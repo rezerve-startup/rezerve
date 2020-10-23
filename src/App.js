@@ -6,7 +6,7 @@ function App() {
   return (
     <>
       <p>
-        Side-bar Testing  
+        Side-bar Testing. Testing Done. 
       </p>  
     </>
   );
