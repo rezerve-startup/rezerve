@@ -6,6 +6,7 @@ function sidebar() {
     <>
       <p>
         Sidebar.js is loading properly.
+        
       </p>  
     </>
   );
