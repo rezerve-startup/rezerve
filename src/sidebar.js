@@ -7,7 +7,7 @@ function Sidebar() {
       <p>
 
         Sidebar.js is loading properly. Now Initializing...
-        Sidebar.js is loading properly.
+        Sidebar.js is loading properly. Reet
 
       </p>  
     </>
