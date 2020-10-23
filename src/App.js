@@ -8,7 +8,7 @@ function App() {
     <>
 
       <p>
-        Side-bar Testing. Testing Done. 
+        Side-bar Testing. Testing Done.
       </p>  
 
       <Sidebar />
