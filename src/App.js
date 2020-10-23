@@ -1,12 +1,12 @@
 import React from 'react';
+import Sidebar from './sidebar'
 import './App.css';
+
 
 function App() {
   return (
     <>
-      <p>
-        settings
-      </p>  
+      <Sidebar /> 
     </>
   );
 }
