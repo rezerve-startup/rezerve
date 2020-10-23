@@ -1,13 +1,18 @@
 import React from 'react';
-import logo from './logo.svg';
+import Sidebar from './sidebar'
 import './App.css';
+
 
 function App() {
   return (
     <>
+
       <p>
         Side-bar Testing. Testing Done. 
       </p>  
+
+      <Sidebar />
+
     </>
   );
 }
