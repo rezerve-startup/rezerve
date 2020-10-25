@@ -6,6 +6,7 @@
     align-items: center;
 }
 
+
 .rezerve-head {
     color: #fff;
 }
@@ -14,6 +15,11 @@
     margin-left: 2rem;
     font-size: 2rem;
     background: none;
+}
+
+.hamburgerIcon {
+    margin-left: 2rem;
+    font-size: 2rem;
 }
 
 .nav-menu {
@@ -25,12 +31,12 @@
     position: fixed;
     top: 0;
     left: -100%;
-    transition: 850ms;
+    transition: 500ms;
 }
 
 .nav-menu.active {
     left: 0;
-    transition: 350 ms;
+    transition: 10 ms;
 }
 
 .nav-text {
