@@ -18,7 +18,11 @@ function Sidebar() {
     let url = 'message'
     const [sidebar, setSidebar] = useState(false)
     const showSidebar = () => setSidebar(!sidebar)
-
+    const toggleOff = () => {
+        if(sidebar == true){
+            showSidebar(false);
+        }
+    };
     const useStyles = makeStyles((theme) => ({
         divider: {
             // Theme Color, or use css color in quote
@@ -35,7 +39,7 @@ function Sidebar() {
     
     return(
                   
-    
+    <ClickAwayListener onClickAway={toggleOff}>
         <div className= "Sidebar">
         <IconContext.Provider value={{ color : '#fff' }}>
 
@@ -88,7 +92,7 @@ function Sidebar() {
 
         
         </div>
-
+            </ClickAwayListener>
     );
 
 }
