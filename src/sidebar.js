@@ -15,7 +15,7 @@ import logo from './images/avatar.jpg'
 function Sidebar() {
   
 
-
+    let url = 'message'
     const [sidebar, setSidebar] = useState(false)
     const showSidebar = () => setSidebar(!sidebar)
     const useStyles = makeStyles((theme) => ({
@@ -30,15 +30,17 @@ function Sidebar() {
     return (
         <div className= "Sidebar">
         <IconContext.Provider value={{ color : '#fff' }}>
-        <div className='navbar' onClick={showSidebar}>
+        <div className='navbar'>
 
             <Link to="#" classname='menu-bars'>
                 <FaIcons.FaBars onClick={showSidebar} className="hamburgerIcon"/>
             </Link>
             <Typography variant="h4" component="h2">
-                <span  className="rezerve-head">
-                    Rezerve
-                </span>
+                <a href={url} className="homeAnchor">
+                    <span  className="rezerve-head">
+                        Rezerve
+                    </span>
+                </a>
             </Typography>
         </div>
         <nav className={sidebar ? 'nav-menu active' : 'nav-menu'}>
