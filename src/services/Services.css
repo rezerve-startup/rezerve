@@ -6,27 +6,3 @@
   text-align: center;
   align-items: center;
 }
-
-.business {
-  position: relative;
-  top: 45%;
-}
-
-.links {
-  position: absolute;
-  bottom: 0;
-  width: 98%;
-  height: 100%;
-}
-
-.distance {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-}
-
-.rating {
-  position: absolute;
-  bottom: 0;
-  right: 0;
-}

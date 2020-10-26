@@ -1,6 +1,6 @@
 import React, { Component } from "react";
-import Card from "react-bootstrap/Card";
 import Header from "./header/Header";
+import BusinessCard from "./business-card/BusinessCard"
 import "./Services.css";
 
 class Services extends Component {
@@ -8,20 +8,10 @@ class Services extends Component {
     return (
       <div class="services-page">
         <Header />
-        <Card>
-          <Card.Img src="assets/cat1.jpg" alt="Card image" />
-          <Card.ImgOverlay
-            style={{ padding: "1%", background: "rgba(0,0,0,0.75)" }}
-          >
-            <div class="business">
-              <Card.Text>Business Name</Card.Text>
-            </div>
-            <div class="links">
-              <Card.Link class="distance">Distance</Card.Link>
-              <Card.Link class="rating">Rating</Card.Link>
-            </div>
-          </Card.ImgOverlay>
-        </Card>
+        <BusinessCard business="Business #1" distance="Distance #1" rating="Rating #1" />
+        <BusinessCard business="Business #2" distance="Distance #2" rating="Rating #2" />
+        <BusinessCard business="Business #3" distance="Distance #3" rating="Rating #3" />
+        <BusinessCard business="Business #4" distance="Distance #4" rating="Rating #4" />
       </div>
     );
   }
