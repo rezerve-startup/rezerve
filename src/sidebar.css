@@ -48,7 +48,7 @@
     align-items: center;
     padding: 8px 0px 8px 16px;
     list-style: none;
-    height: 60px;
+    height: 65px;
 }
 
 .nav-text a {
@@ -61,7 +61,7 @@
     align-items: center;
     padding: 0px 16px;
     border-radius: 4px;
-    margin-top: 50px;
+    margin-top: 65px;
 }
 
 .nav-text a:hover {
@@ -91,10 +91,11 @@ span {
     align-items: center;
     justify-content: center;
     font-size: 3rem;
+
 }
 
 .user-heading{
-    color: #00ffff;
+    color: #bde40f;
     text-align: center;
     margin-left: 50px;
     word-wrap: normal;
@@ -108,4 +109,8 @@ span {
     position: relative;
     overflow: hidden;
     border-radius: 50%;
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> c0d02f616f526f1dd0659a608d93c58bdea45105
