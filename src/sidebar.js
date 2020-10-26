@@ -19,6 +19,7 @@ function Sidebar() {
     const [sidebar, setSidebar] = useState(false)
     const showSidebar = () => setSidebar(!sidebar)
     
+    
     const useStyles = makeStyles((theme) => ({
         divider: {
             // Theme Color, or use css color in quote
@@ -29,7 +30,7 @@ function Sidebar() {
       const classes = useStyles();
 
     return (
-        <>
+        <div className= "Sidebar">
         <IconContext.Provider value={{ color : '#fff' }}>
         <div className='navbar'>
             <Link to="#" classname='menu-bars'>
@@ -62,7 +63,7 @@ function Sidebar() {
             </ul>
         </nav>
         </IconContext.Provider>
-        </>
+        </div>
     );
 
 }
