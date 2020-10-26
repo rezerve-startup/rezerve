@@ -52,7 +52,7 @@ function Sidebar() {
                         {/*<AiIcons.AiOutlineClose />*/}
                     </Link>
                 </li>
-               <Divider className={classes.divider}/>
+               <Divider variant="middle" className={classes.divider}/>
                 {sidebarData.map((item, index) => {
                     return (
                         <li key={index} className={item.cName}>
