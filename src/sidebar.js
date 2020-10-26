@@ -6,8 +6,10 @@ import { sidebarData } from './sidebarData'
 import './sidebar.css'
 import { IconContext } from 'react-icons'
 import {Typography, Divider} from '@material-ui/core/'
-import './images/avatar.jpg'
 import { Dropdown } from 'react-bootstrap';
+import logo from './images/avatar.jpg'
+
+
 
 function Sidebar() {
   
@@ -19,7 +21,7 @@ function Sidebar() {
     return (
         <>
         <IconContext.Provider value={{ color : '#fff' }}>
-        <div className='navbar'>
+        <div className='navbar' onClick={showSidebar}>
             <Link to="#" classname='menu-bars'>
                 <FaIcons.FaBars onClick={showSidebar} className="hamburgerIcon"/>
             </Link>
@@ -32,11 +34,11 @@ function Sidebar() {
         <nav className={sidebar ? 'nav-menu active' : 'nav-menu'}>
             <ul className='nav-menu-items' >
                 <li className='navbar-toggle'>
-                <img src='avatar.jpg' className='image-cropper'/>
+                <img src={logo} alt="Logo" className='image-cropper'/>
                     <h1 className='user-heading'>
                         John Barber</h1>
                     <Link to='#' className='menu-bars' onClick={showSidebar}>
-                        <AiIcons.AiOutlineClose />
+                        {/*<AiIcons.AiOutlineClose />*/}
                     </Link>
                 </li>
                 <Dropdown.Divider />
@@ -53,6 +55,9 @@ function Sidebar() {
             </ul>
         </nav>
         </IconContext.Provider>
+        <div className="closeBar" onClick={!showSidebar}>
+
+        </div>
         </>
     );
 
