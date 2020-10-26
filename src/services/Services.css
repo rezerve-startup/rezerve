@@ -6,3 +6,20 @@
   text-align: center;
   align-items: center;
 }
+
+.business-name {
+  position: relative;
+  top: 45%;
+}
+
+.distance {
+  position: relative;
+  top: 78%;
+  right: 42%;
+}
+
+.rating {
+  position: relative;
+  top: 58%;
+  left: 42%;
+}

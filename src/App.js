@@ -1,8 +1,8 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
-import Services from './services/Services';
-import BusinessInfo from './BusinessInfo';
+import React from "react";
+import logo from "./logo.svg";
+import "./App.css";
+import Services from "./services/Services";
+import BusinessInfo from "./BusinessInfo";
 
 function App() {
   return (
