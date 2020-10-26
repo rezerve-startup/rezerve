@@ -7,19 +7,26 @@
   align-items: center;
 }
 
-.business-name {
+.business {
   position: relative;
   top: 45%;
 }
 
+.links {
+  position: absolute;
+  bottom: 0;
+  width: 98%;
+  height: 100%;
+}
+
 .distance {
-  position: relative;
-  top: 78%;
-  right: 42%;
+  position: absolute;
+  bottom: 0;
+  left: 0;
 }
 
 .rating {
-  position: relative;
-  top: 58%;
-  left: 42%;
+  position: absolute;
+  bottom: 0;
+  right: 0;
 }

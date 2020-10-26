@@ -8,16 +8,18 @@ class Services extends Component {
     return (
       <div class="services-page">
         <Header />
-        <div class="card-container">
-          <Card>
-            <Card.Img src="assets/cat1.jpg" alt="Card image" />
-            <Card.ImgOverlay>
-              <Card.Text class="business-name">Business Name</Card.Text>
-              <Card.Text class="distance">Distance</Card.Text>
-              <Card.Text class="rating">Rating</Card.Text>
-            </Card.ImgOverlay>
-          </Card>
-        </div>
+        <Card>
+          <Card.Img src="assets/cat1.jpg" alt="Card image" />
+          <Card.ImgOverlay style={{ padding: "1%" }}>
+            <div class="business">
+              <Card.Text>Business Name</Card.Text>
+            </div>
+            <div class="links">
+              <Card.Link class="distance">Distance</Card.Link>
+              <Card.Link class="rating">Rating</Card.Link>
+            </div>
+          </Card.ImgOverlay>
+        </Card>
       </div>
     );
   }
