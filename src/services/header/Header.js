@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { FormControl, InputGroup, Nav } from "react-bootstrap";
-import { AiOutlineUser, AiOutlineSearch, AiOutlineInbox } from 'react-icons/ai';
+import { AiOutlineUser, AiOutlineSearch, AiOutlineInbox, AiOutlineFilter } from 'react-icons/ai';
 import { BiMap } from 'react-icons/bi';
 import "./Header.css";
 
@@ -30,6 +30,9 @@ class Header extends Component {
             aria-label="Search"
             aria-describedby="search"
           />
+					<InputGroup.Append>
+						<InputGroup.Text><AiOutlineFilter /></InputGroup.Text>
+					</InputGroup.Append>
         </InputGroup>
       </div>
     );
