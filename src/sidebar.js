@@ -41,7 +41,7 @@ function Sidebar() {
                         {/*<AiIcons.AiOutlineClose />*/}
                     </Link>
                 </li>
-                <Dropdown.Divider />
+               <Divider variant="middle"/>
                 {sidebarData.map((item, index) => {
                     return (
                         <li key={index} className={item.cName}>
