@@ -5,9 +5,9 @@ import { Link } from 'react-router-dom'
 import { sidebarData } from './sidebarData' 
 import './sidebar.css'
 import { IconContext } from 'react-icons'
-import Typography from '@material-ui/core/Typography'
+import {Typography, Divider} from '@material-ui/core/'
 import './images/avatar.jpg'
-
+import { Dropdown } from 'react-bootstrap';
 
 function Sidebar() {
   
@@ -39,6 +39,7 @@ function Sidebar() {
                         <AiIcons.AiOutlineClose />
                     </Link>
                 </li>
+                <Dropdown.Divider />
                 {sidebarData.map((item, index) => {
                     return (
                         <li key={index} className={item.cName}>
