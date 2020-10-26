@@ -15,7 +15,7 @@ import logo from './images/avatar.jpg'
 function Sidebar() {
   
 
-    let url = 'message'
+    let url = 'messages'
     const [sidebar, setSidebar] = useState(false)
     const showSidebar = () => setSidebar(!sidebar)
     const toggleOff = () => {
