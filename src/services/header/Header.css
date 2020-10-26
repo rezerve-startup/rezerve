@@ -1,0 +1,43 @@
+.header {
+    background-color: black;
+    height: 8vh;
+    width: 100%;
+    color: white;
+    padding: 1%;
+}
+
+.icons {
+    height: 33%;
+    padding: none;
+}
+
+.nav {
+    height: 33%;
+    width: 100vw;
+    text-align: center;
+    vertical-align: middle;
+    padding: none;
+}
+
+.forum {
+    width: 50%;
+    text-align: right;
+    padding-right: 5%;
+}
+
+.book {
+    width: 50%;
+    text-align: left;
+    padding-left: 5%;
+}
+
+.search {
+    height: 33%;
+    padding: none;
+    padding: 0 5% 0 5%;
+}
+
+.search-bar {
+    width: 100%;
+    padding: 0 1% 0 1%;
+}

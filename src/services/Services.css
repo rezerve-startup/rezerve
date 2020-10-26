@@ -1,6 +1,7 @@
 .services-page {
     background-color: #212423;
-    height: 100%;
+    height: 100vh;
+    width: 100vw;
     color: white;
     text-align: center;
     align-items: center;
