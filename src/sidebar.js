@@ -5,7 +5,7 @@ import * as FaIcons from 'react-icons/fa'
 import * as AiIcons from 'react-icons/ai'
 import { Link } from 'react-router-dom'
 import { IconContext } from 'react-icons'
-import {Typography, Divider} from '@material-ui/core/'
+import {Typography, Divider, Container} from '@material-ui/core/'
 import { makeStyles } from '@material-ui/core/styles'
 import logo from './images/avatar.jpg'
 
@@ -18,8 +18,6 @@ function Sidebar() {
 
     const [sidebar, setSidebar] = useState(false)
     const showSidebar = () => setSidebar(!sidebar)
-    
-    
     const useStyles = makeStyles((theme) => ({
         divider: {
             // Theme Color, or use css color in quote
@@ -32,7 +30,8 @@ function Sidebar() {
     return (
         <div className= "Sidebar">
         <IconContext.Provider value={{ color : '#fff' }}>
-        <div className='navbar'>
+        <div className='navbar' onClick={showSidebar}>
+
             <Link to="#" classname='menu-bars'>
                 <FaIcons.FaBars onClick={showSidebar} className="hamburgerIcon"/>
             </Link>
@@ -50,6 +49,7 @@ function Sidebar() {
                         John Barber</h1>
                 </li>
                <Divider variant="middle" className={classes.divider}/>
+                
                 {sidebarData.map((item, index) => {
                     return (
                         <li key={index} className={item.cName}  onClick={showSidebar}>

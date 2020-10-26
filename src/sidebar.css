@@ -48,7 +48,7 @@
     align-items: center;
     padding: 8px 0px 8px 16px;
     list-style: none;
-    height: 65px;
+    height: 60px;
 }
 
 .nav-text a {
@@ -61,7 +61,7 @@
     align-items: center;
     padding: 0px 16px;
     border-radius: 4px;
-    margin-top: 65px;
+    margin-top: 50px;
 }
 
 .nav-text a:hover {
@@ -91,11 +91,10 @@ span {
     align-items: center;
     justify-content: center;
     font-size: 3rem;
-
 }
 
 .user-heading{
-    color: #bde40f;
+    color: #1deb38;
     text-align: center;
     margin-left: 50px;
     word-wrap: normal;
