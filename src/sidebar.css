@@ -96,6 +96,7 @@ span {
     color: #00ffff;
     text-align: center;
     margin-left: 50px;
+    word-wrap: normal;
 }
 
 .image-cropper {
@@ -107,4 +108,3 @@ span {
     overflow: hidden;
     border-radius: 50%;
 }
-

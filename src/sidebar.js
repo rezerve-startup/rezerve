@@ -5,8 +5,10 @@ import { Link } from 'react-router-dom'
 import { sidebarData } from './sidebarData' 
 import './sidebar.css'
 import { IconContext } from 'react-icons'
-import Typography from '@material-ui/core/Typography'
+import {Typography, Divider} from '@material-ui/core/'
+import { Dropdown } from 'react-bootstrap';
 import logo from './images/avatar.jpg'
+
 
 
 function Sidebar() {
@@ -35,11 +37,11 @@ function Sidebar() {
                 <img src={logo} alt="Logo" className='image-cropper'/>
                     <h1 className='user-heading'>
                         John Barber</h1>
-                        
                     <Link to='#' className='menu-bars' onClick={showSidebar}>
                         {/*<AiIcons.AiOutlineClose />*/}
                     </Link>
                 </li>
+               <Divider variant="middle"/>
                 {sidebarData.map((item, index) => {
                     return (
                         <li key={index} className={item.cName}>
@@ -53,9 +55,6 @@ function Sidebar() {
             </ul>
         </nav>
         </IconContext.Provider>
-        <div className="closeBar" onClick={!showSidebar}>
-
-        </div>
         </>
     );
 
