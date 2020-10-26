@@ -32,11 +32,6 @@ function Sidebar() {
       }));
       const classes = useStyles();
 
-      
-    
-
-
-    
     return(
                   
     <ClickAwayListener onClickAway={toggleOff}>
@@ -56,7 +51,6 @@ function Sidebar() {
                 </a>
             </Typography>
         </div>
-        
         
         <nav className={sidebar ? 'nav-menu active' : 'nav-menu'}>
            
@@ -83,16 +77,9 @@ function Sidebar() {
             </ul>
             
         </nav>
-
-        
         </IconContext.Provider>
-        
-       
-       
-
-        
         </div>
-            </ClickAwayListener>
+        </ClickAwayListener>
     );
 
 }
