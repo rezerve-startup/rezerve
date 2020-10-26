@@ -22,10 +22,13 @@
 .hamburgerIcon {
     margin-left: 2rem;
     font-size: 2rem;
+    color: #fff;
 }
 
 .nav-menu {
     background-color: #060b26;
+
+    width: 300px;
     width: 265px;
     height: 100vh;
     display: flex;
@@ -34,6 +37,7 @@
     top: 0;
     left: -100%;
     transition: 500ms;
+    
 }
 
 
