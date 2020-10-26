@@ -1,5 +1,7 @@
 import React, { Component } from "react";
 import { FormControl, InputGroup, Nav } from "react-bootstrap";
+import { AiOutlineUser, AiOutlineSearch, AiOutlineInbox } from 'react-icons/ai';
+import { BiMap } from 'react-icons/bi';
 import "./Header.css";
 
 class Header extends Component {
@@ -7,8 +9,10 @@ class Header extends Component {
     return (
       <div class="header">
         <div class="icons">
-          <p>icons</p>
-        </div>
+					<AiOutlineUser class="left-icon" />
+					<AiOutlineInbox class="left-icon" />
+					<BiMap class="right-icon" />
+				</div>
         <Nav justify class="nav justify-content-center">
           <Nav.Item>
             <Nav.Link href="/forum">Forum</Nav.Link>
@@ -17,9 +21,9 @@ class Header extends Component {
             <Nav.Link href="/book">Book</Nav.Link>
           </Nav.Item>
         </Nav>
-        <InputGroup>
+        <InputGroup class="search">
           <InputGroup.Prepend>
-            <InputGroup.Text id="search">@</InputGroup.Text>
+            <InputGroup.Text id="search"><AiOutlineSearch /></InputGroup.Text>
           </InputGroup.Prepend>
           <FormControl
             placeholder="Search"

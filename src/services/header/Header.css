@@ -7,24 +7,24 @@
 }
 
 .icons {
-  height: 33%;
+  height: 20%;
   padding: none;
 }
 
+.left-icon {
+  float: left;
+}
+
+.right-icon {
+  float: right;
+}
+
 .nav {
-  height: 33%;
+  height: 40%;
   width: 100%;
   padding: none;
 }
 
-.forum {
-  width: 50%;
-  text-align: right;
-  padding-right: 5%;
-}
-
-.book {
-  width: 50%;
-  text-align: left;
-  padding-left: 5%;
+.search {
+  height: 40%;
 }
