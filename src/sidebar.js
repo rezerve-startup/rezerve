@@ -6,10 +6,12 @@ import { sidebarData } from './sidebarData'
 import './sidebar.css'
 import { IconContext } from 'react-icons'
 import Typography from '@material-ui/core/Typography'
-
+import logo from './images/avatar.jpg'
 
 
 function Sidebar() {
+  
+
 
     const [sidebar, setSidebar] = useState(false)
     const showSidebar = () => setSidebar(!sidebar)
@@ -28,10 +30,13 @@ function Sidebar() {
             </Typography>
         </div>
         <nav className={sidebar ? 'nav-menu active' : 'nav-menu'}>
-            <ul className='nav-menu-items' onClick={showSidebar}>
+            <ul className='nav-menu-items' >
                 <li className='navbar-toggle'>
-                    <Link to='#' className='menu-bars'>
-                        <AiIcons.AiOutlineClose />
+                <img src={logo} alt="Logo" className='image-cropper'/>
+                    <h1 className='user-heading'>
+                        John Barber</h1>
+                    <Link to='#' className='menu-bars' onClick={showSidebar}>
+                        {/*<AiIcons.AiOutlineClose />*/}
                     </Link>
                 </li>
                 {sidebarData.map((item, index) => {
@@ -52,6 +57,7 @@ function Sidebar() {
         </div>
         </>
     );
+
 }
 
 export default Sidebar;
