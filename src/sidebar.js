@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom'
 import { sidebarData } from './sidebarData' 
 import './sidebar.css'
 import { IconContext } from 'react-icons'
-import {Typography, Divider} from '@material-ui/core/'
+import {Typography, Divider, Container} from '@material-ui/core/'
 import { makeStyles } from '@material-ui/core/styles'
 import logo from './images/avatar.jpg'
 import { light } from '@material-ui/core/styles/createPalette';
@@ -18,7 +18,7 @@ function Sidebar() {
 
     const [sidebar, setSidebar] = useState(false)
     const showSidebar = () => setSidebar(!sidebar)
-    
+    const toggleBar = () => setSidebar(!sidebar)
     const useStyles = makeStyles((theme) => ({
         divider: {
             // Theme Color, or use css color in quote
@@ -28,10 +28,17 @@ function Sidebar() {
         },
       }));
       const classes = useStyles();
+      
+      
 
+
+    
     return (
+        
         <>
+        
         <IconContext.Provider value={{ color : '#fff' }}>
+        
         <div className='navbar' onClick={showSidebar}>
             <Link to="#" classname='menu-bars'>
                 <FaIcons.FaBars onClick={showSidebar} className="hamburgerIcon"/>
@@ -53,6 +60,7 @@ function Sidebar() {
                     </Link>
                 </li>
                <Divider variant="middle" className={classes.divider}/>
+                
                 {sidebarData.map((item, index) => {
                     return (
                         <li key={index} className={item.cName}>
@@ -66,6 +74,7 @@ function Sidebar() {
             </ul>
         </nav>
         </IconContext.Provider>
+        
         </>
     );
 
