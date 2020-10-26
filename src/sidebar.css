@@ -101,6 +101,8 @@ span {
 .image-cropper {
     width: 50px;
     height: 50px;
+    margin-left: 20px;
+    margin-right: -20px;
     position: relative;
     overflow: hidden;
     margin-left: 10px;
