@@ -36,7 +36,7 @@ function Sidebar() {
                 <li className='navbar-toggle'>
                 <img src={logo} alt="Logo" className='image-cropper'/>
                     <h1 className='user-heading'>
-                        John Barber</h1>
+                        J. Barber</h1>
                     <Link to='#' className='menu-bars' onClick={showSidebar}>
                         {/*<AiIcons.AiOutlineClose />*/}
                     </Link>
