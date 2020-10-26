@@ -10,7 +10,9 @@ class Services extends Component {
         <Header />
         <Card>
           <Card.Img src="assets/cat1.jpg" alt="Card image" />
-            <Card.ImgOverlay style={{ padding: "1%", background: 'rgba(0,0,0,0.75)' }}>
+          <Card.ImgOverlay
+            style={{ padding: "1%", background: "rgba(0,0,0,0.75)" }}
+          >
             <div class="business">
               <Card.Text>Business Name</Card.Text>
             </div>
