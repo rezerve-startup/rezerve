@@ -21,10 +21,12 @@ function Sidebar() {
         <IconContext.Provider value={{ color : '#fff' }}>
         <div className='navbar'>
             <Link to="#" classname='menu-bars'>
-                <FaIcons.FaBars onClick={showSidebar}/>
+                <FaIcons.FaBars onClick={showSidebar} className="hamburgerIcon"/>
             </Link>
-            <Typography variant="h4" component="h2" className="rezerve-head">
-                Rezerve
+            <Typography variant="h4" component="h2">
+                <span  className="rezerve-head">
+                    Rezerve
+                </span>
             </Typography>
         </div>
         <nav className={sidebar ? 'nav-menu active' : 'nav-menu'}>
