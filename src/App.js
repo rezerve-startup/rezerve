@@ -1,26 +1,31 @@
-import React from 'react';
-import logo from './logo.svg';
+import React, { useState } from 'react';
+import Sidebar from './sidebar'
+import { BrowserRouter as Router, Switch, Route} from 'react-router-dom'
 import './App.css';
+import './sidebar.css'
+import Help from './pagesRoute/Help'
+import Messages from './pagesRoute/Messages'
+import PaymentInfo from './pagesRoute/PaymentInfo'
+import Settings from './pagesRoute/Settings'
+import YouAppointment from './pagesRoute/YouAppointment'
 
 function App() {
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <>
+      <Router>
+        <Sidebar />
+        <Switch>
+          <Route path="/help" exact component={ Help }/>
+          <Route path="/messages" exact component={ Messages }/>
+          <Route path="/payment" exact component={ PaymentInfo }/>
+          <Route path="/settings" exact component={ Settings }/>
+          <Route path="/appointments" exact component={ YouAppointment }/>
+        </Switch>
+      </Router>
+    </>
   );
+
 }
 
 export default App;
