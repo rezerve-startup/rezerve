@@ -32,7 +32,7 @@ function Sidebar() {
     return (
         <>
         <IconContext.Provider value={{ color : '#fff' }}>
-        <div className='navbar' onClick={showSidebar}>
+        <div className='navbar'>
             <Link to="#" classname='menu-bars'>
                 <FaIcons.FaBars onClick={showSidebar} className="hamburgerIcon"/>
             </Link>
@@ -48,14 +48,11 @@ function Sidebar() {
                 <img src={logo} alt="Logo" className='image-cropper'/>
                     <h1 className='user-heading'>
                         John Barber</h1>
-                    <Link to='#' className='menu-bars' onClick={showSidebar}>
-                        {/*<AiIcons.AiOutlineClose />*/}
-                    </Link>
                 </li>
                <Divider variant="middle" className={classes.divider}/>
                 {sidebarData.map((item, index) => {
                     return (
-                        <li key={index} className={item.cName}>
+                        <li key={index} className={item.cName}  onClick={showSidebar}>
                            <Link to={item.path}>
                                 {item.icon}
                                 <span>{item.title}</span>   
