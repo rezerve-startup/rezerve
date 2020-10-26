@@ -14,7 +14,7 @@ class BusinessCard extends Component {
             <Card.Text>{this.props.business}</Card.Text>
           </div>
           <div class="links">
-						<Card.Link class="distance">{this.props.distance}</Card.Link>
+            <Card.Link class="distance">{this.props.distance}</Card.Link>
             <Card.Link class="rating">{this.props.rating}</Card.Link>
           </div>
         </Card.ImgOverlay>
