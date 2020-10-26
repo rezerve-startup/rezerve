@@ -15,9 +15,10 @@ import logo from './images/avatar.jpg'
 function Sidebar() {
   
 
-
+    let url = 'message'
     const [sidebar, setSidebar] = useState(false)
     const showSidebar = () => setSidebar(!sidebar)
+<<<<<<< HEAD
     var isOn = false;
     const toggleOn = () => {
         setSidebar(true);
@@ -28,6 +29,8 @@ function Sidebar() {
         if(isOn){
         setSidebar(false);}
     };
+=======
+>>>>>>> ea40bbb4a315cbd7440ddb617e086b12e6b9ba05
     const useStyles = makeStyles((theme) => ({
         divider: {
             // Theme Color, or use css color in quote
@@ -36,6 +39,7 @@ function Sidebar() {
         },
       }));
       const classes = useStyles();
+<<<<<<< HEAD
       
     
 
@@ -50,15 +54,23 @@ function Sidebar() {
         
         
         
+=======
+
+    return (
+        <div className= "Sidebar">
+        <IconContext.Provider value={{ color : '#fff' }}>
+>>>>>>> ea40bbb4a315cbd7440ddb617e086b12e6b9ba05
         <div className='navbar'>
 
             <Link to="#" classname='menu-bars'>
                 <FaIcons.FaBars onClick={showSidebar} className="hamburgerIcon"/>
             </Link>
             <Typography variant="h4" component="h2">
-                <span  className="rezerve-head">
-                    Rezerve
-                </span>
+                <a href={url} className="homeAnchor">
+                    <span  className="rezerve-head">
+                        Rezerve
+                    </span>
+                </a>
             </Typography>
         </div>
         
@@ -88,11 +100,16 @@ function Sidebar() {
             </ul>
             
         </nav>
+<<<<<<< HEAD
         
         </IconContext.Provider>
         </ClickAwayListener>
        </> 
        
+=======
+        </IconContext.Provider>
+        </div>
+>>>>>>> ea40bbb4a315cbd7440ddb617e086b12e6b9ba05
     );
 
 }
