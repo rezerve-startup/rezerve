@@ -10,22 +10,8 @@
     padding: 1rem;
 }
 
-.carousel-container {
-    width: 700px;
-    margin: auto;
-}
-
-/* .image-carousel {
-    display: block;
-    margin-left: auto;
-    margin-right: auto;
-} */
-
-.business-name {
-    margin-top: 0;
-}
-
-.image-here {
-    height: 300px;
-    width: 100px;
+@media (max-width: 500px) {
+    .carousel-item > img {
+        width: 100%;
+    }
 }
