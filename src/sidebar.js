@@ -1,14 +1,14 @@
 import React, {useState} from 'react';
+import './sidebar.css'
+import { sidebarData } from './sidebarData' 
 import * as FaIcons from 'react-icons/fa'
 import * as AiIcons from 'react-icons/ai'
 import { Link } from 'react-router-dom'
-import { sidebarData } from './sidebarData' 
-import './sidebar.css'
 import { IconContext } from 'react-icons'
 import {Typography, Divider} from '@material-ui/core/'
 import { makeStyles } from '@material-ui/core/styles'
 import logo from './images/avatar.jpg'
-import { light } from '@material-ui/core/styles/createPalette';
+
 
 
 
@@ -24,7 +24,6 @@ function Sidebar() {
             // Theme Color, or use css color in quote
             background: 'white',
             color: 'white',
-            
         },
       }));
       const classes = useStyles();

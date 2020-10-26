@@ -15,7 +15,6 @@ function App() {
     <>
       <Router>
         <Sidebar />
-        
         <Switch>
           <Route path="/help" exact component={ Help }/>
           <Route path="/messages" exact component={ Messages }/>
