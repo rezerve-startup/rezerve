@@ -1,9 +1,9 @@
 .header {
     background-color: black;
     height: 8vh;
-    width: 100%;
+    width: 100vw;
     color: white;
-    padding: 1%;
+    padding: 1% 2%;
 }
 
 .icons {
@@ -13,9 +13,7 @@
 
 .nav {
     height: 33%;
-    width: 100vw;
-    text-align: center;
-    vertical-align: middle;
+    width: 100%;
     padding: none;
 }
 
@@ -29,15 +27,4 @@
     width: 50%;
     text-align: left;
     padding-left: 5%;
-}
-
-.search {
-    height: 33%;
-    padding: none;
-    padding: 0 5% 0 5%;
-}
-
-.search-bar {
-    width: 100%;
-    padding: 0 1% 0 1%;
 }
