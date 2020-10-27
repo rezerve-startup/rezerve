@@ -57,7 +57,9 @@ function Sidebar() {
             <ul className='nav-menu-items' >
             
                 <li className='navbar-toggle'>
+                <Link to="/profilePage" onClick={toggleOff}>
                 <img src={logo} alt="Logo" className='image-cropper'/>
+                    </Link>
                     <h1 className='user-heading'>
                         John Barber</h1>
                 </li>
