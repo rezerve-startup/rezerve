@@ -29,3 +29,7 @@
     height: 300px;
     width: 100px;
 }
+.barbers thead{
+    border-top: 0;
+}
+
