@@ -1,0 +1,15 @@
+.appointment-header {
+    display: flex;
+    margin: auto;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 3rem;
+}
+
+.upcoming-appointments {
+    margin-bottom: 3rem;
+}
+
+.past-appointments {
+    margin-bottom: 3rem;
+}
