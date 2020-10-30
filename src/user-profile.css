@@ -1,12 +1,19 @@
 .image{
     border-radius: 50%;
-    height: 100px;
-    border-color: grey;
+    height: 150px;
+    align-items: center;
+    display: flex;
+    justify-content: center ;
 }
 
 .page_layout{
     align-items: center;
     justify-content: center;
-    display: list-item;
-    width: 500px;
+    display: flex;
+    text-align: center;
+    padding-top: 10px;
+}
+
+.item_layout{
+    padding: 30px;
 }
