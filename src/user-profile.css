@@ -1,0 +1,12 @@
+.image{
+    border-radius: 50%;
+    height: 100px;
+    border-color: grey;
+}
+
+.page_layout{
+    align-items: center;
+    justify-content: center;
+    display: list-item;
+    width: 500px;
+}
