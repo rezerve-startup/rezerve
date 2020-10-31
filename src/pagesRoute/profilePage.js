@@ -44,18 +44,25 @@ function profilePage() {
             <a href="#">Change</a>
             </div>
 
-            <div className="item_layout">
+            <div>
             
             {infoList.map((item, index) => {
                     return (
                         <div className="item_layout">
                         <h2 key={index}>{item.stat}</h2>
+                        <span/>
                         <TextField required id={item.id} defaultValue={item.current} />
                         
                         </div>
                     )
                 })}
+                <a href="#">Change Password?</a>
             </div>
+
+            <div className="page_layout">
+            <button href="#">Save Changes</button>
+            </div>
+
         </div>
 
         
