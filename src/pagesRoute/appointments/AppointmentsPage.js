@@ -93,7 +93,6 @@ class AppointmentsPage extends React.Component {
                 <div class="page-items">
                     <div class="appointment-header">
                         <h2>Appointments</h2>
-                        <CloseIcon />
                     </div>
                     <div class="upcoming-appointments">
                         <h3>Upcoming</h3>
