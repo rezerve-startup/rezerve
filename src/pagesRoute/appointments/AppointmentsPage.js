@@ -5,12 +5,7 @@ import './AppointmentsPage.css';
 import AppointmentItem from './AppointmentItem';
 
 import List from '@material-ui/core/List';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemIcon from '@material-ui/core/ListItemIcon';
-import ListItemText from '@material-ui/core/ListItemText';
-import Divider from '@material-ui/core/Divider';
-import InboxIcon from '@material-ui/icons/Inbox';
-import DraftsIcon from '@material-ui/icons/Drafts';
+import { firestore } from '../../config/FirebaseConfig';
 
 let DATA = [
     { 
@@ -54,9 +49,34 @@ let DATA = [
 class AppointmentsPage extends React.Component {
 
     state = {
-        upcomingAppointments: DATA,
+        upcomingAppointments: [],
         pastAppointments: DATA
     };
+
+    componentDidMount() {
+        firestore.collection('users').onSnapshot(snapshot => {
+            const appointments = snapshot.docs[0].data().appointments;
+            console.log(appointments);
+
+            let upcomingAppointments = [];
+            for (let i = 0; i < appointments.length; i++) {
+                let appointment = appointments[i];
+                let appointmentDate = appointment.dateTime.toDate().toLocaleString([], {dateStyle: 'short', timeStyle: 'short'});
+                let appointmentToShow = {
+                    appointmentId: `${i}`,
+                    businessName: `${appointment.businessName}`,
+                    businessDate: `${appointmentDate}`
+                }
+                upcomingAppointments.push(appointmentToShow);
+            }
+
+            this.setState((state) => {
+                return {
+                    upcomingAppointments: [...upcomingAppointments]
+                }
+            })
+        })
+    }
 
     render() {
         return (
@@ -70,15 +90,15 @@ class AppointmentsPage extends React.Component {
                         <h3>Upcoming</h3>
                         <List>
                             {this.state.upcomingAppointments.map((appointment) => (
-                                <AppointmentItem businessName={appointment.businessName} appointmentDate={appointment.appointmentDate} appointmentPrice={appointment.appointmentPrice}/>
+                                <AppointmentItem businessName={appointment.businessName} appointmentDate={appointment.businessDate} appointmentPrice={'$26.94'}/>
                             ))}
                         </List>
                     </div>
                     <div class="past-appointments">
                         <h3>Past</h3>
                         <List>
-                            {this.state.upcomingAppointments.map((appointment) => (
-                                <AppointmentItem businessName={appointment.businessName} appointmentDate={appointment.appointmentDate} appointmentPrice={appointment.appointmentPrice}/>
+                            {this.state.pastAppointments.map((appointment) => (
+                                <AppointmentItem businessName={appointment.businessName} appointmentDate={appointment.dateTime} appointmentPrice={'$26.94'}/>
                             ))}
                         </List>
                     </div>

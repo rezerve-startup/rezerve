@@ -10,6 +10,7 @@ class AppointmentItem extends React.Component {
     }
 
     render() {
+        console.log(this.props);
         return (
             <div class="appointment-item">
                 <p class="business-picture"><i>Imagine there is a picture here</i></p>
