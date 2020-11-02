@@ -1,4 +1,5 @@
 import React from 'react'
+import Checkout from '../checkout/checkout'
 
 
 
@@ -6,7 +7,8 @@ import React from 'react'
 function PaymentInfo() {
     return (
         <div className='payments'>
-            <h2>PaymentInfo Page</h2>
+            {/*<h2>PaymentInfo Page</h2>*/}
+            <Checkout />
         </div>
     )
 }
