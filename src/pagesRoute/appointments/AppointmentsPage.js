@@ -59,20 +59,29 @@ class AppointmentsPage extends React.Component {
             console.log(appointments);
 
             let upcomingAppointments = [];
+            let pastAppointments = [];
             for (let i = 0; i < appointments.length; i++) {
                 let appointment = appointments[i];
-                let appointmentDate = appointment.dateTime.toDate().toLocaleString([], {dateStyle: 'short', timeStyle: 'short'});
-                let appointmentToShow = {
+                let appointmentDate = appointment.dateTime.toDate();
+
+                let appointmentDateString = appointmentDate.toLocaleString([], {dateStyle: 'short', timeStyle: 'short'});
+                let appointmentObject = {
                     appointmentId: `${i}`,
                     businessName: `${appointment.businessName}`,
-                    businessDate: `${appointmentDate}`
+                    appointmentDate: `${appointmentDateString}`,
+                    appointmentPrice: `$26.94`
                 }
-                upcomingAppointments.push(appointmentToShow);
+                if (appointmentDate > new Date(new Date().toDateString())) {
+                    upcomingAppointments.push(appointmentObject);
+                } else {
+                    pastAppointments.push(appointmentObject);
+                }
             }
 
             this.setState((state) => {
                 return {
-                    upcomingAppointments: [...upcomingAppointments]
+                    upcomingAppointments: [...upcomingAppointments],
+                    pastAppointments: [...pastAppointments]
                 }
             })
         })
@@ -90,7 +99,7 @@ class AppointmentsPage extends React.Component {
                         <h3>Upcoming</h3>
                         <List>
                             {this.state.upcomingAppointments.map((appointment) => (
-                                <AppointmentItem businessName={appointment.businessName} appointmentDate={appointment.businessDate} appointmentPrice={'$26.94'}/>
+                                <AppointmentItem businessName={appointment.businessName} appointmentDate={appointment.appointmentDate} appointmentPrice={appointment.appointmentPrice}/>
                             ))}
                         </List>
                     </div>
@@ -98,7 +107,7 @@ class AppointmentsPage extends React.Component {
                         <h3>Past</h3>
                         <List>
                             {this.state.pastAppointments.map((appointment) => (
-                                <AppointmentItem businessName={appointment.businessName} appointmentDate={appointment.dateTime} appointmentPrice={'$26.94'}/>
+                                <AppointmentItem businessName={appointment.businessName} appointmentDate={appointment.appointmentDate} appointmentPrice={appointment.appointmentPrice}/>
                             ))}
                         </List>
                     </div>
