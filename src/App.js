@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import ReactDOM from 'react-dom'
 import Sidebar from './sidebar'
 import { BrowserRouter as Router, Switch, Route} from 'react-router-dom'
 import './App.css';
@@ -21,6 +22,8 @@ function App() {
           <Route path="/payment" exact component={ PaymentInfo }/>
           <Route path="/settings" exact component={ Settings }/>
           <Route path="/appointments" exact component={ YouAppointment }/>
+          <Route path="/success.html" />
+          <Route path="/canceled.html" />
         </Switch>
       </Router>
     </>
