@@ -1,0 +1,25 @@
+.appointment-item {
+    margin: 0.5rem;
+    border: 1px solid black;
+    border-radius: 0.25rem;
+    padding: 0.25rem
+}
+
+.appointment-overview {
+    display: flex;
+    justify-content: space-between;
+}
+
+.business-name {
+    flex: 2
+}
+
+.appointment-info {
+    flex: 1;
+    text-align: right;
+}
+
+.business-picture {
+    text-align: center;
+    padding: 2rem;
+}

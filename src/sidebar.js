@@ -39,7 +39,6 @@ function Sidebar() {
         <IconContext.Provider value={{ color : '#fff' }}>
 
         <div className='navbar'>
-
             <Link to="#" classname='menu-bars'>
                 <FaIcons.FaBars onClick={showSidebar} className="hamburgerIcon"/>
             </Link>
