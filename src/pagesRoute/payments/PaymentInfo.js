@@ -4,9 +4,15 @@ import './Payments.css';
 
 function PaymentInfo() {
     return (
-        <div className='payments-container'>
-            <App2 />
+        <>
+        <div className="heading">
+            Checkout Page Under Construction
+            <div className='payments-container'>
+                <App2 />
+            </div>
         </div>
+        
+        </>
     )
 }
 
