@@ -29,7 +29,36 @@
     height: 300px;
     width: 100px;
 }
-.barbers thead{
-    border-top: 0;
+
+
+@media (max-width: 500px) {
+    .carousel-item > img {
+        width: 100%;
+    }
 }
 
+.barbertable table{
+    width: 100%;
+}
+
+.barbertable button{
+    width: 95%;
+}
+
+.barbertable thead{
+    text-align: left;
+}
+
+.barbertable thead, tr {
+    border-bottom: 1px solid white;
+}
+
+.barbertable img{
+    padding-top: 10px;
+}
+.barbertable td{
+    width: 50%;
+}
+.barbertable #left {
+    border-right: 1px solid white;
+}

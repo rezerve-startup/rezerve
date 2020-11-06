@@ -1,25 +1,92 @@
 import React, { Component } from 'react';
-import Carousel from 'react-bootstrap/Carousel';
-import {  Media, Card, CardBody, CardHeader } from 'reactstrap';
-import CarouselItem from 'react-bootstrap/CarouselItem';
+import { Button, Card, CardBody, CardHeader, Carousel, CarouselItem, CarouselCaption, CarouselControl, CarouselIndicators } from 'reactstrap';
 import './BusinessInfo.css'
 
-class BusinessInfo extends Component {
+
+const items = [
+    {
+      src: 'assets/cat1.jpg',
+      altText: '',
+      caption: ''
+    },
+    {
+      src: 'assets/cat2.jpg',
+      altText: '',
+      caption: ''
+    },
+    {
+      src: 'assets/cat3.jpg',
+      altText: '',
+      caption: ''
+    }
+  ];
+  
+  class BusinessInfo extends Component {
+    constructor(props) {
+      super(props);
+      this.state = { activeIndex: 0 };
+      this.next = this.next.bind(this);
+      this.previous = this.previous.bind(this);
+      this.goToIndex = this.goToIndex.bind(this);
+      this.onExiting = this.onExiting.bind(this);
+      this.onExited = this.onExited.bind(this);
+    }
+  
+    onExiting() {
+      this.animating = true;
+    }
+  
+    onExited() {
+      this.animating = false;
+    }
+  
+    next() {
+      if (this.animating) return;
+      const nextIndex = this.state.activeIndex === items.length - 1 ? 0 : this.state.activeIndex + 1;
+      this.setState({ activeIndex: nextIndex });
+    }
+  
+    previous() {
+      if (this.animating) return;
+      const nextIndex = this.state.activeIndex === 0 ? items.length - 1 : this.state.activeIndex - 1;
+      this.setState({ activeIndex: nextIndex });
+    }
+  
+    goToIndex(newIndex) {
+      if (this.animating) return;
+      this.setState({ activeIndex: newIndex });
+    }
+  
     render() {
+      const { activeIndex } = this.state;
+  
+      const slides = items.map((item) => {
         return (
+          <CarouselItem
+            className="carouselImg"
+            onExiting={this.onExiting}
+            onExited={this.onExited}
+            key={item.src}
+          >
+            <img src={item.src} alt={item.altText} />
+            <CarouselCaption captionText={item.caption} captionHeader={item.caption} />
+          </CarouselItem>
+        );
+      });
+  
+      return (
             <div class="business-info-page">
                 <div class="business-overview">
                     <div class="carousel-container">
-                        <Carousel class="image-carousel">
-                            <Carousel.Item style={{"height": "300px"}} interval={3000}>
-                                <img style={{"height": "300px", "width": "500px"}} className="d-block mx-auto" src={"assets/cat1.jpg"} />
-                            </Carousel.Item>
-                            <Carousel.Item style={{"height": "300px"}} interval={3000}>
-                                <img style={{"height": "300px", "width": "500px"}} className="d-block mx-auto" src={"assets/cat2.jpg"} />
-                            </Carousel.Item>
-                            <Carousel.Item style={{"height": "300px"}} interval={3000}>
-                                <img style={{"height": "300px", "width": "500px"}} className="d-block mx-auto" src={"assets/cat3.jpg"} />
-                            </Carousel.Item>
+                        <Carousel
+                            activeIndex={activeIndex}
+                            next={this.next}
+                            previous={this.previous}
+                            >
+                            <CarouselIndicators items={items} activeIndex={activeIndex} onClickHandler={this.goToIndex} />
+                            {slides}
+                            <CarouselControl direction="prev" directionText="Previous" onClickHandler={this.previous} />
+                            <CarouselControl direction="next" directionText="Next" onClickHandler={this.next} />
                         </Carousel>
                     </div>
                     <h5 class="business-name">Hello There</h5>
@@ -38,53 +105,49 @@ class BusinessInfo extends Component {
                             </CardBody>
                         </Card>
                     </div>
-        
+
                     <div className="row row-content">
-                        <div className="row col-md-6 offset-md-3">
-                            <h2>Barbers:</h2>
-                        </div>
-                        <div className="row col-md-6 offset-md-3">
-                            <Media list>
-                                <Media tag="li">
-                                    <Media left middle>
-                                        <Media object width={120} height= {120} src={"assets/profile1.jpg"} alt={"profile1"} />
-                                    </Media>
-                                    <Media body className="text-left ml-3">
-                                    <Media heading>Name one</Media>
-                                        <p>
-                                            Ullamco reprehenderit commodo incididunt qui consequat laboris consectetur. Eu occaecat sit ad amet ad minim anim ullamco laboris ullamco exercitation. Cillum occaecat et elit aute veniam ipsum velit tempor et Lorem do tempor. Irure culpa ullamco duis amet Lorem dolor excepteur aliqua exercitation. Est anim laborum pariatur elit sunt sunt aute aliqua cupidatat consectetur in amet duis. Ullamco ex qui esse est sit reprehenderit amet dolor aliqua.
-                                        </p>
-                                    </Media>
-                                </Media>
-                                <Media tag="li">
-                                    <Media left middle >
-                                        <Media object width={120} height= {120} src={"assets/profile2.jpg"} alt={"profile2"} />
-                                    </Media>
-                                    <Media body className="text-left ml-3">
-                                        <Media heading>Name two</Media>
-                                        <p>
-                                            Anim Lorem Lorem in voluptate reprehenderit minim aliquip. Ipsum labore in reprehenderit ea laborum enim laborum laboris. Qui minim consectetur sunt in culpa est irure. Quis occaecat aliquip proident irure culpa culpa et anim id. Do in ad minim do ullamco magna cillum laboris. Laborum labore consequat sunt ipsum ad adipisicing eiusmod duis aliquip exercitation deserunt anim laboris dolore. Id quis laborum occaecat esse mollit.
-                                        </p>
-                                    </Media>
-                                </Media>
-                                <Media tag="li">
-                                    <Media left middle>
-                                        <Media object width={120} height= {120} src={"assets/profile3.jpg"} alt={"profile3"} />
-                                    </Media>
-                                    <Media body className="text-left ml-3">
-                                        <Media heading>Name three</Media>
-                                        <p>
-                                            Aute ad qui dolor est aliqua occaecat non consequat officia adipisicing velit duis ea. Exercitation aliqua et elit ut qui esse deserunt deserunt officia non cupidatat consectetur mollit. Magna officia ullamco occaecat quis. Eiusmod amet pariatur Lorem anim fugiat incididunt id. Tempor minim elit eu in ex nulla dolore occaecat exercitation minim in dolor. Id reprehenderit excepteur culpa minim irure in Lorem enim officia enim cillum esse ullamco dolore.
-                                        </p>
-                                    </Media>
-                                </Media>
-                            </Media> 
-                        </div>     
+                      <div className="barbertable row col-md-6 offset-md-3">
+                        <table>
+                          
+                          <thead>
+                            <tr>
+                              <th><h4>Barbers:</h4></th>
+                              <th></th>
+                            </tr>
+                          </thead>
+                          
+                          <tbody>
+                            <tr>
+                              <td id="left">
+                                <img className="img-fluid col-12 rounded" src={"assets/profile1.jpg"}></img>
+                                <Button variant="light">Name One</Button>
+                              </td>
+                              <td>
+                                <img className="img-fluid col-12 rounded" src={"assets/profile2.jpg"}></img>
+                                <Button variant="light">Name Two</Button>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td id="left">
+                                <img className="img-fluid col-12 rounded" src={"assets/profile3.jpg"}></img>
+                                <Button variant="light">Name Three</Button>
+                              </td>
+                              <td>
+                                <img className="img-fluid col-12 rounded" src={"assets/profile4.jpg"}></img>
+                                <Button variant="light">Name Four</Button>
+                              </td>
+                            </tr>
+                          </tbody>
+                        
+                        </table>
+                      </div>       
                     </div>
                 </div>
             </div>
-        )
+      );
     }
-}
-
-export default BusinessInfo;
+  }
+  
+  
+  export default BusinessInfo;
