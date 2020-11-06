@@ -2,18 +2,13 @@ import React, {useState} from 'react';
 import './sidebar.css'
 import { sidebarData } from './sidebarData' 
 import * as FaIcons from 'react-icons/fa'
-import * as AiIcons from 'react-icons/ai'
 import { Link } from 'react-router-dom'
 import { IconContext } from 'react-icons'
-import {Typography, Divider, ClickAwayListener} from '@material-ui/core/'
+import { Typography, Divider, ClickAwayListener } from '@material-ui/core/'
 import { makeStyles } from '@material-ui/core/styles'
 import logo from './images/avatar.jpg'
 
-
-
-
 function Sidebar() {
-  
 
     let url = 'messages'
     const [sidebar, setSidebar] = useState(false)

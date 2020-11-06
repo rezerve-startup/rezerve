@@ -25,7 +25,6 @@
 
 .nav-menu {
     background-color: #060b26;
-
     width: 300px;
     width: 265px;
     height: 100vh;
@@ -35,12 +34,12 @@
     top: 0;
     left: -100%;
     transition: 500ms;
-    
 }
 
 .nav-menu.active {
     left: 0;
     transition: 10 ms;
+    z-index: 10000;
 }
 
 .nav-text {
@@ -94,7 +93,7 @@ span {
     text-decoration: none;
 }
 
-.messages, .appointments, .payments, .help, .settings {
+.messages, .appointments, .help, .settings {
     color: rgb(7, 131, 247);
     display: flex;
     height: 92vh;
