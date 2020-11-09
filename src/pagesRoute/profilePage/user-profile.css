@@ -28,17 +28,16 @@
     background-color: #2c2c2e;
     color: #fff;
     width: 400px;
-    height: 300px;
+    height: 350px;
     justify-content: center;
     position: fixed;
     top: 100%;
-    left: 10%;
     transition: 500ms;
     
 }
 
 .pw-menu.active {
-    top: 35%;
+    top: 280px;
     transition: 10 ms;
 }
 

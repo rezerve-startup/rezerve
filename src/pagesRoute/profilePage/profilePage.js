@@ -1,12 +1,17 @@
 import React, {useState} from 'react'
-import logo from '../images/avatar.jpg'
+import logo from '../../images/avatar.jpg'
 import {ClickAwayListener, TextField} from '@material-ui/core/'
-import '../user-profile.css'
+import './user-profile.css'
 
 
 function ProfilePage() {
     
     const [nav, setNav] = useState(false)
+    const [pw1, setPW1] = useState("")
+    const [newPW, setPW] = useState("")
+    const [confPW, confirmPW] = useState("")
+
+
     const showNav = () => setNav(!nav);
     const togglePW = () => {
         if(nav == true){
@@ -26,11 +31,13 @@ function ProfilePage() {
             stat : "Email Address",
             current: "j.barb42@gmail.com"
         }
-
+    
     ];
     
     
-    
+    function clear(){
+        
+    }
     
     return (
         
@@ -69,32 +76,32 @@ function ProfilePage() {
                 <div className="item_layout">
             <button className="button">Save Changes</button>
             </div>
-               
+             
+            <div className="item_layout">
             <nav className={nav ? 'pw-menu active' : 'pw-menu'}>
                 <div className="item_layout">
-                    <h1>Password Change Request</h1> 
+                    <h1>Password Change</h1> 
                     
                 </div>
                
                 <div className="item_layout">
-                <h3>Current Password:  </h3> <span/>
-                <TextField className="textfield" id="current-password" type="password" />
+                <TextField className="textfield" label="Current Password" id="current-password" value={pw1} type="password" variant="outlined"/>
                 </div>
 
                 <div className="item_layout">
-                <h3>Confirm Password:  </h3> <span/>
-                <TextField className="textfield" id="current-password" type="password" />
+                <TextField className="textfield" label="New Password" id="current-password" value={newPW} type="password" variant="outlined"/>
                 </div>
-              
-              <div className="item_layout">
-                  <span>Upon request, an email will be sent confirming the password change.</span>
-              </div>
+
+                <div className="item_layout">
+                <TextField className="textfield" label="Confirm New Password" id="current-password" value={confPW} type="password" variant="outlined"/>
+                </div>
+
             
             <div className="item_layout">
                 <button className="button" onClick={togglePW}>Confirm Request</button>
             </div>
             </nav>
-            
+                </div>
         </div>
         </ClickAwayListener>
         

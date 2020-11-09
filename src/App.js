@@ -8,7 +8,7 @@ import Messages from './pagesRoute/Messages'
 import PaymentInfo from './pagesRoute/PaymentInfo'
 import Settings from './pagesRoute/Settings'
 import YouAppointment from './pagesRoute/YouAppointment'
-import ProfilePage from './pagesRoute/profilePage'
+import ProfilePage from './pagesRoute/profilePage/profilePage'
 
 function App() {
 
