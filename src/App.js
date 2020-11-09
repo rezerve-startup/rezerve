@@ -7,7 +7,7 @@ import Help from './pagesRoute/Help'
 import Messages from './pagesRoute/Messages'
 import PaymentInfo from './pagesRoute/PaymentInfo'
 import Settings from './pagesRoute/Settings'
-import YouAppointment from './pagesRoute/YouAppointment'
+import AppointmentsPage from './pagesRoute/appointment/AppointmentsPage'
 import ProfilePage from './pagesRoute/profilePage/profilePage'
 
 function App() {
@@ -22,7 +22,7 @@ function App() {
           <Route path="/messages" exact component={ Messages }/>
           <Route path="/payment" exact component={ PaymentInfo }/>
           <Route path="/settings" exact component={ Settings }/>
-          <Route path="/appointments" exact component={ YouAppointment }/>
+          <Route path="/appointments" exact component={ AppointmentsPage }/>
         </Switch>
       </Router>
     </>
