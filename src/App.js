@@ -7,7 +7,7 @@ import Help from './pagesRoute/Help'
 import Messages from './pagesRoute/Messages'
 import PaymentInfo from './pagesRoute/PaymentInfo'
 import Settings from './pagesRoute/Settings'
-import AppointmentsPage from './pagesRoute/appointment/AppointmentsPage'
+import AppointmentsPage from './pagesRoute/appointments/AppointmentsPage'
 import ProfilePage from './pagesRoute/profilePage/profilePage'
 
 function App() {

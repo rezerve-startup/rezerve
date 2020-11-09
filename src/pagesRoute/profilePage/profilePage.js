@@ -2,10 +2,20 @@ import React, {useState} from 'react'
 import logo from '../../images/avatar.jpg'
 import {ClickAwayListener, TextField} from '@material-ui/core/'
 import './user-profile.css'
-
+import {firestore} from '../../config/FirebaseConfig';
 
 function ProfilePage() {
     
+    
+
+    firestore.collection('users').onSnapshot(snapshot => {
+        const data = snapshot.docs[0].data().userData;
+        console.log(data);
+
+        
+    })
+
+    const [username, setName] = useState(data.phone_number)
     const [nav, setNav] = useState(false)
     const [pw1, setPW1] = useState("")
     const [newPW, setPW] = useState("")
