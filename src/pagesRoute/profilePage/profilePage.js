@@ -8,20 +8,24 @@ function ProfilePage() {
     
     
 
-    firestore.collection('users').onSnapshot(snapshot => {
-        const data = snapshot.docs[0].data().userData;
-        console.log(data);
 
-        
-    })
 
-    const [username, setName] = useState(data.phone_number)
+    const [username, setName] = useState("")
+    const [phoneNumber, setPhoneNumber] = useState("")
+    const [emailAddress, setEmailAddress] = useState("")
     const [nav, setNav] = useState(false)
     const [pw1, setPW1] = useState("")
     const [newPW, setPW] = useState("")
     const [confPW, confirmPW] = useState("")
 
+    firestore.collection('users').onSnapshot(snapshot => {
+        const data = snapshot.docs[0].data().userData;
+        console.log(data);
 
+        setName(data.username)
+        setPhoneNumber(data.phone_number)
+        setEmailAddress(data.email_address)
+    })
     const showNav = () => setNav(!nav);
     const togglePW = () => {
         if(nav == true){
@@ -31,15 +35,15 @@ function ProfilePage() {
     const infoList = [
         {
             stat : "Username",
-            current: "jbarber9000"
+            current: username
         },
         {
             stat : "Phone Number",
-            current: "479555555"
+            current: phoneNumber
         },
         {
             stat : "Email Address",
-            current: "j.barb42@gmail.com"
+            current: emailAddress
         }
     
     ];
@@ -71,7 +75,7 @@ function ProfilePage() {
                         <div className="item_layout">
                         <h2 key={index}>{item.stat}</h2>
                         <span/>
-                        <TextField required id={item.stat} defaultValue={item.current} />
+                        <TextField required id={item.stat} value={item.current} />
                         
                         </div>
                     )
