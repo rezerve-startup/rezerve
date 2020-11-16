@@ -2,7 +2,8 @@ import React, {useState} from 'react'
 import logo from '../../images/avatar.jpg'
 import {ClickAwayListener, TextField} from '@material-ui/core/'
 import './user-profile.css'
-import {firestore} from '../../config/FirebaseConfig';
+//import {firestore} from '../../config/FirebaseConfig';
+import { firestore } from '../../config/FirebaseConfig';
 
 function ProfilePage() {
     
