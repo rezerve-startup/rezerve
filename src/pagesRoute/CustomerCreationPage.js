@@ -1,5 +1,5 @@
 import React, {useState} from 'react'
-import logo from '../../images/avatar.jpg'
+import logo from '../images/avatar.jpg'
 import {ClickAwayListener, TextField} from '@material-ui/core/'
 
 
