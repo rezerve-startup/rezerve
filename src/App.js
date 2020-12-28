@@ -1,12 +1,11 @@
 import React from 'react';
-import logo from './logo.svg';
-import './App.css';
-import BusinessInfo from './BusinessInfo';
+import './CSS/App.css';
+import Main from './main';
 
 function App() {
   return (
     <div className="App">
-      <BusinessInfo />
+      <Main />
     </div>
   );
 }
