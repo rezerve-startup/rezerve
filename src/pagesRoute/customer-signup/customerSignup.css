@@ -1,10 +1,36 @@
-main {
+.main {
     background-color: #232323;
-    font-family: sans-serif;
-    color: #FFFFFF;
     align-items: center;
+
+    height: 100vh;
 }
 
-page-items {
-    display: flex;
+.page-items {
+    display: flexbox;
+    padding: 35px;
+
+    color:#FFFFFF;
+    font-family: serif;
+    font-size: 2.5vmax;
 }
+
+.button{
+    background-color: #FF4949;
+    border: none;
+    color: white;
+    padding: 15px 36px;
+    text-align: center;
+    text-decoration: none;
+    display: flex;
+    font-size: 2.5vmax;
+    margin: auto;
+    cursor: pointer;
+}
+
+.checkbox{
+    color: #FFFFFF;
+    font-size: 2.5vmax;
+    justify-content: center;
+    text-align: center;
+}
+

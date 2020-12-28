@@ -1,32 +1,45 @@
 import React, {useState} from 'react'
 import logo from '../../images/avatar.jpg'
-import {ClickAwayListener, TextField} from '@material-ui/core/'
+import {ClickAwayListener, TextField, Checkbox} from '@material-ui/core/'
 import './customerSignup.css'
 
 
 function CustomerCreationPage(){
     return(
-<div ClassName="main">
-        <div ClassName="page-items"> 
+<div class="main">
+       
+        <div class="page-items"> 
+                    <h1>Account Info</h1>    
+        </div>
+       
+        <div class="page-items"> 
             <h2>Name</h2>
-            <TextField/>    
+            <TextField color="secondary" fullWidth/>    
         </div>
 
-        <div ClassName="page-items"> 
+        <div class="page-items"> 
             <h2>Phone Number</h2>
-            <TextField/>
-            <a>Not now</a>    
+            <TextField color="secondary" fullWidth/>   
         </div>
 
-        <div ClassName="page-items"> 
+        <div class="checkbox">
+            <Checkbox/>
+            <span>Not Now</span>
+        </div>
+
+        <div class="page-items"> 
             <h2>Email Address</h2>
-            <TextField/>    
+            <TextField color="secondary" fullWidth/>    
         </div>
 
 
-        <div ClassName="page-items"> 
+        <div class="page-items"> 
             <h2>Address/Location</h2>
-            <TextField/>    
+            <TextField color="secondary" fullWidth class="textbox"/>    
+        </div>
+
+        <div>
+            <button class="button">Find Stylists & Book</button>
         </div>
 </div>
     )
