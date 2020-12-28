@@ -1,0 +1,10 @@
+main {
+    background-color: #232323;
+    font-family: sans-serif;
+    color: #FFFFFF;
+    align-items: center;
+}
+
+page-items {
+    display: flex;
+}
