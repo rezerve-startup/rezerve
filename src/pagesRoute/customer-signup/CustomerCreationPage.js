@@ -1,10 +1,19 @@
 import React, {useState} from 'react'
 import logo from '../../images/avatar.jpg'
-import {ClickAwayListener, TextField, Checkbox} from '@material-ui/core/'
+import {ClickAwayListener, TextField, Checkbox, makeStyles} from '@material-ui/core/'
 import './customerSignup.css'
 
+const makeSdtyles = theme => ( {
+    root: {
+      background: "black"
+    },
+    input: {
+      color: "white"
+    }
+  });
 
 function CustomerCreationPage(){
+    
     return(
 <div class="main">
        
@@ -35,7 +44,7 @@ function CustomerCreationPage(){
 
         <div class="page-items"> 
             <h2>Address/Location</h2>
-            <TextField color="secondary" fullWidth class="textbox"/>    
+            <TextField color="secondary"  fullWidth/>    
         </div>
 
         <div>
