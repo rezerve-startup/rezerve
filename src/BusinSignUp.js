@@ -35,23 +35,24 @@ function BusinessSignUp(props) {
         }
     };
 
-    const handleSubmit = event =>{
+    /* const handleSubmit = event =>{
         console.log("Current State is" + JSON.stringify(state))
         event.preventDefault();
-    }
+    } */
 
 
 
     return(
         <div className='business-signUp-page'>
             <div className='container' id="businSignUp">
-                <Form onSubmit={handleSubmit}>
+                 <Form> {/* onSubmit={handleSubmit} */}
                     <div className="row col col-11 col-md-auto offset-1 offset-sm-0">
                         <h1>I am</h1>
                     </div>
                     <FormGroup row>
                         <div className="row col-11 offset-1 offset-sm-0">
-                            <label className="labelContainer">Hairstylist
+                            <label className="labelContainer"> 
+                                <span className="labelText">Hairstylist</span>
                                 <input type="checkbox" name="hairstylist" onChange={handleInputChange}/>
                                 <span className="checkmark"></span>
                             </label>
@@ -59,7 +60,8 @@ function BusinessSignUp(props) {
                     </FormGroup>
                     <FormGroup row>
                         <div className="row col-11 offset-1 offset-sm-0">
-                            <label className="labelContainer">Barber
+                            <label className="labelContainer">
+                                <span>Barber</span>
                                 <input type="checkbox" name="barber" onChange={handleInputChange}/>
                                 <span className="checkmark"></span>
                             </label>
@@ -67,7 +69,8 @@ function BusinessSignUp(props) {
                     </FormGroup>
                     <FormGroup row>
                         <div className="row col-11 offset-1 offset-sm-0">
-                            <label className="labelContainer">Nail salon
+                            <label className="labelContainer">
+                                <span>Nail salon</span>
                                 <input type="checkbox" name="nailSalon" onChange={handleInputChange}/>
                                 <span className="checkmark"></span>
                             </label>
@@ -75,7 +78,8 @@ function BusinessSignUp(props) {
                     </FormGroup>
                     <FormGroup row>
                         <div className="row col-11 offset-1 offset-sm-0">
-                            <label className="labelContainer">Other
+                            <label className="labelContainer">
+                                <span>Other</span>
                                 <input type="checkbox" name="other" onChange={handleInputChange}/>
                                 <span className="checkmark"></span>
                             </label>

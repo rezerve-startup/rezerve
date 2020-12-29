@@ -1,4 +1,5 @@
 import React from 'react';
+import SignUpPage1 from './SignUpPage';
 import BusinessSignUp from './BusinSignUp';
 import BusinessAccountInfo from './BusinAccInfo';
 
@@ -9,7 +10,8 @@ function Main(state) {
   return (
         <BrowserRouter>
             <Switch>
-                <Route exact path='/home' component={BusinessSignUp}/>
+                <Route exact path='/BusinSignUp' component={BusinessSignUp}/>
+                <Route exact path='/home' component={SignUpPage1}/>
                 <Route exact path="/BusinActInfo" component={BusinessAccountInfo}/>
                 
                 <Route exact path="/CustomSignUp" component={CustomerSignup}/>
