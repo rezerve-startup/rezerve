@@ -1,0 +1,28 @@
+.business-account-info {
+    background-color: #212423;
+    color: transparent;
+    text-shadow: 0 0 0 white;
+    min-height: 100%;
+    min-height: 100vh;
+}
+
+.business-account-info .container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    align-items: flex-start;
+}
+
+@media (min-width: 768px) {
+    .business-account-info .container{
+      justify-content: center;
+      align-items: center;
+      font-size: xx-large;
+    }
+
+    .business-account-info .container div{
+      margin-top: 20px; 
+    }
+    
+
+}
