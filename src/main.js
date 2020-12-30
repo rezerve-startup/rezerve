@@ -13,7 +13,6 @@ function Main(state) {
                 <Route exact path='/BusinSignUp' component={BusinessSignUp}/>
                 <Route exact path='/home' component={SignUpPage1}/>
                 <Route exact path="/BusinActInfo" component={BusinessAccountInfo}/>
-                
                 <Route exact path="/CustomSignUp" component={CustomerSignup}/>
                 <Redirect to="/home"/>
             </Switch>

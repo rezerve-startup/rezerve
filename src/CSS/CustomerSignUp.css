@@ -1,18 +1,19 @@
 .main {
-    background-color: #232323;
-    align-items: center;
-
-    height: 100vh;
+    background-color: #212423;
+    color: transparent;
+    text-shadow: 0 0 0 white;
+    min-height: 100%;
+    min-height: 100vh;
 }
 
 .page-items {
-    display: flexbox;
-    padding: 35px;
-
-    color:#FFFFFF;
-    font-family: serif;
-    font-size: 2.5vmax;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    align-items: flex-start;
 }
+
+
 
 .button{
     background-color: #FF4949;
@@ -22,18 +23,31 @@
     text-align: center;
     text-decoration: none;
     display: flex;
-    font-size: 2.5vmax;
+    font-size: 22px;
     margin: auto;
     cursor: pointer;
+    margin-top: 30px;
 }
+
+
 
 .checkbox{
     color: #FFFFFF;
-    font-size: 2.5vmax;
+    font-size: 22px;
     justify-content: center;
     text-align: center;
 }
 
-.textbox input{
-color: #FF4949;  
+.inputText{
+    color:white;
+    display: ruby;  
+    font-size: 22px;
+    padding: 15px;
 }
+
+.inputText input{
+    background-color: #212423;
+    color: white;
+    width: 70vw;
+    border-color: white;
+  }
