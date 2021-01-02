@@ -6,7 +6,7 @@ class BusinessCard extends Component {
   render() {
     return (
       <Card>
-        <Card.Img src={this.props.img} alt="Card image" />
+        <Card.Img class="image" src={this.props.img} alt="Card image" />
         <Card.ImgOverlay
           style={{ padding: "1%", background: "rgba(0,0,0,0.75)" }}
         >
