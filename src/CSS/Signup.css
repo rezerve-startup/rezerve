@@ -6,16 +6,41 @@
     min-height: 100vh;
 }
 
-.signUp-page .container {
-	height: 100%;
+.container {
 display: flex;
 flex-wrap: wrap;
-flex-grow: 1;
 justify-content: flex-start;
 align-items: flex-start;
 } 
-/* Customize the label (the container) */
-.labelContainer {
+.button{
+	background-color: #FF4949;
+	border: none;
+	color: white;
+	padding: 15px 36px;
+	text-align: center;
+	text-decoration: none;
+	display: inline-block;
+	font-size: 22px;
+	margin: auto;
+	cursor: pointer;
+	margin-top: 30px;
+	border-radius: 12px;
+	transition-duration: 0.4s;
+	outline: none;
+}
+.button1 {
+  background-color: white; 
+  color: black; 
+  border: 2px solid#FF4949;
+}
+.button1:hover {
+  background-color: white;
+  color: black;
+}
+
+
+ /* Customize the label (the container) */
+ .labelContainer {
 	display: block;
 	position: relative;
 	padding-left: 35px;
@@ -28,24 +53,33 @@ align-items: flex-start;
 	user-select: none;
 }
 
+.inputText{
+	color:white;
+	display: flex;  
+	font-size: 22px;
+	padding: 15px;
+}
+
 @media (min-width: 768px) {
-	.signUp-page .container{
+	/*	.container{
 		justify-content: center;
 		align-items: center;
 		font-size: xx-large;
-	}
+	}*/
 
 	.signUp-page .container div{
+		margin-top: 50px; 
+	}
+	.signUp-page .inputText div{
 		margin-top: 100px; 
 	}
-
 	.labelContainer {
 		font-size: xx-large;
 		padding-left: 50px;
 	}
 
 }
-.gg-arrow-right-r {
+/*.gg-arrow-right-r {
 	box-sizing: border-box ;
 	position: absolute;
 	display: block;
@@ -81,4 +115,4 @@ align-items: flex-start;
 	height: 2px;
 	bottom: 8px;
 	background: red
- } 
+ } */
