@@ -39,16 +39,18 @@ function Sidebar() {
         <IconContext.Provider value={{ color : '#fff' }}>
 
         <div className='navbar'>
+        <Typography variant="h4" component="h2">
+                <a href={url} className="homeAnchor">
+                    <span  className="rezerve-head">
+                        ReZerve
+                    </span>
+                </a>
+            </Typography>    
+
             <Link to="#" classname='menu-bars'>
                 <FaIcons.FaBars onClick={showSidebar} className="hamburgerIcon"/>
             </Link>
-            <Typography variant="h4" component="h2">
-                <a href={url} className="homeAnchor">
-                    <span  className="rezerve-head">
-                        Rezerve
-                    </span>
-                </a>
-            </Typography>
+
         </div>
         
         <nav className={sidebar ? 'nav-menu active' : 'nav-menu'}>
