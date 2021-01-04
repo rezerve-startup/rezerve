@@ -5,8 +5,8 @@ import "./BusinessCard.css";
 class BusinessCard extends Component {
   render() {
     return (
-      <Card>
-        <Card.Img class="image" src={this.props.img} alt="Card image" />
+      <Card style={{height: '207px', width: '437px', margin: 'auto'}}>
+        <Card.Img  style={{height: '204px', width: '434px'}} src={this.props.img} alt="Card image" />
         <Card.ImgOverlay
           style={{ padding: "1%", background: "rgba(0,0,0,0.75)" }}
         >

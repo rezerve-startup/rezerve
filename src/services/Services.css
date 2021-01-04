@@ -5,4 +5,16 @@
   color: white;
   text-align: center;
   align-items: center;
+  position: fixed;
+}
+
+.business-list{
+  background-color: white;
+  height: 80%;
+  overflow-y: scroll;
+  position: relative;
+}
+
+.item{
+  padding-top: 30px;
 }
