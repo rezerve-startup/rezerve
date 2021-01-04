@@ -1,3 +1,4 @@
+/*Main page; Position is fixed so that just the business list is scrollable*/
 .services-page {
   background-color: #212423;
   height: 100vh;
@@ -8,6 +9,7 @@
   position: fixed;
 }
 
+/*Scrollable div where the business cards are*/
 .business-list{
   background-color: white;
   height: 80%;
@@ -15,6 +17,7 @@
   position: relative;
 }
 
+/*Separates the cards from one another*/
 .item{
   padding-top: 30px;
 }
