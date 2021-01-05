@@ -46,11 +46,11 @@ function BusinessSignUp(props) {
         <div className='business-signUp-page'>
             <div className='container' id="businSignUp">
                  <Form> {/* onSubmit={handleSubmit} */}
-                    <div className="row col col-11 col-md-auto offset-1 offset-sm-0">
+                    <div className="row col col-11 col-md-auto offset-2 offset-sm-0">
                         <h1>I am</h1>
                     </div>
                     <FormGroup row>
-                        <div className="row col-11 offset-1 offset-sm-0">
+                        <div className="row col-11 offset-2 offset-sm-0">
                             <label className="labelContainer"> 
                                 <span className="labelText">Hairstylist</span>
                                 <input type="checkbox" name="hairstylist" onChange={handleInputChange}/>
@@ -59,7 +59,7 @@ function BusinessSignUp(props) {
                         </div>    
                     </FormGroup>
                     <FormGroup row>
-                        <div className="row col-11 offset-1 offset-sm-0">
+                        <div className="row col-11 offset-2 offset-sm-0">
                             <label className="labelContainer">
                                 <span>Barber</span>
                                 <input type="checkbox" name="barber" onChange={handleInputChange}/>
@@ -68,7 +68,7 @@ function BusinessSignUp(props) {
                         </div>
                     </FormGroup>
                     <FormGroup row>
-                        <div className="row col-11 offset-1 offset-sm-0">
+                        <div className="row col-11 offset-2 offset-sm-0">
                             <label className="labelContainer">
                                 <span>Nail salon</span>
                                 <input type="checkbox" name="nailSalon" onChange={handleInputChange}/>
@@ -77,7 +77,7 @@ function BusinessSignUp(props) {
                         </div>
                     </FormGroup>
                     <FormGroup row>
-                        <div className="row col-11 offset-1 offset-sm-0">
+                        <div className="row col-11 offset-2 offset-sm-0">
                             <label className="labelContainer">
                                 <span>Other</span>
                                 <input type="checkbox" name="other" onChange={handleInputChange}/>

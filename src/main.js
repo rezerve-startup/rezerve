@@ -8,7 +8,7 @@ function Main(state) {
   return (
         <BrowserRouter>
             <Switch>
-                <Route exact path='/SignUpPage2' component={BusinessSignUp}/>
+                <Route exact path='/BusinSignUp' component={BusinessSignUp}/>
                 <Route exact path='/home' component={SignUpPage1}/>
                 <Route exact path="/BusinActInfo" component={BusinessAccountInfo}/>
                 <Redirect to="/home"/>

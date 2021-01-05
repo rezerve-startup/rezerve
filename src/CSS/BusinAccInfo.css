@@ -13,6 +13,44 @@
     align-items: flex-start;
 }
 
+.business-account-info #businAccInfoSelect {
+  width: 60px;
+  height: 40px;
+  background-color: #212423;
+  color: transparent;
+  text-shadow: 0 0 0 white;
+  border-radius: 0;
+  -moz-appearance: none; /* Firefox */
+  -webkit-appearance:none; /* Safari and Chrome */
+  -ms-appearance: none; /* Firefox */
+  -o-appearance:none;
+  appearance:none;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.business-account-info #businAccInfoSelect:-webkit-scrollbar {
+  display: none;
+}
+
+.business-account-info #businAccInfoSelect:focus {
+  box-shadow: none;
+  border: 1px solid white;
+}
+
+.accInfoSelect:after {
+  content:"\f063";
+  font-family: FontAwesome;
+  color: #dc3545;
+  position: absolute; top: 0;
+  left: 50px;
+  top: 10px;
+  pointer-events: none;
+}
+#AccInfoLabelAboveCont{
+  padding-bottom: 10px;
+}
+
 @media (min-width: 768px) {
     .business-account-info .container{
       justify-content: center;
@@ -23,6 +61,17 @@
     .business-account-info .container div{
       margin-top: 20px; 
     }
-    
 
+    .business-account-info #businAccInfoSelect {
+      width: 75px;
+      height: 48px;
+    }
+    
+    .accInfoSelect:after {
+      left: 50px;
+      top: 0;
+    }
+    #AccInfoLabelAboveCont{
+      padding-bottom: 0;
+    }
 }
