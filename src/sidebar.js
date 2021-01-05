@@ -28,6 +28,7 @@ function Sidebar() {
             // Theme Color, or use css color in quote
             background: 'white',
             color: 'white',
+            height: '4px',
         },
       }));
       const classes = useStyles();
@@ -45,22 +46,25 @@ function Sidebar() {
                         ReZerve
                     </span>
                 </a>
-            </Typography>    
-
+            </Typography>
             <Link to="#" classname='menu-bars'>
                 <FaIcons.FaBars onClick={showSidebar} className="hamburgerIcon"/>
             </Link>
 
         </div>
-        
+        <div class="nav-container">
         <nav className={sidebar ? 'nav-menu active' : 'nav-menu'}>
            
             <ul className='nav-menu-items' >
             
                 <li className='navbar-toggle'>
+                <Link to="/profilePage" onClick={toggleOff}>
                 <img src={logo} alt="Logo" className='image-cropper'/>
-                    <h1 className='user-heading'>
-                        John Barber</h1>
+                    </Link>
+                    <span className='user-heading'><strong>John Barber</strong>
+                        </span>
+
+                    <span className="edit-link">Edit</span>
                 </li>
                <Divider variant="middle" className={classes.divider}/>
                 
@@ -78,6 +82,7 @@ function Sidebar() {
             </ul>
             
         </nav>
+        </div>
         </IconContext.Provider>
         </div>
         </ClickAwayListener>

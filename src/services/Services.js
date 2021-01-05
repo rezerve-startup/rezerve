@@ -2,12 +2,16 @@ import React, { Component } from "react";
 import Header from "./header/Header";
 import BusinessCard from "./business-card/BusinessCard";
 import "./Services.css";
-
+import Sidebar from '../sidebar.js'
 class Services extends Component {
   render() {
     return (
+    
       <div class="services-page">
-        <Header />
+        <Sidebar/>
+        <Header/>
+  
+
         <div class="business-list">
           <div/>
           <div class="item">
@@ -73,10 +77,15 @@ class Services extends Component {
               img="assets/cat4.jpg"
             />
           </div>
-        
-         <div class="item"> fasdfas</div>
           </div>
+
+      <div class="sidebar">
+        <Sidebar/>
       </div>
+     
+
+      </div>
+    
     );
   }
 }

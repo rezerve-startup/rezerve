@@ -8,15 +8,16 @@ import {
 } from "react-icons/ai";
 import { BiMap } from "react-icons/bi";
 import "./Header.css";
-import Sidebar from "../sidebar"
+import Sidebar from '../../sidebar.js'
+
 
 class Header extends Component {
   render() {
     return (
       <>
-      <Sidebar/>
+
       <div class="header">
-        <div class="icons">
+        <div class="icons"> 
           <AiOutlineUser class="left-icon" />
           <AiOutlineInbox class="left-icon" />
           <BiMap class="right-icon" />
@@ -47,6 +48,7 @@ class Header extends Component {
           </InputGroup.Append>
         </InputGroup>
       </div>
+
       </>
     );
   }
