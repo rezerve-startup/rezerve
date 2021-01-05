@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import {Form, FormGroup} from 'reactstrap';
 import {Link} from 'react-router-dom';
 import './CSS/BusinSignUp.css';
+import './CSS/Signup.css';
 
 function SignUpPage1(props) {
 
@@ -11,35 +12,43 @@ function SignUpPage1(props) {
 
     });  
 
-   
-		
-    const handleSubmit = event =>{
-        console.log("Current State is" + JSON.stringify(state))
-        event.preventDefault();
-    }
-
-
 
     return(
         <div className='signUp-page'>
-            <div className='container' id="SignUpPage">
-                <Form onSubmit={handleSubmit}>
-                    <div className="row col col-11 col-md-auto offset-1 offset-sm-0">
-                        <h1>Sign Up</h1>
+            <Form /*onSubmit={handleSubmit}*/>
+                 <div className='container'>
+              
+                    <div className="row col col-11 col-md-auto offset-1 offset-sm-1">
+                        <h1><strong>Sign&nbsp;Up</strong></h1>
                     </div>
-                    
-						<FormGroup row>
-                        <div className="Next row col-11 offset-1 offset-sm-0">
-                            <Link to="/BusinSignUp">
-                                <button type="submit" className="btn btn-danger">
-                                    NEXT
-                                </button>
-                            </Link>
+                
+                   <FormGroup row>
+                   <Link to = "/CustomSignUp">
+                        <div className="inputText row col-10 offset-2 offset-sm-0" >
+                            <label className ="labelContainer">
+                            <button class="button button1">Customer</button>
+                                </label>
                         </div>
+                        </Link>
+                    </FormGroup> 
+                    <FormGroup row>
+                      <Link to = "/BusinSignUp">
+                          <div className="inputText row col-10 offset-2 offset-sm-6" >
+                              
+                                  <label  className ="labelContainer">         
+                           
+                                  <button class="button button1">Business</button>
+                            
+                                </label>
+                                
+                        </div>
+                        </Link>
                     </FormGroup>
-
-                </Form>
-            </div>
+                    
+                 
+               
+            </div>  
+             </Form>
         </div>
     );
 }
