@@ -43,7 +43,7 @@ function Sidebar() {
                 <FaIcons.FaBars onClick={showSidebar} className="hamburgerIcon"/>
             </Link>
             <Typography variant="h4" component="h2">
-                <a href={url} className="homeAnchor">
+                <a href="/" className="homeAnchor">
                     <span  className="rezerve-head">
                         Rezerve
                     </span>
