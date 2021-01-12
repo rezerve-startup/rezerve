@@ -52,7 +52,7 @@ function Sidebar() {
             </Link>
 
         </div>
-        <div class="nav-container">
+        
         <nav className={sidebar ? 'nav-menu active' : 'nav-menu'}>
            
             <ul className='nav-menu-items' >
@@ -64,7 +64,7 @@ function Sidebar() {
                     <span className='user-heading'><strong>John Barber</strong>
                         </span>
 
-                    <span className="edit-link">Edit</span>
+                    
                 </li>
                <Divider variant="middle" className={classes.divider}/>
                 
@@ -82,7 +82,7 @@ function Sidebar() {
             </ul>
             
         </nav>
-        </div>
+    
         </IconContext.Provider>
         </div>
         </ClickAwayListener>

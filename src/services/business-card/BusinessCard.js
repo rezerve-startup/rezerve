@@ -1,6 +1,8 @@
 import React, { Component } from "react";
 import Card from "react-bootstrap/Card";
 import "./BusinessCard.css";
+import * as FaIcons from 'react-icons/fa'
+import { IconContext } from 'react-icons'
 
 class BusinessCard extends Component {
   render() {
@@ -14,8 +16,10 @@ class BusinessCard extends Component {
             <Card.Text>{this.props.business}</Card.Text>
           </div>
           <div class="links">
-            <Card.Link class="distance">{this.props.distance}</Card.Link>
-            <Card.Link class="rating">{this.props.rating}</Card.Link>
+              <Card.Subtitle class="distance">
+                <FaIcons.FaMapMarkerAlt/>{" " + this.props.distance + " mi"} 
+                </Card.Subtitle>
+            <Card.Img class="rating" style={{height: "30px", width: "150px"}} src={"assets/" + this.props.rating +".png"}/>
           </div>
         </Card.ImgOverlay>
       </Card>
