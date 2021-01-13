@@ -67,7 +67,7 @@ function Sidebar() {
                         <li key={index} className={item.cName}  onClick={showSidebar}>
                            <Link to={item.path}>
                                 {item.icon}
-                                <span>{item.title}</span>   
+                                <span style={{ marginLeft: '16px' }}>{item.title}</span>   
                             </Link> 
                         </li>
                     )

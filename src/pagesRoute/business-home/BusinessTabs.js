@@ -54,7 +54,7 @@ export default function BusinessTabs() {
           </Tabs>
         </AppBar>
         <SwipeableViews
-          axis={theme.direction == 'rt1' ? 'x-reverse' : 'x'}
+          axis={theme.direction === 'rt1' ? 'x-reverse' : 'x'}
           index={value}
           onChangeIndex={handleChangeIndex}
         >
