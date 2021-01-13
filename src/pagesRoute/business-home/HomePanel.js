@@ -1,10 +1,10 @@
 import React from 'react';
 import Carousel from 'react-material-ui-carousel';
-import { Container, Box, Paper, Button, Grid, useMediaQuery, Card, CardContent, CardActions, CardHeader, CardMedia, Typography } from '@material-ui/core';
+import { Container, Box, Paper, Button, Grid, useMediaQuery, Card, CardContent, CardActions, CardMedia, Typography, List, ListItem, ListItemText, ListItemSecondaryAction, TextField } from '@material-ui/core';
 import { Rating } from "@material-ui/lab";
-import { Favorite } from "@material-ui/icons";
 import image from "../../images/avatar.jpg";
 import { makeStyles, useTheme, withStyles } from '@material-ui/core/styles';
+
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -13,20 +13,31 @@ const useStyles = makeStyles((theme) => ({
   paper: {
     padding: theme.spacing(2),
     textAlign: 'center',
+    color: theme.palette.text.secondary,
+    minWidth: 300,
+    minHeight: 300
+  },
+  card:{
+    padding: theme.spacing(2),
+    textAlign: 'center',
+    color: theme.palette.text.secondary,
+    minWidth: 300,
+    minHeight: 300
+
+  },
+  openHours:{
+    padding: theme.spacing(2),
+    textAlign: 'center',
     color: theme.palette.text.secondary
   },
-  card: {
-    display: 'flex',
-    margin: 'auto'
-  },
-  content: {
+  userContent: {
     flex: '1 0 auto'
   },
-  image: {
+  userImage: {
     width: 150,
     height: 150
   },
-  rating: {
+  userRating: {
     marginTop: '16px'
   }
 }))
@@ -76,11 +87,11 @@ function StylistCard() {
     <Card className={classes.card}>
       <Grid container justify="space-between" spacing={4}>
         <Grid item>
-          <CardContent className={classes.content}>
+          <CardContent className={classes.userContent}>
             <Typography component="h5" variant="h5">Name</Typography>
             <Typography variant="subtitle1" color="textSecondary">Position</Typography>
             <StyledRating
-              className={classes.rating}
+              className={classes.userRating}
               value={3.5}
               defaultValue={2.5}
               precision={0.5}
@@ -91,7 +102,7 @@ function StylistCard() {
         </Grid>
         <Grid item>
           <CardMedia
-            className={classes.image}
+            className={classes.userImage}
             image={image}
             title="Employee Image"
           />
@@ -102,10 +113,44 @@ function StylistCard() {
 }
 
 function AvailablityCard() {
-  const classes = useStyles()
+  const classes = useStyles()  
+  var daysOfWeek = [{day: "Monday", start: "09:00", end: "17:00"},
+                    {day: "Tuesday", start: "09:00", end: "17:00"},
+                    {day: "Wednesday", start: "09:00", end: "17:00"},  
+                    {day: "Thursday", start: "09:00", end: "17:00"},  
+                    {day: "Friday", start: "09:00", end: "17:00"},  
+                    {day: "Saturday", start: "09:00", end: "17:00"}, 
+                    {day: "Sunday", start: "09:00", end: "17:00"}]
   return (
-      <Paper className={classes.paper}>Availability</Paper>
-  )
+      <Card className = {classes.card}>
+        Avaliability 
+        <List className = {classes.openHours}>
+          {daysOfWeek.map(item => (
+          <ListItem key = {item.day}>
+          <ListItemText primary={item.day}/> 
+            <ListItemSecondaryAction> 
+              <Grid container justify="space-between" spacing={1}>
+                <Grid item sx>
+                  <form noValidate>
+                  <TextField id="time" type = "Time" disabled={true} defaultValue = {item.start}/>
+                  </form>
+                </Grid>
+                to
+                <Grid item sx>
+                  <form noValidate>
+                  <TextField id="time" type = "Time" disabled={true} defaultValue = {item.end}/>
+                  </form>
+                </Grid>
+              </Grid>
+            </ListItemSecondaryAction>
+          </ListItem>
+                  ))}
+        </List>
+        <CardActions style={{justifyContent: 'center'}}>
+          <Button size='small' color="secondary">edit</Button>
+        </CardActions>
+      </Card>
+    )
 }
 
 function ContactCard() {
