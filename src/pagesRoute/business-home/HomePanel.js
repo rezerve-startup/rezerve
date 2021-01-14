@@ -1,10 +1,11 @@
 import React from 'react';
 import Carousel from 'react-material-ui-carousel';
-import { Container, Box, Paper, Button, Grid, useMediaQuery, Card, CardContent, CardActions, CardMedia, Typography, List, ListItem, ListItemText, ListItemSecondaryAction, TextField } from '@material-ui/core';
+import { Paper, Button, Grid, useMediaQuery, Card, CardContent, CardActions, CardMedia, Typography, List, ListItem, ListItemText, ListItemSecondaryAction, TextField } from '@material-ui/core';
 import { Rating } from "@material-ui/lab";
-import image from "../../images/avatar.jpg";
 import { makeStyles, useTheme, withStyles } from '@material-ui/core/styles';
+import image from "../../images/avatar.jpg";
 
+import TodoList from "./TodoList";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -12,20 +13,12 @@ const useStyles = makeStyles((theme) => ({
   },
   paper: {
     padding: theme.spacing(2),
-    textAlign: 'center',
-    color: theme.palette.text.secondary,
-    minWidth: 300,
-    minHeight: 300
+    textAlign: 'center'
   },
-  card:{
-    padding: theme.spacing(2),
-    textAlign: 'center',
-    color: theme.palette.text.secondary,
-    minWidth: 300,
-    minHeight: 300
-
+  card: {
+    padding: theme.spacing(2)
   },
-  openHours:{
+  openHours: {
     padding: theme.spacing(2),
     textAlign: 'center',
     color: theme.palette.text.secondary
@@ -50,36 +43,42 @@ export default function HomePanel() {
 
   return (
     <div className={classes.root}>
-      <Grid container spacing={2} direction={isMobile ? "column" : "row"}>
-        <Grid item xs>
-          <StylistCard/>
+      <Grid container spacing={2}>
+        <Grid item xs={isMobile ? 12 : 6}>
+          <Grid container spacing={2} direction="column">
+            <Grid item xs>
+              <StylistCard />
+            </Grid>
+            <Grid item xs>
+              <Carousel>
+                {carouselComponents.map((Component, i) => <Component key={i} />)}
+              </Carousel>
+            </Grid>
+          </Grid>
         </Grid>
-        <Grid item xs>
-          <Carousel>
-            {carouselComponents.map(Component => <Component />)}
-          </Carousel>
-        </Grid>
-      </Grid>
-      <Grid container spacing={2} direction={isMobile ? "column" : "row" }>
-        <Grid item xs>
-          <Paper className={classes.paper}>Upcoming Appointments</Paper>
-        </Grid>
-        <Grid item xs>
-          <Paper className={classes.paper}>Todo List</Paper>
+        <Grid item xs={isMobile ? 12 : 6}>
+          <Grid container spacing={2} direction="column">
+            <Grid item xs>
+              <Paper className={classes.paper}>Upcoming Appointments</Paper>
+            </Grid>
+            <Grid item xs>
+              <TodoList />
+            </Grid>
+          </Grid>
         </Grid>
       </Grid>
     </div>
   )
 }
 
-const StyledRating = withStyles({
+const StyledRating = withStyles((theme) => ({
   iconFilled: {
-    color: '#ff6d75',
+    color: theme.palette.primary.main,
   },
   iconHover: {
-    color: '#ff3d47',
+    color: theme.palette.primary.light,
   }
-})(Rating);
+}))(Rating);
 
 function StylistCard() {
   const classes = useStyles()
@@ -88,7 +87,7 @@ function StylistCard() {
       <Grid container justify="space-between" spacing={4}>
         <Grid item>
           <CardContent className={classes.userContent}>
-            <Typography component="h5" variant="h5">Name</Typography>
+            <Typography variant="h5">Name</Typography>
             <Typography variant="subtitle1" color="textSecondary">Position</Typography>
             <StyledRating
               className={classes.userRating}
@@ -113,44 +112,44 @@ function StylistCard() {
 }
 
 function AvailablityCard() {
-  const classes = useStyles()  
-  var daysOfWeek = [{day: "Monday", start: "09:00", end: "17:00"},
-                    {day: "Tuesday", start: "09:00", end: "17:00"},
-                    {day: "Wednesday", start: "09:00", end: "17:00"},  
-                    {day: "Thursday", start: "09:00", end: "17:00"},  
-                    {day: "Friday", start: "09:00", end: "17:00"},  
-                    {day: "Saturday", start: "09:00", end: "17:00"}, 
-                    {day: "Sunday", start: "09:00", end: "17:00"}]
+  const classes = useStyles()
+  var daysOfWeek = [{ day: "Monday", start: "09:00", end: "17:00" },
+  { day: "Tuesday", start: "09:00", end: "17:00" },
+  { day: "Wednesday", start: "09:00", end: "17:00" },
+  { day: "Thursday", start: "09:00", end: "17:00" },
+  { day: "Friday", start: "09:00", end: "17:00" },
+  { day: "Saturday", start: "09:00", end: "17:00" },
+  { day: "Sunday", start: "09:00", end: "17:00" }]
   return (
-      <Card className = {classes.card}>
-        Avaliability 
-        <List className = {classes.openHours}>
-          {daysOfWeek.map(item => (
-          <ListItem key = {item.day}>
-          <ListItemText primary={item.day}/> 
-            <ListItemSecondaryAction> 
+    <Card className={classes.card}>
+      <Typography align="center">Avaliability</Typography>
+      <List className={classes.openHours}>
+        {daysOfWeek.map(item => (
+          <ListItem key={item.day}>
+            <ListItemText primary={item.day} />
+            <ListItemSecondaryAction>
               <Grid container justify="space-between" spacing={1}>
-                <Grid item sx>
+                <Grid item xs>
                   <form noValidate>
-                  <TextField id="time" type = "Time" disabled={true} defaultValue = {item.start}/>
+                    <TextField id="time" type="Time" disabled={true} defaultValue={item.start} />
                   </form>
                 </Grid>
                 to
-                <Grid item sx>
+                <Grid item xs>
                   <form noValidate>
-                  <TextField id="time" type = "Time" disabled={true} defaultValue = {item.end}/>
+                    <TextField id="time" type="Time" disabled={true} defaultValue={item.end} />
                   </form>
                 </Grid>
               </Grid>
             </ListItemSecondaryAction>
           </ListItem>
-                  ))}
-        </List>
-        <CardActions style={{justifyContent: 'center'}}>
-          <Button size='small' color="secondary">edit</Button>
-        </CardActions>
-      </Card>
-    )
+        ))}
+      </List>
+      <CardActions style={{ justifyContent: 'center' }}>
+        <Button size='small' color="secondary">edit</Button>
+      </CardActions>
+    </Card>
+  )
 }
 
 function ContactCard() {

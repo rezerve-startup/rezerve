@@ -1,6 +1,6 @@
 import React from 'react';
 import { BrowserRouter as Router, Switch, Route} from 'react-router-dom'
-import { makeStyles } from '@material-ui/core/styles';
+import { createMuiTheme, makeStyles, ThemeProvider } from '@material-ui/core/styles';
 import Sidebar from './sidebar'
 import './App.css';
 import './sidebar.css'
@@ -20,26 +20,45 @@ const routes = [
   { path: "/appoinments", component: AppointmentsPage }
 ]
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles({
   root: {
-    flexGrow: 1
+    flex: 1
   }
-}))
+})
 
-export default function App() {
+const theme = createMuiTheme({
+  palette: {
+    primary: {
+      main: "#FE8488",
+      light: "#FF6D6D",
+      dark: "#FF2B2B"
+    },
+    secondary: {
+      main: "#5B5B5B",
+      light: "#D7D7D7",
+      dark: "#353535"
+    }
+  }
+})
+
+const App = () => {
   const classes = useStyles();
 
   return (
     <div className={classes.root}>
-      <Router>
-        <Sidebar />
-        <Switch>
-          {routes.map((route, i) => (
-            <Route key={i} path={route.path} exact component={route.component} />
-          ))}
-        </Switch>
-      </Router>
-      <BusinessTabs />
+      <ThemeProvider theme={theme}>
+        <Router>
+          <Sidebar />
+          <Switch>
+            {routes.map((route, i) => (
+              <Route key={i} path={route.path} exact component={route.component} />
+            ))}
+          </Switch>
+        </Router>
+        <BusinessTabs />
+      </ThemeProvider>
     </div>
   );
 }
+
+export default App;

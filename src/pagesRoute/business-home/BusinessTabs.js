@@ -2,16 +2,16 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import SwipeableViews from 'react-swipeable-views';
 import { makeStyles, useTheme } from '@material-ui/core/styles';
-import { Container, Box, AppBar, Tab, Tabs, Typography, useMediaQuery } from '@material-ui/core';
+import { Box, AppBar, Tab, Tabs, Typography, useMediaQuery } from '@material-ui/core';
 import { Home, List, Person, Assessment } from '@material-ui/icons'
 
 import HomePanel from './HomePanel';
 
-const useStyles = makeStyles({
+const useStyles = makeStyles((theme) => ({
   root: {
-    flexGrow: 1,
+    flexGrow: 1
   }
-})
+}))
 
 export default function BusinessTabs() {
   const classes = useStyles();
@@ -19,7 +19,7 @@ export default function BusinessTabs() {
   const [value, setValue] = React.useState(0);
   const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
 
-  const handleChange = (event, newValue) => {
+  const handleChange = (_event, newValue) => {
     setValue(newValue);
   };
 
@@ -41,14 +41,15 @@ export default function BusinessTabs() {
           <Tabs
             value={value} 
             onChange={handleChange} 
-            aria-label="business-tabs" 
+            aria-label="business-tabs"
+            indicatorColor="primary"
             centered 
             variant={isSmallScreen ? "scrollable" : "fullWidth"}
             scrollButtons="on"
           >
             {
               tabs.map((tab, i) => (
-                <Tab label={tab.label} icon={tab.icon} {...a11yProps(i)}></Tab>
+                <Tab key={i} label={tab.label} icon={tab.icon} {...a11yProps(i)}></Tab>
               ))
             }
           </Tabs>
@@ -57,6 +58,7 @@ export default function BusinessTabs() {
           axis={theme.direction === 'rt1' ? 'x-reverse' : 'x'}
           index={value}
           onChangeIndex={handleChangeIndex}
+          enableMouseEvents
         >
           <TabPanel value={value} index={0} dir={theme.direction}>
             <HomePanel></HomePanel>
