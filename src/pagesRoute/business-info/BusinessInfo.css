@@ -1,0 +1,17 @@
+.business-info-page {
+    background-color: #212423;
+    height: 100%;
+    color: white;
+    text-align: center;
+    align-items: center;
+}
+
+.business-overview {
+    padding: 1rem;
+}
+
+@media (max-width: 500px) {
+    .carousel-item > img {
+        width: 100%;
+    }
+}

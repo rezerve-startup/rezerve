@@ -11,6 +11,7 @@ import Messages from './pagesRoute/Messages'
 import PaymentInfo from './pagesRoute/PaymentInfo'
 import Settings from './pagesRoute/Settings'
 import AppointmentsPage from './pagesRoute/appointments/AppointmentsPage'
+import BusinessInfo from './pagesRoute/business-info/BusinessInfo';
 
 const routes = [
   { path: "/help", component: Help },
@@ -22,7 +23,8 @@ const routes = [
 
 const useStyles = makeStyles({
   root: {
-    flex: 1
+    flex: 1,
+    height: '80vh'
   }
 })
 
@@ -49,13 +51,14 @@ const App = () => {
       <ThemeProvider theme={theme}>
         <Router>
           <Sidebar />
-          <Switch>
+          <BusinessInfo />
+          {/* <Switch>
             {routes.map((route, i) => (
               <Route key={i} path={route.path} exact component={route.component} />
             ))}
-          </Switch>
+          </Switch> */}
         </Router>
-        <BusinessTabs />
+        {/* <BusinessTabs /> */}
       </ThemeProvider>
     </div>
   );
