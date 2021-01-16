@@ -6,6 +6,13 @@
     align-items: center;
 }
 
+.loading-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+}
+
 .business-overview {
     padding: 2.5rem;
 }
@@ -55,7 +62,7 @@
 
 .review-avatar {
     flex: 1;
-    margin-right: 0.25rem
+    margin-right: 0.5rem
 }
 
 .review-content {
