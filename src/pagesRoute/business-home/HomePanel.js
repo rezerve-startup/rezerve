@@ -158,16 +158,27 @@ function AvailablityCard() {
 
 function ContactCard() {
   const classes = useStyles()
-  var editMode = false
   return (
     <Card className={classes.card}>
       <Typography align="center">Contact Stylist</Typography> 
-      <Typography align="left" b={10} hidden={editMode ? true:false}>Phone Number: 444-444-4444</Typography> 
-      <Typography align="left" hidden={editMode ? true:false}>Email: placeholder@email.com</Typography> 
-      <form hidden={editMode ? false:true} noValidate autoComplete="off">
-        <TextField b={15} label="Edit Phone number" id="edit-phone"/> <br/>
-        <TextField label="Edit email address" id="edit-email"/>
-      </form>
+
+      {this.props.value ? 
+        <Typography align="left">Phone Number: 444-444-4444</Typography> 
+         : 
+        <form hidden={editMode ? false:true} noValidate autoComplete="off">
+         <TextField b={15} label="Edit Phone number" id="edit-phone"/> <br/>
+        </form>
+        }
+      
+      {this.props.value ? 
+        <Typography align="left">Email Address: exampleEmail@email.com</Typography> 
+         : 
+        <form hidden={editMode ? false:true} noValidate autoComplete="off">
+         <TextField label="Edit email address" id="edit-email"/>
+        </form>
+        }
+
+
 
       <CardActions style={{ justifyContent: 'center' }}>
         <Button size='small' color="secondary" onClick={editMode = !editMode}>edit</Button>
