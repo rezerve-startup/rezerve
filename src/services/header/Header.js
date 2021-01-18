@@ -1,12 +1,14 @@
 import React, { Component } from "react";
-import { FormControl, InputGroup, Nav } from "react-bootstrap";
+import { FormControl, InputGroup, Nav, NavItem } from "react-bootstrap";
 import {
   AiOutlineUser,
   AiOutlineSearch,
   AiOutlineInbox,
   AiOutlineFilter,
 } from "react-icons/ai";
+import { NavLink } from 'react-router-dom';
 import { BiMap } from "react-icons/bi";
+import 'font-awesome/css/font-awesome.min.css';
 import "./Header.css";
 
 class Header extends Component {
@@ -18,31 +20,55 @@ class Header extends Component {
           <AiOutlineInbox class="left-icon" />
           <BiMap class="right-icon" />
         </div>
-        <Nav justify class="nav justify-content-center">
-          <Nav.Item>
-            <Nav.Link href="/forum">Forum</Nav.Link>
-          </Nav.Item>
-          <Nav.Item>
-            <Nav.Link href="/book">Book</Nav.Link>
-          </Nav.Item>
+
+        <Nav navbar className="navBar row col-10 offset-1">
+          <NavItem className="navItem col-3 col-sm-3">
+            <NavLink className="nav-link" to="#">
+                Hair
+            </NavLink>
+          </NavItem>
+
+          <NavItem className="navItem col-3 col-sm-3" id="leftBorder">
+            <NavLink className="nav-link" to="#">
+                Nail
+            </NavLink>
+          </NavItem>
+
+          <NavItem className="navItem col-3 col-sm-3" id="leftBorder">
+            <NavLink className="nav-link" to="#">
+                Barber
+            </NavLink>
+          </NavItem>
+          
+          <NavItem className="navItem col-3 col-sm-3" id="leftBorder">
+            <NavLink className="nav-link" to="#">
+                <span className="fa fa-home fa-lg"></span> <br/>
+                House&nbsp;Calls
+            </NavLink>
+          </NavItem>
         </Nav>
-        <InputGroup class="search">
-          <InputGroup.Prepend>
-            <InputGroup.Text id="search">
-              <AiOutlineSearch />
-            </InputGroup.Text>
-          </InputGroup.Prepend>
-          <FormControl
-            placeholder="Search"
-            aria-label="Search"
-            aria-describedby="search"
-          />
-          <InputGroup.Append>
-            <InputGroup.Text>
-              <AiOutlineFilter />
-            </InputGroup.Text>
-          </InputGroup.Append>
-        </InputGroup>
+
+        <div className="row">
+          <InputGroup class="search">
+            <InputGroup.Prepend>
+              <InputGroup.Text id="search">
+                <AiOutlineSearch />
+              </InputGroup.Text>
+            </InputGroup.Prepend>
+            <FormControl
+              placeholder="Search"
+              aria-label="Search"
+              aria-describedby="search"
+            />
+            <InputGroup.Append>
+              <InputGroup.Text>
+                <AiOutlineFilter />
+              </InputGroup.Text>
+            </InputGroup.Append>
+          </InputGroup>
+        </div>
+
+        
       </div>
     );
   }

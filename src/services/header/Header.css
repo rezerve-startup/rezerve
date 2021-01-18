@@ -1,9 +1,8 @@
 .header {
   background-color: black;
-  height: 15vh;
+  height: 40vh;
   width: 100vw;
   color: white;
-  padding: 1% 2%;
 }
 
 .icons {
@@ -19,12 +18,32 @@
   float: right;
 }
 
+.navBar {
+  background-color: white;
+  min-height: 40%;
+}
+
 .nav {
   height: 40%;
   width: 100%;
-  padding: none;
+}
+
+.navItem{
+  margin: 8px 0 8px 0;
+}
+
+#leftBorder{
+  border-left: 2px solid black;
+}
+
+.nav-link{
+  color: black;
+}
+
+.nav-link:hover{
+  color: black;
 }
 
 .search {
-  height: 40%;
+  height: 15%;
 }
