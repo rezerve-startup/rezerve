@@ -14,11 +14,13 @@
   position: absolute;
   bottom: 0;
   left: 0;
+  color: #FF4949;
+  font-size: 16pt;
 }
 
 .rating {
   position: absolute;
-  bottom: 0;
+  bottom: 5px;
   right: 0;
 }
 

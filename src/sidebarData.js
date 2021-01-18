@@ -12,15 +12,9 @@ export const sidebarData = [
         cName: 'nav-text'
     },
     {
-        title: 'Your Appointments',
+        title: 'Appointments',
         path: '/appointments',
         icon: <BiIcons.BiNotepad />,
-        cName: 'nav-text'
-    },
-    {
-        title: 'Payment Info',
-        path: '/payment',
-        icon: <MdIcons.MdPayment />,
         cName: 'nav-text'
     },
     {

@@ -10,12 +10,16 @@ import { NavLink } from 'react-router-dom';
 import { BiMap } from "react-icons/bi";
 import 'font-awesome/css/font-awesome.min.css';
 import "./Header.css";
+import Sidebar from '../../sidebar.js'
+
 
 class Header extends Component {
   render() {
     return (
+      <>
+
       <div class="header">
-        <div class="icons">
+        <div class="icons"> 
           <AiOutlineUser class="left-icon" />
           <AiOutlineInbox class="left-icon" />
           <BiMap class="right-icon" />
@@ -70,6 +74,8 @@ class Header extends Component {
 
         
       </div>
+
+      </>
     );
   }
 }

@@ -12,7 +12,7 @@
 /*Scrollable div where the business cards are*/
 .business-list{
   background-color: white;
-  height: 80%;
+  height: 77%;
   overflow-y: scroll;
   position: relative;
 }
@@ -20,4 +20,12 @@
 /*Separates the cards from one another*/
 .item{
   padding-top: 30px;
+}
+
+/*Lays a new sidebar at the top, while overlaying the rest of the page*/
+.sidebar{
+  position: absolute;
+  top: 0;
+  background-color:transparent;
+  width: 100%
 }
