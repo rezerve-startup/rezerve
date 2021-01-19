@@ -4,7 +4,6 @@ import { createMuiTheme, makeStyles, ThemeProvider } from '@material-ui/core/sty
 import Sidebar from './sidebar'
 import './App.css';
 import './sidebar.css'
-import BusinessTabs from "./pagesRoute/business-home/BusinessTabs"
 
 import Help from './pagesRoute/Help'
 import Messages from './pagesRoute/Messages'
@@ -12,13 +11,16 @@ import PaymentInfo from './pagesRoute/PaymentInfo'
 import Settings from './pagesRoute/Settings'
 import AppointmentsPage from './pagesRoute/appointments/AppointmentsPage'
 import BusinessInfo from './pagesRoute/business-info/BusinessInfo';
+import BusinessInfoDetails from './pagesRoute/business-info/business-info-details/BusinessInfoDetails';
 
 const routes = [
   { path: "/help", component: Help },
   { path: "/messages", component: Messages },
   { path: "/payment", component: PaymentInfo },
   { path: "/settings", component: Settings },
-  { path: "/appoinments", component: AppointmentsPage }
+  { path: "/appoinments", component: AppointmentsPage },
+  { path: '/business-info', component: BusinessInfo },
+  { path: '/business-info-details', component: BusinessInfoDetails }
 ]
 
 const useStyles = makeStyles({
@@ -51,14 +53,12 @@ const App = () => {
       <ThemeProvider theme={theme}>
         <Router>
           <Sidebar />
-          <BusinessInfo />
-          {/* <Switch>
+          <Switch>
             {routes.map((route, i) => (
               <Route key={i} path={route.path} exact component={route.component} />
             ))}
-          </Switch> */}
+          </Switch>
         </Router>
-        {/* <BusinessTabs /> */}
       </ThemeProvider>
     </div>
   );
