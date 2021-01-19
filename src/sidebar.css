@@ -42,6 +42,7 @@
 .nav-menu.active {
     right: 0;
     transition: 10 ms;
+    z-index: 10000;
     border: 3px solid grey;
 }
 

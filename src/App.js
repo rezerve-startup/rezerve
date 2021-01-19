@@ -7,7 +7,7 @@ import './sidebar.css'
 
 import Help from './pagesRoute/Help'
 import Messages from './pagesRoute/Messages'
-import PaymentInfo from './pagesRoute/PaymentInfo'
+import PaymentInfo from './pagesRoute/payments/PaymentInfo'
 import Settings from './pagesRoute/Settings'
 import AppointmentsPage from './pagesRoute/appointments/AppointmentsPage'
 import Services from './services/Services';

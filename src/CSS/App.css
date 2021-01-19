@@ -10,3 +10,11 @@
   padding: 0;
   font-family: 'Lato', sans-serif;
 }
+
+.sidebar {
+  height: 10vh;
+}
+
+.content-screen {
+  height: 90vh;
+}
