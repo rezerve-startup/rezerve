@@ -11,19 +11,19 @@
   background-color: white;
 }
 
-.navItem{
+.navItem {
   margin: 8px 0 8px 0;
 }
 
-#leftBorder{
+#leftBorder {
   border-left: 2px solid black;
 }
 
-.nav-link{
+.nav-link {
   color: black;
 }
 
-.nav-link:hover{
+.nav-link:hover {
   color: black;
 }
 
@@ -47,7 +47,7 @@
 }
 
 .header .input-group input:focus {
-  border-color:white;
+  border-color: white;
   box-shadow: none;
   color: #ff4949;
 }
@@ -56,31 +56,29 @@
   margin-top: 25px;
 }
 
-.navBottom .location{
+.navBottom .location {
   text-align: left;
   padding-left: 0;
   margin-left: 0;
 }
 
-.navBottom .sortDropdown{
+.navBottom .sortDropdown {
   text-align: right;
   padding-right: 0;
   margin-right: 0;
 }
 
-.navBottom i{
+.navBottom i {
   color: #ff4949;
 }
 
-.navBottom .form-select{
+.navBottom .form-select {
   background-color: black;
   color: white;
   border-radius: 100px;
   width: auto;
 }
 
-.navBottom .form-select option{
+.navBottom .form-select option {
   margin: 5px;
 }
-
-

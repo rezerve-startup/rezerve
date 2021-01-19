@@ -1,15 +1,15 @@
-import React from "react";
+import React from 'react';
 // import Card from "react-bootstrap/Card";
-import "./BusinessCard.css";
+import './BusinessCard.css';
 // import * as FaIcons from '../../customer/user-reciept/node_modules/react-icons/fa'
 // import { IconContext } from 'react-icons'
 
 type Props = {
-  business: any
-  distance: string
-  rating: string
-  img: string
-}
+  business: any;
+  distance: string;
+  rating: string;
+  img: string;
+};
 
 class BusinessCard extends React.Component<Props, {}> {
   render() {
@@ -25,7 +25,7 @@ class BusinessCard extends React.Component<Props, {}> {
       //     </div>
       //     <div class="links">
       //         <Card.Subtitle class="distance">
-      //           <FaIcons.FaMapMarkerAlt/>{" " + this.props.distance + " mi"} 
+      //           <FaIcons.FaMapMarkerAlt/>{" " + this.props.distance + " mi"}
       //           </Card.Subtitle>
       //       <Card.Img class="rating" style={{height: "30px", width: "150px"}} src={"assets/" + this.props.rating +".png"}/>
       //     </div>

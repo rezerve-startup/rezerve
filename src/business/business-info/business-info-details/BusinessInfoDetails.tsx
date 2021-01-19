@@ -1,6 +1,6 @@
-import React, { Component } from "react";
+import React, { Component } from 'react';
 // import { Form, Image } from '../../../customer/header/node_modules/react-bootstrap'
-import "./BusinessInfoDetails.css";
+import './BusinessInfoDetails.css';
 
 // const employees = [
 //   {
@@ -35,9 +35,7 @@ class BusinessInfoDetails extends Component {
   render() {
     return (
       <div className="business-info-details-page">
-        <div className="employee-listing">
-          {/* {employeeList} */}
-        </div>
+        <div className="employee-listing">{/* {employeeList} */}</div>
       </div>
     );
   }

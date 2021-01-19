@@ -4,48 +4,45 @@ import React from 'react';
 import './CSS/BusinSignUp.css';
 
 function BusinessSignUp(props: any) {
+  // const [state, setState] = useState({
+  //         hairstylist: false,
+  //         barber: false,
+  //         nailSalon: false,
+  //         other: false,
+  //         otherTextbox: ""
+  // });
 
-    // const [state, setState] = useState({
-    //         hairstylist: false,
-    //         barber: false,
-    //         nailSalon: false,
-    //         other: false,
-    //         otherTextbox: ""
-    // });  
+  // const handleInputChange = event: any =>{
+  //     const target = event.target;
+  //     const value = target.type === 'checkbox' ? target.checked : target.value;
+  //     const name = target.name;
 
-    // const handleInputChange = event: any =>{
-    //     const target = event.target;
-    //     const value = target.type === 'checkbox' ? target.checked : target.value;
-    //     const name = target.name;
+  //     setState({
+  //         ...state,[name]: value,
+  //     });
 
-    //     setState({
-    //         ...state,[name]: value,
-    //     });
+  //     //console.log("-CHANGE-Touched Name  " + name);
+  //     if((name === "other" && value === true) || state.other === true)
+  //         document.getElementById("otherTextbox").disabled= false;
+  //     else
+  //     {
+  //         document.getElementById("otherTextbox").disabled= true;
+  //         document.getElementById("otherTextbox").value= "";
+  //         setState({
+  //             ...state,otherTextbox: "",
+  //         });
+  //     }
+  // };
 
-    //     //console.log("-CHANGE-Touched Name  " + name);
-    //     if((name === "other" && value === true) || state.other === true)
-    //         document.getElementById("otherTextbox").disabled= false;
-    //     else
-    //     {
-    //         document.getElementById("otherTextbox").disabled= true;
-    //         document.getElementById("otherTextbox").value= "";
-    //         setState({
-    //             ...state,otherTextbox: "",
-    //         });
-    //     }
-    // };
-
-    /* const handleSubmit = event =>{
+  /* const handleSubmit = event =>{
         console.log("Current State is" + JSON.stringify(state))
         event.preventDefault();
     } */
 
-
-
-    return(
-        <div className='business-signUp-page'>
-            <div className='container' id="businSignUp">
-                 {/* <Form> onSubmit={handleSubmit}
+  return (
+    <div className="business-signUp-page">
+      <div className="container" id="businSignUp">
+        {/* <Form> onSubmit={handleSubmit}
                     <div className="row col col-11 col-md-auto offset-2 offset-sm-0">
                         <h1>I am</h1>
                     </div>
@@ -101,9 +98,9 @@ function BusinessSignUp(props: any) {
                         </div>
                     </FormGroup>
                 </Form> */}
-            </div>
-        </div>
-    );
+      </div>
+    </div>
+  );
 }
 
 export default BusinessSignUp;

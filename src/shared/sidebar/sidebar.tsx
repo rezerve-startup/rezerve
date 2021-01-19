@@ -1,40 +1,35 @@
-import React, {useState} from 'react';
-import './sidebar.css'
-// import { sidebarData } from './sidebarData' 
+import React, { useState } from 'react';
+import './sidebar.css';
+// import { sidebarData } from './sidebarData'
 // import * as FaIcons from '../../customer/user-reciept/node_modules/react-icons/fa'
 // import { Link } from 'react-router-dom'
 // import { IconContext } from 'react-icons'
 // import {Typography, Divider, ClickAwayListener} from '@material-ui/core/'
-import { makeStyles } from '@material-ui/core/styles'
+import { makeStyles } from '@material-ui/core/styles';
 // import logo from '../../assets/avatar.jpg'
 
-
-
-
 function Sidebar() {
-  
-    const [sidebar, setSidebar] = useState(false)
-    const showSidebar = () => setSidebar(!sidebar)
-    const toggleOff = () => {
-        if(sidebar === true){
-            showSidebar();
-        }
-    };
-    const useStyles = makeStyles({
-        divider: {
-            // Theme Color, or use css color in quote
-            background: 'white',
-            color: 'white',
-            height: '4px',
-        },
-      });
-      const classes = useStyles();
+  const [sidebar, setSidebar] = useState(false);
+  const showSidebar = () => setSidebar(!sidebar);
+  const toggleOff = () => {
+    if (sidebar === true) {
+      showSidebar();
+    }
+  };
+  const useStyles = makeStyles({
+    divider: {
+      // Theme Color, or use css color in quote
+      background: 'white',
+      color: 'white',
+      height: '4px',
+    },
+  });
+  const classes = useStyles();
 
-    return(
-                  
+  return (
     // <ClickAwayListener onClickAway={toggleOff}>
-        <div className= "Sidebar">
-        {/* <IconContext.Provider value={{ color : '#fff' }}>
+    <div className="Sidebar">
+      {/* <IconContext.Provider value={{ color : '#fff' }}>
 
         <div className='navbar'>
             <Link to="#" className='menu-bars'>
@@ -84,10 +79,9 @@ function Sidebar() {
         </nav>
     
         </IconContext.Provider> */}
-        </div>
-        // </ClickAwayListener>
-    );
-
+    </div>
+    // </ClickAwayListener>
+  );
 }
 
 export default Sidebar;

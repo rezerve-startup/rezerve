@@ -3,10 +3,10 @@ import React from 'react';
 import './CSS/BusinAccInfo.css';
 
 function BusinessAccountInfo(props: any) {
-    return(
-        <div className='business-account-info'>
-            <div className='container'>
-                {/* <Form> onSubmit={handleSubmit}
+  return (
+    <div className="business-account-info">
+      <div className="container">
+        {/* <Form> onSubmit={handleSubmit}
                     <div className="row col col-11 col-md-auto offset-1 offset-sm-0">
                         <h1>Account&nbsp;info</h1>
                     </div>
@@ -81,9 +81,9 @@ function BusinessAccountInfo(props: any) {
                         </div>
                     </FormGroup>
                 </Form> */}
-            </div>
-        </div>
-    );
+      </div>
+    </div>
+  );
 }
 
 export default BusinessAccountInfo;

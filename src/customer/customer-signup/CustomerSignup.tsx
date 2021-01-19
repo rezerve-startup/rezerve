@@ -1,15 +1,13 @@
-import React from 'react'
+import React from 'react';
 // import { Checkbox } from 'material-ui-core'
 // import { FormCheck, FormControl, FormLabel } from 'react-bootstrap';
 // import {Form, FormGroup} from 'reactstrap';
-import './CSS/CustomerSignUp.css'
+import './CSS/CustomerSignUp.css';
 
-
-function CustomerSignup(){
-    
-    return(
-<div className="main">
-       {/* <Form>
+function CustomerSignup() {
+  return (
+    <div className="main">
+      {/* <Form>
         <div className="page-items"> 
                     
                 <div className='inputText row col-11 offset-1 offset-sm-1'>
@@ -65,8 +63,8 @@ function CustomerSignup(){
             <button className="button">Find Stylists & Book</button>
         </div>
         </Form> */}
-</div>
-    )
+    </div>
+  );
 }
 
 export default CustomerSignup;

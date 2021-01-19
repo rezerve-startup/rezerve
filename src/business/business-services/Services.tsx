@@ -1,18 +1,16 @@
-import React, { Component } from "react";
-import Header from "../../customer/customer-tabs/CustomerTabs";
-import BusinessCard from "../business-card/BusinessCard";
-import "./Services.css";
+import React, { Component } from 'react';
+import Header from '../../customer/customer-tabs/CustomerTabs';
+import BusinessCard from '../business-card/BusinessCard';
+import './Services.css';
 
 class Services extends Component {
   render() {
     return (
-    
       <div className="services-page">
-        <Header/>
-  
+        <Header />
 
         <div className="business-list">
-          <div/>
+          <div />
           <div className="item">
             <BusinessCard
               business="Business #1"
@@ -20,19 +18,18 @@ class Services extends Component {
               rating="four_half"
               img="assets/cat1.jpg"
             />
-          </div> 
-            
-          <div className="item">  
+          </div>
+
+          <div className="item">
             <BusinessCard
               business="Business #2"
               distance="0.3"
               rating="five"
               img="assets/cat2.jpg"
             />
-
           </div>
-            
-          <div className="item">  
+
+          <div className="item">
             <BusinessCard
               business="Business #3"
               distance="1.2"
@@ -76,9 +73,8 @@ class Services extends Component {
               img="assets/cat4.jpg"
             />
           </div>
-          </div>
+        </div>
       </div>
-    
     );
   }
 }

@@ -10,7 +10,7 @@
 }
 
 /*Scrollable div where the business cards are*/
-.business-list{
+.business-list {
   background-color: white;
   height: 77%;
   overflow-y: scroll;
@@ -18,14 +18,14 @@
 }
 
 /*Separates the cards from one another*/
-.item{
+.item {
   padding-top: 30px;
 }
 
 /*Lays a new sidebar at the top, while overlaying the rest of the page*/
-.sidebar{
+.sidebar {
   position: absolute;
   top: 0;
-  background-color:transparent;
-  width: 100%
+  background-color: transparent;
+  width: 100%;
 }

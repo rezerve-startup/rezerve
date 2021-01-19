@@ -1,188 +1,74 @@
 import React from 'react';
 import Carousel from 'react-material-ui-carousel';
-import { Paper, Button, Grid, useMediaQuery, Card, CardContent, CardActions, CardMedia, Typography, List, ListItem, ListItemText, ListItemSecondaryAction, TextField } from '@material-ui/core';
-import { Rating } from "@material-ui/lab";
-import { makeStyles, useTheme, withStyles } from '@material-ui/core/styles';
-import image from "../../images/avatar.jpg";
+import {
+  Paper,
+  Grid,
+  useMediaQuery,
+  withStyles,
+  createStyles,
+  WithStyles,
+  Theme,
+} from '@material-ui/core';
 
-import TodoList from "./TodoList";
+import StylistCard from './StylistCard';
+import AvailablityCard from './AvailabilityCard';
+import ContactCard from './ContactCard';
+import TodoList from './TodoList';
 
-const useStyles = makeStyles((theme) => ({
-  root: {
-    flexGrow: 1
-  },
-  paper: {
-    padding: theme.spacing(2),
-    textAlign: 'center'
-  },
-  card: {
-    padding: theme.spacing(2)
-  },
-  openHours: {
-    padding: theme.spacing(2),
-    textAlign: 'center',
-    color: theme.palette.text.secondary
-  },
-  userContent: {
-    flex: '1 0 auto'
-  },
-  userImage: {
-    width: 150,
-    height: 150
-  },
-  userRating: {
-    marginTop: '16px'
-  }
-}))
+const styles = (theme: Theme) =>
+  createStyles({
+    root: {
+      flexGrow: 1,
+    },
+    paper: {
+      padding: theme.spacing(2),
+      textAlign: 'center',
+    },
+    card: {
+      padding: theme.spacing(2),
+    },
+  });
 
-export default function HomePanel() {
-  const classes = useStyles();
-  const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down("sm"))
-  var carouselComponents = [AvailablityCard, ContactCard]
+interface Props extends WithStyles<typeof styles> {}
+type State = {};
 
-  return (
-    <div className={classes.root}>
-      <Grid container spacing={2}>
-        <Grid item xs={isMobile ? 12 : 6}>
-          <Grid container spacing={2} direction="column">
-            <Grid item xs>
-              <StylistCard />
-            </Grid>
-            <Grid item xs>
-              <Carousel>
-                {carouselComponents.map((Component, i) => <Component key={i} />)}
-              </Carousel>
-            </Grid>
-          </Grid>
-        </Grid>
-        <Grid item xs={isMobile ? 12 : 6}>
-          <Grid container spacing={2} direction="column">
-            <Grid item xs>
-              <Paper className={classes.paper}>Upcoming Appointments</Paper>
-            </Grid>
-            <Grid item xs>
-              <TodoList />
-            </Grid>
-          </Grid>
-        </Grid>
-      </Grid>
-    </div>
-  )
-}
+class HomePanel extends React.Component<Props, State> {
+  render() {
+    const { classes } = this.props;
+    const isMobile = false; // useMediaQuery(theme.breakpoints.down('sm'));
+    const carouselComponents = [AvailablityCard, ContactCard];
 
-const StyledRating = withStyles((theme) => ({
-  iconFilled: {
-    color: theme.palette.primary.main,
-  },
-  iconHover: {
-    color: theme.palette.primary.light,
-  }
-}))(Rating);
-
-function StylistCard() {
-  const classes = useStyles()
-  return (
-    <Card className={classes.card}>
-      <Grid container justify="space-between" spacing={4}>
-        <Grid item>
-          <CardContent className={classes.userContent}>
-            <Typography variant="h5">Name</Typography>
-            <Typography variant="subtitle1" color="textSecondary">Position</Typography>
-            <StyledRating
-              className={classes.userRating}
-              value={3.5}
-              defaultValue={2.5}
-              precision={0.5}
-              size="large"
-              readOnly
-            />
-          </CardContent>
-        </Grid>
-        <Grid item>
-          <CardMedia
-            className={classes.userImage}
-            image={image}
-            title="Employee Image"
-          />
-        </Grid>
-      </Grid>
-    </Card>
-  )
-}
-
-function AvailablityCard() {
-  const classes = useStyles()
-  var daysOfWeek = [{ day: "Monday", start: "09:00", end: "17:00" },
-  { day: "Tuesday", start: "09:00", end: "17:00" },
-  { day: "Wednesday", start: "09:00", end: "17:00" },
-  { day: "Thursday", start: "09:00", end: "17:00" },
-  { day: "Friday", start: "09:00", end: "17:00" },
-  { day: "Saturday", start: "09:00", end: "17:00" },
-  { day: "Sunday", start: "09:00", end: "17:00" }]
-  var editTimecard = true
-  return (
-    <Card className={classes.card}>
-      <Typography align="center">Avaliability</Typography>
-      <List className={classes.openHours}>
-        {daysOfWeek.map(item => (
-          <ListItem key={item.day}>
-            <ListItemText primary={item.day} />
-            <ListItemSecondaryAction>
-              <Grid container justify="space-between" spacing={1}>
-                <Grid item xs>
-                  <form noValidate>
-                    <TextField id="time" type="Time" disabled={editTimecard} defaultValue={item.start} />
-                  </form>
-                </Grid>
-                to
-                <Grid item xs>
-                  <form noValidate>
-                    <TextField id="time" type="Time" disabled={editTimecard} defaultValue={item.end} />
-                  </form>
-                </Grid>
+    return (
+      <div className={classes.root}>
+        <Grid container={true} spacing={2}>
+          <Grid item={true} xs={isMobile ? 12 : 6}>
+            <Grid container={true} spacing={2} direction="column">
+              <Grid item={true} xs={true}>
+                <StylistCard />
               </Grid>
-            </ListItemSecondaryAction>
-          </ListItem>
-        ))}
-      </List>
-      <CardActions style={{ justifyContent: 'center' }}>
-        <Button size='small' color="secondary"
-        onClick={() => editTimecard = !editTimecard }
-        >edit</Button>
-      </CardActions>
-    </Card>
-  )
+              <Grid item={true} xs={true}>
+                <Carousel>
+                  {carouselComponents.map((Component, i) => (
+                    <Component key={i} editInfo={false} />
+                  ))}
+                </Carousel>
+              </Grid>
+            </Grid>
+          </Grid>
+          <Grid item={true} xs={isMobile ? 12 : 6}>
+            <Grid container={true} spacing={2} direction="column">
+              <Grid item={true} xs={true}>
+                <Paper className={classes.paper}>Upcoming Appointments</Paper>
+              </Grid>
+              <Grid item={true} xs={true}>
+                <TodoList />
+              </Grid>
+            </Grid>
+          </Grid>
+        </Grid>
+      </div>
+    );
+  }
 }
 
-function ContactCard(props: any) {
-  const classes = useStyles()
-  var editMode = false
-  return (
-    <Card className={classes.card}>
-      <Typography align="center">Contact Stylist</Typography> 
-
-      {props.value ? 
-        <Typography align="left">Phone Number: 444-444-4444</Typography> 
-         : 
-        <form hidden={editMode ? false:true} noValidate autoComplete="off">
-         <TextField label="Edit Phone number" id="edit-phone"/> <br/>
-        </form>
-        }
-      
-      {props.value ? 
-        <Typography align="left">Email Address: exampleEmail@email.com</Typography> 
-         : 
-        <form hidden={editMode ? false:true} noValidate autoComplete="off">
-         <TextField label="Edit email address" id="edit-email"/>
-        </form>
-        }
-
-
-
-      <CardActions style={{ justifyContent: 'center' }}>
-        <Button size='small' color="secondary" onClick={() => editMode = !editMode}>edit</Button>
-      </CardActions>
-    </Card>
-  )
-}
+export default withStyles(styles, { withTheme: true })(HomePanel);

@@ -1,87 +1,87 @@
 .business-info-page {
-    background-color: #FFFFFF;
-    height: 100%;
-    color: white;
-    text-align: center;
-    align-items: center;
+  background-color: #ffffff;
+  height: 100%;
+  color: white;
+  text-align: center;
+  align-items: center;
 }
 
 .loading-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
 }
 
 .business-overview {
-    padding: 2.5rem;
+  padding: 2.5rem;
 }
 
 .business-information {
-    color: black;
+  color: black;
 }
 
 .distance-container {
-    display: flex;
-    justify-content: center;
-    color: red
+  display: flex;
+  justify-content: center;
+  color: red;
 }
 
 .distance-to-business {
-    margin-left: 0.25rem;
+  margin-left: 0.25rem;
 }
 
 .about-business {
-    color: black;
-    padding: 0.5rem;
-    background-color: lightgray;
-    border: darkgray solid 1;
-    margin-bottom: 1rem;
+  color: black;
+  padding: 0.5rem;
+  background-color: lightgray;
+  border: darkgray solid 1;
+  margin-bottom: 1rem;
 }
 
 .about-business .about-content {
-    text-align: start;
+  text-align: start;
 }
 
 .reviews-container {
-    color: black
+  color: black;
 }
 
 .reviews-container .MuiRating-iconFilled {
-    color: red;
+  color: red;
 }
 
 .overall-review {
-    margin-bottom: 0.5rem;
+  margin-bottom: 0.5rem;
 }
 
 .business-review {
-    display: flex;
-    justify-content: space-around;
+  display: flex;
+  justify-content: space-around;
 }
 
 .review-avatar {
-    flex: 1;
-    margin-right: 0.5rem
+  flex: 1;
+  margin-right: 0.5rem;
 }
 
 .review-content {
-    flex: 5;
-    text-align: start;
+  flex: 5;
+  text-align: start;
 }
 
 .review-rating {
-    flex: 2;
-    margin-left: 0.25rem;
+  flex: 2;
+  margin-left: 0.25rem;
 }
 
 .carousel-container {
-    margin-bottom: 1rem;
+  margin-bottom: 1rem;
 }
 
 .carousel-control-prev-icon,
 .carousel-control-next-icon {
-    filter: invert(1)
+  filter: invert(1);
 }
 
 /* @media (max-width: 500px) {

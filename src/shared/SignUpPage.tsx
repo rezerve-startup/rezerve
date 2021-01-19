@@ -5,17 +5,15 @@ import './CSS/BusinSignUp.css';
 import './CSS/Signup.css';
 
 function SignUpPage1() {
+  // const [state,setState] = useState({
+  //         Customer: false,
+  //         Business: false,
 
-    // const [state,setState] = useState({
-    //         Customer: false,
-    //         Business: false,
+  // });
 
-    // });  
-
-
-    return(
-        <div className='signUp-page'>
-            {/* <Form onSubmit={handleSubmit}>
+  return (
+    <div className="signUp-page">
+      {/* <Form onSubmit={handleSubmit}>
                  <div className='container'>
               
                     <div className="row col col-11 col-md-auto offset-1 offset-sm-1">
@@ -49,8 +47,8 @@ function SignUpPage1() {
                
             </div>  
              </Form> */}
-        </div>
-    );
+    </div>
+  );
 }
 
 export default SignUpPage1;
