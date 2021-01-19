@@ -1,0 +1,15 @@
+.business-info-details-page {
+  background-color: #212423;
+  height: 100%;
+  color: white;
+  text-align: center;
+  align-items: center;
+}
+
+.employee-listing {
+  display: inline;
+}
+
+.employee {
+  display: inline;
+}
