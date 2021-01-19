@@ -25,6 +25,7 @@ function Sidebar() {
             // Theme Color, or use css color in quote
             background: 'white',
             color: 'white',
+            height: '4px',
         },
       });
       const classes = useStyles();
@@ -42,10 +43,14 @@ function Sidebar() {
             <Typography variant="h4" component="h2">
                 <a href="/" className="homeAnchor">
                     <span  className="rezerve-head">
-                        Rezerve
+                        ReZerve
                     </span>
                 </a>
             </Typography>
+            <Link to="#" classname='menu-bars'>
+                <FaIcons.FaBars onClick={showSidebar} className="hamburgerIcon"/>
+            </Link>
+
         </div>
         
         <nav className={sidebar ? 'nav-menu active' : 'nav-menu'}>
@@ -56,8 +61,10 @@ function Sidebar() {
                 <Link to="/profilePage" onClick={toggleOff}>
                 <img src={logo} alt="Logo" className='image-cropper'/>
                     </Link>
-                    <h1 className='user-heading'>
-                        John Barber</h1>
+                    <span className='user-heading'><strong>John Barber</strong>
+                        </span>
+
+                    
                 </li>
                <Divider variant="middle" className={classes.divider}/>
                 
@@ -75,6 +82,7 @@ function Sidebar() {
             </ul>
             
         </nav>
+    
         </IconContext.Provider>
         </div>
         </ClickAwayListener>

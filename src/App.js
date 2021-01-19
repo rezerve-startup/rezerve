@@ -10,7 +10,8 @@ import Messages from './pagesRoute/Messages'
 import PaymentInfo from './pagesRoute/PaymentInfo'
 import Settings from './pagesRoute/Settings'
 import AppointmentsPage from './pagesRoute/appointments/AppointmentsPage'
-import ProfilePage from './pagesRoute/profilePage/profilePage'
+import Services from './services/Services';
+import Receipt from './Reciept.js'
 import BusinessInfo from './pagesRoute/business-info/BusinessInfo';
 import BusinessInfoDetails from './pagesRoute/business-info/business-info-details/BusinessInfoDetails';
 
@@ -21,8 +22,7 @@ const routes = [
   { path: "/settings", component: Settings },
   { path: "/appoinments", component: AppointmentsPage },
   { path: '/business-info', component: BusinessInfo },
-  { path: '/business-info-details', component: BusinessInfoDetails },
-  { path: '/profile-page', component: ProfilePage }
+  { path: '/business-info-details', component: BusinessInfoDetails }
 ]
 
 const useStyles = makeStyles({

@@ -1,0 +1,44 @@
+
+.receipt-page {
+    background-color: white;
+    height: 100vh;
+    width: 100vw;
+    color: black;
+    text-align: center;
+    align-items: center;
+    position: fixed;
+  }
+  
+
+  .items{
+    display: flex;
+    padding: 25px;
+  }
+  
+  
+  .image{
+    height: 100px;
+    width: 100px;
+    border-radius: 50px;
+    right: 50px;
+    position: absolute;
+    padding: 5px;
+  }
+  
+  .stat{
+    right: 50px;
+    font-weight: bold;
+    position: absolute;
+  }
+
+  .close-icon{
+    right: 50px;
+    position: absolute;
+    font-size: 40px; 
+    color: black;
+  }
+
+  .receipt{
+    border-style: solid;
+  }
+
