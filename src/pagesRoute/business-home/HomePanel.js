@@ -6,6 +6,7 @@ import { makeStyles, useTheme, withStyles } from '@material-ui/core/styles';
 import image from "../../images/avatar.jpg";
 
 import TodoList from "./TodoList";
+import { FormatListNumberedRounded } from '@material-ui/icons';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -120,6 +121,7 @@ function AvailablityCard() {
   { day: "Friday", start: "09:00", end: "17:00" },
   { day: "Saturday", start: "09:00", end: "17:00" },
   { day: "Sunday", start: "09:00", end: "17:00" }]
+  var editTimecard = true
   return (
     <Card className={classes.card}>
       <Typography align="center">Avaliability</Typography>
@@ -131,13 +133,13 @@ function AvailablityCard() {
               <Grid container justify="space-between" spacing={1}>
                 <Grid item xs>
                   <form noValidate>
-                    <TextField id="time" type="Time" disabled={true} defaultValue={item.start} />
+                    <TextField id="time" type="Time" disabled={editTimecard} defaultValue={item.start} />
                   </form>
                 </Grid>
                 to
                 <Grid item xs>
                   <form noValidate>
-                    <TextField id="time" type="Time" disabled={true} defaultValue={item.end} />
+                    <TextField id="time" type="Time" disabled={editTimecard} defaultValue={item.end} />
                   </form>
                 </Grid>
               </Grid>
@@ -146,7 +148,9 @@ function AvailablityCard() {
         ))}
       </List>
       <CardActions style={{ justifyContent: 'center' }}>
-        <Button size='small' color="secondary">edit</Button>
+        <Button size='small' color="secondary"
+        onClick = {editTimecard = !editTimecard }
+        >edit</Button>
       </CardActions>
     </Card>
   )
@@ -155,6 +159,30 @@ function AvailablityCard() {
 function ContactCard() {
   const classes = useStyles()
   return (
-    <Paper className={classes.paper}>Contact Information</Paper>
+    <Card className={classes.card}>
+      <Typography align="center">Contact Stylist</Typography> 
+
+      {this.props.value ? 
+        <Typography align="left">Phone Number: 444-444-4444</Typography> 
+         : 
+        <form hidden={editMode ? false:true} noValidate autoComplete="off">
+         <TextField b={15} label="Edit Phone number" id="edit-phone"/> <br/>
+        </form>
+        }
+      
+      {this.props.value ? 
+        <Typography align="left">Email Address: exampleEmail@email.com</Typography> 
+         : 
+        <form hidden={editMode ? false:true} noValidate autoComplete="off">
+         <TextField label="Edit email address" id="edit-email"/>
+        </form>
+        }
+
+
+
+      <CardActions style={{ justifyContent: 'center' }}>
+        <Button size='small' color="secondary" onClick={editMode = !editMode}>edit</Button>
+      </CardActions>
+    </Card>
   )
 }
