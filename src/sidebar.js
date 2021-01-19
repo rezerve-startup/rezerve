@@ -2,7 +2,6 @@ import React, {useState} from 'react';
 import './sidebar.css'
 import { sidebarData } from './sidebarData' 
 import * as FaIcons from 'react-icons/fa'
-import * as AiIcons from 'react-icons/ai'
 import { Link } from 'react-router-dom'
 import { IconContext } from 'react-icons'
 import {Typography, Divider, ClickAwayListener} from '@material-ui/core/'
@@ -14,22 +13,20 @@ import logo from './images/avatar.jpg'
 
 function Sidebar() {
   
-
-    let url = 'messages'
     const [sidebar, setSidebar] = useState(false)
     const showSidebar = () => setSidebar(!sidebar)
     const toggleOff = () => {
-        if(sidebar == true){
+        if(sidebar === true){
             showSidebar(false);
         }
     };
-    const useStyles = makeStyles((theme) => ({
+    const useStyles = makeStyles({
         divider: {
             // Theme Color, or use css color in quote
             background: 'white',
             color: 'white',
         },
-      }));
+      });
       const classes = useStyles();
 
     return(
@@ -39,11 +36,11 @@ function Sidebar() {
         <IconContext.Provider value={{ color : '#fff' }}>
 
         <div className='navbar'>
-            <Link to="#" classname='menu-bars'>
+            <Link to="#" className='menu-bars'>
                 <FaIcons.FaBars onClick={showSidebar} className="hamburgerIcon"/>
             </Link>
             <Typography variant="h4" component="h2">
-                <a href={url} className="homeAnchor">
+                <a href="/" className="homeAnchor">
                     <span  className="rezerve-head">
                         Rezerve
                     </span>
@@ -67,7 +64,7 @@ function Sidebar() {
                         <li key={index} className={item.cName}  onClick={showSidebar}>
                            <Link to={item.path}>
                                 {item.icon}
-                                <span>{item.title}</span>   
+                                <span style={{ marginLeft: '16px' }}>{item.title}</span>   
                             </Link> 
                         </li>
                     )
