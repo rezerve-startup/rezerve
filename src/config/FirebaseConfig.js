@@ -4,7 +4,7 @@ import 'firebase/firestore';
 const firebaseConfig = {
     apiKey: "AIzaSyCWPWJ59aphpRf_EkMZfT9JGEWXm69rexg",
     authDomain: "rezerve-develop.firebaseapp.com",
-    databaseURL: "https://rezerve-develop.firebaseio.com/",
+    databaseURL: "https://rezerve-develop.firebaseio.com",
     projectId: "rezerve-develop",
     storageBucket: "rezerve-develop.appspot.com",
     messagingSenderId: "425070059413",

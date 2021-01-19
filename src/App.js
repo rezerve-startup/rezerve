@@ -1,33 +1,69 @@
-import React, { useState } from 'react';
-import Sidebar from './sidebar'
+import React from 'react';
 import { BrowserRouter as Router, Switch, Route} from 'react-router-dom'
+import { createMuiTheme, makeStyles, ThemeProvider } from '@material-ui/core/styles';
+import Sidebar from './sidebar'
 import './App.css';
 import './sidebar.css'
+
 import Help from './pagesRoute/Help'
 import Messages from './pagesRoute/Messages'
 import PaymentInfo from './pagesRoute/PaymentInfo'
 import Settings from './pagesRoute/Settings'
 import AppointmentsPage from './pagesRoute/appointments/AppointmentsPage'
 import ProfilePage from './pagesRoute/profilePage/profilePage'
+import BusinessInfo from './pagesRoute/business-info/BusinessInfo';
+import BusinessInfoDetails from './pagesRoute/business-info/business-info-details/BusinessInfoDetails';
 
-function App() {
+const routes = [
+  { path: "/help", component: Help },
+  { path: "/messages", component: Messages },
+  { path: "/payment", component: PaymentInfo },
+  { path: "/settings", component: Settings },
+  { path: "/appoinments", component: AppointmentsPage },
+  { path: '/business-info', component: BusinessInfo },
+  { path: '/business-info-details', component: BusinessInfoDetails },
+  { path: '/profile-page', component: ProfilePage }
+]
+
+const useStyles = makeStyles({
+  root: {
+    flex: 1,
+    height: '80vh'
+  }
+})
+
+const theme = createMuiTheme({
+  palette: {
+    primary: {
+      main: "#FE8488",
+      light: "#FF6D6D",
+      dark: "#FF2B2B"
+    },
+    secondary: {
+      main: "#5B5B5B",
+      light: "#D7D7D7",
+      dark: "#353535"
+    }
+  }
+})
+
+const App = () => {
+  const classes = useStyles();
 
   return (
-    <>
-      <Router>
-        <Sidebar />
-        <Switch>
-          <Route path="/profilePage" exact component={ ProfilePage }/>
-          <Route path="/help" exact component={ Help }/>
-          <Route path="/messages" exact component={ Messages }/>
-          <Route path="/payment" exact component={ PaymentInfo }/>
-          <Route path="/settings" exact component={ Settings }/>
-          <Route path="/appointments" exact component={ AppointmentsPage }/>
-        </Switch>
-      </Router>
-    </>
+    <div className={classes.root}>
+      <ThemeProvider theme={theme}>
+        <Router>
+          <Sidebar />
+          <Switch>
+            {routes.map((route, i) => (
+              <Route key={i} path={route.path} exact component={route.component} />
+            ))}
+          </Switch>
+        </Router>
+      </ThemeProvider>
+    </div>
   );
-
 }
 
 export default App;
