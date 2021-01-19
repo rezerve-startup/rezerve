@@ -9,6 +9,7 @@ import PaymentInfo from './pagesRoute/PaymentInfo'
 import Settings from './pagesRoute/Settings'
 import AppointmentsPage from './pagesRoute/appointments/AppointmentsPage'
 import Services from './services/Services';
+import Receipt from './Reciept.js'
 
 function App() {
 
@@ -23,6 +24,7 @@ function App() {
           <Route path="/settings" exact component={ Settings }/>
           <Route path="/appointments" exact component={ AppointmentsPage }/>
           <Route path="/services" exact component={ Services }/>
+          <Route path="/receipt" exact component={ Receipt }/>        
         </Switch>
       </Router>
     </>
