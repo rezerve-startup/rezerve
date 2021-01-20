@@ -1,32 +1,28 @@
-// import React from 'react'
-// import * as AiIcons from '../../customer/header/node_modules/react-icons/ai'
-// import * as BiIcons from '../../customer/header/node_modules/react-icons/bi'
-// import * as MdIcons from 'react-icons/md'
-// import * as FiIcons from 'react-icons/fi'
+import { Forum, CalendarViewDay, Help, Settings } from '@material-ui/icons';
 
 export const sidebarData = [
   {
     title: 'Messages',
     path: '/messages',
-    // icon: <AiIcons.AiOutlineMessage />,
+    icon: <Forum />,
     cName: 'nav-text',
   },
   {
     title: 'Appointments',
     path: '/appointments',
-    // icon: <BiIcons.BiNotepad />,
+    icon: <CalendarViewDay/>,
     cName: 'nav-text',
   },
   {
     title: 'Help',
     path: '/help',
-    // icon: <BiIcons.BiHelpCircle />,
+    icon: <Help />,
     cName: 'nav-text',
   },
   {
     title: 'Settings',
     path: '/settings',
-    // icon: <FiIcons.FiSettings />,
+    icon: <Settings />,
     cName: 'nav-text',
   },
 ];

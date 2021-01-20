@@ -3,7 +3,6 @@ import Carousel from 'react-material-ui-carousel';
 import {
   Paper,
   Grid,
-  useMediaQuery,
   withStyles,
   createStyles,
   WithStyles,
@@ -29,13 +28,15 @@ const styles = (theme: Theme) =>
     },
   });
 
-interface Props extends WithStyles<typeof styles> {}
+interface Props extends WithStyles<typeof styles> {
+  theme: Theme;
+  isMobile: boolean;
+}
 type State = {};
 
 class HomePanel extends React.Component<Props, State> {
   render() {
-    const { classes } = this.props;
-    const isMobile = false; // useMediaQuery(theme.breakpoints.down('sm'));
+    const { classes, isMobile } = this.props;
     const carouselComponents = [AvailablityCard, ContactCard];
 
     return (
@@ -44,7 +45,7 @@ class HomePanel extends React.Component<Props, State> {
           <Grid item={true} xs={isMobile ? 12 : 6}>
             <Grid container={true} spacing={2} direction="column">
               <Grid item={true} xs={true}>
-                <StylistCard />
+                <StylistCard isMobile={isMobile}/>
               </Grid>
               <Grid item={true} xs={true}>
                 <Carousel>
@@ -71,4 +72,6 @@ class HomePanel extends React.Component<Props, State> {
   }
 }
 
-export default withStyles(styles, { withTheme: true })(HomePanel);
+export default withStyles(styles, { withTheme: true, isMobile: false })(
+  HomePanel,
+);

@@ -2,8 +2,7 @@ import React from 'react';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import { createMuiTheme, makeStyles, ThemeProvider } from '@material-ui/core';
 import Sidebar from './shared/sidebar/sidebar';
-import './css/App.css';
-import './shared/sidebar/sidebar.css';
+import './CSS/App.css';
 
 // import Help from './pagesRoute/Help'
 // import Messages from './pagesRoute/Messages'
@@ -14,6 +13,7 @@ import AppointmentsPage from './customer/customer-appointments/AppointmentPage';
 // import Receipt from './customer/customer-reciept/Reciept.js';
 import BusinessInfo from './business/business-info/BusinessInfo';
 import BusinessInfoDetails from './business/business-info/business-info-details/BusinessInfoDetails';
+import BusinessTabs from './business/business-home/BusinessHome';
 
 const routes = [
   // { path: "/help", component: Help },
@@ -66,6 +66,7 @@ const App = () => {
             ))}
           </Switch>
         </Router>
+        <BusinessTabs />
       </ThemeProvider>
     </div>
   );

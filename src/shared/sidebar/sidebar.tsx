@@ -1,86 +1,154 @@
 import React, { useState } from 'react';
-import './sidebar.css';
-// import { sidebarData } from './sidebarData'
-// import * as FaIcons from '../../customer/user-reciept/node_modules/react-icons/fa'
-// import { Link } from 'react-router-dom'
-// import { IconContext } from 'react-icons'
-// import {Typography, Divider, ClickAwayListener} from '@material-ui/core/'
-import { makeStyles } from '@material-ui/core/styles';
-// import logo from '../../assets/avatar.jpg'
+import { sidebarData } from './sidebarData';
+import { Menu } from '@material-ui/icons';
+import { Link } from 'react-router-dom';
+import {
+  Typography,
+  Divider,
+  IconButton,
+  makeStyles,
+  SwipeableDrawer,
+  AppBar,
+  Toolbar,
+  List,
+  ListItem,
+  ListItemText,
+  ListItemIcon,
+  ListItemAvatar,
+  Avatar,
+} from '@material-ui/core';
+import logo from '../../assets/avatar.jpg';
+
+const useStyles = makeStyles((theme) => ({
+  root: {
+    flexGrow: 1,
+  },
+  appBar: {
+    backgroundColor: theme.palette.secondary.dark,
+  },
+  sidebar: {
+    backgroundColor: theme.palette.secondary.dark,
+  },
+  title: {
+    display: 'block',
+    color: theme.palette.background.paper,
+    textDecoration: 'none',
+  },
+  divider: {
+    background: 'white',
+    color: 'white',
+    height: '2px',
+    marginTop: '2px',
+    marginBottom: '2px',
+  },
+  menuButton: {
+    marginRight: theme.spacing(2),
+    color: theme.palette.background.paper,
+  },
+  list: {
+    width: 250,
+  },
+  listIcon: {
+    color: 'white',
+  },
+  listText: {
+    color: 'white',
+    fontSize: '25px',
+  },
+}));
 
 function Sidebar() {
-  const [sidebar, setSidebar] = useState(false);
-  const showSidebar = () => setSidebar(!sidebar);
-  const toggleOff = () => {
-    if (sidebar === true) {
-      showSidebar();
-    }
-  };
-  const useStyles = makeStyles({
-    divider: {
-      // Theme Color, or use css color in quote
-      background: 'white',
-      color: 'white',
-      height: '4px',
-    },
+  const [state, setState] = useState({
+    open: false,
   });
+
+  const toggleSidebar = (open: boolean) => (
+    event: React.KeyboardEvent | React.MouseEvent,
+  ) => {
+    if (
+      event &&
+      event.type === 'keydown' &&
+      ((event as React.KeyboardEvent).key === 'Tab' ||
+        (event as React.KeyboardEvent).key === 'Shift')
+    ) {
+      return;
+    }
+
+    setState({ ...state, open });
+  };
+
   const classes = useStyles();
 
   return (
-    // <ClickAwayListener onClickAway={toggleOff}>
-    <div className="Sidebar">
-      {/* <IconContext.Provider value={{ color : '#fff' }}>
-
-        <div className='navbar'>
-            <Link to="#" className='menu-bars'>
-                <FaIcons.FaBars onClick={showSidebar} className="hamburgerIcon"/>
-            </Link>
-            <Typography variant="h4" component="h2">
-                <a href="/" className="homeAnchor">
-                    <span  className="rezerve-head">
-                        ReZerve
-                    </span>
-                </a>
+    <div className={classes.root}>
+      <AppBar position="static" className={classes.appBar}>
+        <Toolbar>
+          <React.Fragment>
+            <IconButton
+              edge="start"
+              aria-label="menu"
+              className={classes.menuButton}
+              onClick={toggleSidebar(true)}
+            >
+              <Menu />
+            </IconButton>
+            <Typography
+              className={classes.title}
+              variant="h6"
+              noWrap={true}
+              color="primary"
+              component={Link}
+              to="/"
+            >
+              ReZerve
             </Typography>
-            <Link to="#" classname='menu-bars'>
-                <FaIcons.FaBars onClick={showSidebar} className="hamburgerIcon"/>
-            </Link>
-
-        </div>
-        
-        <nav className={sidebar ? 'nav-menu active' : 'nav-menu'}>
-           
-            <ul className='nav-menu-items' >
-            
-                <li className='navbar-toggle'>
-                <Link to="/profilePage" onClick={toggleOff}>
-                <img src={logo} alt="Logo" className='image-cropper'/>
-                    </Link>
-                    <span className='user-heading'><strong>John Barber</strong>
-                        </span>
-
-                    
-                </li>
-               <Divider variant="middle" className={classes.divider}/>
-                
-                {sidebarData.map((item, index) => {
-                    return (
-                        <li key={index} className={item.cName}  onClick={showSidebar}>
-                           <Link to={item.path}>
-                                {item.icon}
-                                <span style={{ marginLeft: '16px' }}>{item.title}</span>   
-                            </Link> 
-                        </li>
-                    )
-                })}
-                
-            </ul>
-            
-        </nav>
-    
-        </IconContext.Provider> */}
+            <SwipeableDrawer
+              anchor="left"
+              open={state.open}
+              onClose={toggleSidebar(false)}
+              onOpen={toggleSidebar(true)}
+              classes={{ paper: classes.sidebar }}
+            >
+              <div
+                className={classes.list}
+                role="presentation"
+                onClick={toggleSidebar(false)}
+                onKeyDown={toggleSidebar(false)}
+              >
+                <List>
+                  <ListItem>
+                    <ListItemAvatar>
+                      <Avatar src="../../assets/avatar.jpg" />
+                    </ListItemAvatar>
+                    <ListItemText
+                      className={classes.listText}
+                      primary="John Barber"
+                    />
+                  </ListItem>
+                  <Divider className={classes.divider} />
+                  {sidebarData.map((obj, i) => (
+                    <ListItem
+                      button={true}
+                      key={i}
+                      component={Link}
+                      to={obj.path}
+                    >
+                      <ListItemIcon className={classes.listIcon}>
+                        {obj.icon}
+                      </ListItemIcon>
+                      <ListItemText
+                        className={classes.listText}
+                        primary={obj.title}
+                      />
+                    </ListItem>
+                  ))}
+                </List>
+              </div>
+            </SwipeableDrawer>
+          </React.Fragment>
+        </Toolbar>
+      </AppBar>
     </div>
-    // </ClickAwayListener>
   );
 }
 

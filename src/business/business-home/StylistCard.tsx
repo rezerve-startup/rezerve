@@ -11,7 +11,7 @@ import {
   createStyles,
 } from '@material-ui/core';
 import { Rating } from '@material-ui/lab';
-import image from '../../images/avatar.jpg';
+import image from '../../assets/avatar.jpg';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -22,8 +22,8 @@ const useStyles = makeStyles((theme: Theme) =>
       flex: '1 0 auto',
     },
     userImage: {
-      width: 150,
-      height: 150,
+      width: '125px',
+      height: '100%',
     },
     userRating: {
       marginTop: '16px',
@@ -31,11 +31,16 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 );
 
-export default function StylistCard() {
+type Props = {
+  isMobile: boolean
+}
+
+export default function StylistCard(props: Props) {
+  const { isMobile } = props
   const classes = useStyles();
   return (
     <Card className={classes.card}>
-      <Grid container={true} justify="space-between" spacing={4}>
+      <Grid container={true} justify="space-between" spacing={2}>
         <Grid item={true}>
           <CardContent className={classes.userContent}>
             <Typography variant="h5">Name</Typography>
@@ -47,7 +52,7 @@ export default function StylistCard() {
               value={3.5}
               defaultValue={2.5}
               precision={0.5}
-              size="large"
+              size={isMobile ? "medium" : "large"}
               readOnly={true}
             />
           </CardContent>

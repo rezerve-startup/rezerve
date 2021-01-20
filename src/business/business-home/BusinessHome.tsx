@@ -1,12 +1,10 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import SwipeableViews from 'react-swipeable-views';
 import {
   Box,
   AppBar,
   Tab,
   Tabs,
-  Typography,
   useMediaQuery,
   makeStyles,
   useTheme,
@@ -15,17 +13,17 @@ import { Home, List, Person, Assessment } from '@material-ui/icons';
 
 import HomePanel from './HomePanel';
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles({
   root: {
     flexGrow: 1,
   },
-}));
+});
 
 export default function BusinessTabs() {
   const classes = useStyles();
   const theme = useTheme();
   const [value, setValue] = React.useState(0);
-  const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
   const handleChange = (_event: any, newValue: number) => {
     setValue(newValue);
@@ -44,15 +42,15 @@ export default function BusinessTabs() {
 
   return (
     <div className={classes.root}>
-      <Box m={2}>
+      <Box m={1}>
         <AppBar position="static" color="default">
           <Tabs
             value={value}
             onChange={handleChange}
             aria-label="business-tabs"
             indicatorColor="primary"
-            centered={true}
-            variant={isSmallScreen ? 'scrollable' : 'fullWidth'}
+            centered={isMobile ? false : true}
+            variant={isMobile ? 'scrollable' : 'fullWidth'}
             scrollButtons="on"
           >
             {tabs.map((tab, i) => (
@@ -71,7 +69,7 @@ export default function BusinessTabs() {
           enableMouseEvents={true}
         >
           <TabPanel value={value} index={0}>
-            <HomePanel />
+            <HomePanel isMobile={isMobile} />
           </TabPanel>
           <TabPanel value={value} index={1}>
             Item Two
@@ -89,7 +87,13 @@ function a11yProps(index: number) {
   };
 }
 
-function TabPanel(props: any) {
+type TabPanelProps = {
+  children: React.ReactNode
+  index: number
+  value: string | number | Error
+}
+
+function TabPanel(props: TabPanelProps) {
   const { children, value, index, ...other } = props;
 
   return (
@@ -101,16 +105,10 @@ function TabPanel(props: any) {
       {...other}
     >
       {value === index && (
-        <Box p={3}>
-          <Typography>{children}</Typography>
+        <Box p={1}>
+          {children}
         </Box>
       )}
     </div>
   );
 }
-
-TabPanel.propTypes = {
-  children: PropTypes.node,
-  index: PropTypes.any.isRequired,
-  value: PropTypes.any.isRequired,
-};
