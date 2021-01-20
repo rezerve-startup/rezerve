@@ -26,25 +26,32 @@ const styles = (theme: Theme) =>
     },
   });
 
-type State = {};
+type State = {
+  editInfo: boolean;
+};
 
 interface Props extends WithStyles<typeof styles> {
-  editInfo: boolean;
+
 }
 
 class ContactCard extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
-    this.state = {};
+    this.state = {
+      editInfo: false
+    };
+    this.handleEdit = this.handleEdit.bind(this);
   }
 
   render() {
     const { classes } = this.props;
+    const { editInfo } = this.state;
+
     return (
       <Card className={classes.card}>
         <Typography align="center">Contact Stylist</Typography>
 
-        {this.props.editInfo ? (
+        {this.state.editInfo ? (
           <Typography align="left">Phone Number: 444-444-4444</Typography>
         ) : (
           <form autoComplete="off">
@@ -52,7 +59,7 @@ class ContactCard extends React.Component<Props, State> {
           </form>
         )}
 
-        {this.props.editInfo ? (
+        {this.state.editInfo ? (
           <Typography align="left">
             Email Address: exampleEmail@email.com
           </Typography>
@@ -63,12 +70,30 @@ class ContactCard extends React.Component<Props, State> {
         )}
 
         <CardActions style={{ justifyContent: 'center' }}>
-          <Button size="small" color="secondary">
+        <Button
+            size="small"
+            color="secondary"
+            // tslint:disable-next-line: jsx-no-lambda
+            onClick={() => this.handleEdit(editInfo)}
+          >
+            {' '}
             edit
           </Button>
         </CardActions>
       </Card>
     );
+  }
+
+  handleEdit(edit: boolean) {
+    // tslint:disable-next-line: no-console
+    console.log(edit);
+    this.updateTimes(edit);
+  }
+
+  updateTimes(edit: boolean) {
+    // tslint:disable-next-line: no-console
+    console.log(edit);
+    this.setState({ editInfo: !this.state.editInfo });
   }
 }
 

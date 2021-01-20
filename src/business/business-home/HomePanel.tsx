@@ -50,7 +50,7 @@ class HomePanel extends React.Component<Props, State> {
               <Grid item={true} xs={true}>
                 <Carousel>
                   {carouselComponents.map((Component, i) => (
-                    <Component key={i} editInfo={false} />
+                    <Component key={i} />
                   ))}
                 </Carousel>
               </Grid>

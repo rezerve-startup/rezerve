@@ -33,6 +33,7 @@ const styles = (theme: Theme) =>
 
 type State = {
   businessSchedule: BusinessSchedule[];
+  editInfo: boolean;
 };
 
 interface BusinessSchedule {
@@ -41,9 +42,7 @@ interface BusinessSchedule {
   end: string;
 }
 
-interface Props extends WithStyles<typeof styles> {
-  editInfo: boolean;
-}
+interface Props extends WithStyles<typeof styles> {}
 
 class AvailablityCard extends React.Component<Props, State> {
   constructor(props: Props) {
@@ -59,11 +58,15 @@ class AvailablityCard extends React.Component<Props, State> {
         { day: 'Saturday', start: '09:00', end: '17:00' },
         { day: 'Sunday', start: '09:00', end: '17:00' },
       ],
+      editInfo: false,
     };
+
+    this.handleEdit = this.handleEdit.bind(this);
   }
 
   render() {
     const { classes } = this.props;
+    const { businessSchedule, editInfo } = this.state;
     return (
       <Card className={classes.card}>
         <Typography align="center">Avaliability</Typography>
@@ -78,6 +81,7 @@ class AvailablityCard extends React.Component<Props, State> {
                       <TextField
                         id="time"
                         type="Time"
+                        disabled={editInfo}
                         defaultValue={item.start}
                       />
                     </form>
@@ -88,6 +92,7 @@ class AvailablityCard extends React.Component<Props, State> {
                       <TextField
                         id="time"
                         type="Time"
+                        disabled={editInfo}
                         defaultValue={item.end}
                       />
                     </form>
@@ -98,13 +103,31 @@ class AvailablityCard extends React.Component<Props, State> {
           ))}
         </List>
         <CardActions style={{ justifyContent: 'center' }}>
-          <Button size="small" color="secondary">
+          
+          <Button
+            size="small"
+            color="secondary"
+            // tslint:disable-next-line: jsx-no-lambda
+            onClick={() => this.handleEdit(editInfo)}
+          >
             {' '}
             edit
           </Button>
         </CardActions>
       </Card>
     );
+  }
+
+  handleEdit(edit: boolean) {
+    // tslint:disable-next-line: no-console
+    console.log(edit);
+    this.updateTimes(edit);
+  }
+
+  updateTimes(edit: boolean) {
+    // tslint:disable-next-line: no-console
+    console.log(edit);
+    this.setState({ editInfo: !this.state.editInfo });
   }
 }
 
