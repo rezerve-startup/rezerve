@@ -10,6 +10,7 @@ import {
   WithStyles,
   Theme,
 } from '@material-ui/core';
+import { StringDecoder } from 'string_decoder';
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -28,17 +29,19 @@ const styles = (theme: Theme) =>
 
 type State = {
   editInfo: boolean;
+  phone: string;
+  email: string;
 };
 
-interface Props extends WithStyles<typeof styles> {
-
-}
+interface Props extends WithStyles<typeof styles> {}
 
 class ContactCard extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = {
-      editInfo: false
+      editInfo: true,
+      phone: '444-444-4444',
+      email: 'exampleEmail@email.com',
     };
     this.handleEdit = this.handleEdit.bind(this);
   }
@@ -52,48 +55,81 @@ class ContactCard extends React.Component<Props, State> {
         <Typography align="center">Contact Stylist</Typography>
 
         {this.state.editInfo ? (
-          <Typography align="left">Phone Number: 444-444-4444</Typography>
+          <Typography align="left">Phone Number: {this.state.phone}</Typography>
         ) : (
           <form autoComplete="off">
-            <TextField label="Edit Phone number" id="edit-phone" /> <br />
+            Phone Number:
+            <TextField
+              label="Change Phone number"
+              id="edit-phone"
+              value={this.state.phone}
+            />{' '}
+            <br />
           </form>
         )}
 
         {this.state.editInfo ? (
           <Typography align="left">
-            Email Address: exampleEmail@email.com
+            Email Address: {this.state.email}
           </Typography>
         ) : (
           <form autoComplete="off">
-            <TextField label="Edit email address" id="edit-email" />
+            Phone Number:
+            <TextField
+              label="Change email address"
+              id="edit-email"
+              value={this.state.email}
+            />
           </form>
         )}
 
         <CardActions style={{ justifyContent: 'center' }}>
-        <Button
-            size="small"
-            color="secondary"
-            // tslint:disable-next-line: jsx-no-lambda
-            onClick={() => this.handleEdit(editInfo)}
-          >
-            {' '}
-            edit
-          </Button>
+          {this.state.editInfo ? (
+            <Button
+              size="small"
+              color="secondary"
+              // tslint:disable-next-line: jsx-no-lambda
+              onClick={() => this.handleEdit('EditStart')}
+            >
+              edit
+            </Button>
+          ) : (
+            <Button
+              size="small"
+              color="secondary"
+              // tslint:disable-next-line: jsx-no-lambda
+              onClick={() => this.handleEdit('SaveChanges')}
+            >
+              Save Changes
+            </Button>
+          )}
         </CardActions>
       </Card>
     );
   }
 
-  handleEdit(edit: boolean) {
-    // tslint:disable-next-line: no-console
-    console.log(edit);
-    this.updateTimes(edit);
+  handleEdit(action: string) {
+    switch (action) {
+      case 'EditStart': {
+        this.updateTimes();
+        break;
+      }
+      case 'SaveChanges': {
+        this.updateData();
+        break;
+      }
+    }
   }
 
-  updateTimes(edit: boolean) {
-    // tslint:disable-next-line: no-console
-    console.log(edit);
+  updateTimes() {
     this.setState({ editInfo: !this.state.editInfo });
+  }
+
+  updateData() {
+    this.setState({
+      phone: '723-256-1232',
+      email: 'newEmail@gmail.com',
+    });
   }
 }
 

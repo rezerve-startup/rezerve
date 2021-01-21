@@ -103,31 +103,52 @@ class AvailablityCard extends React.Component<Props, State> {
           ))}
         </List>
         <CardActions style={{ justifyContent: 'center' }}>
-          
-          <Button
-            size="small"
-            color="secondary"
-            // tslint:disable-next-line: jsx-no-lambda
-            onClick={() => this.handleEdit(editInfo)}
-          >
-            {' '}
-            edit
-          </Button>
+        {this.state.editInfo ? (
+            <Button
+              size="small"
+              color="secondary"
+              // tslint:disable-next-line: jsx-no-lambda
+              onClick={() => this.handleEdit('EditStart')}
+            >
+              edit
+            </Button>
+          ) : (
+            <Button
+              size="small"
+              color="secondary"
+              // tslint:disable-next-line: jsx-no-lambda
+              onClick={() => this.handleEdit('SaveChanges')}
+            >
+              Save Changes
+            </Button>
+          )}
         </CardActions>
       </Card>
     );
   }
 
-  handleEdit(edit: boolean) {
-    // tslint:disable-next-line: no-console
-    console.log(edit);
-    this.updateTimes(edit);
+  handleEdit(action: string) {
+    switch (action) {
+      case 'EditStart': {
+        this.updateTimes();
+        break;
+      }
+      case 'SaveChanges': {
+        this.updateData();
+        break;
+      }
+    }
   }
 
-  updateTimes(edit: boolean) {
-    // tslint:disable-next-line: no-console
-    console.log(edit);
+  updateTimes() {
     this.setState({ editInfo: !this.state.editInfo });
+  }
+
+  updateData() {
+    this.setState({
+      phone: '723-256-1232',
+      email: 'newEmail@gmail.com',
+    });
   }
 }
 
