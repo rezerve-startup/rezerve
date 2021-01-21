@@ -66,7 +66,7 @@ class AvailablityCard extends React.Component<Props, State> {
 
   render() {
     const { classes } = this.props;
-    const { businessSchedule, editInfo } = this.state;
+    const { editInfo } = this.state;
     return (
       <Card className={classes.card}>
         <Typography align="center">Avaliability</Typography>
@@ -103,12 +103,12 @@ class AvailablityCard extends React.Component<Props, State> {
           ))}
         </List>
         <CardActions style={{ justifyContent: 'center' }}>
-        {this.state.editInfo ? (
+          {this.state.editInfo ? (
             <Button
               size="small"
               color="secondary"
               // tslint:disable-next-line: jsx-no-lambda
-              onClick={() => this.handleEdit('EditStart')}
+              onClick={() => this.handleEdit('editClicked')}
             >
               edit
             </Button>
@@ -117,7 +117,7 @@ class AvailablityCard extends React.Component<Props, State> {
               size="small"
               color="secondary"
               // tslint:disable-next-line: jsx-no-lambda
-              onClick={() => this.handleEdit('SaveChanges')}
+              onClick={() => this.handleEdit('editClicked')}
             >
               Save Changes
             </Button>
@@ -129,26 +129,15 @@ class AvailablityCard extends React.Component<Props, State> {
 
   handleEdit(action: string) {
     switch (action) {
-      case 'EditStart': {
-        this.updateTimes();
-        break;
-      }
-      case 'SaveChanges': {
-        this.updateData();
+      case 'editClicked': {
+        this.update();
         break;
       }
     }
   }
 
-  updateTimes() {
+  update() {
     this.setState({ editInfo: !this.state.editInfo });
-  }
-
-  updateData() {
-    this.setState({
-      phone: '723-256-1232',
-      email: 'newEmail@gmail.com',
-    });
   }
 }
 

@@ -48,7 +48,6 @@ class ContactCard extends React.Component<Props, State> {
 
   render() {
     const { classes } = this.props;
-    const { editInfo } = this.state;
 
     return (
       <Card className={classes.card}>
@@ -57,13 +56,10 @@ class ContactCard extends React.Component<Props, State> {
         {this.state.editInfo ? (
           <Typography align="left">Phone Number: {this.state.phone}</Typography>
         ) : (
+          // Edit/Update Phone Number
           <form autoComplete="off">
             Phone Number:
-            <TextField
-              label="Change Phone number"
-              id="edit-phone"
-              value={this.state.phone}
-            />{' '}
+            <TextField label="Change Phone number" id="edit-phone" />
             <br />
           </form>
         )}
@@ -73,13 +69,10 @@ class ContactCard extends React.Component<Props, State> {
             Email Address: {this.state.email}
           </Typography>
         ) : (
+          // Edit/Update Email
           <form autoComplete="off">
             Phone Number:
-            <TextField
-              label="Change email address"
-              id="edit-email"
-              value={this.state.email}
-            />
+            <TextField label="Change email address" id="edit-email" />
           </form>
         )}
 
@@ -89,7 +82,7 @@ class ContactCard extends React.Component<Props, State> {
               size="small"
               color="secondary"
               // tslint:disable-next-line: jsx-no-lambda
-              onClick={() => this.handleEdit('EditStart')}
+              onClick={() => this.handleEdit('editClicked')}
             >
               edit
             </Button>
@@ -110,8 +103,8 @@ class ContactCard extends React.Component<Props, State> {
 
   handleEdit(action: string) {
     switch (action) {
-      case 'EditStart': {
-        this.updateTimes();
+      case 'editClicked': {
+        this.update();
         break;
       }
       case 'SaveChanges': {
@@ -121,15 +114,16 @@ class ContactCard extends React.Component<Props, State> {
     }
   }
 
-  updateTimes() {
+  update() {
     this.setState({ editInfo: !this.state.editInfo });
   }
 
   updateData() {
     this.setState({
-      phone: '723-256-1232',
+      phone: '123-123-1234',
       email: 'newEmail@gmail.com',
     });
+    this.update();
   }
 }
 
