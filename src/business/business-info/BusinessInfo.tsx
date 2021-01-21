@@ -1,139 +1,171 @@
-import React from 'react';
+import React, { Component } from 'react';
 // import { CarouselItem, CarouselCaption, Carousel, CarouselControl, CarouselIndicators } from '../../customer/customer-signup/node_modules/reactstrap';
-import LocationOnIcon from '@material-ui/icons/LocationOn';
+import Carousel from 'react-material-ui-carousel';
+import { LocationOn } from '@material-ui/icons';
 import { Rating } from '@material-ui/lab';
-import { Avatar, CircularProgress } from '@material-ui/core';
+import { 
+  Avatar, 
+  CircularProgress,
+  Paper,
+  withStyles,
+  createStyles,
+  WithStyles,
+  Theme, 
+} from '@material-ui/core';
 
 import { firestore } from '../../config/FirebaseConfig';
 
-import './BusinessInfo.css';
+// import './BusinessInfo.css';
 
-type MyState = {
-  animating: boolean;
-  activeIndex: number;
+type BusinessInfoState = {
   business: any;
 };
 
-class BusinessInfo extends React.Component<{}, MyState> {
+interface Props extends WithStyles<typeof styles> {}
+
+const styles = (theme: Theme) =>
+  createStyles({
+    root: {
+      flexGrow: 1,
+    },
+    businessInfoPage: {
+      backgroundColor: '#ffffff',
+      height: '100%',
+      color: 'white',
+      textAlign: 'center',
+      alignItems: 'center'
+    },
+    businessOverview: {
+      padding: '2.5rem'
+    },
+    businessPicture: {
+      width: '100%'
+    },
+    carouselContainer: {
+      marginBottom: '1rem'
+    },
+    businessInformation: {
+      color: 'black'
+    },
+    distanceContainer: {
+      display: 'flex',
+      justifyContent: 'center',
+      color: 'red'
+    },
+    distanceToBusiness: {
+      marginLeft: '0.25rem'
+    },
+    aboutBusiness: {
+      color: 'black',
+      padding: '0.5rem',
+      backgroundColor: 'lightgray',
+      border: 'darkgray solid 1',
+      marginBottom: '1rem'
+    },
+    aboutContent: {
+      textAlign: 'start'
+    },
+    reviewsContainer: {
+      color: 'black'
+    },
+    overallReview: {
+      marginBottom: '0.5rem'
+    },
+    businessReview: {
+      display: 'flex',
+      justifyContent: 'space-around',
+      textAlign: 'start'
+    },
+    reviewAvatar: {
+      flex: 1,
+      marginRight: '0.5rem'
+    },
+    reviewContent: {
+      flex: 5,
+      marginRight: '0.5rem'
+    },
+    reviewRating: {
+      flex: 2,
+      marginLeft: '0.25rem'
+    },
+    loadingContainer: {
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
+      height: '100%'
+    }
+  });
+
+class BusinessInfo extends React.Component<Props, BusinessInfoState> {
   constructor(props: any) {
     super(props);
     this.state = {
-      animating: false,
-      activeIndex: 0,
       business: undefined,
     };
-    this.nextImg = this.nextImg.bind(this);
-    this.prevImg = this.prevImg.bind(this);
-    this.goToIndex = this.goToIndex.bind(this);
-    this.onExiting = this.onExiting.bind(this);
-    this.onExited = this.onExited.bind(this);
   }
 
   componentDidMount() {
+
     firestore.collection('businesses').onSnapshot((snapshot) => {
       const selectedBusiness = snapshot.docs[0].data();
+
+      console.log(selectedBusiness);
 
       this.setState({
         business: selectedBusiness,
       });
-      console.log(selectedBusiness);
     });
-  }
-
-  onExiting() {
-    this.setState({
-      animating: true,
-    });
-  }
-
-  onExited() {
-    this.setState({
-      animating: false,
-    });
-  }
-
-  nextImg() {
-    if (this.state.animating) return;
-    const nextIndex =
-      this.state.activeIndex === items.length - 1
-        ? 0
-        : this.state.activeIndex + 1;
-    this.setState({ activeIndex: nextIndex });
-  }
-
-  prevImg() {
-    if (this.state.animating) return;
-    const nextIndex =
-      this.state.activeIndex === 0
-        ? items.length - 1
-        : this.state.activeIndex - 1;
-    this.setState({ activeIndex: nextIndex });
-  }
-
-  goToIndex(newIndex: number) {
-    if (this.state.animating) return;
-    this.setState({ activeIndex: newIndex });
   }
 
   render() {
-    // const activeIndex = this.state.activeIndex;
 
-    // const slides = items.map((item) => {
-    // return (
-    //   <CarouselItem
-    //     classNameName="carouselImg"
-    //     onExiting={this.onExiting}
-    //     onExited={this.onExited}
-    //     key={item.src}
-    //   >
-    //     <img src={item.src} alt={item.altText} classNameName="d-block w-100"/>
-    //     <CarouselCaption captionText={item.caption} captionHeader={item.caption} />
-    //   </CarouselItem>
-    // );
-    // });
+    const { classes } = this.props;
+
+    const businessPictures = [
+      {imageUrl: 'cat1.jpg' },
+      {imageUrl: 'cat2.jpg' },
+      {imageUrl: 'cat3.jpg' }
+    ];
 
     return (
-      <div className="business-info-page">
+      <div className={classes.businessInfoPage}>
         {this.state.business !== undefined ? (
-          <div className="business-overview">
-            <div className="carousel-container">
-              {/* <Carousel
-                          activeIndex={activeIndex}
-                          next={this.nextImgButton}
-                          previous={this.prevImgButton}
-                      >
-                          <CarouselIndicators items={items} activeIndex={activeIndex} onClickHandler={this.goToIndex} />
-                          {slides}
-                          <CarouselControl direction="prev" directionText="Previous" onClickHandler={this.prevImg} />
-                          <CarouselControl direction="next" directionText="Next" onClickHandler={this.nextImg} />
-                      </Carousel> */}
+          <div className={classes.businessOverview}>
+            <div className={classes.carouselContainer}>
+              <Carousel navButtonsAlwaysVisible={true}>
+                {businessPictures.map((businessPicture, i) => (
+                  <Paper key={i}>
+                    <img className={classes.businessPicture} src={businessPicture.imageUrl} />
+                  </Paper>
+                ))}
+              </Carousel>
             </div>
 
-            <div className="business-information">
-              <h5 className="business-name">
+            <div className={classes.businessInformation}>
+              <h5>
                 {this.state.business.businessName}
               </h5>
               <h6>
                 {this.state.business.address}, {this.state.business.city},{' '}
                 {this.state.business.state} {this.state.business.zipcode}
               </h6>
-              <div className="distance-container">
-                <LocationOnIcon />
-                <p className="distance-to-business">0.02 Mi</p>
+              <div className={classes.distanceContainer}>
+                <LocationOn />
+                <p className={classes.distanceToBusiness}>0.02 Mi</p>
               </div>
             </div>
 
-            <div className="about-business">
+            <div className={classes.aboutBusiness}>
               <h6>
                 <b>ABOUT US</b>
               </h6>
-              <div className="about-content">
+              <div className={classes.aboutContent}>
                 {this.state.business.aboutBusiness}
               </div>
             </div>
 
-            <div className="reviews-container">
-              <div className="overall-review">
+            <div className={classes.reviewsContainer}>
+              <div className={classes.overallReview}>
                 <h6>
                   <b>REVIEWS</b>
                 </h6>
@@ -146,11 +178,11 @@ class BusinessInfo extends React.Component<{}, MyState> {
               </div>
 
               <div>
-                <div className="business-review">
-                  <div className="review-avatar">
+                <div className={classes.businessReview}>
+                  <div className={classes.reviewAvatar}>
                     <Avatar />
                   </div>
-                  <div className="review-content">
+                  <div className={classes.reviewContent}>
                     <div>
                       <b>Melissa</b>
                     </div>
@@ -159,7 +191,7 @@ class BusinessInfo extends React.Component<{}, MyState> {
                       it and we will definitely be making another appointment
                     </div>
                   </div>
-                  <div className="review-rating">
+                  <div className={classes.reviewRating}>
                     <div>10/17/20</div>
                     <Rating size="small" value={2.5} precision={0.5} readOnly />
                   </div>
@@ -168,7 +200,7 @@ class BusinessInfo extends React.Component<{}, MyState> {
             </div>
           </div>
         ) : (
-          <div className="loading-container">
+          <div className={classes.loadingContainer}>
             <CircularProgress size={75} />
           </div>
         )}
@@ -177,22 +209,4 @@ class BusinessInfo extends React.Component<{}, MyState> {
   }
 }
 
-const items = [
-  {
-    src: 'assets/cat1.jpg',
-    altText: '',
-    caption: '',
-  },
-  {
-    src: 'assets/cat2.jpg',
-    altText: '',
-    caption: "Freedom Isn't Free",
-  },
-  {
-    src: 'assets/cat4.jpg',
-    altText: '',
-    caption: '',
-  },
-];
-
-export default BusinessInfo;
+export default withStyles(styles, { withTheme: true })(BusinessInfo);
