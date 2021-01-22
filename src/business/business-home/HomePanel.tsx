@@ -11,7 +11,7 @@ import {
 } from '@material-ui/core';
 
 import StylistCard from './StylistCard';
-import AvailablityCard from './AvailabilityCard';
+import AvailabilityCard from './AvailabilityCard';
 import ContactCard from './ContactCard';
 import TodoList from './TodoList';
 
@@ -38,7 +38,7 @@ type State = {};
 class HomePanel extends React.Component<Props, State> {
   render() {
     const { classes, isMobile } = this.props;
-    const carouselComponents = [AvailablityCard, ContactCard];
+    const carouselComponents = [AvailabilityCard, ContactCard];
 
     return (
       <div className={classes.root}>
@@ -49,7 +49,7 @@ class HomePanel extends React.Component<Props, State> {
                 <StylistCard isMobile={isMobile}/>
               </Grid>
               <Grid item={true} xs={true}>
-                <Carousel>
+                <Carousel stopAutoPlayOnHover={true} animation="slide" navButtonsAlwaysInvisible={isMobile ? true : false}>
                   {carouselComponents.map((Component, i) => (
                     <Component key={i} />
                   ))}
