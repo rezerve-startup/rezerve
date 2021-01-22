@@ -55,7 +55,7 @@ interface BusinessSchedule {
 
 interface Props extends WithStyles<typeof styles> {}
 
-class AvailablityCard extends React.Component<Props, State> {
+class AvailabilityCard extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
 
@@ -81,7 +81,7 @@ class AvailablityCard extends React.Component<Props, State> {
     return (
       <Card>
         <CardContent className={classes.cardContent}>
-          <Typography align="center">Avaliability</Typography>
+          <Typography align="center">Availability</Typography>
           <List>
             {this.state.businessSchedule.map((item: BusinessSchedule) => (
               <ListItem key={item.day}>
@@ -156,4 +156,4 @@ class AvailablityCard extends React.Component<Props, State> {
   }
 }
 
-export default withStyles(styles, { withTheme: true })(AvailablityCard);
+export default withStyles(styles, { withTheme: true })(AvailabilityCard);
