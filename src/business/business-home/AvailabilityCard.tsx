@@ -15,6 +15,7 @@ import {
   WithStyles,
   Theme,
   CardContent,
+  Divider,
 } from '@material-ui/core';
 import { HorizontalSplitRounded } from '@material-ui/icons';
 
@@ -81,7 +82,8 @@ class AvailablityCard extends React.Component<Props, State> {
     return (
       <Card>
         <CardContent className={classes.cardContent}>
-          <Typography align="center">Avaliability</Typography>
+          <Typography variant="h5">Avaliability</Typography>
+          <Divider />
           <List>
             {this.state.businessSchedule.map((item: BusinessSchedule) => (
               <ListItem key={item.day}>
@@ -95,7 +97,7 @@ class AvailablityCard extends React.Component<Props, State> {
                           type="Time"
                           disabled={editInfo}
                           defaultValue={item.start}
-                          style={{width: 104, fontSize: "12px"}}
+                          style={{ width: 104 }}
                         />
                       </form>
                     </Grid>
@@ -107,7 +109,7 @@ class AvailablityCard extends React.Component<Props, State> {
                           type="Time"
                           disabled={editInfo}
                           defaultValue={item.end}
-                          style={{width: 104 , fontSize: 5}}
+                          style={{ width: 104 }}
                         />
                       </form>
                     </Grid>

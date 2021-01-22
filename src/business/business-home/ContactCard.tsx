@@ -9,6 +9,7 @@ import {
   createStyles,
   WithStyles,
   Theme,
+  Divider,
 } from '@material-ui/core';
 import { StringDecoder } from 'string_decoder';
 
@@ -20,9 +21,7 @@ const styles = (theme: Theme) =>
     card: {
       padding: theme.spacing(2),
     },
-    contacts: {
-      height: '50%',
-    },
+    contacts: {},
   });
 
 type State = {
@@ -49,19 +48,18 @@ class ContactCard extends React.Component<Props, State> {
 
     return (
       <Card className={classes.card}>
-        <Typography align="center">Contact Stylist</Typography>
-
+        <Typography variant="h5">Contact Stylist</Typography>
+        <Divider />
         {this.state.editInfo ? (
           <Typography align="left" className={classes.contacts}>
-            Phone Number: {this.state.phone}
+            Phone: {this.state.phone}
           </Typography>
         ) : (
           // Edit/Update Phone Number
-          <form autoComplete="off">
-            Phone Number:
+          <form autoComplete="off" style={{padding: 10}}>
             <TextField
               label="Change Phone number"
-              id="edit-phone"
+              id="edit-phone" 
               defaultValue={this.state.phone}
             />
             <br />
@@ -70,12 +68,11 @@ class ContactCard extends React.Component<Props, State> {
 
         {this.state.editInfo ? (
           <Typography className={classes.contacts} align="left">
-            Email Address: {this.state.email}
+            Email: {this.state.email}
           </Typography>
         ) : (
           // Edit/Update Email
-          <form autoComplete="off">
-            Email Address:
+          <form autoComplete="off" style={{padding: 10}}>
             <TextField
               label="Change email address"
               id="edit-email"
