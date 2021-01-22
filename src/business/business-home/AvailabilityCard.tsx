@@ -14,6 +14,7 @@ import {
   createStyles,
   WithStyles,
   Theme,
+  CardContent,
 } from '@material-ui/core';
 import { HorizontalSplitRounded } from '@material-ui/icons';
 
@@ -24,6 +25,9 @@ const styles = (theme: Theme) =>
     },
     card: {
       padding: theme.spacing(1),
+    },
+    cardContent: {
+      padding: '2px'
     },
     openHours: {
       padding: theme.spacing(1),
@@ -75,42 +79,44 @@ class AvailablityCard extends React.Component<Props, State> {
     const { classes } = this.props;
     const { editInfo } = this.state;
     return (
-      <Card className={classes.card}>
-        <Typography align="center">Avaliability</Typography>
-        <List>
-          {this.state.businessSchedule.map((item: BusinessSchedule) => (
-            <ListItem key={item.day}>
-              <ListItemText primary={item.day}  classes={{primary: classes.dayOfWeek }}/>
-              <ListItemSecondaryAction>
-                <Grid container={true} justify="flex-start" spacing={1}>
-                  <Grid item={true} xs={true}>
-                    <form noValidate={true} >
-                      <TextField
-                        id="time"
-                        type="Time"
-                        disabled={editInfo}
-                        defaultValue={item.start}
-                        style={{width: 104, fontSize: "12px"}}
-                      />
-                    </form>
+      <Card>
+        <CardContent className={classes.cardContent}>
+          <Typography align="center">Avaliability</Typography>
+          <List>
+            {this.state.businessSchedule.map((item: BusinessSchedule) => (
+              <ListItem key={item.day}>
+                <ListItemText primary={item.day}  classes={{primary: classes.dayOfWeek }}/>
+                <ListItemSecondaryAction>
+                  <Grid container={true} justify="flex-start" spacing={1}>
+                    <Grid item={true} xs={true}>
+                      <form noValidate={true} >
+                        <TextField
+                          id="time"
+                          type="Time"
+                          disabled={editInfo}
+                          defaultValue={item.start}
+                          style={{width: 104, fontSize: "12px"}}
+                        />
+                      </form>
+                    </Grid>
+                    <Typography style={{ margin: "auto" }}>-</Typography>
+                    <Grid item={true} xs={true}>
+                      <form noValidate={true}>
+                        <TextField
+                          id="time"
+                          type="Time"
+                          disabled={editInfo}
+                          defaultValue={item.end}
+                          style={{width: 104 , fontSize: 5}}
+                        />
+                      </form>
+                    </Grid>
                   </Grid>
-                  <Typography style={{ margin: "auto" }}>-</Typography>
-                  <Grid item={true} xs={true}>
-                    <form noValidate={true}>
-                      <TextField
-                        id="time"
-                        type="Time"
-                        disabled={editInfo}
-                        defaultValue={item.end}
-                        style={{width: 104 , fontSize: 5}}
-                      />
-                    </form>
-                  </Grid>
-                </Grid>
-              </ListItemSecondaryAction>
-            </ListItem>
-          ))}
-        </List>
+                </ListItemSecondaryAction>
+              </ListItem>
+            ))}
+          </List>
+        </CardContent>
         <CardActions style={{ justifyContent: 'center' }}>
           {this.state.editInfo ? (
             <Button
