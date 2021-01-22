@@ -94,7 +94,7 @@ class AvailablityCard extends React.Component<Props, State> {
                       />
                     </form>
                   </Grid>
-                  <Typography style={{fontSize: "14px"}}>-</Typography>
+                  <Typography style={{ margin: "auto" }}>-</Typography>
                   <Grid item={true} xs={true}>
                     <form noValidate={true}>
                       <TextField
