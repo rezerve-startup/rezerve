@@ -20,10 +20,8 @@ const styles = (theme: Theme) =>
     card: {
       padding: theme.spacing(2),
     },
-    openHours: {
-      padding: theme.spacing(2),
-      textAlign: 'center',
-      color: theme.palette.text.secondary,
+    contacts: {
+      height: '50%',
     },
   });
 
@@ -54,25 +52,35 @@ class ContactCard extends React.Component<Props, State> {
         <Typography align="center">Contact Stylist</Typography>
 
         {this.state.editInfo ? (
-          <Typography align="left">Phone Number: {this.state.phone}</Typography>
+          <Typography align="left" className={classes.contacts}>
+            Phone Number: {this.state.phone}
+          </Typography>
         ) : (
           // Edit/Update Phone Number
           <form autoComplete="off">
             Phone Number:
-            <TextField label="Change Phone number" id="edit-phone" />
+            <TextField
+              label="Change Phone number"
+              id="edit-phone"
+              defaultValue={this.state.phone}
+            />
             <br />
           </form>
         )}
 
         {this.state.editInfo ? (
-          <Typography align="left">
+          <Typography className={classes.contacts} align="left">
             Email Address: {this.state.email}
           </Typography>
         ) : (
           // Edit/Update Email
           <form autoComplete="off">
-            Phone Number:
-            <TextField label="Change email address" id="edit-email" />
+            Email Address:
+            <TextField
+              label="Change email address"
+              id="edit-email"
+              defaultValue={this.state.email}
+            />
           </form>
         )}
 
@@ -120,8 +128,8 @@ class ContactCard extends React.Component<Props, State> {
 
   updateData() {
     this.setState({
-      phone: '123-123-1234',
-      email: 'newEmail@gmail.com',
+      phone: this.state.phone,
+      email: this.state.email,
     });
     this.update();
   }

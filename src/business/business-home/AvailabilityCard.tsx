@@ -15,6 +15,7 @@ import {
   WithStyles,
   Theme,
 } from '@material-ui/core';
+import { HorizontalSplitRounded } from '@material-ui/icons';
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -22,12 +23,18 @@ const styles = (theme: Theme) =>
       flexGrow: 1,
     },
     card: {
-      padding: theme.spacing(2),
+      padding: theme.spacing(1),
     },
     openHours: {
-      padding: theme.spacing(2),
+      padding: theme.spacing(1),
       textAlign: 'center',
-      color: theme.palette.text.secondary,
+      backgroundColor: theme.palette.background.paper,
+      insert: true,
+
+    }, 
+    dayOfWeek: {
+      marginRight: "100px",
+      fontSize: "14px"
     },
   });
 
@@ -58,7 +65,7 @@ class AvailablityCard extends React.Component<Props, State> {
         { day: 'Saturday', start: '09:00', end: '17:00' },
         { day: 'Sunday', start: '09:00', end: '17:00' },
       ],
-      editInfo: false,
+      editInfo: true,
     };
 
     this.handleEdit = this.handleEdit.bind(this);
@@ -70,23 +77,24 @@ class AvailablityCard extends React.Component<Props, State> {
     return (
       <Card className={classes.card}>
         <Typography align="center">Avaliability</Typography>
-        <List className={classes.openHours}>
+        <List>
           {this.state.businessSchedule.map((item: BusinessSchedule) => (
             <ListItem key={item.day}>
-              <ListItemText primary={item.day} />
+              <ListItemText primary={item.day}  classes={{primary: classes.dayOfWeek }}/>
               <ListItemSecondaryAction>
-                <Grid container={true} justify="space-between" spacing={1}>
+                <Grid container={true} justify="flex-start" spacing={1}>
                   <Grid item={true} xs={true}>
-                    <form noValidate={true}>
+                    <form noValidate={true} >
                       <TextField
                         id="time"
                         type="Time"
                         disabled={editInfo}
                         defaultValue={item.start}
+                        style={{width: 104, fontSize: "12px"}}
                       />
                     </form>
                   </Grid>
-                  to
+                  <Typography style={{fontSize: "14px"}}>-</Typography>
                   <Grid item={true} xs={true}>
                     <form noValidate={true}>
                       <TextField
@@ -94,6 +102,7 @@ class AvailablityCard extends React.Component<Props, State> {
                         type="Time"
                         disabled={editInfo}
                         defaultValue={item.end}
+                        style={{width: 104 , fontSize: 5}}
                       />
                     </form>
                   </Grid>
