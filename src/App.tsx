@@ -25,6 +25,8 @@ const routes = [
   { path: '/business-info-details', component: BusinessInfoDetails },
 ];
 
+let currentUser = 'business';
+
 const useStyles = makeStyles({
   root: {
     flex: 1,
@@ -53,7 +55,14 @@ const App = () => {
   return (
     <div className={classes.root}>
       <ThemeProvider theme={theme}>
-        <Router>
+        {currentUser === 'business' && (
+          <BusinessInfo />
+        )}
+
+        {currentUser === 'customer' && (
+          <AppointmentsPage />
+        )}
+        {/* <Router>
           <Sidebar />
           <Switch>
             {routes.map((route, i) => (
@@ -66,7 +75,7 @@ const App = () => {
             ))}
           </Switch>
         </Router>
-        <BusinessTabs />
+        <BusinessTabs /> */}
       </ThemeProvider>
     </div>
   );
