@@ -1,7 +1,12 @@
-import React, {useState} from 'react';
-import {loadStripe} from '@stripe/stripe-js';
+import React, { useState } from 'react';
+import { loadStripe } from '@stripe/stripe-js';
 import './checkout.css';
-import { CardElement, Elements, useElements, useStripe } from '@stripe/react-stripe-js';
+import {
+  CardElement,
+  Elements,
+  useElements,
+  useStripe,
+} from '@stripe/react-stripe-js';
 import { Card } from '@material-ui/core';
 
 const CARD_OPTIONS = {
@@ -28,7 +33,7 @@ const CARD_OPTIONS = {
   },
 };
 
-const CardField = ({onChange}) => (
+const CardField = ({ onChange }) => (
   <div className="FormRow">
     <CardElement options={CARD_OPTIONS} onChange={onChange} />
   </div>
@@ -61,7 +66,7 @@ const Field = ({
   </div>
 );
 
-const SubmitButton = ({processing, error, children, disabled}) => (
+const SubmitButton = ({ processing, error, children, disabled }) => (
   <button
     className={`SubmitButton ${error ? 'SubmitButton--error' : ''}`}
     type="submit"
@@ -71,7 +76,7 @@ const SubmitButton = ({processing, error, children, disabled}) => (
   </button>
 );
 
-const ErrorMessage = ({children}) => (
+const ErrorMessage = ({ children }) => (
   <div className="ErrorMessage" role="alert">
     <svg width="16" height="16" viewBox="0 0 17 17">
       <path
@@ -87,7 +92,7 @@ const ErrorMessage = ({children}) => (
   </div>
 );
 
-const ResetButton = ({onClick}) => (
+const ResetButton = ({ onClick }) => (
   <button type="button" className="ResetButton" onClick={onClick}>
     <svg width="32px" height="32px" viewBox="0 0 32 32">
       <path
@@ -156,94 +161,109 @@ const CheckoutForm = () => {
   };
 
   return paymentMethod ? (
-      <div class="checkout-container">
-        <Card>
-            <div class="card-inner-container">
-                <div className="Result">
-                <div className="ResultTitle" role="alert">
-                    Payment successful
-                </div>
-                <div className="ResultMessage">
-                    Thanks for trying Stripe Elements. No money was charged, but we
-                    generated a PaymentMethod: {paymentMethod.id}
-                </div>
-                <ResetButton onClick={reset} />
-                </div>
+    <div class="checkout-container">
+      <Card>
+        <div class="card-inner-container">
+          <div className="Result">
+            <div className="ResultTitle" role="alert">
+              Payment successful
             </div>
-        </Card>
-      </div>
+            <div className="ResultMessage">
+              Thanks for trying Stripe Elements. No money was charged, but we
+              generated a PaymentMethod: {paymentMethod.id}
+            </div>
+            <ResetButton onClick={reset} />
+          </div>
+        </div>
+      </Card>
+    </div>
   ) : (
-      <div class="checkout-card">
-        <Card>
-            <div class="card-inner-container">
-                <form className="Form" onSubmit={handleSubmit}>
-                    <fieldset className="FormGroup">
-                        <Field
-                            label="Name"
-                            id="name"
-                            type="text"
-                            placeholder="Jane Doe"
-                            required
-                            autoComplete="name"
-                            value={billingDetails.name}
-                            onChange={(e) => {
-                                setBillingDetails({...billingDetails, name: e.target.value});
-                            }}
-                        />
-                        <Field
-                            label="Email"
-                            id="email"
-                            type="email"
-                            placeholder="janedoe@gmail.com"
-                            required
-                            autoComplete="email"
-                            value={billingDetails.email}
-                            onChange={(e) => {
-                                setBillingDetails({...billingDetails, email: e.target.value});
-                            }}
-                        />
-                        <Field
-                            label="Phone"
-                            id="phone"
-                            type="tel"
-                            placeholder="(123) 456-7890"
-                            required
-                            autoComplete="tel"
-                            value={billingDetails.phone}
-                            onChange={(e) => {
-                                setBillingDetails({...billingDetails, phone: e.target.value});
-                            }}
-                        />
-                    </fieldset>
-                    <fieldset className="FormGroup">
-                        <CardField
-                        onChange={(e) => {
-                            setError(e.error);
-                            setCardComplete(e.complete);
-                        }}
-                        />
-                    </fieldset>
-                    {error && <ErrorMessage>{error.message}</ErrorMessage>}
-                    <SubmitButton processing={processing} error={error} disabled={!stripe}>
-                        Pay $25
-                    </SubmitButton>
-                </form>
-            </div>
-        </Card>
-      </div>
+    <div class="checkout-card">
+      <Card>
+        <div class="card-inner-container">
+          <form className="Form" onSubmit={handleSubmit}>
+            <fieldset className="FormGroup">
+              <Field
+                label="Name"
+                id="name"
+                type="text"
+                placeholder="Jane Doe"
+                required
+                autoComplete="name"
+                value={billingDetails.name}
+                onChange={(e) => {
+                  setBillingDetails({
+                    ...billingDetails,
+                    name: e.target.value,
+                  });
+                }}
+              />
+              <Field
+                label="Email"
+                id="email"
+                type="email"
+                placeholder="janedoe@gmail.com"
+                required
+                autoComplete="email"
+                value={billingDetails.email}
+                onChange={(e) => {
+                  setBillingDetails({
+                    ...billingDetails,
+                    email: e.target.value,
+                  });
+                }}
+              />
+              <Field
+                label="Phone"
+                id="phone"
+                type="tel"
+                placeholder="(123) 456-7890"
+                required
+                autoComplete="tel"
+                value={billingDetails.phone}
+                onChange={(e) => {
+                  setBillingDetails({
+                    ...billingDetails,
+                    phone: e.target.value,
+                  });
+                }}
+              />
+            </fieldset>
+            <fieldset className="FormGroup">
+              <CardField
+                onChange={(e) => {
+                  setError(e.error);
+                  setCardComplete(e.complete);
+                }}
+              />
+            </fieldset>
+            {error && <ErrorMessage>{error.message}</ErrorMessage>}
+            <SubmitButton
+              processing={processing}
+              error={error}
+              disabled={!stripe}
+            >
+              Pay $25
+            </SubmitButton>
+          </form>
+        </div>
+      </Card>
+    </div>
   );
 };
 
 // Make sure to call `loadStripe` outside of a component’s render to avoid
 // recreating the `Stripe` object on every render.
-const stripePromise = loadStripe('pk_test_51Hiu7WCrgvBRTZ4ZDfOmbitywAwqDCrPuACQBItzVMXTjQL4v8rW6GPXjTsh7ZdNkkq2dvIKphbvTFDkj8GKphap00GcsGQvqC');
+const stripePromise = loadStripe(
+  'pk_test_51Hiu7WCrgvBRTZ4ZDfOmbitywAwqDCrPuACQBItzVMXTjQL4v8rW6GPXjTsh7ZdNkkq2dvIKphbvTFDkj8GKphap00GcsGQvqC',
+);
 const ELEMENTS_OPTIONS = {
-    fonts: [
-      {
-        cssSrc: 'https://fonts.googleapis.com/css?family=Roboto',
-      },
-    ],
-  };
+  fonts: [
+    {
+      cssSrc: 'https://fonts.googleapis.com/css?family=Roboto',
+    },
+  ],
+};
 
 const App2 = () => {
   return (

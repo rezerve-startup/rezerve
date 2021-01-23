@@ -28,18 +28,17 @@ const styles = (theme: Theme) =>
       padding: theme.spacing(1),
     },
     cardContent: {
-      padding: '2px'
+      padding: '2px',
     },
     openHours: {
       padding: theme.spacing(1),
       textAlign: 'center',
       backgroundColor: theme.palette.background.paper,
       insert: true,
-
-    }, 
+    },
     dayOfWeek: {
-      marginRight: "100px",
-      fontSize: "14px"
+      marginRight: '100px',
+      fontSize: '14px',
     },
   });
 
@@ -87,11 +86,14 @@ class AvailablityCard extends React.Component<Props, State> {
           <List>
             {this.state.businessSchedule.map((item: BusinessSchedule) => (
               <ListItem key={item.day}>
-                <ListItemText primary={item.day}  classes={{primary: classes.dayOfWeek }}/>
+                <ListItemText
+                  primary={item.day}
+                  classes={{ primary: classes.dayOfWeek }}
+                />
                 <ListItemSecondaryAction>
                   <Grid container={true} justify="flex-start" spacing={1}>
                     <Grid item={true} xs={true}>
-                      <form noValidate={true} >
+                      <form noValidate={true}>
                         <TextField
                           id="time"
                           type="Time"
@@ -101,7 +103,7 @@ class AvailablityCard extends React.Component<Props, State> {
                         />
                       </form>
                     </Grid>
-                    <Typography style={{ margin: "auto" }}>-</Typography>
+                    <Typography style={{ margin: 'auto' }}>-</Typography>
                     <Grid item={true} xs={true}>
                       <form noValidate={true}>
                         <TextField

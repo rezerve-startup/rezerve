@@ -46,10 +46,14 @@ class HomePanel extends React.Component<Props, State> {
           <Grid item={true} xs={isMobile ? 12 : 6}>
             <Grid container={true} spacing={2} direction="column">
               <Grid item={true} xs={true}>
-                <StylistCard isMobile={isMobile}/>
+                <StylistCard isMobile={isMobile} />
               </Grid>
               <Grid item={true} xs={true}>
-                <Carousel stopAutoPlayOnHover={true} animation="slide" navButtonsAlwaysInvisible={isMobile ? true : false}>
+                <Carousel
+                  stopAutoPlayOnHover={true}
+                  animation="slide"
+                  navButtonsAlwaysInvisible={isMobile ? true : false}
+                >
                   {carouselComponents.map((Component, i) => (
                     <Component key={i} />
                   ))}
@@ -61,8 +65,22 @@ class HomePanel extends React.Component<Props, State> {
             <Grid container={true} spacing={2} direction="column">
               <Grid item={true} xs={true}>
                 <Paper className={classes.paper}>
-                  <Typography component="h1" variant="h1" color="primary" align="left">20</Typography>
-                  <Typography component="h5" variant="h5" align="left" style={{ fontWeight: 600 }}>Upcoming Appointments</Typography>
+                  <Typography
+                    component="h1"
+                    variant="h1"
+                    color="primary"
+                    align="left"
+                  >
+                    20
+                  </Typography>
+                  <Typography
+                    component="h5"
+                    variant="h5"
+                    align="left"
+                    style={{ fontWeight: 600 }}
+                  >
+                    Upcoming Appointments
+                  </Typography>
                 </Paper>
               </Grid>
               <Grid item={true} xs={true}>

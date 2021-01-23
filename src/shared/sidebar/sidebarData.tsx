@@ -10,7 +10,7 @@ export const sidebarData = [
   {
     title: 'Appointments',
     path: '/appointments',
-    icon: <CalendarViewDay/>,
+    icon: <CalendarViewDay />,
     cName: 'nav-text',
   },
   {

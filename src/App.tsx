@@ -13,7 +13,7 @@ import AppointmentsPage from './customer/customer-appointments/AppointmentPage';
 // import Receipt from './customer/customer-reciept/Reciept.js';
 import BusinessInfo from './business/business-info/BusinessInfo';
 import BusinessInfoDetails from './business/business-info/business-info-details/BusinessInfoDetails';
-import BusinessTabs from './business/business-home/BusinessHome';
+import BusinessHome from './business/business-home/BusinessHome';
 
 const routes = [
   // { path: "/help", component: Help },
@@ -66,7 +66,7 @@ const App = () => {
             ))}
           </Switch>
         </Router>
-        <BusinessTabs />
+        <BusinessHome />
       </ThemeProvider>
     </div>
   );

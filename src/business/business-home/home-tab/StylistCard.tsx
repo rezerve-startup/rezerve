@@ -11,7 +11,7 @@ import {
   createStyles,
 } from '@material-ui/core';
 import { Rating } from '@material-ui/lab';
-import image from '../../assets/avatar.jpg';
+import image from '../../../assets/avatar.jpg';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -32,11 +32,11 @@ const useStyles = makeStyles((theme: Theme) =>
 );
 
 type Props = {
-  isMobile: boolean
-}
+  isMobile: boolean;
+};
 
 export default function StylistCard(props: Props) {
-  const { isMobile } = props
+  const { isMobile } = props;
   const classes = useStyles();
   return (
     <Card className={classes.card}>
@@ -52,7 +52,7 @@ export default function StylistCard(props: Props) {
               value={3.5}
               defaultValue={2.5}
               precision={0.5}
-              size={isMobile ? "medium" : "large"}
+              size={isMobile ? 'medium' : 'large'}
               readOnly={true}
             />
           </CardContent>

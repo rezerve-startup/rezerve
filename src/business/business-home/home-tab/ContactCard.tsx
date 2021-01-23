@@ -56,10 +56,10 @@ class ContactCard extends React.Component<Props, State> {
           </Typography>
         ) : (
           // Edit/Update Phone Number
-          <form autoComplete="off" style={{padding: 10}}>
+          <form autoComplete="off" style={{ padding: 10 }}>
             <TextField
               label="Change Phone number"
-              id="edit-phone" 
+              id="edit-phone"
               defaultValue={this.state.phone}
             />
             <br />
@@ -72,7 +72,7 @@ class ContactCard extends React.Component<Props, State> {
           </Typography>
         ) : (
           // Edit/Update Email
-          <form autoComplete="off" style={{padding: 10}}>
+          <form autoComplete="off" style={{ padding: 10 }}>
             <TextField
               label="Change email address"
               id="edit-email"
