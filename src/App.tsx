@@ -14,6 +14,7 @@ import AppointmentsPage from './customer/customer-appointments/AppointmentPage';
 import BusinessInfo from './business/business-info/BusinessInfo';
 import BusinessInfoDetails from './business/business-info/business-info-details/BusinessInfoDetails';
 import BusinessTabs from './business/business-home/BusinessHome';
+import store from './shared/store/store';
 
 const routes = [
   // { path: "/help", component: Help },
@@ -75,7 +76,9 @@ const App = () => {
             ))}
           </Switch>
         </Router>
-        <BusinessTabs /> */}
+        <BusinessTabs />
+        </Router> */}
+        <BusinessTabs />
       </ThemeProvider>
     </div>
   );
