@@ -14,6 +14,7 @@ import AppointmentsPage from './customer/customer-appointments/AppointmentPage';
 import BusinessInfo from './business/business-info/BusinessInfo';
 import BusinessInfoDetails from './business/business-info/business-info-details/BusinessInfoDetails';
 import BusinessTabs from './business/business-home/BusinessHome';
+import store from './shared/store/store';
 
 const routes = [
   // { path: "/help", component: Help },
@@ -24,6 +25,8 @@ const routes = [
   { path: '/business-info', component: BusinessInfo },
   { path: '/business-info-details', component: BusinessInfoDetails },
 ];
+
+let currentUser = 'business';
 
 const useStyles = makeStyles({
   root: {
@@ -53,7 +56,14 @@ const App = () => {
   return (
     <div className={classes.root}>
       <ThemeProvider theme={theme}>
-        <Router>
+        {currentUser === 'business' && (
+          <BusinessInfo />
+        )}
+
+        {currentUser === 'customer' && (
+          <AppointmentsPage />
+        )}
+        {/* <Router>
           <Sidebar />
           <Switch>
             {routes.map((route, i) => (
@@ -66,6 +76,8 @@ const App = () => {
             ))}
           </Switch>
         </Router>
+        <BusinessTabs />
+        </Router> */}
         <BusinessTabs />
       </ThemeProvider>
     </div>
