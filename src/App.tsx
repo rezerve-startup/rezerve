@@ -13,7 +13,7 @@ import AppointmentsPage from './customer/customer-appointments/AppointmentPage';
 // import Receipt from './customer/customer-reciept/Reciept.js';
 import BusinessInfo from './business/business-info/BusinessInfo';
 import BusinessInfoDetails from './business/business-info/business-info-details/BusinessInfoDetails';
-import BusinessTabs from './business/business-home/BusinessHome';
+import BusinessHome from './business/business-home/BusinessHome';
 import store from './shared/store/store';
 
 const routes = [
@@ -76,9 +76,8 @@ const App = () => {
             ))}
           </Switch>
         </Router>
-        <BusinessTabs />
+        <BusinessHome />
         </Router> */}
-        <BusinessTabs />
       </ThemeProvider>
     </div>
   );

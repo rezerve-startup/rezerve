@@ -11,7 +11,7 @@ import {
 } from '@material-ui/core';
 import { Home, List, Person, Assessment } from '@material-ui/icons';
 
-import HomePanel from './HomePanel';
+import HomePanel from './home-tab/HomeTab';
 
 const useStyles = makeStyles({
   root: {
@@ -19,7 +19,7 @@ const useStyles = makeStyles({
   },
 });
 
-export default function BusinessTabs() {
+export default function BusinessHome() {
   const classes = useStyles();
   const theme = useTheme();
   const [value, setValue] = React.useState(0);
@@ -88,10 +88,10 @@ function a11yProps(index: number) {
 }
 
 type TabPanelProps = {
-  children: React.ReactNode
-  index: number
-  value: string | number | Error
-}
+  children: React.ReactNode;
+  index: number;
+  value: string | number | Error;
+};
 
 function TabPanel(props: TabPanelProps) {
   const { children, value, index, ...other } = props;
@@ -104,11 +104,7 @@ function TabPanel(props: TabPanelProps) {
       aria-labelledby={`business-tab-${index}`}
       {...other}
     >
-      {value === index && (
-        <Box p={1}>
-          {children}
-        </Box>
-      )}
+      {value === index && <Box p={1}>{children}</Box>}
     </div>
   );
 }

@@ -7,10 +7,11 @@ import {
   createStyles,
   WithStyles,
   Theme,
+  Typography,
 } from '@material-ui/core';
 
 import StylistCard from './StylistCard';
-import AvailablityCard from './AvailabilityCard';
+import AvailabilityCard from './AvailabilityCard';
 import ContactCard from './ContactCard';
 import TodoList from './TodoList';
 
@@ -37,7 +38,7 @@ type State = {};
 class HomePanel extends React.Component<Props, State> {
   render() {
     const { classes, isMobile } = this.props;
-    const carouselComponents = [AvailablityCard, ContactCard];
+    const carouselComponents = [AvailabilityCard, ContactCard];
 
     return (
       <div className={classes.root}>
@@ -45,12 +46,16 @@ class HomePanel extends React.Component<Props, State> {
           <Grid item={true} xs={isMobile ? 12 : 6}>
             <Grid container={true} spacing={2} direction="column">
               <Grid item={true} xs={true}>
-                <StylistCard isMobile={isMobile}/>
+                <StylistCard isMobile={isMobile} />
               </Grid>
               <Grid item={true} xs={true}>
-                <Carousel>
+                <Carousel
+                  stopAutoPlayOnHover={true}
+                  animation="slide"
+                  navButtonsAlwaysInvisible={isMobile ? true : false}
+                >
                   {carouselComponents.map((Component, i) => (
-                    <Component key={i} editInfo={false} />
+                    <Component key={i} />
                   ))}
                 </Carousel>
               </Grid>
@@ -59,7 +64,24 @@ class HomePanel extends React.Component<Props, State> {
           <Grid item={true} xs={isMobile ? 12 : 6}>
             <Grid container={true} spacing={2} direction="column">
               <Grid item={true} xs={true}>
-                <Paper className={classes.paper}>Upcoming Appointments</Paper>
+                <Paper className={classes.paper}>
+                  <Typography
+                    component="h1"
+                    variant="h1"
+                    color="primary"
+                    align="left"
+                  >
+                    20
+                  </Typography>
+                  <Typography
+                    component="h5"
+                    variant="h5"
+                    align="left"
+                    style={{ fontWeight: 600 }}
+                  >
+                    Upcoming Appointments
+                  </Typography>
+                </Paper>
               </Grid>
               <Grid item={true} xs={true}>
                 <TodoList />

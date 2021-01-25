@@ -6,12 +6,15 @@ import {
   List,
   ListItem,
   ListItemText,
+  ListItemAvatar,
   ListItemSecondaryAction,
+  Avatar,
   Checkbox,
   withStyles,
   createStyles,
   WithStyles,
   Theme,
+  Divider,
 } from '@material-ui/core';
 
 const styles = (theme: Theme) =>
@@ -25,6 +28,9 @@ const styles = (theme: Theme) =>
     todoList: {
       width: '100%',
       backgroundColor: theme.palette.background.paper,
+    },
+    listAvatar: {
+      backgroundColor: theme.palette.primary.main,
     },
   });
 
@@ -82,13 +88,16 @@ class TodoList extends React.Component<Props, State> {
     return (
       <Card className={classes.card}>
         <CardContent>
-          <Typography variant="h5">ToDo List</Typography>
+          <Typography variant="h5">TO-DO</Typography>
+          <Divider />
           <List className={classes.todoList}>
             {this.state.todoItems.map((item: TodoItem) => {
               const labelId = `checkbox-list-secondary-label-${item.id}`;
               return (
                 <ListItem key={item.id}>
-                  {/* <ListItemAvatar>{item.id}</ListItemAvatar> */}
+                  <ListItemAvatar>
+                    <Avatar className={classes.listAvatar}>{item.id}</Avatar>
+                  </ListItemAvatar>
                   <ListItemText id={labelId} primary={item.title} />
                   <ListItemSecondaryAction>
                     <Checkbox
