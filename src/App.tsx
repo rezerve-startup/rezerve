@@ -78,7 +78,7 @@ const App = () => {
         </Router>
         <BusinessHome />
         </Router> */}
-      </ThemeProv4ider>
+      </ThemeProvider>
     </div>
   );
 };
