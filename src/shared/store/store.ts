@@ -1,6 +1,12 @@
-import { combineReducers } from 'redux';
-import { systemReducer } from './reducers';
+import { combineReducers, createStore } from 'redux';
+import { composeWithDevTools } from 'redux-devtools-extension';
+import { businessReducer, systemReducer } from './reducers';
 
-export const rootReducer = combineReducers({
+const rootReducer = combineReducers({
   system: systemReducer,
+  business: businessReducer
 });
+
+const store = createStore(rootReducer, composeWithDevTools());
+
+export default store;
