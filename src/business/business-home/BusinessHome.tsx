@@ -12,6 +12,7 @@ import {
 import { Home, List, Person, Assessment } from '@material-ui/icons';
 
 import HomePanel from './home-tab/HomeTab';
+import AppointmentPanel from './appointment-tab/AppointmentHome';
 
 const useStyles = makeStyles({
   root: {
@@ -72,7 +73,7 @@ export default function BusinessHome() {
             <HomePanel isMobile={isMobile} />
           </TabPanel>
           <TabPanel value={value} index={1}>
-            Item Two
+            <AppointmentPanel isMobile={isMobile}/>
           </TabPanel>
         </SwipeableViews>
       </Box>
