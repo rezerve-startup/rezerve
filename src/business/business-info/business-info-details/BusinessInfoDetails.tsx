@@ -7,6 +7,7 @@ import {
   Grid,
   makeStyles,
   Theme,
+  Fab,
 } from '@material-ui/core';
 import cat1 from '../../../assets/business-pictures/cat1.jpg';
 import cat2 from '../../../assets/business-pictures/cat2.jpg';
@@ -22,7 +23,7 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     card: {
       padding: 0,
-      margin: '2vw 2vh'
+      margin: '2vw 2vh',
     },
     serviceHeader: {
       marginTop: 0,
@@ -40,34 +41,63 @@ const useStyles = makeStyles((theme: Theme) =>
       marginBottom: '0',
       float: 'right',
     },
+    dateContainer: {
+      display: 'inline-block',
+      width: (100 / 7 - 1).toString() + 'vw',
+      float: 'left',
+    },
+    dateCircle: {
+      color: 'red',
+      width: 'inherit',
+    },
+    dateLabel: {
+      color: 'red',
+      width: 'inherit',
+    },
   }),
 );
 
 const employees = [
   {
     name: 'Cindy',
-    picture: 'assets/cat1.jpg',
+    picture: cat1,
     schedule: '',
     checked: false,
+    services: [
+      {
+        name: 'Service',
+        time: '25',
+        price: '35',
+      },
+      {
+        name: 'Service',
+        time: '25',
+        price: '35',
+      },
+      {
+        name: 'Service',
+        time: '25',
+        price: '35',
+      },
+      {
+        name: 'Service',
+        time: '25',
+        price: '35',
+      },
+    ],
   },
   {
     name: 'Joel',
-    picture: 'assets/cat2.jpg',
+    picture: cat2,
     schedule: '',
     checked: false,
   },
   {
     name: 'Mark',
-    picture: 'assets/cat4.jpg',
+    picture: cat3,
     schedule: '',
     checked: false,
   },
-];
-
-const businessPictures = [
-  { imageUrl: cat1 },
-  { imageUrl: cat2 },
-  { imageUrl: cat3 },
 ];
 
 // const employeeList = employees.map(
@@ -84,69 +114,110 @@ const businessPictures = [
 export default function BusinessInfoDetails(props: any) {
   const business = props.props;
   const classes = useStyles();
+  let firstAvailable = 'off';
+
+  const checkBoxCheck: any = () => {
+    console.log(firstAvailable);
+  }
   return (
     <div className={classes.main}>
       <Grid container={true} spacing={1}>
-        <Grid container={true} item={true} xs={4}>
-          <img
-            className={classes.businessPicture}
-            src={businessPictures[0].imageUrl}
-            alt=""
-          />
-          <FormControlLabel
-            control={
-              <Checkbox name={employees[0].name} value={employees[0].checked} />
-            }
-            label={employees[0].name}
-          />
-        </Grid>
-        <Grid container={true} item={true} xs={4}>
-          <img
-            className={classes.businessPicture}
-            src={businessPictures[1].imageUrl}
-            alt=""
-          />
-          <FormControlLabel
-            control={
-              <Checkbox name={employees[1].name} value={employees[1].checked} />
-            }
-            label={employees[1].name}
-          />
-        </Grid>
-        <Grid container={true} item={true} xs={4}>
-          <img
-            className={classes.businessPicture}
-            src={businessPictures[2].imageUrl}
-            alt=""
-          />
-          <FormControlLabel
-            control={
-              <Checkbox name={employees[2].name} value={employees[2].checked} />
-            }
-            label={employees[2].name}
-          />
-        </Grid>
+        {employees.map((employee) => (
+          <Grid container={true} item={true} xs={4} key={employee.name}>
+            <img
+              className={classes.businessPicture}
+              src={employee.picture}
+              alt=""
+            />
+            <FormControlLabel
+              control={
+                <Checkbox name={employee.name} value={employee.checked} />
+              }
+              label={employee.name}
+            />
+          </Grid>
+        ))}
       </Grid>
       <FormControlLabel
-        control={<Checkbox name={'FirstAvailable'} />}
+        control={<Checkbox name={'FirstAvailable'} value={firstAvailable} onChange={checkBoxCheck()} />}
         label="FIRST AVAILABLE"
       />
+      {/* {firstAvailable === 'on' && (
+        <Card className={classes.card} variant="outlined">
+        <h1 className={classes.serviceHeader}>Service</h1>
+        <p className={classes.serviceCost}>
+          <span className={classes.serviceTime}>25 min</span> $35
+        </p>
+      </Card>
+      )}
+      {employees.map((employee) => (
+        employee?.checked && (
+          employee?.services?.map((service) => (
+            // tslint:disable-next-line: jsx-key
+            <Card className={classes.card} variant="outlined">
+            <h1 className={classes.serviceHeader}>{service.name}</h1>
+            <p className={classes.serviceCost}>
+              <span className={classes.serviceTime}>{service.time} min</span>${service.price}
+            </p>
+      </Card>
+          ))
+        )
+      ))} */}
       <Card className={classes.card} variant="outlined">
         <h1 className={classes.serviceHeader}>Service</h1>
-        <p className={classes.serviceCost}><span className={classes.serviceTime}>25 min</span> $35</p>
+        <p className={classes.serviceCost}>
+          <span className={classes.serviceTime}>25 min</span> $35
+        </p>
       </Card>
       <Card className={classes.card} variant="outlined">
         <h1 className={classes.serviceHeader}>Service</h1>
-        <p className={classes.serviceCost}><span className={classes.serviceTime}>25 min</span> $35</p>
+        <p className={classes.serviceCost}>
+          <span className={classes.serviceTime}>25 min</span> $35
+        </p>
       </Card>
       <Card className={classes.card} variant="outlined">
         <h1 className={classes.serviceHeader}>Service</h1>
-        <p className={classes.serviceCost}><span className={classes.serviceTime}>25 min</span> $35</p>
+        <p className={classes.serviceCost}>
+          <span className={classes.serviceTime}>25 min</span> $35
+        </p>
       </Card>
       <Card className={classes.card} variant="outlined">
         <h1 className={classes.serviceHeader}>Service</h1>
-        <p className={classes.serviceCost}><span className={classes.serviceTime}>25 min</span> $35</p>
+        <p className={classes.serviceCost}>
+          <span className={classes.serviceTime}>25 min</span> $35
+        </p>
       </Card>
+      <h3>SEPTEMBER</h3>
+      <div>
+        <div className={classes.dateContainer}>
+          <p className={classes.dateLabel}>MON</p>
+          <Fab className={classes.dateCircle}>8</Fab>
+        </div>
+        <div className={classes.dateContainer}>
+          <p className={classes.dateLabel}>TUES</p>
+          <Fab className={classes.dateCircle}>9</Fab>
+        </div>
+        <div className={classes.dateContainer}>
+          <p className={classes.dateLabel}>WED</p>
+          <Fab className={classes.dateCircle}>10</Fab>
+        </div>
+        <div className={classes.dateContainer}>
+          <p className={classes.dateLabel}>THU</p>
+          <Fab className={classes.dateCircle}>11</Fab>
+        </div>
+        <div className={classes.dateContainer}>
+          <p className={classes.dateLabel}>FRI</p>
+          <Fab className={classes.dateCircle}>12</Fab>
+        </div>
+        <div className={classes.dateContainer}>
+          <p className={classes.dateLabel}>SAT</p>
+          <Fab className={classes.dateCircle}>13</Fab>
+        </div>
+        <div className={classes.dateContainer}>
+          <p className={classes.dateLabel}>SUN</p>
+          <Fab className={classes.dateCircle}>14</Fab>
+        </div>
+      </div>
     </div>
   );
 }
