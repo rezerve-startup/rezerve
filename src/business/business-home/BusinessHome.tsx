@@ -12,6 +12,7 @@ import {
 import { Home, List, Person, Assessment } from '@material-ui/icons';
 
 import HomePanel from './home-tab/HomeTab';
+import BusinessPerformance from './business-performance/BusinessPerformance';
 
 const useStyles = makeStyles({
   root: {
@@ -37,7 +38,7 @@ export default function BusinessHome() {
     { label: 'Home', icon: <Home /> },
     { label: 'Appointments', icon: <List /> },
     { label: 'Clients', icon: <Person /> },
-    { label: 'Preformance', icon: <Assessment /> },
+    { label: 'Performance', icon: <Assessment /> },
   ];
 
   return (
@@ -73,6 +74,18 @@ export default function BusinessHome() {
           </TabPanel>
           <TabPanel value={value} index={1}>
             Item Two
+          </TabPanel>
+          <TabPanel value={value} index={2}>
+            Item Three
+          </TabPanel>
+          <TabPanel value={value} index={3}>
+          <Tabs value={value} onChange={handleChange} aria-label="ant example">
+              <Tab label="Day" />
+              <Tab label="Week" />
+              <Tab label="Month" />
+              <Tab label="Year" />
+            </Tabs>
+            <BusinessPerformance />
           </TabPanel>
         </SwipeableViews>
       </Box>

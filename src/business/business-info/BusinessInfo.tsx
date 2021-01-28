@@ -11,6 +11,7 @@ import {
   createStyles,
   WithStyles,
   Theme, 
+  Button
 } from '@material-ui/core';
 
 import { firestore } from '../../config/FirebaseConfig';
@@ -112,7 +113,7 @@ class BusinessInfo extends React.Component<any, BusinessInfoState> {
                   size="medium"
                   value={this.state.business.businessRating}
                   precision={0.5}
-                  readOnly
+                  readOnly={true}
                 />
               </div>
 
@@ -132,12 +133,13 @@ class BusinessInfo extends React.Component<any, BusinessInfoState> {
                   </div>
                   <div className={classes.reviewRating}>
                     <div>10/17/20</div>
-                    <Rating size="small" value={2.5} precision={0.5} readOnly />
+                    <Rating size="small" value={2.5} precision={0.5} readOnly={true} />
                   </div>
                 </div>
               </div>
             </div>
-            <button onClick={this.dispatchUpdateBusinessName}>Update Business Name in Store</button>
+            <Button variant="contained" onClick={this.dispatchUpdateBusinessName}>Update Business Name in Store</Button>
+
           </div>
         ) : (
           <div className={classes.loadingContainer}>

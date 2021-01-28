@@ -27,6 +27,7 @@ const routes = [
 ];
 
 let currentUser = 'business';
+let currentPage = 'business-home';
 
 const useStyles = makeStyles({
   root: {
@@ -57,7 +58,14 @@ const App = () => {
     <div className={classes.root}>
       <ThemeProvider theme={theme}>
         {currentUser === 'business' && (
-          <BusinessInfo />
+          <div>
+            {currentPage === 'business-home' && (
+              <BusinessHome />
+            )}
+            {currentPage === 'business-info' && (
+              <BusinessInfo />
+            )}
+          </div>
         )}
 
         {currentUser === 'customer' && (
