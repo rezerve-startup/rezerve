@@ -73,7 +73,7 @@ export default function BusinessHome() {
             <HomePanel isMobile={isMobile} />
           </TabPanel>
           <TabPanel value={value} index={1}>
-            <AppointmentPanel isMobile={isMobile}/>
+            <AppointmentPanel />
           </TabPanel>
         </SwipeableViews>
       </Box>
