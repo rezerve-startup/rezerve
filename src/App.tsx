@@ -56,13 +56,9 @@ const App = () => {
   return (
     <div className={classes.root}>
       <ThemeProvider theme={theme}>
-        {currentUser === 'business' && (
-          <BusinessInfo />
-        )}
+        {currentUser === 'business' && <BusinessHome />}
 
-        {currentUser === 'customer' && (
-          <AppointmentsPage />
-        )}
+        {currentUser === 'customer' && <AppointmentsPage />}
         {/* <Router>
           <Sidebar />
           <Switch>

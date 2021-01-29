@@ -10,7 +10,7 @@ import {
   useTheme,
 } from '@material-ui/core';
 import { Home, List, Person, Assessment } from '@material-ui/icons';
-
+import ClientTab from './client-tab/ClientTab';
 import HomePanel from './home-tab/HomeTab';
 
 const useStyles = makeStyles({
@@ -73,6 +73,9 @@ export default function BusinessHome() {
           </TabPanel>
           <TabPanel value={value} index={1}>
             Item Two
+          </TabPanel>
+          <TabPanel value={value} index={2}>
+            <ClientTab employeeName="Test Employee" />
           </TabPanel>
         </SwipeableViews>
       </Box>
