@@ -79,12 +79,6 @@ export default function BusinessHome() {
             Item Three
           </TabPanel>
           <TabPanel value={value} index={3}>
-          <Tabs value={value} onChange={handleChange} aria-label="ant example">
-              <Tab label="Day" />
-              <Tab label="Week" />
-              <Tab label="Month" />
-              <Tab label="Year" />
-            </Tabs>
             <BusinessPerformance />
           </TabPanel>
         </SwipeableViews>

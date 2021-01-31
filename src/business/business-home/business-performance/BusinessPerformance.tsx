@@ -20,6 +20,12 @@ import { connect } from 'react-redux';
 
 type BusinessPerformanceState = {
   loading: boolean;
+  value: number;
+  business: {
+    abandonedCarts: number;
+    bookingPercentage: number;
+    profileViews: number;
+  }
 };
 
 interface Props extends WithStyles<typeof styles> {}
@@ -28,9 +34,21 @@ class BusinessPerformance extends React.Component<any, BusinessPerformanceState>
   constructor(props: any) {
     super(props);
     this.state = {
-        loading: false
+      value: 0,
+      loading: false,
+      business: {
+        abandonedCarts: 5,
+        bookingPercentage: 80,
+        profileViews: 180
+      }
     };
   }
+
+  handleChange = (_event: any, newValue: number) => {
+    this.setState({
+      value: newValue
+    });
+  };
 
   render() {
 
@@ -41,16 +59,36 @@ class BusinessPerformance extends React.Component<any, BusinessPerformanceState>
         {this.state.loading === false ? (
           <div className={classes.businessOverview}>
               
-              <h1>Marketing</h1>
+              <Tabs value={this.state.value} onChange={this.handleChange} aria-label="ant example">
+                <Tab label="Day" />
+                <Tab label="Week" />
+                <Tab label="Month" />
+                <Tab label="Year" />
+              </Tabs>
+
+              <div className={classes.sectionTitle}>
+                <div>Marketing</div>
+              </div>
               <div>
-                  <div>Profile Views</div>
-                  <div>
-                      <div>Abandoned Carts</div>
-                      <div>Booking Percentage</div>
+                  <div className={classes.businessPerformanceItem}>
+                    <div>Profile Views</div>
+                    <div>{this.state.business.profileViews}</div>
+                  </div>
+                  <div className={classes.businessPerformanceItemContainer}>
+                      <div className={classes.businessPerformanceItem}>
+                        <div>Abandoned Carts</div>
+                        <div>{this.state.business.abandonedCarts}</div>
+                      </div>
+                      <div className={classes.businessPerformanceItem}>
+                        <div>Booking Percentage</div>
+                        <div>{this.state.business.bookingPercentage}%</div>
+                      </div>
                   </div>
               </div>
 
-              <h1>Reviews & Rating</h1>
+              <div className={classes.sectionTitle}>
+                <div>Reviews & Rating</div>
+              </div>
               <h2>3.5</h2>
               <p>Rating</p>
               <Rating
@@ -58,10 +96,16 @@ class BusinessPerformance extends React.Component<any, BusinessPerformanceState>
                   value={3.5}
                   precision={0.5}
                   readOnly={true}
+                  classes={{
+                    iconFilled: classes.starRatingFilled,
+                    iconHover: classes.starRatingHover
+                  }}
                 />
 
               <div>
-                  <h1>Reviews</h1>
+                <div className={classes.sectionTitle}>
+                  <div>Reviews</div>
+                </div>
                 <div className={classes.businessReview}>
                   <div className={classes.reviewAvatar}>
                     <Avatar />
@@ -77,7 +121,16 @@ class BusinessPerformance extends React.Component<any, BusinessPerformanceState>
                   </div>
                   <div className={classes.reviewRating}>
                     <div>10/17/20</div>
-                    <Rating size="small" value={2.5} precision={0.5} readOnly={true} />
+                      <Rating 
+                        size="small" 
+                        value={2.5} 
+                        precision={0.5} 
+                        readOnly={true}
+                        classes={{
+                          iconFilled: classes.starRatingFilled,
+                          iconHover: classes.starRatingHover
+                        }} 
+                      />
                   </div>
                 </div>
               </div>
@@ -97,16 +150,37 @@ const styles = (theme: Theme) =>
     // root: {
     //   flexGrow: 1,
     // },
-    // businessInfoPage: {
-    //   backgroundColor: '#ffffff',
-    //   height: '100%',
-    //   color: 'white',
-    //   textAlign: 'center',
-    //   alignItems: 'center'
-    // },
-    // businessOverview: {
-    //   padding: '2.5rem'
-    // },
+    businessInfoPage: {
+      textAlign: 'center',
+      alignItems: 'center'
+    },
+    businessOverview: {
+      padding: ' 0.5rem 2.5rem 2.5rem 2.5rem'
+    },
+    businessPerformanceItemContainer: {
+      display: 'flex',
+      justifyContent: 'space-between',
+    },
+    businessPerformanceItem: {
+      borderStyle: 'solid',
+      borderWidth: 1,
+      borderRadius: '0.25rem',
+      margin: '0.25rem',
+      padding: '0.25rem',
+      flex: 1
+    },
+    starRatingFilled: {
+      color: theme.palette.primary.main,
+    },
+    starRatingHover: {
+      color: theme.palette.primary.light
+    },
+    sectionTitle: {
+      textAlign: 'left',
+      fontSize: 20,
+      fontWeight: 800,
+      margin: '0.5rem 0.25rem 0.5rem 0.25rem'
+    },
     // businessPicture: {
     //   width: '100%'
     // },
@@ -140,23 +214,23 @@ const styles = (theme: Theme) =>
     // overallReview: {
     //   marginBottom: '0.5rem'
     // },
-    // businessReview: {
-    //   display: 'flex',
-    //   justifyContent: 'space-around',
-    //   textAlign: 'start'
-    // },
-    // reviewAvatar: {
-    //   flex: 1,
-    //   marginRight: '0.5rem'
-    // },
-    // reviewContent: {
-    //   flex: 5,
-    //   marginRight: '0.5rem'
-    // },
-    // reviewRating: {
-    //   flex: 2,
-    //   marginLeft: '0.25rem'
-    // },
+    businessReview: {
+      display: 'flex',
+      justifyContent: 'space-around',
+      textAlign: 'start'
+    },
+    reviewAvatar: {
+      flex: 1,
+      marginRight: '0.5rem'
+    },
+    reviewContent: {
+      flex: 5,
+      marginRight: '0.5rem'
+    },
+    reviewRating: {
+      flex: 2,
+      marginLeft: '0.25rem'
+    },
     // loadingContainer: {
     //   display: 'flex',
     //   justifyContent: 'center',

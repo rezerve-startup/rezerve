@@ -113,6 +113,9 @@ class BusinessInfo extends React.Component<any, BusinessInfoState> {
                   size="medium"
                   value={this.state.business.businessRating}
                   precision={0.5}
+                  classes={{
+                    iconFilled: classes.starRating
+                  }}
                   readOnly={true}
                 />
               </div>
@@ -133,7 +136,11 @@ class BusinessInfo extends React.Component<any, BusinessInfoState> {
                   </div>
                   <div className={classes.reviewRating}>
                     <div>10/17/20</div>
-                    <Rating size="small" value={2.5} precision={0.5} readOnly={true} />
+                    <Rating size="small" value={2.5} precision={0.5} readOnly={true} 
+                      classes={{
+                        iconFilled: classes.starRatingFilled,
+                        iconHover: classes.starRatingHover,
+                      }} />
                   </div>
                 </div>
               </div>
@@ -221,6 +228,12 @@ const styles = (theme: Theme) =>
       justifyContent: 'center',
       alignItems: 'center',
       height: '100%'
+    },
+    starRatingFilled: {
+      color: theme.palette.primary.main,
+    },
+    starRatingHover: {
+      color: theme.palette.primary.light
     }
   });
 
