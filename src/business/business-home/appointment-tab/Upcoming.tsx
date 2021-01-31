@@ -8,8 +8,13 @@ import {
   Accordion,
   AccordionDetails,
   AccordionSummary,
+  Button,
+  Avatar,
 } from '@material-ui/core';
-import { ExpandMoreIcon, AccountCircle } from '@material-ui/icons/';
+import { AccountCircle, Description } from '@material-ui/icons/';
+import DeleteIcon from '@material-ui/icons/Delete';
+import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+import image from '../../../assets/avatar.jpg';
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -20,6 +25,20 @@ const styles = (theme: Theme) =>
       fontSize: theme.typography.pxToRem(15),
       fontWeight: theme.typography.fontWeightRegular,
     },
+    button: {
+      margin: theme.spacing(1),
+    },
+    small: {
+      width: theme.spacing(3),
+      height: theme.spacing(3),
+    },
+    secondaryHeading: {
+      fontSize: theme.typography.pxToRem(15),
+      color: theme.palette.text.secondary,
+    },
+    column: {
+      flexBasis: '33.33%',
+    },
   });
 
 type State = {
@@ -27,6 +46,7 @@ type State = {
 };
 
 interface IncomingSchedule {
+  id: number;
   name: string;
   apptType: string;
   start: string;
@@ -43,56 +63,65 @@ class Upcoming extends React.Component<Props, State> {
     this.state = {
       incomingSchedule: [
         {
+          id: 1,
           name: 'Marcus',
           apptType: 'Haircut',
-          start: '09:00',
-          end: '17:00',
+          start: '9:15am',
+          end: '9:30am',
           duration: '15min',
         },
         {
+          id: 2,
           name: 'Marcus',
           apptType: 'Haircut',
-          start: '09:00',
-          end: '17:00',
+          start: '10:15am',
+          end: '11:00am',
+          duration: '45min',
+        },
+        {
+          id: 3,
+          name: 'Marcus',
+          apptType: 'Haircut',
+          start: '12:00pm',
+          end: '1:00pm',
+          duration: '60min',
+        },
+        {
+          id: 4,
+          name: 'Marcus',
+          apptType: 'Haircut',
+          start: '1:15pm',
+          end: '1:30pm',
           duration: '15min',
         },
         {
+          id: 5,
           name: 'Marcus',
           apptType: 'Haircut',
-          start: '09:00',
-          end: '17:00',
+          start: '2:00pm',
+          end: '3:00pm',
+          duration: '60min',
+        },
+        {
+          id: 6,
+          name: 'Marcus',
+          apptType: 'Haircut',
+          start: '3:30pm',
+          end: '3:45pm',
           duration: '15min',
         },
         {
+          id: 7,
           name: 'Marcus',
           apptType: 'Haircut',
-          start: '09:00',
-          end: '17:00',
-          duration: '15min',
-        },
-        {
-          name: 'Marcus',
-          apptType: 'Haircut',
-          start: '09:00',
-          end: '17:00',
-          duration: '15min',
-        },
-        {
-          name: 'Marcus',
-          apptType: 'Haircut',
-          start: '09:00',
-          end: '17:00',
-          duration: '15min',
-        },
-        {
-          name: 'Marcus',
-          apptType: 'Haircut',
-          start: '09:00',
-          end: '17:00',
+          start: '4:00',
+          end: '4:15',
           duration: '15min',
         },
       ],
     };
+
+    this.handleClick = this.handleClick.bind(this);
   }
 
   render() {
@@ -100,25 +129,75 @@ class Upcoming extends React.Component<Props, State> {
     return (
       <div className={classes.root}>
         {this.state.incomingSchedule.map((item: IncomingSchedule) => (
-          <Accordion key={item.name}>
+          <Accordion key={item.id}>
             <AccordionSummary
               expandIcon={<ExpandMoreIcon />}
               aria-controls="panel1a-content"
               id="panel1a-header"
             >
-              <Typography className={classes.heading}> {item.name}</Typography>
+              <div className={classes.column}>
+                <Avatar alt="Marcus" src={image} className={classes.small} />
+                <Typography className={classes.heading}>{item.name}</Typography>
+              </div>
+              <div className={classes.column}>
+                <Typography className={classes.heading}>
+                  {item.start}-{item.end}
+                </Typography>
+              </div>
+              <div className={classes.column}>
+                <Typography
+                  className={classes.heading}
+                  style={{ margin: 'auto' }}
+                >
+                  {item.duration}
+                </Typography>
+              </div>
             </AccordionSummary>
             <AccordionDetails>
-              <Typography>
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                Suspendisse malesuada lacus ex, sit amet blandit leo lobortis
-                eget.
-              </Typography>
+              <Button
+                size="small"
+                color="primary"
+                variant="contained"
+                className={classes.button}
+                startIcon={<Description />}
+                // tslint:disable-next-line: jsx-no-lambda
+                onClick={() => this.handleClick(item)}
+              >
+                Send Message
+              </Button>
+              <Button
+                size="small"
+                color="secondary"
+                variant="contained"
+                className={classes.button}
+                startIcon={<DeleteIcon />}
+                // tslint:disable-next-line: jsx-no-lambda
+                onClick={() => this.handleClick(item)}
+              >
+                Cancel Appt.
+              </Button>
             </AccordionDetails>
           </Accordion>
         ))}
       </div>
     );
+  }
+
+  handleClick(item: IncomingSchedule) {
+    // tslint:disable-next-line: no-console
+    console.log(item);
+    this.updateItem(item.id);
+  }
+
+  updateItem(id: number) {
+    const idx = this.state.incomingSchedule.findIndex((x) => x.id === id);
+    if (idx === -1) {
+      // tslint:disable-next-line: no-console
+      console.log('N/A');
+    } else {
+      // tslint:disable-next-line: no-console
+      console.log('Button pressed');
+    }
   }
 }
 

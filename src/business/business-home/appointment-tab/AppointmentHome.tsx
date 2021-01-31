@@ -17,6 +17,7 @@ import {
 import { CalendarToday, Description } from '@material-ui/icons';
 import SwipeableViews from 'react-swipeable-views';
 import Upcoming from './Upcoming';
+import Calendar from './Calendar';
 
 const useStyles = makeStyles({
   root: {
@@ -74,7 +75,7 @@ export default function AppointmentHome() {
             <Upcoming />
           </TabPanel>
           <TabPanel value={value} index={1}>
-            test 2
+            <Calendar />
           </TabPanel>
         </SwipeableViews>
       </Box>
