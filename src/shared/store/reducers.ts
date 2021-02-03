@@ -1,4 +1,11 @@
-import { SystemState, SystemActionTypes, UPDATE_SESSION, BusinessActionTypes, UPDATE_BUSINESS_NAME, BusinessState } from './types';
+import {
+  SystemState,
+  SystemActionTypes,
+  UPDATE_SESSION,
+  BusinessActionTypes,
+  UPDATE_BUSINESS_NAME,
+  BusinessState,
+} from './types';
 
 const initialSystemState: SystemState = {
   loggedIn: false,
@@ -23,18 +30,18 @@ export function systemReducer(
 }
 
 const initialBusinessState: BusinessState = {
-  businessName: '3cut Barbershop'
-}
+  businessName: '3cut Barbershop',
+};
 
 export function businessReducer(
   state = initialBusinessState,
-  action: BusinessActionTypes
+  action: BusinessActionTypes,
 ): BusinessState {
   switch (action.type) {
     case UPDATE_BUSINESS_NAME: {
       return {
         ...state,
-        businessName: action.payload
+        businessName: action.payload,
       };
     }
     default:
