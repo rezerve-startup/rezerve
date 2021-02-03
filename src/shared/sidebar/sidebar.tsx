@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { sidebarData } from './sidebarData';
 import { Link } from 'react-router-dom';
 import {
@@ -15,8 +15,6 @@ import {
   ListItemIcon,
   ListItemAvatar,
   Avatar,
-  useTheme,
-  useMediaQuery,
   MenuItem,
   Menu,
   Button,
@@ -27,9 +25,9 @@ import {
   Menu as MenuIcon,
   Forum,
   CalendarViewDay,
-  ArrowDropDown
+  ArrowDropDown,
 } from '@material-ui/icons';
-import logo from '../../assets/avatar.jpg';
+import logo from "../../assets/avatar.png";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -46,13 +44,13 @@ const useStyles = makeStyles((theme) => ({
   },
   toolbarButton: {
     color: theme.palette.common.white,
-    borderRadius: "5em",
+    borderRadius: '5em',
     '&:hover': {
-      backgroundColor: 'rgba(255, 255, 255, 0.3)'
-    }
+      backgroundColor: 'rgba(255, 255, 255, 0.3)',
+    },
   },
   toolbarButtonText: {
-    padding: '6px 10px'
+    padding: '6px 10px',
   },
   title: {
     display: 'block',
@@ -96,7 +94,6 @@ const useStyles = makeStyles((theme) => ({
 
 function Sidebar() {
   const classes = useStyles();
-  const theme = useTheme();
 
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [mobileSidebar, setMobileSidebar] = React.useState({

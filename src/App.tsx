@@ -56,7 +56,7 @@ const App = () => {
   return (
     <div className={classes.root}>
       <ThemeProvider theme={theme}>
-      <Router>
+        <Router>
           <Sidebar />
           <Switch>
             {routes.map((route, i) => (
