@@ -15,6 +15,7 @@ import BusinessInfo from './business/business-info/BusinessInfo';
 import BusinessInfoDetails from './business/business-info/business-info-details/BusinessInfoDetails';
 import BusinessHome from './business/business-home/BusinessHome';
 import store from './shared/store/store';
+import CustomerCheckout from './customer/customer-checkout/customer-checkout';
 
 const routes = [
   // { path: "/help", component: Help },
@@ -26,7 +27,7 @@ const routes = [
   { path: '/business-info-details', component: BusinessInfoDetails },
 ];
 
-let currentUser = 'business';
+let currentUser = 'checkout';
 
 const useStyles = makeStyles({
   root: {
@@ -52,9 +53,10 @@ const theme = createMuiTheme({
 
 const App = () => {
   const classes = useStyles();
-
+  
   return (
     <div className={classes.root}>
+      
       <ThemeProvider theme={theme}>
         {currentUser === 'business' && (
           <BusinessInfo />
@@ -63,6 +65,12 @@ const App = () => {
         {currentUser === 'customer' && (
           <AppointmentsPage />
         )}
+
+        {currentUser === 'checkout' &&(
+          <CustomerCheckout />
+        )
+
+        }
         {/* <Router>
           <Sidebar />
           <Switch>
