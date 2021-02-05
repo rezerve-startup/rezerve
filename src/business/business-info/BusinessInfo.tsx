@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-// import { CarouselItem, CarouselCaption, Carousel, CarouselControl, CarouselIndicators } from '../../customer/customer-signup/node_modules/reactstrap';
 import Carousel from 'react-material-ui-carousel';
 import { LocationOn } from '@material-ui/icons';
 import { Rating } from '@material-ui/lab';
@@ -22,6 +21,7 @@ import { BusinessState, StoreState } from '../../shared/store/types';
 type BusinessInfoState = {
   business: any;
   businessName: string;
+  businessReviews: any[]
 };
 
 function mapStateToProps(state: StoreState) {
@@ -37,7 +37,8 @@ class BusinessInfo extends React.Component<any, BusinessInfoState> {
     super(props);
     this.state = {
       business: undefined,
-      businessName: props.business.businessName
+      businessName: props.business.businessName,
+      businessReviews: []
     };
   }
 
@@ -47,13 +48,27 @@ class BusinessInfo extends React.Component<any, BusinessInfoState> {
 
   componentDidMount() {
 
-    firestore.collection('businesses').onSnapshot((snapshot) => {
-      const selectedBusiness = snapshot.docs[0].data();
+    const businessData = firestore.collection('businesses').doc('98amGMWjvPkULXgBerJq');
 
+    businessData.get().then((val) => {
+      const businessInfo = val.data();
       this.setState({
-        business: selectedBusiness,
-      });
-    });
+        business: businessInfo
+      })
+    }).then(() => {
+      businessData.collection('reviews').onSnapshot((snapshot) => {
+        const review = snapshot.forEach((reviewDoc) => {
+          const businessReview = reviewDoc.data();
+
+          this.setState({
+            businessReviews: [
+              ...this.state.businessReviews,
+              businessReview
+            ]
+          })
+        })
+      })
+    })
   }
 
   render() {
@@ -86,8 +101,8 @@ class BusinessInfo extends React.Component<any, BusinessInfoState> {
                 {this.props.business.businessName}
               </h5>
               <h6>
-                {this.state.business.address}, {this.state.business.city},{' '}
-                {this.state.business.state} {this.state.business.zipcode}
+                {this.state.business.about.address}, {this.state.business.about.city},{' '}
+                {this.state.business.about.state} {this.state.business.about.zipcode}
               </h6>
               <div className={classes.distanceContainer}>
                 <LocationOn />
@@ -100,7 +115,7 @@ class BusinessInfo extends React.Component<any, BusinessInfoState> {
                 <b>ABOUT US</b>
               </h6>
               <div className={classes.aboutContent}>
-                {this.state.business.aboutBusiness}
+                {this.state.business.description}
               </div>
             </div>
 
@@ -111,7 +126,7 @@ class BusinessInfo extends React.Component<any, BusinessInfoState> {
                 </h6>
                 <Rating
                   size="medium"
-                  value={this.state.business.businessRating}
+                  value={this.state.business.performance.rating}
                   precision={0.5}
                   classes={{
                     iconFilled: classes.starRating
@@ -121,28 +136,31 @@ class BusinessInfo extends React.Component<any, BusinessInfoState> {
               </div>
 
               <div>
-                <div className={classes.businessReview}>
-                  <div className={classes.reviewAvatar}>
-                    <Avatar />
-                  </div>
-                  <div className={classes.reviewContent}>
-                    <div>
-                      <b>Melissa</b>
+                {this.state.businessReviews.map((review, i) => {
+                  return (
+                    <div className={classes.businessReview} key={i}>
+                      <div className={classes.reviewAvatar}>
+                        <Avatar />
+                      </div>
+                      <div className={classes.reviewContent}>
+                        <div>
+                          <b>{review.poster}</b>
+                        </div>
+                        <div>
+                          {review.content}
+                        </div>
+                      </div>
+                      <div className={classes.reviewRating}>
+                        {new Date(review.date.toDate()).toLocaleDateString()}
+                        <Rating size="small" value={review.rating} precision={0.5} readOnly={true} 
+                          classes={{
+                            iconFilled: classes.starRatingFilled,
+                            iconHover: classes.starRatingHover,
+                          }} />
+                      </div>
                     </div>
-                    <div>
-                      Brought my son for a haircut and it was perfect! He loved
-                      it and we will definitely be making another appointment
-                    </div>
-                  </div>
-                  <div className={classes.reviewRating}>
-                    <div>10/17/20</div>
-                    <Rating size="small" value={2.5} precision={0.5} readOnly={true} 
-                      classes={{
-                        iconFilled: classes.starRatingFilled,
-                        iconHover: classes.starRatingHover,
-                      }} />
-                  </div>
-                </div>
+                  )
+                })}
               </div>
             </div>
             <Button variant="contained" onClick={this.dispatchUpdateBusinessName}>Update Business Name in Store</Button>
@@ -209,7 +227,8 @@ const styles = (theme: Theme) =>
     businessReview: {
       display: 'flex',
       justifyContent: 'space-around',
-      textAlign: 'start'
+      textAlign: 'start',
+      marginBottom: '0.5rem'
     },
     reviewAvatar: {
       flex: 1,

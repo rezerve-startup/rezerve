@@ -16,16 +16,19 @@ import {
   Tabs,
 } from '@material-ui/core';
 
+import { firestore } from '../../../config/FirebaseConfig';
 import { connect } from 'react-redux';
 
 type BusinessPerformanceState = {
   loading: boolean;
-  value: number;
-  business: {
+  tabSelected: number;
+  businessPerformance: {
     abandonedCarts: number;
     bookingPercentage: number;
     profileViews: number;
-  }
+    rating: number
+  },
+  businessReviews: any[]
 };
 
 interface Props extends WithStyles<typeof styles> {}
@@ -34,19 +37,54 @@ class BusinessPerformance extends React.Component<any, BusinessPerformanceState>
   constructor(props: any) {
     super(props);
     this.state = {
-      value: 0,
+      tabSelected: 0,
       loading: false,
-      business: {
-        abandonedCarts: 5,
-        bookingPercentage: 80,
-        profileViews: 180
-      }
+      businessPerformance: {
+        abandonedCarts: 0,
+        bookingPercentage: 0,
+        profileViews: 0,
+        rating: 0
+      },
+      businessReviews: []
     };
   }
 
-  handleChange = (_event: any, newValue: number) => {
+  componentDidMount() {
+    const businessData = firestore.collection('businesses').doc('98amGMWjvPkULXgBerJq');
+
+    businessData.get().then((val) => {
+      const businessInfo = val.data();
+
+      if (businessInfo !== undefined) {
+        this.setState({
+          businessPerformance: businessInfo.performance
+        })
+      }
+
+    }).then(() => {
+      const businessReviews: any[] = []
+
+      businessData.collection('reviews').onSnapshot((snapshot) => {
+        const review = snapshot.forEach((reviewDoc) => {
+          const businessReview = reviewDoc.data();
+
+          businessReviews.push(businessReview);
+        });
+
+        const sortedReviews = businessReviews.slice().sort((a, b) => {
+          return b.date - a.date
+        });
+    
+        this.setState({
+          businessReviews: sortedReviews
+        });
+      });
+    })
+  }
+
+  handleChange = (_event: any, newTabSelected: number) => {
     this.setState({
-      value: newValue
+      tabSelected: newTabSelected
     });
   };
 
@@ -59,7 +97,7 @@ class BusinessPerformance extends React.Component<any, BusinessPerformanceState>
         {this.state.loading === false ? (
           <div className={classes.businessOverview}>
               
-              <Tabs value={this.state.value} onChange={this.handleChange} aria-label="ant example">
+              <Tabs value={this.state.tabSelected} onChange={this.handleChange} aria-label="ant example">
                 <Tab label="Day" />
                 <Tab label="Week" />
                 <Tab label="Month" />
@@ -72,16 +110,16 @@ class BusinessPerformance extends React.Component<any, BusinessPerformanceState>
               <div>
                   <div className={classes.businessPerformanceItem}>
                     <div>Profile Views</div>
-                    <div>{this.state.business.profileViews}</div>
+                    <div>{this.state.businessPerformance.profileViews}</div>
                   </div>
                   <div className={classes.businessPerformanceItemContainer}>
                       <div className={classes.businessPerformanceItem}>
                         <div>Abandoned Carts</div>
-                        <div>{this.state.business.abandonedCarts}</div>
+                        <div>{this.state.businessPerformance.abandonedCarts}</div>
                       </div>
                       <div className={classes.businessPerformanceItem}>
                         <div>Booking Percentage</div>
-                        <div>{this.state.business.bookingPercentage}%</div>
+                        <div>{this.state.businessPerformance.bookingPercentage}%</div>
                       </div>
                   </div>
               </div>
@@ -89,11 +127,11 @@ class BusinessPerformance extends React.Component<any, BusinessPerformanceState>
               <div className={classes.sectionTitle}>
                 <div>Reviews & Rating</div>
               </div>
-              <h2>3.5</h2>
+              <h2>{this.state.businessPerformance.rating}</h2>
               <p>Rating</p>
               <Rating
                   size="medium"
-                  value={3.5}
+                  value={this.state.businessPerformance.rating}
                   precision={0.5}
                   readOnly={true}
                   classes={{
@@ -106,33 +144,31 @@ class BusinessPerformance extends React.Component<any, BusinessPerformanceState>
                 <div className={classes.sectionTitle}>
                   <div>Reviews</div>
                 </div>
-                <div className={classes.businessReview}>
-                  <div className={classes.reviewAvatar}>
-                    <Avatar />
-                  </div>
-                  <div className={classes.reviewContent}>
-                    <div>
-                      <b>Melissa</b>
+                {this.state.businessReviews.map((review, i) => {
+                  return (
+                    <div className={classes.businessReview} key={i}>
+                      <div className={classes.reviewAvatar}>
+                        <Avatar />
+                      </div>
+                      <div className={classes.reviewContent}>
+                        <div>
+                          <b>{review.poster}</b>
+                        </div>
+                        <div>
+                          {review.content}
+                        </div>
+                      </div>
+                      <div className={classes.reviewRating}>
+                        {new Date(review.date.toDate()).toLocaleDateString()}
+                        <Rating size="small" value={review.rating} precision={0.5} readOnly={true} 
+                          classes={{
+                            iconFilled: classes.starRatingFilled,
+                            iconHover: classes.starRatingHover,
+                          }} />
+                      </div>
                     </div>
-                    <div>
-                      Brought my son for a haircut and it was perfect! He loved
-                      it and we will definitely be making another appointment
-                    </div>
-                  </div>
-                  <div className={classes.reviewRating}>
-                    <div>10/17/20</div>
-                      <Rating 
-                        size="small" 
-                        value={2.5} 
-                        precision={0.5} 
-                        readOnly={true}
-                        classes={{
-                          iconFilled: classes.starRatingFilled,
-                          iconHover: classes.starRatingHover
-                        }} 
-                      />
-                  </div>
-                </div>
+                  )
+                })}
               </div>
           </div>
         ) : (
@@ -147,9 +183,6 @@ class BusinessPerformance extends React.Component<any, BusinessPerformanceState>
 
 const styles = (theme: Theme) =>
   createStyles({
-    // root: {
-    //   flexGrow: 1,
-    // },
     businessInfoPage: {
       textAlign: 'center',
       alignItems: 'center'
@@ -217,7 +250,8 @@ const styles = (theme: Theme) =>
     businessReview: {
       display: 'flex',
       justifyContent: 'space-around',
-      textAlign: 'start'
+      textAlign: 'start',
+      marginBottom: '0.5rem'
     },
     reviewAvatar: {
       flex: 1,
