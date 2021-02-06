@@ -18,6 +18,7 @@ const useStyles = makeStyles({
     flexGrow: 1,
   },
 });
+
 export default function AppointmentHome() {
   const classes = useStyles();
   const theme = useTheme();

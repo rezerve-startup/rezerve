@@ -5,17 +5,15 @@ import {
   createStyles,
   WithStyles,
   Theme,
-  TextField,
+  Paper,
+  Divider,
 } from '@material-ui/core';
+import { ViewState } from '@devexpress/dx-react-scheduler';
 import {
-  Timeline,
-  TimelineItem,
-  TimelineSeparator,
-  TimelineConnector,
-  TimelineContent,
-  TimelineDot,
-  TimelineOppositeContent,
-} from '@material-ui/lab';
+  Scheduler,
+  DayView,
+  Appointments,
+} from '@devexpress/dx-react-scheduler-material-ui';
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -42,17 +40,16 @@ const styles = (theme: Theme) =>
     },
   });
 
+
 type State = {
   incomingSchedule: IncomingSchedule[];
+  currentDate: string; // YYYY-MM-DD
 };
 
 interface IncomingSchedule {
-  id: number;
-  name: string;
-  apptType: string;
-  start: string;
-  end: string;
-  duration: string;
+  startDate: string; // YYYY-MM-DDTHH:MM
+  endDate: string; // YYYY-MM-DDTHH:MM
+  title: string;
 }
 
 interface Props extends WithStyles<typeof styles> {}
@@ -64,62 +61,27 @@ class Upcoming extends React.Component<Props, State> {
     this.state = {
       incomingSchedule: [
         {
-          id: 1,
-          name: 'Marcus',
-          apptType: 'Haircut',
-          start: '9:15am',
-          end: '9:30am',
-          duration: '15min',
+          startDate: '2021-02-06T11:30',
+          endDate: '2021-02-06T12:00',
+          title: 'Haircut with customer',
         },
         {
-          id: 2,
-          name: 'Marcus',
-          apptType: 'Haircut',
-          start: '10:15am',
-          end: '11:00am',
-          duration: '45min',
+          startDate: '2021-02-06T09:30',
+          endDate: '2021-02-06T10:00',
+          title: 'Haircut with Marcus',
         },
         {
-          id: 3,
-          name: 'Marcus',
-          apptType: 'Haircut',
-          start: '12:00pm',
-          end: '1:00pm',
-          duration: '60min',
+          startDate: '2021-02-06T10:45',
+          endDate: '2021-02-06T11:00',
+          title: 'Haircut with customer',
         },
         {
-          id: 4,
-          name: 'Marcus',
-          apptType: 'Haircut',
-          start: '1:15pm',
-          end: '1:30pm',
-          duration: '15min',
-        },
-        {
-          id: 5,
-          name: 'Marcus',
-          apptType: 'Haircut',
-          start: '2:00pm',
-          end: '3:00pm',
-          duration: '60min',
-        },
-        {
-          id: 6,
-          name: 'Marcus',
-          apptType: 'Haircut',
-          start: '3:30pm',
-          end: '3:45pm',
-          duration: '15min',
-        },
-        {
-          id: 7,
-          name: 'Marcus',
-          apptType: 'Haircut',
-          start: '4:00pm',
-          end: '4:15pm',
-          duration: '15min',
+          startDate: '2021-02-06T09:00',
+          endDate: '2021-02-06T11:00',
+          title: 'Haircut with customer',
         },
       ],
+      currentDate: '2021-02-06',
     };
 
     // this.handleClick = this.handleClick.bind(this);
@@ -129,32 +91,15 @@ class Upcoming extends React.Component<Props, State> {
     const { classes } = this.props;
     return (
       <div className={classes.root}>
-        {this.state.incomingSchedule.map((item: IncomingSchedule) => (
-          <Timeline key={item.id} align="right">
-            <TimelineItem>
-              <TimelineOppositeContent>
-                <Typography
-                  color="textSecondary"
-                  style={{ margin: 'auto', fontSize: '12px' }}
-                >
-                  {item.start}-{item.end}
-                </Typography>
-              </TimelineOppositeContent>
-              <TimelineSeparator>
-                <TimelineDot />
-                <TimelineConnector />
-              </TimelineSeparator>
-              <TimelineContent>
-                {' '}
-                <Typography
-                  style={{ fontSize: '20px' }}
-                >
-                  {item.name}
-                </Typography>
-              </TimelineContent>
-            </TimelineItem>
-          </Timeline>
-        ))}
+        
+        <Divider/> 
+        <Paper>
+          <Scheduler data={this.state.incomingSchedule}>
+            <ViewState currentDate={this.state.currentDate} />
+            <DayView startDayHour={8} endDayHour={16} />
+            <Appointments />
+          </Scheduler>
+        </Paper>
       </div>
     );
   }
