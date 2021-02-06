@@ -5,6 +5,7 @@ import {
   createStyles,
   WithStyles,
   Theme,
+  TextField,
 } from '@material-ui/core';
 import {
   Timeline,
@@ -15,7 +16,6 @@ import {
   TimelineDot,
   TimelineOppositeContent,
 } from '@material-ui/lab';
-import { IncomingMessage } from 'http';
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -130,10 +130,13 @@ class Upcoming extends React.Component<Props, State> {
     return (
       <div className={classes.root}>
         {this.state.incomingSchedule.map((item: IncomingSchedule) => (
-          <Timeline key={item.id} align="right" >
+          <Timeline key={item.id} align="right">
             <TimelineItem>
               <TimelineOppositeContent>
-                <Typography color="textSecondary" style={{ margin: "auto", fontSize: "14px" }}>
+                <Typography
+                  color="textSecondary"
+                  style={{ margin: 'auto', fontSize: '12px' }}
+                >
                   {item.start}-{item.end}
                 </Typography>
               </TimelineOppositeContent>
@@ -141,7 +144,14 @@ class Upcoming extends React.Component<Props, State> {
                 <TimelineDot />
                 <TimelineConnector />
               </TimelineSeparator>
-              <TimelineContent>{item.name}</TimelineContent>
+              <TimelineContent>
+                {' '}
+                <Typography
+                  style={{ fontSize: '20px' }}
+                >
+                  {item.name}
+                </Typography>
+              </TimelineContent>
             </TimelineItem>
           </Timeline>
         ))}
