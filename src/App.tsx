@@ -12,7 +12,7 @@ import AppointmentsPage from './customer/customer-appointments/AppointmentPage';
 // import Services from './business/business-services/Services';
 // import Receipt from './customer/customer-reciept/Reciept.js';
 import BusinessInfo from './business/business-info/BusinessInfo';
-import BusinessInfoDetails from './business/business-info/business-info-details/BusinessInfoDetails';
+// import BusinessInfoDetails from './business/business-info/business-info-details/BusinessInfoDetails';
 import BusinessHome from './business/business-home/BusinessHome';
 import store from './shared/store/store';
 
@@ -21,9 +21,9 @@ const routes = [
   // { path: "/messages", component: Messages },
   // { path: "/payment", component: PaymentInfo },
   // { path: "/settings", component: Settings },
-  { path: '/appoinments', component: AppointmentsPage },
-  { path: '/business-info', component: BusinessInfo },
-  { path: '/business-info-details', component: BusinessInfoDetails },
+  // { path: '/appoinments', component: AppointmentsPage },
+  // { path: '/business-info', component: BusinessInfo },
+  // { path: '/business-info-details', component: BusinessInfoDetails },
 ];
 
 let currentUser = 'business';
@@ -57,7 +57,7 @@ const App = () => {
     <div className={classes.root}>
       <ThemeProvider theme={theme}>
         {currentUser === 'business' && (
-          <BusinessInfo />
+          <BusinessHome />
         )}
 
         {currentUser === 'customer' && (

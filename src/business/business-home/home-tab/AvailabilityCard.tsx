@@ -17,7 +17,6 @@ import {
   CardContent,
   Divider,
 } from '@material-ui/core';
-import { HorizontalSplitRounded } from '@material-ui/icons';
 
 const styles = (theme: Theme) =>
   createStyles({
