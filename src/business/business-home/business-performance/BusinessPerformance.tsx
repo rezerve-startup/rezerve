@@ -102,16 +102,18 @@ class BusinessPerformance extends React.Component<
       <div className={classes.businessInfoPage}>
         {this.state.loading === false ? (
           <div className={classes.businessOverview}>
-            <Tabs
-              value={this.state.tabSelected}
-              onChange={this.handleChange}
-              aria-label="ant example"
-            >
-              <Tab label="Day" />
-              <Tab label="Week" />
-              <Tab label="Month" />
-              <Tab label="Year" />
-            </Tabs>
+            <div className={classes.selectedPeriodTabs}>
+              <Tabs
+                value={this.state.tabSelected}
+                onChange={this.handleChange}
+                aria-label="ant example"
+              >
+                <Tab label="Day" />
+                <Tab label="Week" />
+                <Tab label="Month" />
+                <Tab label="Year" />
+              </Tabs>
+            </div>
 
             <div className={classes.sectionTitle}>
               <div>Marketing</div>
@@ -244,6 +246,10 @@ const styles = (theme: Theme) =>
       flex: 2,
       marginLeft: '0.25rem',
     },
+    selectedPeriodTabs: {
+      display: 'flex',
+      justifyContent: 'center'
+    }
   });
 
 export default connect(
