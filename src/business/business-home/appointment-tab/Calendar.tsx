@@ -40,7 +40,6 @@ const styles = (theme: Theme) =>
     },
   });
 
-
 type State = {
   incomingSchedule: IncomingSchedule[];
   currentDate: string; // YYYY-MM-DD
@@ -80,6 +79,11 @@ class Upcoming extends React.Component<Props, State> {
           endDate: '2021-02-06T11:00',
           title: 'Haircut with customer',
         },
+        {
+          startDate: '2021-02-06T08:00',
+          endDate: '2021-02-06T14:00',
+          title: 'Work Hours',
+        },
       ],
       currentDate: '2021-02-06',
     };
@@ -91,8 +95,7 @@ class Upcoming extends React.Component<Props, State> {
     const { classes } = this.props;
     return (
       <div className={classes.root}>
-        
-        <Divider/> 
+        <Divider />
         <Paper>
           <Scheduler data={this.state.incomingSchedule}>
             <ViewState currentDate={this.state.currentDate} />
