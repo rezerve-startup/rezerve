@@ -4,7 +4,7 @@ import { businessReducer, systemReducer } from './reducers';
 
 const rootReducer = combineReducers({
   system: systemReducer,
-  business: businessReducer
+  business: businessReducer,
 });
 
 const store = createStore(rootReducer, composeWithDevTools());

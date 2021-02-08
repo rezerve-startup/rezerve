@@ -3,14 +3,14 @@ import React, { Component } from 'react';
 import Carousel from 'react-material-ui-carousel';
 import { LocationOn } from '@material-ui/icons';
 import { Rating } from '@material-ui/lab';
-import { 
-  Avatar, 
+import {
+  Avatar,
   CircularProgress,
   Paper,
   withStyles,
   createStyles,
   WithStyles,
-  Theme, 
+  Theme,
 } from '@material-ui/core';
 
 import { firestore } from '../../config/FirebaseConfig';
@@ -25,8 +25,8 @@ type BusinessInfoState = {
 
 function mapStateToProps(state: StoreState) {
   return {
-    business: state.business
-  }
+    business: state.business,
+  };
 }
 
 interface Props extends WithStyles<typeof styles> {}
@@ -36,16 +36,15 @@ class BusinessInfo extends React.Component<any, BusinessInfoState> {
     super(props);
     this.state = {
       business: undefined,
-      businessName: props.business.businessName
+      businessName: props.business.businessName,
     };
   }
 
   dispatchUpdateBusinessName = () => {
     this.props.updateBusinessName('Hello World!');
-  }
+  };
 
   componentDidMount() {
-
     firestore.collection('businesses').onSnapshot((snapshot) => {
       const selectedBusiness = snapshot.docs[0].data();
 
@@ -56,13 +55,12 @@ class BusinessInfo extends React.Component<any, BusinessInfoState> {
   }
 
   render() {
-
     const { classes } = this.props;
 
     const businessPictures = [
-      {imageUrl: 'cat1.jpg' },
-      {imageUrl: 'cat2.jpg' },
-      {imageUrl: 'cat3.jpg' }
+      { imageUrl: 'cat1.jpg' },
+      { imageUrl: 'cat2.jpg' },
+      { imageUrl: 'cat3.jpg' },
     ];
 
     return (
@@ -73,7 +71,10 @@ class BusinessInfo extends React.Component<any, BusinessInfoState> {
               <Carousel navButtonsAlwaysVisible={true}>
                 {businessPictures.map((businessPicture, i) => (
                   <Paper key={i}>
-                    <img className={classes.businessPicture} src={businessPicture.imageUrl} />
+                    <img
+                      className={classes.businessPicture}
+                      src={businessPicture.imageUrl}
+                    />
                   </Paper>
                 ))}
               </Carousel>
@@ -81,9 +82,7 @@ class BusinessInfo extends React.Component<any, BusinessInfoState> {
 
             <div className={classes.businessInformation}>
               {/* The value that is being updated dynamically via state changes */}
-              <h5>
-                {this.props.business.businessName}
-              </h5>
+              <h5>{this.props.business.businessName}</h5>
               <h6>
                 {this.state.business.address}, {this.state.business.city},{' '}
                 {this.state.business.state} {this.state.business.zipcode}
@@ -137,7 +136,9 @@ class BusinessInfo extends React.Component<any, BusinessInfoState> {
                 </div>
               </div>
             </div>
-            <button onClick={this.dispatchUpdateBusinessName}>Update Business Name in Store</button>
+            <button onClick={this.dispatchUpdateBusinessName}>
+              Update Business Name in Store
+            </button>
           </div>
         ) : (
           <div className={classes.loadingContainer}>
@@ -159,67 +160,69 @@ const styles = (theme: Theme) =>
       height: '100%',
       color: 'white',
       textAlign: 'center',
-      alignItems: 'center'
+      alignItems: 'center',
     },
     businessOverview: {
-      padding: '2.5rem'
+      padding: '2.5rem',
     },
     businessPicture: {
-      width: '100%'
+      width: '100%',
     },
     carouselContainer: {
-      marginBottom: '1rem'
+      marginBottom: '1rem',
     },
     businessInformation: {
-      color: 'black'
+      color: 'black',
     },
     distanceContainer: {
       display: 'flex',
       justifyContent: 'center',
-      color: 'red'
+      color: 'red',
     },
     distanceToBusiness: {
-      marginLeft: '0.25rem'
+      marginLeft: '0.25rem',
     },
     aboutBusiness: {
       color: 'black',
       padding: '0.5rem',
       backgroundColor: 'lightgray',
       border: 'darkgray solid 1',
-      marginBottom: '1rem'
+      marginBottom: '1rem',
     },
     aboutContent: {
-      textAlign: 'start'
+      textAlign: 'start',
     },
     reviewsContainer: {
-      color: 'black'
+      color: 'black',
     },
     overallReview: {
-      marginBottom: '0.5rem'
+      marginBottom: '0.5rem',
     },
     businessReview: {
       display: 'flex',
       justifyContent: 'space-around',
-      textAlign: 'start'
+      textAlign: 'start',
     },
     reviewAvatar: {
       flex: 1,
-      marginRight: '0.5rem'
+      marginRight: '0.5rem',
     },
     reviewContent: {
       flex: 5,
-      marginRight: '0.5rem'
+      marginRight: '0.5rem',
     },
     reviewRating: {
       flex: 2,
-      marginLeft: '0.25rem'
+      marginLeft: '0.25rem',
     },
     loadingContainer: {
       display: 'flex',
       justifyContent: 'center',
       alignItems: 'center',
-      height: '100%'
-    }
+      height: '100%',
+    },
   });
 
-export default connect(mapStateToProps, { updateBusinessName })(withStyles(styles, { withTheme: true })(BusinessInfo));
+export default connect(mapStateToProps, { updateBusinessName })(
+  withStyles(styles, { withTheme: true })(BusinessInfo),
+);

@@ -69,13 +69,14 @@ const App = () => {
             ))}
           </Switch>
         </Router>
-        {currentUser === 'business' && (
-          <BusinessHome />
-        )}
+          {currentUser === 'business' && (
+            <BusinessHome />
+          )}
 
-        {currentUser === 'customer' && (
-          <AppointmentsPage />
-        )}
+          {currentUser === 'customer' && (
+            <AppointmentsPage />
+          )}
+        
       </ThemeProvider>
     </div>
   );
