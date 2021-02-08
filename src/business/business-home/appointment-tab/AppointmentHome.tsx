@@ -1,18 +1,17 @@
 import React from 'react';
-import SwipeableViews from 'react-swipeable-views';
 import {
-  Box,
-  AppBar,
   Tab,
   Tabs,
-  useMediaQuery,
+  AppBar,
+  Box,
   makeStyles,
+  useMediaQuery,
   useTheme,
 } from '@material-ui/core';
-import { Home, List, Person, Assessment } from '@material-ui/icons';
-import ClientTab from './client-tab/ClientTab';
-import HomePanel from './home-tab/HomeTab';
-import AppointmentPanel from './appointment-tab/AppointmentHome';
+import { CalendarToday, Description } from '@material-ui/icons';
+import SwipeableViews from 'react-swipeable-views';
+import Upcoming from './Upcoming';
+import Calendar from './Calendar';
 
 const useStyles = makeStyles({
   root: {
@@ -20,7 +19,7 @@ const useStyles = makeStyles({
   },
 });
 
-export default function BusinessHome() {
+export default function AppointmentHome() {
   const classes = useStyles();
   const theme = useTheme();
   const [value, setValue] = React.useState(0);
@@ -35,20 +34,18 @@ export default function BusinessHome() {
   };
 
   const tabs = [
-    { label: 'Home', icon: <Home /> },
-    { label: 'Appointments', icon: <List /> },
-    { label: 'Clients', icon: <Person /> },
-    { label: 'Preformance', icon: <Assessment /> },
+    { label: '', icon: <Description /> },
+    { label: '', icon: <CalendarToday /> },
   ];
 
   return (
     <div className={classes.root}>
       <Box m={1}>
-        <AppBar position="static" color="default">
+        <AppBar position="relative" color="default">
           <Tabs
             value={value}
             onChange={handleChange}
-            aria-label="business-tabs"
+            aria-label="appointment-tabs"
             indicatorColor="primary"
             centered={isMobile ? false : true}
             variant={isMobile ? 'scrollable' : 'fullWidth'}
@@ -70,25 +67,15 @@ export default function BusinessHome() {
           enableMouseEvents={true}
         >
           <TabPanel value={value} index={0}>
-            <HomePanel isMobile={isMobile} />
+            <Upcoming />
           </TabPanel>
           <TabPanel value={value} index={1}>
-            <AppointmentPanel />
-          </TabPanel>
-          <TabPanel value={value} index={2}>
-            <ClientTab employeeName="Test Employee" />
+            <Calendar />
           </TabPanel>
         </SwipeableViews>
       </Box>
     </div>
   );
-}
-
-function a11yProps(index: number) {
-  return {
-    id: `business-tab-${index}`,
-    'aria-controls': `business-tabpanel-${index}`,
-  };
 }
 
 type TabPanelProps = {
@@ -104,11 +91,18 @@ function TabPanel(props: TabPanelProps) {
     <div
       role="tabpanel"
       hidden={value !== index}
-      id={`business-tabpanel-${index}`}
-      aria-labelledby={`business-tab-${index}`}
+      id={`appointment-tab-${index}`}
+      aria-labelledby={`appt-tab-${index}`}
       {...other}
     >
       {value === index && <Box p={1}>{children}</Box>}
     </div>
   );
+}
+
+function a11yProps(index: number) {
+  return {
+    id: `appointment-tab-${index}`,
+    'aria-controls': `appointment-tabpanel-${index}`,
+  };
 }
