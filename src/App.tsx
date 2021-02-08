@@ -56,14 +56,7 @@ const App = () => {
   return (
     <div className={classes.root}>
       <ThemeProvider theme={theme}>
-        {currentUser === 'business' && (
-          <BusinessHome />
-        )}
-
-        {currentUser === 'customer' && (
-          <AppointmentsPage />
-        )}
-        {/* <Router>
+        <Router>
           <Sidebar />
           <Switch>
             {routes.map((route, i) => (
@@ -75,9 +68,14 @@ const App = () => {
               />
             ))}
           </Switch>
+          {currentUser === 'business' && (
+            <BusinessHome />
+          )}
+
+          {currentUser === 'customer' && (
+            <AppointmentsPage />
+          )}
         </Router>
-        <BusinessHome />
-        </Router> */}
       </ThemeProvider>
     </div>
   );

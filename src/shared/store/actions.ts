@@ -1,4 +1,10 @@
-import { SystemState, UPDATE_SESSION, UPDATE_BUSINESS_NAME, SystemActionTypes, BusinessActionTypes } from './types';
+import {
+  SystemState,
+  UPDATE_SESSION,
+  UPDATE_BUSINESS_NAME,
+  SystemActionTypes,
+  BusinessActionTypes,
+} from './types';
 
 export function updateSession(newSession: SystemState): SystemActionTypes {
   return {
@@ -7,9 +13,11 @@ export function updateSession(newSession: SystemState): SystemActionTypes {
   };
 }
 
-export function updateBusinessName(newBusinessName: string): BusinessActionTypes {
+export function updateBusinessName(
+  newBusinessName: string,
+): BusinessActionTypes {
   return {
     type: UPDATE_BUSINESS_NAME,
-    payload: newBusinessName
-  }
+    payload: newBusinessName,
+  };
 }
