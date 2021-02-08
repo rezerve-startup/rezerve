@@ -11,12 +11,32 @@ import {
   Typography,
   Fab,
   useMediaQuery,
+  Stepper,
+  Step,
+  StepLabel
 } from '@material-ui/core/';
 import { makeStyles, useTheme } from '@material-ui/core/styles';
 import classes from '*.module.css';
 import './customer-checkout.css';
 import { Close } from '@material-ui/icons';
 
+
+function getSteps() {
+  return ['Review Booking', 'Payment Setup', 'Confirm'];
+}
+
+function getStepContent(stepIndex: number) {
+  switch (stepIndex) {
+    case 0:
+      return <ConfirmationCard/>;
+    case 1:
+      return <StripePaymentSetup/>;
+    case 2:
+      return <BookingConfirmation/>;
+    default:
+      return 'Our apologies, there has been a mishap with the booking process. Please try again later.';
+  }
+}
 function StripePaymentSetup() {
   const classes = useStyles();
   return (
@@ -30,8 +50,23 @@ function StripePaymentSetup() {
   );
 }
 
+function PaymentInfo(){
+  const classes = useStyles();
+  return (
+    <div className={classes.itemCard}>
+      <Divider className={classes.divider0} />
+      <h1>
+        <strong>Payment Info</strong>
+      </h1>
+      <Divider className={classes.divider0} />
+    </div>
+  );
+}
+
 function ConfirmationCard() {
   const classes = useStyles();
+
+
   return (
     <div className={classes.itemCard}>
       <div className={classes.items}>
@@ -64,39 +99,76 @@ function ConfirmationCard() {
   );
 }
 
+function BookingConfirmation(){
+  const classes = useStyles();
+  return(
+    <div>
+      <ConfirmationCard/>
+      <PaymentInfo/>
+      
+      <div className={classes.itemPlus1}>
+            <h3>
+              <strong>Receive Text Reminders/Updates</strong>
+            </h3>
+            <Checkbox className={classes.checkbox} />
+          </div>
+
+          <div className={classes.phoneField}>
+            <TextField type="tel" placeholder="Phone Number" />
+          </div>
+    </div>
+)  
+}
 
 function CustomerCheckout() {
   const theme = useTheme();
   const classes = useStyles();
-  const fullscreen = useMediaQuery(theme.breakpoints.down('sm'));
+  const fullscreen = useMediaQuery(theme.breakpoints.down('lg'));
   const [open, setOpen] = React.useState(false);
+  const [activeStep, setActiveStep] = React.useState(0);
+  const steps = getSteps();
 
+  const handleNext = () => {
+    setActiveStep((prevActiveStep) => prevActiveStep + 1);
+  };
+
+  const handleBack = () => {
+    setActiveStep((prevActiveStep) => prevActiveStep - 1);
+  };
+
+  const handleReset = () => {
+    setActiveStep(0);
+  };
   const openOnClick = () => {
     setOpen(true)
+    handleReset()
   }
 
   const handleClose = () => {
     setOpen(false)
   }
 
+var backFunction = () => handleBack;
+
   return (
     <div>
       <Button variant="contained" color="primary" onClick={openOnClick}>Open Checkout</Button>
-  
       <Dialog open={open} fullScreen={fullscreen} className={classes.receiptPage}>
         <DialogTitle>
-          <Typography variant="h6" component="h6">Checkout</Typography>
-          
-          <Fab color="primary" onClick={handleClose}>
-            <Close />
-          </Fab>
         </DialogTitle>
+        <Stepper activeStep={activeStep} alternativeLabel>
+        {steps.map((label) => (
+          <Step key={label}>
+            <StepLabel>{label}</StepLabel>
+          </Step>
+        ))}
+      </Stepper>
         <DialogContent>
           {/* <div className={classes.itemPlus}>
             <h1>
               <strong>Confirm</strong>
             </h1>
-          </div> */}
+          </div> 
           <ConfirmationCard />
 
           <div className={classes.itemPlus1}>
@@ -117,7 +189,28 @@ function CustomerCheckout() {
             <TextField type="tel" placeholder="Phone Number" />
           </div>
 
-          <button className={classes.button}>Confirm & Book</button>
+        <button className={classes.button}>Confirm & Book</button*/}
+
+
+<div>
+
+          <div>
+            <Typography className={classes.instructions}>{getStepContent(activeStep)}</Typography>
+            <div>
+              <Button 
+                onClick={activeStep == 0 ? handleClose : handleBack }
+                className={classes.backButton}
+              >
+              Back
+              </Button>
+              <Button variant="contained" color="primary" 
+              onClick={activeStep === steps.length - 1 ? handleClose : handleNext }>
+                {activeStep === steps.length - 1 ? 'Confirm & Book' : 'Next'}
+              </Button>
+            </div>
+          </div>
+        
+      </div>
         </DialogContent>
       </Dialog>
     </div>
@@ -217,6 +310,14 @@ const useStyles = makeStyles((theme) => ({
     textAlign: 'center',
     fontWeight: 'bold',
     fontSize: '14pt',
+  },
+
+  backButton: {
+    marginRight: theme.spacing(1),
+  },
+  instructions: {
+    marginTop: theme.spacing(1),
+    marginBottom: theme.spacing(1),
   },
 }));
 

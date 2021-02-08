@@ -10,7 +10,7 @@ import './CSS/App.css';
 // import Settings from './pagesRoute/Settings'
 import AppointmentsPage from './customer/customer-appointments/AppointmentPage';
 // import Services from './business/business-services/Services';
-// import Receipt from './customer/customer-reciept/Reciept.js';
+import Receipt from './customer/customer-reciept/Reciept';
 import BusinessInfo from './business/business-info/BusinessInfo';
 import BusinessInfoDetails from './business/business-info/business-info-details/BusinessInfoDetails';
 import BusinessHome from './business/business-home/BusinessHome';
@@ -25,6 +25,7 @@ const routes = [
   { path: '/appoinments', component: AppointmentsPage },
   { path: '/business-info', component: BusinessInfo },
   { path: '/business-info-details', component: BusinessInfoDetails },
+  { path: '/customer-receipt', component: Receipt},
 ];
 
 let currentUser = 'checkout';
