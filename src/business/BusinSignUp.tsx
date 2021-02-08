@@ -1,9 +1,110 @@
 import React from 'react';
-// import {Form, FormGroup} from 'reactstrap';
-// import {Link} from 'react-router-dom';
-import './CSS/BusinSignUp.css';
+import {
+    Button,
+    Container,
+    TextField,
+    Checkbox,
+    FormControl,
+    FormControlLabel,
+    Select,
+    MenuItem,
+    InputLabel,
+    Grid,
+    createStyles,
+    makeStyles,
+    Theme,
+    withStyles,
+} from '@material-ui/core'
 
-function BusinessSignUp(props: any) {
+const useStyles = makeStyles((theme:Theme) => 
+    createStyles({
+        root: {
+            backgroundColor: theme.palette.secondary.dark,
+            minHeight: '100vh',
+            color: theme.palette.secondary.light
+        },
+        nextButton: {
+            position: 'fixed',
+            bottom: theme.spacing(4),
+            right: theme.spacing(3)
+        }
+    })
+);
+
+const CustomTextField = withStyles({
+    root: {
+        '& label.MuiInputLabel-root': {
+            color: '#D7D7D7',
+          },
+      '& label.Mui-focused': {
+        color: '#D7D7D7',
+      },
+      '& .MuiInputBase-input': {
+        color: '#D7D7D7', // Text color
+      },
+      '& .MuiInput-underline:before': {
+        borderBottomColor: '#D7D7D7',
+      },
+      '& .MuiInput-underline:hover:before': {
+        borderBottomColor: '#D7D7D7',
+      },
+      '& .MuiInput-underline:after': {
+        borderBottomColor: '#D7D7D7',
+      },
+    },
+  })(TextField);
+
+function BusinessSignUp() {
+    const classes = useStyles();
+    return (
+            <Container className={classes.root} maxWidth={false}>
+                <form autoComplete="off">
+                    <Grid container spacing={4} direction="column" alignItems="center" justify="center" >
+                        <Grid item xs={12}>
+                            <h1>I&nbsp;am</h1>
+                        </Grid>
+                        <Grid item xs={12}>
+                            <FormControlLabel
+                                control={
+                                    <Checkbox />}
+                                label="Mobile stylist"
+                            />
+                        </Grid>
+                        <Grid item xs={12}>
+                            <FormControlLabel
+                                control={
+                                    <Checkbox />}
+                                label="Barber"
+                            />
+                        </Grid>
+                        <Grid item xs={12}>
+                            <FormControlLabel
+                                control={
+                                    <Checkbox />}
+                                label="Nail Salon"
+                            />
+                        </Grid>
+                        <Grid item xs={12}>
+                            <FormControlLabel
+                                control={
+                                    <Checkbox />}
+                                label="Other"
+                            />
+                        </Grid>
+                        <Grid item xs={7} sm={7} lg={7}>
+                            <CustomTextField label="" disabled/>
+                        </Grid>
+                        <Grid item xs={12}>
+                            <Button variant="contained" color="primary" className={classes.nextButton}>
+                                Next
+                            </Button>
+                        </Grid>
+                    </Grid>
+                </form>
+            </Container>
+  );
+}
+/*function BusinessSignUp(props: any) {
   // const [state, setState] = useState({
   //         hairstylist: false,
   //         barber: false,
@@ -34,15 +135,15 @@ function BusinessSignUp(props: any) {
   //     }
   // };
 
-  /* const handleSubmit = event =>{
+   const handleSubmit = event =>{
         console.log("Current State is" + JSON.stringify(state))
         event.preventDefault();
-    } */
+    } 
 
   return (
     <div className="business-signUp-page">
       <div className="container" id="businSignUp">
-        {/* <Form> onSubmit={handleSubmit}
+        { <Form> onSubmit={handleSubmit}
                     <div className="row col col-11 col-md-auto offset-2 offset-sm-0">
                         <h1>I am</h1>
                     </div>
@@ -97,10 +198,10 @@ function BusinessSignUp(props: any) {
                             </Link>
                         </div>
                     </FormGroup>
-                </Form> */}
+                </Form> }
       </div>
     </div>
   );
 }
-
+*/
 export default BusinessSignUp;

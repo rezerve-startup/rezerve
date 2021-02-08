@@ -15,6 +15,8 @@ import BusinessInfo from './business/business-info/BusinessInfo';
 import BusinessInfoDetails from './business/business-info/business-info-details/BusinessInfoDetails';
 import BusinessHome from './business/business-home/BusinessHome';
 import store from './shared/store/store';
+import BusinessAccountInfo from './business/BusinAccInfo';
+import BusinessSignUp from './business/BusinSignUp';
 
 const routes = [
   // { path: "/help", component: Help },
@@ -24,6 +26,7 @@ const routes = [
   { path: '/appoinments', component: AppointmentsPage },
   { path: '/business-info', component: BusinessInfo },
   { path: '/business-info-details', component: BusinessInfoDetails },
+  { path: '/business-account-info', component: BusinessAccountInfo },
 ];
 
 let currentUser = 'business';
@@ -57,7 +60,7 @@ const App = () => {
     <div className={classes.root}>
       <ThemeProvider theme={theme}>
         {currentUser === 'business' && (
-          <BusinessInfo />
+          <BusinessSignUp />
         )}
 
         {currentUser === 'customer' && (
