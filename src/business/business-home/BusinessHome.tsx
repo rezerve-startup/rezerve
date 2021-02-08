@@ -16,6 +16,7 @@ import HomePanel from './home-tab/HomeTab';
 import { connect } from 'react-redux';
 import { firestore } from '../../config/FirebaseConfig';
 import { StoreState } from '../../shared/store/types';
+import AppointmentPanel from './appointment-tab/AppointmentHome';
 
 const styles = (_theme: Theme) =>
   createStyles({
@@ -110,7 +111,7 @@ class BusinessHome extends React.Component<Props, State> {
                   {...a11yProps(i)}
                 />
               ))}
-            </Tabs>
+          </Tabs>
           </AppBar>
           <SwipeableViews
             index={this.state.tabValue}
@@ -121,7 +122,7 @@ class BusinessHome extends React.Component<Props, State> {
               <HomePanel isMobile={isMobile} />
             </TabPanel>
             <TabPanel value={this.state.tabValue} index={1}>
-              Item Two
+              <AppointmentPanel />
             </TabPanel>
           </SwipeableViews>
         </Box>
@@ -141,6 +142,8 @@ class BusinessHome extends React.Component<Props, State> {
     });
   };
 }
+
+
 
 function a11yProps(index: number) {
   return {

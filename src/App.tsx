@@ -3,24 +3,16 @@ import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import { createMuiTheme, makeStyles, ThemeProvider } from '@material-ui/core';
 import Sidebar from './shared/sidebar/sidebar';
 import './CSS/App.css';
-
-// import Help from './pagesRoute/Help'
-// import Messages from './pagesRoute/Messages'
-// import PaymentInfo from './pagesRoute/PaymentInfo'
-// import Settings from './pagesRoute/Settings'
-import AppointmentsPage from './customer/customer-appointments/AppointmentPage';
-// import Services from './business/business-services/Services';
-// import Receipt from './customer/customer-reciept/Reciept.js';
 import BusinessInfo from './business/business-info/BusinessInfo';
 import BusinessInfoDetails from './business/business-info/business-info-details/BusinessInfoDetails';
 import BusinessHome from './business/business-home/BusinessHome';
-import store from './shared/store/store';
+import AppointmentsPage from './customer/customer-appointments/AppointmentPage';
 
 const routes = [
-  // { path: "/help", component: Help },
-  // { path: "/messages", component: Messages },
-  // { path: "/payment", component: PaymentInfo },
-  // { path: "/settings", component: Settings },
+  /* { path: "/help", component: Help },
+  { path: "/messages", component: Messages },
+  { path: "/payment", component: PaymentInfo },
+  { path: "/settings", component: Settings }, */
   { path: '/appoinments', component: AppointmentsPage },
   { path: '/business-info', component: BusinessInfo },
   { path: '/business-info-details', component: BusinessInfoDetails },
