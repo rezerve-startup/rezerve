@@ -21,7 +21,7 @@ const routes = [
   // { path: "/messages", component: Messages },
   // { path: "/payment", component: PaymentInfo },
   // { path: "/settings", component: Settings },
-  // { path: '/appoinments', component: AppointmentsPage },
+  { path: '/appoinments', component: AppointmentsPage },
   // { path: '/business-info', component: BusinessInfo },
   // { path: '/business-info-details', component: BusinessInfoDetails },
 ];
@@ -56,14 +56,7 @@ const App = () => {
   return (
     <div className={classes.root}>
       <ThemeProvider theme={theme}>
-        {currentUser === 'business' && (
-          <BusinessHome />
-        )}
-
-        {currentUser === 'customer' && (
-          <AppointmentsPage />
-        )}
-        {/* <Router>
+        <Router>
           <Sidebar />
           <Switch>
             {routes.map((route, i) => (
@@ -76,8 +69,13 @@ const App = () => {
             ))}
           </Switch>
         </Router>
-        <BusinessHome />
-        </Router> */}
+        {currentUser === 'business' && (
+          <BusinessHome />
+        )}
+
+        {currentUser === 'customer' && (
+          <AppointmentsPage />
+        )}
       </ThemeProvider>
     </div>
   );
