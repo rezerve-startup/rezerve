@@ -12,6 +12,7 @@ import {
   SvgIconProps,
 } from '@material-ui/core';
 import { Home, List, Person, Assessment } from '@material-ui/icons';
+import ClientTab from './client-tab/ClientTab';
 import HomePanel from './home-tab/HomeTab';
 import { connect } from 'react-redux';
 import { firestore } from '../../config/FirebaseConfig';
@@ -123,6 +124,9 @@ class BusinessHome extends React.Component<Props, State> {
             </TabPanel>
             <TabPanel value={this.state.tabValue} index={1}>
               <AppointmentPanel />
+            </TabPanel>
+            <TabPanel value={this.state.tabValue} index={2}>
+              <ClientTab employeeName="Test Employee" />
             </TabPanel>
           </SwipeableViews>
         </Box>
