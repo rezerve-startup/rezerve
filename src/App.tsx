@@ -7,6 +7,7 @@ import BusinessInfo from './business/business-info/BusinessInfo';
 import BusinessInfoDetails from './business/business-info/business-info-details/BusinessInfoDetails';
 import BusinessHome from './business/business-home/BusinessHome';
 import AppointmentsPage from './customer/customer-appointments/AppointmentPage';
+import BusinessProfile from './business/business-home/business-profile/business-profile';
 
 const routes = [
   /* { path: "/help", component: Help },
@@ -18,7 +19,7 @@ const routes = [
   { path: '/business-info-details', component: BusinessInfoDetails },
 ];
 
-let currentUser = 'business';
+let currentUser = 'business-profile';
 
 const useStyles = makeStyles({
   root: {
@@ -63,6 +64,7 @@ const App = () => {
         </Router>
         {currentUser === 'business' && <BusinessHome />}
         {currentUser === 'customer' && <BusinessInfo />}
+        {currentUser === 'business-profile' && <BusinessProfile/>}
       </ThemeProvider>
     </div>
   );
