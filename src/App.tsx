@@ -63,7 +63,7 @@ const App = () => {
         {currentUser === 'customer' && (
           <AppointmentsPage />
         )}
-        {/* <Router>
+        <Router>
           <Sidebar />
           <Switch>
             {routes.map((route, i) => (
@@ -76,8 +76,9 @@ const App = () => {
             ))}
           </Switch>
         </Router>
-        {currentUser === 'business' && <BusinessHome />}
-        {currentUser === 'customer' && <BusinessInfo />}
+
+        {/* {currentUser === 'business' && <BusinessHome />}
+        {currentUser === 'customer' && <BusinessInfo />} */}
       </ThemeProvider>
     </div>
   );
