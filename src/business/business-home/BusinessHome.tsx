@@ -14,6 +14,7 @@ import {
 import { Home, List, Person, Assessment } from '@material-ui/icons';
 import ClientTab from './client-tab/ClientTab';
 import HomePanel from './home-tab/HomeTab';
+import BusinessPerformance from './business-performance/BusinessPerformance';
 import { connect } from 'react-redux';
 import { firestore } from '../../config/FirebaseConfig';
 import { StoreState } from '../../shared/store/types';
@@ -54,7 +55,7 @@ class BusinessHome extends React.Component<Props, State> {
         { label: 'Home', icon: <Home /> },
         { label: 'Appointments', icon: <List /> },
         { label: 'Clients', icon: <Person /> },
-        { label: 'Preformance', icon: <Assessment /> },
+        { label: 'Performance', icon: <Assessment /> },
       ],
       tabValue: 0,
     };
@@ -127,6 +128,9 @@ class BusinessHome extends React.Component<Props, State> {
             </TabPanel>
             <TabPanel value={this.state.tabValue} index={2}>
               <ClientTab employeeName="Test Employee" />
+            </TabPanel>
+            <TabPanel value={this.state.tabValue} index={3}>
+              <BusinessPerformance />
             </TabPanel>
           </SwipeableViews>
         </Box>
