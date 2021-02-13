@@ -2,14 +2,14 @@ import React, { Component } from 'react';
 import Carousel from 'react-material-ui-carousel';
 import { LocationOn } from '@material-ui/icons';
 import { Rating } from '@material-ui/lab';
-import { 
-  Avatar, 
+import {
+  Avatar,
   CircularProgress,
   Paper,
   withStyles,
   createStyles,
   WithStyles,
-  Theme, 
+  Theme,
   Button
 } from '@material-ui/core';
 
@@ -26,8 +26,8 @@ type BusinessInfoState = {
 
 function mapStateToProps(state: StoreState) {
   return {
-    business: state.business
-  }
+    business: state.business,
+  };
 }
 
 interface Props extends WithStyles<typeof styles> {}
@@ -44,7 +44,7 @@ class BusinessInfo extends React.Component<any, BusinessInfoState> {
 
   dispatchUpdateBusinessName = () => {
     this.props.updateBusinessName('Hello World!');
-  }
+  };
 
   componentDidMount() {
 
@@ -72,13 +72,12 @@ class BusinessInfo extends React.Component<any, BusinessInfoState> {
   }
 
   render() {
-
     const { classes } = this.props;
 
     const businessPictures = [
-      {imageUrl: 'cat1.jpg' },
-      {imageUrl: 'cat2.jpg' },
-      {imageUrl: 'cat3.jpg' }
+      { imageUrl: 'cat1.jpg' },
+      { imageUrl: 'cat2.jpg' },
+      { imageUrl: 'cat3.jpg' },
     ];
 
     return (
@@ -89,7 +88,10 @@ class BusinessInfo extends React.Component<any, BusinessInfoState> {
               <Carousel navButtonsAlwaysVisible={true}>
                 {businessPictures.map((businessPicture, i) => (
                   <Paper key={i}>
-                    <img className={classes.businessPicture} src={businessPicture.imageUrl} />
+                    <img
+                      className={classes.businessPicture}
+                      src={businessPicture.imageUrl}
+                    />
                   </Paper>
                 ))}
               </Carousel>
@@ -97,9 +99,7 @@ class BusinessInfo extends React.Component<any, BusinessInfoState> {
 
             <div className={classes.businessInformation}>
               {/* The value that is being updated dynamically via state changes */}
-              <h5>
-                {this.props.business.businessName}
-              </h5>
+              <h5>{this.props.business.businessName}</h5>
               <h6>
                 {this.state.business.about.address}, {this.state.business.about.city},{' '}
                 {this.state.business.about.state} {this.state.business.about.zipcode}
@@ -186,43 +186,43 @@ const styles = (theme: Theme) =>
       height: '100%',
       color: 'white',
       textAlign: 'center',
-      alignItems: 'center'
+      alignItems: 'center',
     },
     businessOverview: {
-      padding: '2.5rem'
+      padding: '2.5rem',
     },
     businessPicture: {
-      width: '100%'
+      width: '100%',
     },
     carouselContainer: {
-      marginBottom: '1rem'
+      marginBottom: '1rem',
     },
     businessInformation: {
-      color: 'black'
+      color: 'black',
     },
     distanceContainer: {
       display: 'flex',
       justifyContent: 'center',
-      color: 'red'
+      color: 'red',
     },
     distanceToBusiness: {
-      marginLeft: '0.25rem'
+      marginLeft: '0.25rem',
     },
     aboutBusiness: {
       color: 'black',
       padding: '0.5rem',
       backgroundColor: 'lightgray',
       border: 'darkgray solid 1',
-      marginBottom: '1rem'
+      marginBottom: '1rem',
     },
     aboutContent: {
-      textAlign: 'start'
+      textAlign: 'start',
     },
     reviewsContainer: {
-      color: 'black'
+      color: 'black',
     },
     overallReview: {
-      marginBottom: '0.5rem'
+      marginBottom: '0.5rem',
     },
     businessReview: {
       display: 'flex',
@@ -232,15 +232,15 @@ const styles = (theme: Theme) =>
     },
     reviewAvatar: {
       flex: 1,
-      marginRight: '0.5rem'
+      marginRight: '0.5rem',
     },
     reviewContent: {
       flex: 5,
-      marginRight: '0.5rem'
+      marginRight: '0.5rem',
     },
     reviewRating: {
       flex: 2,
-      marginLeft: '0.25rem'
+      marginLeft: '0.25rem',
     },
     loadingContainer: {
       display: 'flex',
@@ -256,4 +256,6 @@ const styles = (theme: Theme) =>
     }
   });
 
-export default connect(mapStateToProps, { updateBusinessName })(withStyles(styles, { withTheme: true })(BusinessInfo));
+export default connect(mapStateToProps, { updateBusinessName })(
+  withStyles(styles, { withTheme: true })(BusinessInfo),
+);

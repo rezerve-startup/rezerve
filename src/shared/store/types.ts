@@ -29,7 +29,7 @@ export const UPDATE_BUSINESS_NAME = 'UPDATE_BUSINESS_NAME';
 
 interface UpdateBusinessNameAction {
   type: typeof UPDATE_BUSINESS_NAME;
-  payload: string
+  payload: string;
 }
 
 export type BusinessActionTypes = UpdateBusinessNameAction;
