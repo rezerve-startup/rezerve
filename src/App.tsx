@@ -49,20 +49,6 @@ const App = () => {
   return (
     <div className={classes.root}>
       <ThemeProvider theme={theme}>
-        {currentUser === 'business' && (
-          <div>
-            {currentPage === 'business-home' && (
-              <BusinessHome />
-            )}
-            {currentPage === 'business-info' && (
-              <BusinessInfo />
-            )}
-          </div>
-        )}
-
-        {currentUser === 'customer' && (
-          <AppointmentsPage />
-        )}
         <Router>
           <Sidebar />
           <Switch>
@@ -77,8 +63,21 @@ const App = () => {
           </Switch>
         </Router>
 
-        {/* {currentUser === 'business' && <BusinessHome />}
-        {currentUser === 'customer' && <BusinessInfo />} */}
+        {currentUser === 'business' && (
+          <div>
+            {currentPage === 'business-home' && (
+              <BusinessHome />
+            )}
+            {currentPage === 'business-info' && (
+              <BusinessInfo />
+            )}
+          </div>
+        )}
+
+        {currentUser === 'customer' && (
+          <AppointmentsPage />
+        )}
+
       </ThemeProvider>
     </div>
   );
