@@ -2,9 +2,11 @@ import React from 'react';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import { createMuiTheme, makeStyles, ThemeProvider } from '@material-ui/core';
 import Sidebar from './shared/sidebar/sidebar';
+
+import AppointmentsPage from './customer/customer-appointments/AppointmentPage';
 import './CSS/App.css';
+
 import BusinessInfo from './business/business-info/BusinessInfo';
-import BusinessInfoDetails from './business/business-info/business-info-details/BusinessInfoDetails';
 import BusinessHome from './business/business-home/BusinessHome';
 import AppointmentsPage from './customer/customer-appointments/AppointmentPage';
 
@@ -15,7 +17,6 @@ const routes = [
   { path: "/settings", component: Settings }, */
   { path: '/appoinments', component: AppointmentsPage },
   { path: '/business-info', component: BusinessInfo },
-  { path: '/business-info-details', component: BusinessInfoDetails },
 ];
 
 let currentUser = 'business';

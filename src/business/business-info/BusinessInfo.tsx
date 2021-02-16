@@ -10,6 +10,7 @@ import {
   createStyles,
   WithStyles,
   Theme,
+  Grid, 
   Button
 } from '@material-ui/core';
 
@@ -17,6 +18,10 @@ import { firestore } from '../../config/FirebaseConfig';
 import { connect } from 'react-redux';
 import { updateBusinessName } from '../../shared/store/actions';
 import { BusinessState, StoreState } from '../../shared/store/types';
+import BusinessInfoDetails from './business-info-details/BusinessInfoDetails';
+import cat1 from '../../assets/business-pictures/cat1.jpg';
+import cat2 from '../../assets/business-pictures/cat2.jpg';
+import cat3 from '../../assets/business-pictures/cat3.jpg';
 
 type BusinessInfoState = {
   business: any;
@@ -75,9 +80,9 @@ class BusinessInfo extends React.Component<any, BusinessInfoState> {
     const { classes } = this.props;
 
     const businessPictures = [
-      { imageUrl: 'cat1.jpg' },
-      { imageUrl: 'cat2.jpg' },
-      { imageUrl: 'cat3.jpg' },
+      {imageUrl: cat1 },
+      {imageUrl: cat2 },
+      {imageUrl: cat3 }
     ];
 
     return (
@@ -88,10 +93,7 @@ class BusinessInfo extends React.Component<any, BusinessInfoState> {
               <Carousel navButtonsAlwaysVisible={true}>
                 {businessPictures.map((businessPicture, i) => (
                   <Paper key={i}>
-                    <img
-                      className={classes.businessPicture}
-                      src={businessPicture.imageUrl}
-                    />
+                    <img className={classes.businessPicture} src={businessPicture.imageUrl} alt='' />
                   </Paper>
                 ))}
               </Carousel>
@@ -128,9 +130,6 @@ class BusinessInfo extends React.Component<any, BusinessInfoState> {
                   size="medium"
                   value={this.state.business.performance.rating}
                   precision={0.5}
-                  classes={{
-                    iconFilled: classes.starRating
-                  }}
                   readOnly={true}
                 />
               </div>
@@ -159,6 +158,16 @@ class BusinessInfo extends React.Component<any, BusinessInfoState> {
                           }} />
                       </div>
                     </div>
+                    <div>
+                      Brought my son for a haircut and it was perfect! He loved
+                      it and we will definitely be making another appointment
+                    </div>
+                  </div>
+                  <div className={classes.reviewRating}>
+                    <div>10/17/20</div>
+                    <Rating size="small" value={2.5} precision={0.5} readOnly={true} />
+                  </div>
+                </div>
                   )
                 })}
               </div>
@@ -171,6 +180,7 @@ class BusinessInfo extends React.Component<any, BusinessInfoState> {
             <CircularProgress size={75} />
           </div>
         )}
+        <BusinessInfoDetails props={this.state.business} />
       </div>
     );
   }
