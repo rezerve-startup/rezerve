@@ -10,8 +10,8 @@ import {
   createStyles,
   WithStyles,
   Theme,
-  Grid, 
-  Button
+  Grid,
+  Button,
 } from '@material-ui/core';
 
 import { firestore } from '../../config/FirebaseConfig';
@@ -26,7 +26,7 @@ import cat3 from '../../assets/business-pictures/cat3.jpg';
 type BusinessInfoState = {
   business: any;
   businessName: string;
-  businessReviews: any[]
+  businessReviews: any[];
 };
 
 function mapStateToProps(state: StoreState) {
@@ -43,7 +43,7 @@ class BusinessInfo extends React.Component<any, BusinessInfoState> {
     this.state = {
       business: undefined,
       businessName: props.business.businessName,
-      businessReviews: []
+      businessReviews: [],
     };
   }
 
@@ -52,37 +52,38 @@ class BusinessInfo extends React.Component<any, BusinessInfoState> {
   };
 
   componentDidMount() {
+    const businessData = firestore
+      .collection('businesses')
+      .doc('98amGMWjvPkULXgBerJq');
 
-    const businessData = firestore.collection('businesses').doc('98amGMWjvPkULXgBerJq');
-
-    businessData.get().then((val) => {
-      const businessInfo = val.data();
-      this.setState({
-        business: businessInfo
+    businessData
+      .get()
+      .then((val) => {
+        const businessInfo = val.data();
+        this.setState({
+          business: businessInfo,
+        });
       })
-    }).then(() => {
-      businessData.collection('reviews').onSnapshot((snapshot) => {
-        const review = snapshot.forEach((reviewDoc) => {
-          const businessReview = reviewDoc.data();
+      .then(() => {
+        businessData.collection('reviews').onSnapshot((snapshot) => {
+          const review = snapshot.forEach((reviewDoc) => {
+            const businessReview = reviewDoc.data();
 
-          this.setState({
-            businessReviews: [
-              ...this.state.businessReviews,
-              businessReview
-            ]
-          })
-        })
-      })
-    })
+            this.setState({
+              businessReviews: [...this.state.businessReviews, businessReview],
+            });
+          });
+        });
+      });
   }
 
   render() {
     const { classes } = this.props;
 
     const businessPictures = [
-      {imageUrl: cat1 },
-      {imageUrl: cat2 },
-      {imageUrl: cat3 }
+      { imageUrl: cat1 },
+      { imageUrl: cat2 },
+      { imageUrl: cat3 },
     ];
 
     return (
@@ -93,7 +94,11 @@ class BusinessInfo extends React.Component<any, BusinessInfoState> {
               <Carousel navButtonsAlwaysVisible={true}>
                 {businessPictures.map((businessPicture, i) => (
                   <Paper key={i}>
-                    <img className={classes.businessPicture} src={businessPicture.imageUrl} alt='' />
+                    <img
+                      className={classes.businessPicture}
+                      src={businessPicture.imageUrl}
+                      alt=""
+                    />
                   </Paper>
                 ))}
               </Carousel>
@@ -103,8 +108,10 @@ class BusinessInfo extends React.Component<any, BusinessInfoState> {
               {/* The value that is being updated dynamically via state changes */}
               <h5>{this.props.business.businessName}</h5>
               <h6>
-                {this.state.business.about.address}, {this.state.business.about.city},{' '}
-                {this.state.business.about.state} {this.state.business.about.zipcode}
+                {this.state.business.about.address},{' '}
+                {this.state.business.about.city},{' '}
+                {this.state.business.about.state}{' '}
+                {this.state.business.about.zipcode}
               </h6>
               <div className={classes.distanceContainer}>
                 <LocationOn />
@@ -145,35 +152,42 @@ class BusinessInfo extends React.Component<any, BusinessInfoState> {
                         <div>
                           <b>{review.poster}</b>
                         </div>
-                        <div>
-                          {review.content}
-                        </div>
+                        <div>{review.content}</div>
                       </div>
                       <div className={classes.reviewRating}>
                         {new Date(review.date.toDate()).toLocaleDateString()}
-                        <Rating size="small" value={review.rating} precision={0.5} readOnly={true} 
+                        <Rating
+                          size="small"
+                          value={review.rating}
+                          precision={0.5}
+                          readOnly={true}
                           classes={{
                             iconFilled: classes.starRatingFilled,
                             iconHover: classes.starRatingHover,
-                          }} />
+                          }}
+                        />
+                      </div>
+
+                      <div className={classes.reviewRating}>
+                        <div>10/17/20</div>
+                        <Rating
+                          size="small"
+                          value={2.5}
+                          precision={0.5}
+                          readOnly={true}
+                        />
                       </div>
                     </div>
-                    <div>
-                      Brought my son for a haircut and it was perfect! He loved
-                      it and we will definitely be making another appointment
-                    </div>
-                  </div>
-                  <div className={classes.reviewRating}>
-                    <div>10/17/20</div>
-                    <Rating size="small" value={2.5} precision={0.5} readOnly={true} />
-                  </div>
-                </div>
-                  )
+                  );
                 })}
               </div>
             </div>
-            <Button variant="contained" onClick={this.dispatchUpdateBusinessName}>Update Business Name in Store</Button>
-
+            <Button
+              variant="contained"
+              onClick={this.dispatchUpdateBusinessName}
+            >
+              Update Business Name in Store
+            </Button>
           </div>
         ) : (
           <div className={classes.loadingContainer}>
@@ -238,7 +252,7 @@ const styles = (theme: Theme) =>
       display: 'flex',
       justifyContent: 'space-around',
       textAlign: 'start',
-      marginBottom: '0.5rem'
+      marginBottom: '0.5rem',
     },
     reviewAvatar: {
       flex: 1,
@@ -256,14 +270,14 @@ const styles = (theme: Theme) =>
       display: 'flex',
       justifyContent: 'center',
       alignItems: 'center',
-      height: '100%'
+      height: '100%',
     },
     starRatingFilled: {
       color: theme.palette.primary.main,
     },
     starRatingHover: {
-      color: theme.palette.primary.light
-    }
+      color: theme.palette.primary.light,
+    },
   });
 
 export default connect(mapStateToProps, { updateBusinessName })(
