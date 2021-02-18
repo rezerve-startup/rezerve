@@ -1,0 +1,31 @@
+/*Main page; Position is fixed so that just the business list is scrollable*/
+.services-page {
+  background-color: #212423;
+  height: 100vh;
+  width: 100vw;
+  color: white;
+  text-align: center;
+  align-items: center;
+  position: fixed;
+}
+
+/*Scrollable div where the business cards are*/
+.business-list {
+  background-color: white;
+  height: 77%;
+  overflow-y: scroll;
+  position: relative;
+}
+
+/*Separates the cards from one another*/
+.item {
+  padding-top: 30px;
+}
+
+/*Lays a new sidebar at the top, while overlaying the rest of the page*/
+.sidebar {
+  position: absolute;
+  top: 0;
+  background-color: transparent;
+  width: 100%;
+}
