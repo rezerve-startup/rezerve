@@ -29,6 +29,7 @@ jobs:
           heroku_api_key: ${{secrets.HEROKU_API_KEY}}
           heroku_app_name: "rezerve-startup" #Must be unique in Heroku
           heroku_email: "rezerve.develop@gmail.com"
+          webpack: "https://github.com/mars/create-react-app-buildpack.git"
 
       # Runs a single command using the runners shell
       - name: Format the code
