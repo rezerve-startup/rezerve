@@ -52,29 +52,47 @@ class BusinessInfo extends React.Component<any, BusinessInfoState> {
   };
 
   componentDidMount() {
+    this.getBusinessInfoData();
+  }
+
+  getBusinessInfoData() {
     const businessData = firestore
       .collection('businesses')
       .doc('98amGMWjvPkULXgBerJq');
 
     businessData
       .get()
+      // Get business info data
       .then((val) => {
         const businessInfo = val.data();
         this.setState({
           business: businessInfo,
         });
       })
+      // Get business reviews
       .then(() => {
-        businessData.collection('reviews').onSnapshot((snapshot) => {
-          const review = snapshot.forEach((reviewDoc) => {
-            const businessReview = reviewDoc.data();
+        this.state.business.reviews.forEach((reviewId: any) => {
+          let tempBusinessReview;
 
-            this.setState({
-              businessReviews: [...this.state.businessReviews, businessReview],
-            });
-          });
+          firestore.collection('reviews').doc(`${reviewId}`).get()
+            .then((review) => {
+              tempBusinessReview = review.data();
+            })
+            .then(() => {
+              firestore.collection('users').where('customerId', '==', `${tempBusinessReview.customerId}`).get()
+                .then((querySnapshot) => {
+                  querySnapshot.forEach((doc) => {
+                    tempBusinessReview.poster = doc.data().firstName;
+                  })
+                })
+                .then(() => {
+                  this.setState({
+                    businessReviews: [...this.state.businessReviews, tempBusinessReview]
+                  })
+                });
+            })
         });
-      });
+      })
   }
 
   render() {
@@ -152,42 +170,30 @@ class BusinessInfo extends React.Component<any, BusinessInfoState> {
                         <div>
                           <b>{review.poster}</b>
                         </div>
-                        <div>{review.content}</div>
+                        <div>{review.message}</div>
                       </div>
                       <div className={classes.reviewRating}>
-                        {new Date(review.date.toDate()).toLocaleDateString()}
-                        <Rating
-                          size="small"
-                          value={review.rating}
-                          precision={0.5}
-                          readOnly={true}
-                          classes={{
-                            iconFilled: classes.starRatingFilled,
-                            iconHover: classes.starRatingHover,
-                          }}
-                        />
-                      </div>
-
-                      <div className={classes.reviewRating}>
-                        <div>10/17/20</div>
-                        <Rating
-                          size="small"
-                          value={2.5}
-                          precision={0.5}
-                          readOnly={true}
-                        />
+                        <div>
+                          {new Date(review.date.toDate()).toLocaleDateString()}
+                        </div>
+                        <div>
+                          <Rating
+                            size="small"
+                            value={review.rating}
+                            precision={0.5}
+                            readOnly={true}
+                            classes={{
+                              iconFilled: classes.starRatingFilled,
+                              iconHover: classes.starRatingHover,
+                            }}
+                          />
+                        </div>
                       </div>
                     </div>
                   );
                 })}
               </div>
             </div>
-            <Button
-              variant="contained"
-              onClick={this.dispatchUpdateBusinessName}
-            >
-              Update Business Name in Store
-            </Button>
           </div>
         ) : (
           <div className={classes.loadingContainer}>
@@ -265,6 +271,8 @@ const styles = (theme: Theme) =>
     reviewRating: {
       flex: 2,
       marginLeft: '0.25rem',
+      textAlign: 'center',
+      alignContent: 'center'
     },
     loadingContainer: {
       display: 'flex',
@@ -281,5 +289,5 @@ const styles = (theme: Theme) =>
   });
 
 export default connect(mapStateToProps, { updateBusinessName })(
-  withStyles(styles, { withTheme: true })(BusinessInfo),
+  withStyles(styles, { withTheme: true })(BusinessInfo)
 );
