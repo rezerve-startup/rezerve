@@ -1,263 +1,184 @@
 import React from 'react';
-// import * as FaIcons from 'react-icons/fa'
+import SwipeableViews from 'react-swipeable-views';
 import {
-  Divider,
-  Checkbox,
-  TextField,
-  Dialog,
-  DialogContent,
-  Button,
-  DialogTitle,
-  Typography,
-  Fab,
-  useMediaQuery,
-  Stepper,
-  Step,
-  StepLabel
-} from '@material-ui/core/';
-import { makeStyles, useTheme } from '@material-ui/core/styles';
-import classes from '*.module.css';
-import { Close } from '@material-ui/icons';
+  Box,
+  AppBar,
+  Tab,
+  Tabs,
+  Theme,
+  WithStyles,
+  createStyles,
+  withStyles,
+  SvgIconProps,
+} from '@material-ui/core';
+import { Home, List, Person, Assessment } from '@material-ui/icons';
+import ClientTab from '../business-home/client-tab/ClientTab';
+import HomePanel from './HomeTab';
+import { connect } from 'react-redux';
+import { firestore } from '../../config/FirebaseConfig';
+import { StoreState } from '../../shared/store/types';
+import AppointmentPanel from '../business-home/appointment-tab/AppointmentHome';
 
+const styles = (_theme: Theme) =>
+  createStyles({
+    root: {
+      flexGrow: 1,
+    },
+  });
 
-function BusinessHeader() {
-  const classes = useStyles();
-  return (
-    <div className={classes.itemCard}>
-      <Divider className={classes.divider0} />
-      <h1>
-        <strong>Business Header</strong>
-      </h1>
-      <Divider className={classes.divider0} />
-    </div>
-  );
+interface CustomTab {
+  label: string;
+  icon: React.ReactElement<SvgIconProps>;
 }
 
-function SwipableDivs(){
-  const classes = useStyles();
-  return (
-    <div className={classes.itemCard}>
-      <Divider className={classes.divider0} />
-      <h1>
-        <strong>Swipable Divs</strong>
-      </h1>
-      <Divider className={classes.divider0} />
-    </div>
-  );
-}
+interface Props extends WithStyles<typeof styles> {}
 
-function AppointmentsDiv() {
-  const classes = useStyles();
+type State = {
+  business: any;
+  tabs: CustomTab[];
+  tabValue: number;
+};
 
-
-  return (
-    <div className={classes.itemCard}>
-      <Divider className={classes.divider0} />
-      <h1>
-        <strong>Upcoming Appointments</strong>
-      </h1>
-      </div>
-  );
-}
-
-function BookingConfirmation(){
-  const classes = useStyles();
-  return(
-    <div>
-      <ConfirmationCard/>
-      <PaymentInfo/>
-      
-      <div className={classes.itemPlus1}>
-            <h3>
-              <strong>Receive Text Reminders/Updates</strong>
-            </h3>
-            <Checkbox className={classes.checkbox} />
-          </div>
-
-          <div className={classes.phoneField}>
-            <TextField type="tel" placeholder="Phone Number" />
-          </div>
-    </div>
-)  
-}
-
-function BusinessProfile() {
-  const theme = useTheme();
-  const classes = useStyles();
-  const fullscreen = useMediaQuery(theme.breakpoints.down('lg'));
-  const [open, setOpen] = React.useState(false);
-  const [activeStep, setActiveStep] = React.useState(0);
-
-  const handleNext = () => {
-    setActiveStep((prevActiveStep) => prevActiveStep + 1);
+function mapStateToProps(state: StoreState) {
+  return {
+    business: state.business,
   };
+}
 
-  const handleBack = () => {
-    setActiveStep((prevActiveStep) => prevActiveStep - 1);
-  };
-
-  const handleReset = () => {
-    setActiveStep(0);
-  };
-  const openOnClick = () => {
-    setOpen(true)
-    handleReset()
+class BusinessProfile extends React.Component<Props, State> {
+  constructor(props: Props) {
+    super(props);
+    this.state = {
+      business: undefined,
+      tabs: [
+        { label: 'Home', icon: <Home /> },
+        { label: 'Appointments', icon: <List /> },
+        { label: 'Clients', icon: <Person /> },
+        { label: 'Preformance', icon: <Assessment /> },
+      ],
+      tabValue: 0,
+    };
   }
 
-  const handleClose = () => {
-    setOpen(false)
+  componentDidMount() {
+    const fetchedBusinesses: any[] = [];
+
+    firestore.collection('businesses').onSnapshot((snapshot) => {
+      snapshot.docs.forEach((doc) => {
+        const barbers: any[] = [];
+        firestore
+          .collection('businesses')
+          .doc(doc.id)
+          .collection('barbers')
+          .onSnapshot((snapshot2) => {
+            snapshot2.docs.forEach((barber) => {
+              barbers.push(barber.data());
+            });
+          });
+
+        const business = doc.data();
+        business.barbers = barbers;
+        fetchedBusinesses.push(business);
+      });
+
+      console.log(fetchedBusinesses);
+      this.setState({
+        business: fetchedBusinesses,
+      });
+    });
   }
 
-var backFunction = () => handleBack;
+  render() {
+    const { classes } = this.props;
+    const isMobile = true;
+    return (
+      <div className={classes.root}>
+        <Box m={1}>
+          <AppBar position="static" color="default">
+            <Tabs
+              value={this.state.tabValue}
+              onChange={this.handleChange}
+              aria-label="business-tabs"
+              indicatorColor="primary"
+              centered={isMobile ? false : true}
+              variant={isMobile ? 'scrollable' : 'fullWidth'}
+              scrollButtons="on"
+            >
+              {this.state.tabs.map((tab: CustomTab, i: number) => (
+                <Tab
+                  key={i}
+                  label={tab.label}
+                  icon={tab.icon}
+                  {...a11yProps(i)}
+                />
+              ))}
+          </Tabs>
+          </AppBar>
+          <SwipeableViews
+            index={this.state.tabValue}
+            onChangeIndex={this.handleChangeIndex}
+            enableMouseEvents={true}
+          >
+            <TabPanel value={this.state.tabValue} index={0}>
+              <HomePanel isMobile={isMobile} />
+            </TabPanel>
+            <TabPanel value={this.state.tabValue} index={1}>
+              <AppointmentPanel />
+            </TabPanel>
+            <TabPanel value={this.state.tabValue} index={2}>
+              <ClientTab employeeName="Test Employee" />
+            </TabPanel>
+          </SwipeableViews>
+        </Box>
+      </div>
+    );
+  }
+
+  handleChange = (_event: any, newValue: number) => {
+    this.setState({
+      tabValue: newValue,
+    });
+  };
+
+  handleChangeIndex = (index: number) => {
+    this.setState({
+      tabValue: index,
+    });
+  };
+}
+
+
+
+function a11yProps(index: number) {
+  return {
+    id: `business-tab-${index}`,
+    'aria-controls': `business-tabpanel-${index}`,
+  };
+}
+
+type TabPanelProps = {
+  children: React.ReactNode;
+  index: number;
+  value: string | number | Error;
+};
+
+function TabPanel(props: TabPanelProps) {
+  const { children, value, index, ...other } = props;
 
   return (
-    <div>
-      <Button variant="contained" color="primary" onClick={openOnClick}>Open Checkout</Button>
-      <Dialog open={open} fullScreen={fullscreen} className={classes.receiptPage}>
-        <DialogContent>
-          {/* <div className={classes.itemPlus}>
-            <h1>
-              <strong>Confirm</strong>
-            </h1>
-          </div> 
-          <ConfirmationCard />
-
-          <div className={classes.itemPlus1}>
-            <h2>
-              <strong>Deposit/Booking Fee</strong>
-            </h2>
-          </div>
-          <StripePaymentSetup />
-
-          <div className={classes.itemPlus1}>
-            <h3>
-              <strong>Receive Text Reminders/Updates</strong>
-            </h3>
-            <Checkbox className={classes.checkbox} />
-          </div>
-
-          <div className={classes.phoneField}>
-            <TextField type="tel" placeholder="Phone Number" />
-          </div>
-
-        <button className={classes.button}>Confirm & Book</button*/}
-
-
-<div>
-
-        <BusinessHeader/>
-        <SwipableDivs/>
-        <AppointmentsDiv/>
-        
-      </div>
-        </DialogContent>
-      </Dialog>
+    <div
+      role="tabpanel"
+      hidden={value !== index}
+      id={`business-tabpanel-${index}`}
+      aria-labelledby={`business-tab-${index}`}
+      {...other}
+    >
+      {value === index && <Box p={1}>{children}</Box>}
     </div>
   );
 }
 
-const useStyles = makeStyles((theme) => ({
-  divider0: {
-    // Theme Color, or use css color in quote
-    background: '#c8c8c8',
-    color: 'white',
-    height: '30px',
-    width: '95%',
-    margin: 'auto',
-  },
-
-  divider1: {
-    // Theme Color, or use css color in quote
-    background: 'white',
-    color: 'white',
-    height: '10px',
-    width: '95%',
-    margin: 'auto',
-  },
-
-  receiptPage: {
-    background: 'white',
-    height: '100vh',
-    width: '100vw',
-    color: 'black',
-    textAlign: 'center',
-    alignItems: 'center',
-    position: 'fixed',
-  },
-
-  items: {
-    display: 'flex',
-    padding: '5px',
-  },
-
-  stat: {
-    right: '60px',
-    fontWeight: 'bold',
-    position: 'absolute',
-  },
-
-  closeIcon: {
-    right: '50px',
-    position: 'absolute',
-    fontSize: '40px',
-    color: 'black',
-  },
-
-  receipt: {
-    borderStyle: 'solid',
-  },
-
-  itemCard: {
-    background: '#c8c8c8',
-    color: 'white',
-    margin: 'auto',
-    width: '90%',
-  },
-
-  itemPlus: {
-    display: 'flex',
-    padding: '40px',
-  },
-
-  itemPlus1: {
-    display: 'flex',
-    paddingTop: '40px',
-    paddingLeft: '40px',
-    paddingBottom: '10px',
-  },
-
-  checkbox: {
-    right: '60px',
-    fontWeight: 'bold',
-    position: 'absolute',
-  },
-
-  phoneField: {
-    display: 'flex',
-    paddingTop: '10px',
-    paddingLeft: '40px',
-    paddingBottom: '20px',
-    WebkitAppearance: 'none',
-    margin: '0',
-  },
-
-  button: {
-    background: '#ff4949',
-    border: 'none',
-    color: 'white',
-    padding: '12px 34px',
-    textAlign: 'center',
-    fontWeight: 'bold',
-    fontSize: '14pt',
-  },
-
-  backButton: {
-    marginRight: theme.spacing(1),
-  },
-  instructions: {
-    marginTop: theme.spacing(1),
-    marginBottom: theme.spacing(1),
-  },
-}));
-
-export default BusinessProfile;
+export default connect(
+  mapStateToProps,
+  null,
+)(withStyles(styles, { withTheme: true })(BusinessProfile));
