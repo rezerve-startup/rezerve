@@ -8,6 +8,7 @@ import {
   DialogContent,
   Button,
   DialogTitle,
+  DialogActions,
   Typography,
   Fab,
   useMediaQuery,
@@ -107,10 +108,13 @@ function BookingConfirmation(){
       <PaymentInfo/>
       
       <div className={classes.itemPlus1}>
+         <span>  
             <h3>
               <strong>Receive Text Reminders/Updates</strong>
+              <Checkbox className={classes.checkbox} />
             </h3>
-            <Checkbox className={classes.checkbox} />
+            
+            </span>
           </div>
 
           <div className={classes.phoneField}>
@@ -123,7 +127,7 @@ function BookingConfirmation(){
 function CustomerCheckout() {
   const theme = useTheme();
   const classes = useStyles();
-  const fullscreen = useMediaQuery(theme.breakpoints.down('lg'));
+  const fullscreen = useMediaQuery(theme.breakpoints.down('md'));
   const [open, setOpen] = React.useState(false);
   const [activeStep, setActiveStep] = React.useState(0);
   const steps = getSteps();
@@ -154,64 +158,36 @@ var backFunction = () => handleBack;
     <div>
       <Button variant="contained" color="primary" onClick={openOnClick}>Open Checkout</Button>
       <Dialog open={open} fullScreen={fullscreen} className={classes.receiptPage}>
-        <DialogTitle>
-        </DialogTitle>
-        <Stepper activeStep={activeStep} alternativeLabel>
-        {steps.map((label) => (
-          <Step key={label}>
-            <StepLabel>{label}</StepLabel>
-          </Step>
-        ))}
-      </Stepper>
+      
+
         <DialogContent>
-          {/* <div className={classes.itemPlus}>
-            <h1>
-              <strong>Confirm</strong>
-            </h1>
-          </div> 
-          <ConfirmationCard />
-
-          <div className={classes.itemPlus1}>
-            <h2>
-              <strong>Deposit/Booking Fee</strong>
-            </h2>
-          </div>
-          <StripePaymentSetup />
-
-          <div className={classes.itemPlus1}>
-            <h3>
-              <strong>Receive Text Reminders/Updates</strong>
-            </h3>
-            <Checkbox className={classes.checkbox} />
-          </div>
-
-          <div className={classes.phoneField}>
-            <TextField type="tel" placeholder="Phone Number" />
-          </div>
-
-        <button className={classes.button}>Confirm & Book</button*/}
-
-
-<div>
-
-          <div>
-            <Typography className={classes.instructions}>{getStepContent(activeStep)}</Typography>
-            <div>
-              <Button 
-                onClick={activeStep == 0 ? handleClose : handleBack }
-                className={classes.backButton}
-              >
-              Back
-              </Button>
-              <Button variant="contained" color="primary" 
-              onClick={activeStep === steps.length - 1 ? handleClose : handleNext }>
-                {activeStep === steps.length - 1 ? 'Confirm & Book' : 'Next'}
-              </Button>
-            </div>
-          </div>
-        
-      </div>
+          <Stepper activeStep={activeStep} alternativeLabel>
+          {steps.map((label) => (
+            <Step key={label}>
+              <StepLabel>{label}</StepLabel>
+            </Step>
+          ))}
+        </Stepper>
+        <Typography className={classes.instructions}>{getStepContent(activeStep)}</Typography>
         </DialogContent>
+
+            <DialogActions>
+                <div>
+                     <Button
+                          onClick={activeStep == 0 ? handleClose : handleBack }
+                          className={classes.backButton}
+                        >
+                        Back
+                        </Button>
+                        <Button variant="contained" color="primary" 
+                        onClick={activeStep === steps.length - 1 ? handleClose : handleNext }>
+                          {activeStep === steps.length - 1 ? 'Confirm & Book' : 'Next'}
+                        </Button>
+                            
+                        
+                        
+                      </div>
+      </DialogActions>
       </Dialog>
     </div>
   );
@@ -252,9 +228,9 @@ const useStyles = makeStyles((theme) => ({
   },
 
   stat: {
-    right: '60px',
+    display: 'flex',
     fontWeight: 'bold',
-    position: 'absolute',
+    position: 'relative',
   },
 
   closeIcon: {
@@ -288,9 +264,8 @@ const useStyles = makeStyles((theme) => ({
   },
 
   checkbox: {
-    right: '60px',
     fontWeight: 'bold',
-    position: 'absolute',
+    position: 'relative',
   },
 
   phoneField: {
