@@ -29,6 +29,7 @@ type BusinessPerformanceState = {
     rating: number;
   };
   businessReviews: any[];
+  business: any;
 };
 
 interface Props extends WithStyles<typeof styles> {}
@@ -49,44 +50,55 @@ class BusinessPerformance extends React.Component<
         rating: 0,
       },
       businessReviews: [],
+      business: undefined
     };
   }
 
   componentDidMount() {
+    this.getBusinessPerformanceData();
+  }
+
+  getBusinessPerformanceData() {
     const businessData = firestore
       .collection('businesses')
       .doc('98amGMWjvPkULXgBerJq');
 
-    businessData
-      .get()
+    businessData.get()
+      // Get business info data
       .then((val) => {
         const businessInfo = val.data();
-
         if (businessInfo !== undefined) {
           this.setState({
+            business: businessInfo,
             businessPerformance: businessInfo.performance,
           });
         }
       })
+      // Get business reviews
       .then(() => {
-        const businessReviews: any[] = [];
+        this.state.business.reviews.forEach((reviewId: any) => {
+          let tempBusinessReview;
 
-        businessData.collection('reviews').onSnapshot((snapshot) => {
-          const review = snapshot.forEach((reviewDoc) => {
-            const businessReview = reviewDoc.data();
-
-            businessReviews.push(businessReview);
-          });
-
-          const sortedReviews = businessReviews.slice().sort((a, b) => {
-            return b.date - a.date;
-          });
-
-          this.setState({
-            businessReviews: sortedReviews,
-          });
+          firestore.collection('reviews').doc(`${reviewId}`).get()
+            .then((review) => {
+              tempBusinessReview = review.data();
+            })
+            .then(() => {
+              firestore.collection('users').where('customerId', '==', `${tempBusinessReview.customerId}`).get()
+                .then((querySnapshot) => {
+                  querySnapshot.forEach((doc) => {
+                    tempBusinessReview.poster = doc.data().firstName;
+                  })
+                })
+                .then(() => {
+                  console.log(tempBusinessReview);
+                  this.setState({
+                    businessReviews: [...this.state.businessReviews, tempBusinessReview]
+                  })
+                });
+            })
         });
-      });
+      })
   }
 
   handleChange = (_event: any, newTabSelected: number) => {
@@ -165,20 +177,24 @@ class BusinessPerformance extends React.Component<
                       <div>
                         <b>{review.poster}</b>
                       </div>
-                      <div>{review.content}</div>
+                      <div>{review.message}</div>
                     </div>
                     <div className={classes.reviewRating}>
-                      {new Date(review.date.toDate()).toLocaleDateString()}
-                      <Rating
-                        size="small"
-                        value={review.rating}
-                        precision={0.5}
-                        readOnly={true}
-                        classes={{
-                          iconFilled: classes.starRatingFilled,
-                          iconHover: classes.starRatingHover,
-                        }}
-                      />
+                      <div>
+                        {new Date(review.date.toDate()).toLocaleDateString()}
+                      </div>
+                      <div>
+                        <Rating
+                          size="small"
+                          value={review.rating}
+                          precision={0.5}
+                          readOnly={true}
+                          classes={{
+                            iconFilled: classes.starRatingFilled,
+                            iconHover: classes.starRatingHover,
+                          }}
+                        />
+                      </div>
                     </div>
                   </div>
                 );
@@ -245,6 +261,8 @@ const styles = (theme: Theme) =>
     reviewRating: {
       flex: 2,
       marginLeft: '0.25rem',
+      textAlign: 'center',
+      alignContent: 'center'
     },
     selectedPeriodTabs: {
       display: 'flex',

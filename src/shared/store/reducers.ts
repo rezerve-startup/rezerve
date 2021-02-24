@@ -5,12 +5,17 @@ import {
   BusinessActionTypes,
   UPDATE_BUSINESS_NAME,
   BusinessState,
+  UPDATE_USER,
+  CustomerState,
+  CustomerActionTypes,
+  UPDATE_CUSTOMER_PAST_APPOINTMENTS,
+  UPDATE_CUSTOMER_UPCOMING_APPOINTMENTS,
 } from './types';
 
 const initialSystemState: SystemState = {
   loggedIn: false,
   session: '',
-  userName: '',
+  user: undefined
 };
 
 export function systemReducer(
@@ -23,6 +28,12 @@ export function systemReducer(
         ...state,
         ...action.payload,
       };
+    }
+    case UPDATE_USER: {
+      return {
+        ...state,
+        user: action.payload
+      }
     }
     default:
       return state;
@@ -42,6 +53,33 @@ export function businessReducer(
       return {
         ...state,
         businessName: action.payload,
+      };
+    }
+    default:
+      return state;
+  }
+}
+
+const initialCustomerState: CustomerState = {
+  pastAppointments: [],
+  upcomingAppointments: []
+}
+
+export function customerReducer(
+  state = initialCustomerState,
+  action: CustomerActionTypes
+): CustomerState {
+  switch(action.type) {
+    case UPDATE_CUSTOMER_PAST_APPOINTMENTS: {
+      return {
+        ...state,
+        pastAppointments: action.payload
+      };
+    }
+    case UPDATE_CUSTOMER_UPCOMING_APPOINTMENTS: {
+      return {
+        ...state,
+        upcomingAppointments: action.payload
       };
     }
     default:
