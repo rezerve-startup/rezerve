@@ -10,6 +10,9 @@ import {
   createStyles,
   withStyles,
   SvgIconProps,
+  useMediaQuery,
+  useTheme,
+  Divider
 } from '@material-ui/core';
 import { Home, List, Person, Assessment } from '@material-ui/icons';
 import ClientTab from './client-tab/ClientTab';
@@ -20,11 +23,14 @@ import { firestore } from '../../config/FirebaseConfig';
 import { StoreState } from '../../shared/store/types';
 import AppointmentPanel from './appointment-tab/AppointmentHome';
 
-const styles = (_theme: Theme) =>
+const styles = (theme: Theme) =>
   createStyles({
     root: {
       flexGrow: 1,
     },
+    divider: {
+      marginTop: '8px'
+    }
   });
 
 interface CustomTab {
@@ -32,7 +38,9 @@ interface CustomTab {
   icon: React.ReactElement<SvgIconProps>;
 }
 
-interface Props extends WithStyles<typeof styles> {}
+interface Props extends WithStyles<typeof styles> {
+  isMobile: boolean
+}
 
 type State = {
   business: any;
@@ -91,18 +99,18 @@ class BusinessHome extends React.Component<Props, State> {
 
   render() {
     const { classes } = this.props;
-    const isMobile = false;
+    // const isMobile = false;
     return (
       <div className={classes.root}>
         <Box m={1}>
-          <AppBar position="static" color="default">
+          <AppBar position="static" color="transparent" elevation={0}>
             <Tabs
               value={this.state.tabValue}
               onChange={this.handleChange}
               aria-label="business-tabs"
               indicatorColor="primary"
-              centered={isMobile ? false : true}
-              variant={isMobile ? 'scrollable' : 'fullWidth'}
+              centered={this.props.isMobile ? false : true}
+              variant={this.props.isMobile ? 'scrollable' : 'fullWidth'}
               scrollButtons="on"
             >
               {this.state.tabs.map((tab: CustomTab, i: number) => (
@@ -113,15 +121,16 @@ class BusinessHome extends React.Component<Props, State> {
                   {...a11yProps(i)}
                 />
               ))}
-          </Tabs>
+            </Tabs>
           </AppBar>
+          <Divider className={classes.divider} variant="fullWidth" />
           <SwipeableViews
             index={this.state.tabValue}
             onChangeIndex={this.handleChangeIndex}
             enableMouseEvents={true}
           >
             <TabPanel value={this.state.tabValue} index={0}>
-              <HomePanel isMobile={isMobile} />
+              <HomePanel isMobile={this.props.isMobile} />
             </TabPanel>
             <TabPanel value={this.state.tabValue} index={1}>
               <AppointmentPanel />
@@ -182,7 +191,15 @@ function TabPanel(props: TabPanelProps) {
   );
 }
 
-export default connect(
+export const withMediaQuery = (Component: any) => {
+  return (props: any) => {
+    const theme = useTheme();
+    const isMobileProp = useMediaQuery(theme.breakpoints.down('sm'));
+    return <Component isMobile={isMobileProp} {...props} />
+  }
+}
+
+export default withMediaQuery(connect(
   mapStateToProps,
   null,
-)(withStyles(styles, { withTheme: true })(BusinessHome));
+)(withStyles(styles, { withTheme: true })(BusinessHome)));

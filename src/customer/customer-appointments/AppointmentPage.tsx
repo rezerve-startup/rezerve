@@ -1,89 +1,94 @@
 import React from 'react';
-import { Container } from '@material-ui/core';
-// import AppointmentItem from './AppointmentItem';
+import { connect } from 'react-redux';
+import { Container, createStyles, Theme, withStyles } from '@material-ui/core';
 
+import AppointmentItem from './AppointmentItem';
 import List from '@material-ui/core/List';
 import { firestore } from '../../config/FirebaseConfig';
+import { CustomerState, StoreState } from '../../shared/store/types';
+import { updateCustomerPastAppointments, updateCustomerUpcomingAppointments } from '../../shared/store/actions';
 
-let DATA = [
-  {
-    appointmentId: 0,
-    businessName: '2cut Barbershop',
-    appointmentDate: '11/21/21',
-    appointmentPrice: '$26.94',
-  },
-  {
-    appointmentId: 1,
-    businessName: '2cut Barbershop',
-    appointmentDate: '11/21/21',
-    appointmentPrice: '$26.94',
-  },
-  {
-    appointmentId: 2,
-    businessName: '2cut Barbershop',
-    appointmentDate: '11/21/21',
-    appointmentPrice: '$26.94',
-  },
-  {
-    appointmentId: 3,
-    businessName: '2cut Barbershop',
-    appointmentDate: '11/21/21',
-    appointmentPrice: '$26.94',
-  },
-  {
-    appointmentId: 4,
-    businessName: '2cut Barbershop',
-    appointmentDate: '11/21/21',
-    appointmentPrice: '$26.94',
-  },
-  {
-    appointmentId: 5,
-    businessName: '2cut Barbershop',
-    appointmentDate: '11/21/21',
-    appointmentPrice: '$26.94',
-  },
-];
+function mapStateToProps(state: StoreState) {
+  return {
+    customer: state.customer,
+    user: state.system.user
+  }
+}
 
-class AppointmentsPage extends React.Component {
-  state = {
-    upcomingAppointments: [],
-    pastAppointments: DATA,
-  };
+class AppointmentsPage extends React.Component<any, any> {
+  constructor(props) {
+    super(props);
+    this.state = {
+      upcomingAppointments: [],
+      pastAppointments: [],
+    }
+  }
 
   componentDidMount() {
-    firestore.collection('users').onSnapshot((snapshot) => {
-      const appointments = snapshot.docs[0].data().appointments;
-      console.log(appointments);
+    this.getCustomerAppointments();
+  }
 
-      let upcomingAppointments: any = [];
-      let pastAppointments: any = [];
-      for (let i = 0; i < appointments.length; i++) {
-        let appointment = appointments[i];
-        let appointmentDate = appointment.dateTime.toDate();
+  dispatchUpdateCustomerPastAppointment(pastAppointment: any) {
+    this.props.updateCustomerPastAppointments(pastAppointment);
+  }
 
-        let appointmentDateString = appointmentDate.toLocaleString([], {
-          dateStyle: 'short',
-          timeStyle: 'short',
+  dispatchUpdateCustomerUpcomingAppointment(upcomingAppointment: any) {
+    this.props.updateCustomerUpcomingAppointment(upcomingAppointment);
+  }
+
+  getCustomerAppointments() {
+    // Get appointment ids for customer
+    firestore.collection('customers').doc(`${this.props.user.customerId}`).get()
+      .then((customerObj) => {
+        const appointmentDoc = customerObj.data();
+
+        if (appointmentDoc) {
+          const appointmentIds = appointmentDoc.appointments;
+          
+          appointmentIds.forEach((appointmentId: string) => {
+            // Get appointment objects for customer
+            firestore.collection('appointments').doc(`${appointmentId}`).get()
+              .then((appointmentObj) => {
+                const appointmentDoc = appointmentObj.data();
+
+                if (appointmentDoc) {
+                  // Get business name of the appointment
+                  firestore.collection('businesses').doc(`${appointmentDoc.businessId}`).get()
+                    .then((businessObj) => {
+                      const businessDoc = businessObj.data();
+
+                      if (businessDoc) {
+                        const appointmentDatetime = appointmentDoc.datetime.toDate();
+
+                        const appointmentDateString = appointmentDatetime.toLocaleString([], {
+                          dateStyle: 'short',
+                          timeStyle: 'short',
+                        });
+
+                        const appointmentObject = {
+                          appointmentId: `${appointmentObj.id}`,
+                          businessName: `${businessDoc.name}`,
+                          appointmentDate: `${appointmentDateString}`,
+                          appointmentPrice: `$${appointmentDoc.cost}`,
+                        };
+                        if (appointmentDatetime > new Date(new Date().toDateString())) {
+                          this.setState({
+                            upcomingAppointments: [...this.state.upcomingAppointments, appointmentObject]
+                          });
+                          // this.dispatchUpdateCustomerUpcomingAppointment(appointmentObject);
+                        } else {
+                          this.setState({
+                            pastAppointments: [...this.state.pastAppointments, appointmentObject]
+                          })
+                          // this.dispatchUpdateCustomerPastAppointment(appointmentObject);
+                        }
+                      }
+                    }
+                  );
+                }
+          });
         });
-        let appointmentObject = {
-          appointmentId: `${i}`,
-          businessName: `${appointment.businessName}`,
-          appointmentDate: `${appointmentDateString}`,
-          appointmentPrice: `$26.94`,
-        };
-        if (appointmentDate > new Date(new Date().toDateString())) {
-          upcomingAppointments.push(appointmentObject);
-        } else {
-          pastAppointments.push(appointmentObject);
-        }
-      }
-
-      this.setState((state) => {
-        return {
-          upcomingAppointments: [...upcomingAppointments],
-          pastAppointments: [...pastAppointments],
-        };
-      });
+      };
     });
   }
 
@@ -97,17 +102,17 @@ class AppointmentsPage extends React.Component {
           <div className="upcoming-appointments">
             <h3>Upcoming</h3>
             <List>
-              {/* {this.state.upcomingAppointments.map((appointment) => (
+              {this.state.upcomingAppointments.map((appointment) => (
                                 <AppointmentItem businessName={appointment.businessName} appointmentDate={appointment.appointmentDate} appointmentPrice={appointment.appointmentPrice}/>
-                            ))} */}
+                            ))}
             </List>
           </div>
           <div className="past-appointments">
             <h3>Past</h3>
             <List>
-              {/* {this.state.pastAppointments.map((appointment) => (
+              {this.state.pastAppointments.map((appointment) => (
                                 <AppointmentItem businessName={appointment.businessName} appointmentDate={appointment.appointmentDate} appointmentPrice={appointment.appointmentPrice}/>
-                            ))} */}
+                            ))}
             </List>
           </div>
         </div>
@@ -116,4 +121,10 @@ class AppointmentsPage extends React.Component {
   }
 }
 
-export default AppointmentsPage;
+const styles = (theme: Theme) =>
+  createStyles({
+
+  });
+
+export default connect(mapStateToProps, { updateCustomerPastAppointments, updateCustomerUpcomingAppointments })(
+  withStyles(styles, { withTheme: true})(AppointmentsPage));

@@ -42,7 +42,7 @@ class HomePanel extends React.Component<Props, State> {
 
     return (
       <div className={classes.root}>
-        <Grid container={true} spacing={2}>
+        <Grid container={true} spacing={1}>
           <Grid item={true} xs={isMobile ? 12 : 6}>
             <Grid container={true} spacing={2} direction="column">
               <Grid item={true} xs={true}>
@@ -51,6 +51,7 @@ class HomePanel extends React.Component<Props, State> {
               <Grid item={true} xs={true}>
                 <Carousel
                   stopAutoPlayOnHover={true}
+                  autoPlay={false}
                   animation="slide"
                   navButtonsAlwaysInvisible={isMobile ? true : false}
                 >
@@ -62,9 +63,9 @@ class HomePanel extends React.Component<Props, State> {
             </Grid>
           </Grid>
           <Grid item={true} xs={isMobile ? 12 : 6}>
-            <Grid container={true} spacing={2} direction="column">
+            <Grid container={true} spacing={1} direction="column">
               <Grid item={true} xs={true}>
-                <Paper className={classes.paper}>
+                <Paper className={classes.paper} elevation={0}>
                   <Typography
                     component="h1"
                     variant="h1"
