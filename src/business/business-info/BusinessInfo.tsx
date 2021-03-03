@@ -144,7 +144,7 @@ class BusinessInfo extends React.Component<any, BusinessInfoState> {
               </div>
               <div className={classes.mapContainerStyle}>
                 {/* <div> */}
-                <LoadScript googleMapsApiKey="AIzaSyCJNy8CE-cgdwuYFX3kT3r-ELumZxjJeU0" libraries={["places"]}>
+                <LoadScript googleMapsApiKey="" libraries={["places"]}>
                   <MapsContainer></MapsContainer>
                 </LoadScript>
                 {/* </div> */}
