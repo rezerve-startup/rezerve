@@ -22,11 +22,14 @@ import BusinessInfoDetails from './business-info-details/BusinessInfoDetails';
 import cat1 from '../../assets/business-pictures/cat1.jpg';
 import cat2 from '../../assets/business-pictures/cat2.jpg';
 import cat3 from '../../assets/business-pictures/cat3.jpg';
+import MapsContainer from './MapsContainer';
+import { LoadScript } from '@react-google-maps/api';
 
 type BusinessInfoState = {
   business: any;
   businessName: string;
   businessReviews: any[];
+  mapCenter: any;
 };
 
 function mapStateToProps(state: StoreState) {
@@ -44,6 +47,10 @@ class BusinessInfo extends React.Component<any, BusinessInfoState> {
       business: undefined,
       businessName: props.business.businessName,
       businessReviews: [],
+      mapCenter: {
+        lat: -3.475,
+        lng: -38.523
+      }
     };
   }
 
@@ -135,6 +142,13 @@ class BusinessInfo extends React.Component<any, BusinessInfoState> {
                 <LocationOn />
                 <p className={classes.distanceToBusiness}>0.02 Mi</p>
               </div>
+              <div className={classes.mapContainerStyle}>
+                {/* <div> */}
+                <LoadScript googleMapsApiKey="AIzaSyCJNy8CE-cgdwuYFX3kT3r-ELumZxjJeU0" libraries={["places"]}>
+                  <MapsContainer></MapsContainer>
+                </LoadScript>
+                {/* </div> */}
+              </div>
             </div>
 
             <div className={classes.aboutBusiness}>
@@ -216,7 +230,7 @@ const styles = (theme: Theme) =>
       height: '100%',
       color: 'white',
       textAlign: 'center',
-      alignItems: 'center',
+      alignItems: 'center'
     },
     businessOverview: {
       padding: '2.5rem',
@@ -229,6 +243,7 @@ const styles = (theme: Theme) =>
     },
     businessInformation: {
       color: 'black',
+      justifyContent: 'center'
     },
     distanceContainer: {
       display: 'flex',
@@ -286,6 +301,12 @@ const styles = (theme: Theme) =>
     starRatingHover: {
       color: theme.palette.primary.light,
     },
+    mapContainerStyle: {
+      marginTop: '1rem',
+      marginBottom: '1rem',
+      paddingLeft: '1rem',
+      paddingRight: '1rem'
+    }
   });
 
 export default connect(mapStateToProps, { updateBusinessName })(

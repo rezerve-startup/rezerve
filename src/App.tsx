@@ -137,7 +137,7 @@ class App extends React.Component<any, SystemState> {
                 <div>
                   <div>{this.props.system.user.firstName}</div>
                   <Button variant="contained" onClick={this.switchToEmployee}>Switch to Employee</Button>
-                  <AppointmentsPage />
+                  {/* <AppointmentsPage /> */}
                   <BusinessInfo />
                 </div>
               ) : (
