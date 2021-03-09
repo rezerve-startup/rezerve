@@ -16,7 +16,7 @@ import image from '../../../assets/avatar.jpg';
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     card: {
-      padding: theme.spacing(2),
+      padding: theme.spacing(1),
     },
     userContent: {
       flex: '1 0 auto',
@@ -39,7 +39,7 @@ export default function StylistCard(props: Props) {
   const { isMobile } = props;
   const classes = useStyles();
   return (
-    <Card className={classes.card}>
+    <Card className={classes.card} elevation={0}>
       <Grid container={true} justify="space-between" spacing={2}>
         <Grid item={true}>
           <CardContent className={classes.userContent}>

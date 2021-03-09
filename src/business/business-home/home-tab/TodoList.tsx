@@ -23,7 +23,7 @@ const styles = (theme: Theme) =>
       flexGrow: 1,
     },
     card: {
-      padding: theme.spacing(2),
+      padding: theme.spacing(1),
     },
     todoList: {
       width: '100%',
@@ -86,7 +86,7 @@ class TodoList extends React.Component<Props, State> {
   render() {
     const { classes } = this.props;
     return (
-      <Card className={classes.card}>
+      <Card className={classes.card} elevation={0}>
         <CardContent>
           <Typography variant="h5">TO-DO</Typography>
           <Divider />

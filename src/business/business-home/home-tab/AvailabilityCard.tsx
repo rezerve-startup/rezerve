@@ -17,7 +17,6 @@ import {
   CardContent,
   Divider,
 } from '@material-ui/core';
-import { HorizontalSplitRounded } from '@material-ui/icons';
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -26,9 +25,7 @@ const styles = (theme: Theme) =>
     },
     card: {
       padding: theme.spacing(1),
-    },
-    cardContent: {
-      padding: '2px',
+      height: '400px'
     },
     openHours: {
       padding: theme.spacing(1),
@@ -79,9 +76,9 @@ class AvailablityCard extends React.Component<Props, State> {
     const { classes } = this.props;
     const { editInfo } = this.state;
     return (
-      <Card>
-        <CardContent className={classes.cardContent}>
-          <Typography variant="h5">Avaliability</Typography>
+      <Card className={classes.card} elevation={0}>
+        <CardContent>
+          <Typography variant="h5">Availability</Typography>
           <Divider />
           <List>
             {this.state.businessSchedule.map((item: BusinessSchedule) => (

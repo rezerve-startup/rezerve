@@ -5,80 +5,162 @@ import {
   AppBar,
   Tab,
   Tabs,
+  Theme,
+  WithStyles,
+  createStyles,
+  withStyles,
+  SvgIconProps,
   useMediaQuery,
-  makeStyles,
   useTheme,
+  Divider
 } from '@material-ui/core';
 import { Home, List, Person, Assessment } from '@material-ui/icons';
-
+import ClientTab from './client-tab/ClientTab';
 import HomePanel from './home-tab/HomeTab';
+import BusinessPerformance from './business-performance/BusinessPerformance';
+import { connect } from 'react-redux';
+import { firestore } from '../../config/FirebaseConfig';
+import { StoreState } from '../../shared/store/types';
+import AppointmentPanel from './appointment-tab/AppointmentHome';
 
-const useStyles = makeStyles({
-  root: {
-    flexGrow: 1,
-  },
-});
+const styles = (theme: Theme) =>
+  createStyles({
+    root: {
+      flexGrow: 1,
+    },
+    divider: {
+      marginTop: '8px'
+    }
+  });
 
-export default function BusinessHome() {
-  const classes = useStyles();
-  const theme = useTheme();
-  const [value, setValue] = React.useState(0);
-  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
-
-  const handleChange = (_event: any, newValue: number) => {
-    setValue(newValue);
-  };
-
-  const handleChangeIndex = (index: number) => {
-    setValue(index);
-  };
-
-  const tabs = [
-    { label: 'Home', icon: <Home /> },
-    { label: 'Appointments', icon: <List /> },
-    { label: 'Clients', icon: <Person /> },
-    { label: 'Preformance', icon: <Assessment /> },
-  ];
-
-  return (
-    <div className={classes.root}>
-      <Box m={1}>
-        <AppBar position="static" color="default">
-          <Tabs
-            value={value}
-            onChange={handleChange}
-            aria-label="business-tabs"
-            indicatorColor="primary"
-            centered={isMobile ? false : true}
-            variant={isMobile ? 'scrollable' : 'fullWidth'}
-            scrollButtons="on"
-          >
-            {tabs.map((tab, i) => (
-              <Tab
-                key={i}
-                label={tab.label}
-                icon={tab.icon}
-                {...a11yProps(i)}
-              />
-            ))}
-          </Tabs>
-        </AppBar>
-        <SwipeableViews
-          index={value}
-          onChangeIndex={handleChangeIndex}
-          enableMouseEvents={true}
-        >
-          <TabPanel value={value} index={0}>
-            <HomePanel isMobile={isMobile} />
-          </TabPanel>
-          <TabPanel value={value} index={1}>
-            Item Two
-          </TabPanel>
-        </SwipeableViews>
-      </Box>
-    </div>
-  );
+interface CustomTab {
+  label: string;
+  icon: React.ReactElement<SvgIconProps>;
 }
+
+interface Props extends WithStyles<typeof styles> {
+  isMobile: boolean
+}
+
+type State = {
+  business: any;
+  tabs: CustomTab[];
+  tabValue: number;
+};
+
+function mapStateToProps(state: StoreState) {
+  return {
+    business: state.business,
+  };
+}
+
+class BusinessHome extends React.Component<Props, State> {
+  constructor(props: Props) {
+    super(props);
+    this.state = {
+      business: undefined,
+      tabs: [
+        { label: 'Home', icon: <Home /> },
+        { label: 'Appointments', icon: <List /> },
+        { label: 'Clients', icon: <Person /> },
+        { label: 'Performance', icon: <Assessment /> },
+      ],
+      tabValue: 0,
+    };
+  }
+
+  componentDidMount() {
+    const fetchedBusinesses: any[] = [];
+
+    firestore.collection('businesses').onSnapshot((snapshot) => {
+      snapshot.docs.forEach((doc) => {
+        const barbers: any[] = [];
+        firestore
+          .collection('businesses')
+          .doc(doc.id)
+          .collection('barbers')
+          .onSnapshot((snapshot2) => {
+            snapshot2.docs.forEach((barber) => {
+              barbers.push(barber.data());
+            });
+          });
+
+        const business = doc.data();
+        business.barbers = barbers;
+        fetchedBusinesses.push(business);
+      });
+
+      console.log(fetchedBusinesses);
+      this.setState({
+        business: fetchedBusinesses,
+      });
+    });
+  }
+
+  render() {
+    const { classes } = this.props;
+    // const isMobile = false;
+    return (
+      <div className={classes.root}>
+        <Box m={1}>
+          <AppBar position="static" color="transparent" elevation={0}>
+            <Tabs
+              value={this.state.tabValue}
+              onChange={this.handleChange}
+              aria-label="business-tabs"
+              indicatorColor="primary"
+              centered={this.props.isMobile ? false : true}
+              variant={this.props.isMobile ? 'scrollable' : 'fullWidth'}
+              scrollButtons="on"
+            >
+              {this.state.tabs.map((tab: CustomTab, i: number) => (
+                <Tab
+                  key={i}
+                  label={tab.label}
+                  icon={tab.icon}
+                  {...a11yProps(i)}
+                />
+              ))}
+            </Tabs>
+          </AppBar>
+          <Divider className={classes.divider} variant="fullWidth" />
+          <SwipeableViews
+            index={this.state.tabValue}
+            onChangeIndex={this.handleChangeIndex}
+            enableMouseEvents={true}
+          >
+            <TabPanel value={this.state.tabValue} index={0}>
+              <HomePanel isMobile={this.props.isMobile} />
+            </TabPanel>
+            <TabPanel value={this.state.tabValue} index={1}>
+              <AppointmentPanel />
+            </TabPanel>
+            <TabPanel value={this.state.tabValue} index={2}>
+              <ClientTab employeeName="Test Employee" />
+            </TabPanel>
+            <TabPanel value={this.state.tabValue} index={3}>
+              <BusinessPerformance />
+            </TabPanel>
+          </SwipeableViews>
+        </Box>
+      </div>
+    );
+  }
+
+  handleChange = (_event: any, newValue: number) => {
+    this.setState({
+      tabValue: newValue,
+    });
+  };
+
+  handleChangeIndex = (index: number) => {
+    this.setState({
+      tabValue: index,
+    });
+  };
+}
+
+
 
 function a11yProps(index: number) {
   return {
@@ -108,3 +190,16 @@ function TabPanel(props: TabPanelProps) {
     </div>
   );
 }
+
+export const withMediaQuery = (Component: any) => {
+  return (props: any) => {
+    const theme = useTheme();
+    const isMobileProp = useMediaQuery(theme.breakpoints.down('sm'));
+    return <Component isMobile={isMobileProp} {...props} />
+  }
+}
+
+export default withMediaQuery(connect(
+  mapStateToProps,
+  null,
+)(withStyles(styles, { withTheme: true })(BusinessHome)));
