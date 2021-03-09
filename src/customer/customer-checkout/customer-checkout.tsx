@@ -86,7 +86,7 @@ function ConfirmationCard() {
         <h3>
           <strong>Haircut</strong>
         </h3>
-        <h3 className={classes.stat}>$35</h3>
+        <div  className={classes.priceAlign}><h3 className={classes.stat}>$35.00</h3></div>
       </div>
 
       <Divider className={classes.divider0} />
@@ -94,7 +94,7 @@ function ConfirmationCard() {
         <h3>
           <strong>Sat 1/16/2021</strong>
         </h3>
-        <h3 className={classes.stat}>4:00pm</h3>
+        <div  className={classes.timeAlign}><h3 className={classes.stat}>4:00pm</h3></div>
       </div>
     </div>
   );
@@ -228,9 +228,18 @@ const useStyles = makeStyles((theme) => ({
   },
 
   stat: {
-    display: 'flex',
+    left: '175px',
     fontWeight: 'bold',
-    position: 'relative',
+    position: 'absolute',
+  },
+
+  priceAlign:{
+    position: 'relative'
+  },
+
+  timeAlign:{
+    right: '60px',
+    position: 'relative'
   },
 
   closeIcon: {
