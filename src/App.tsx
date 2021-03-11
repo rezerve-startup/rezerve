@@ -2,7 +2,6 @@ import React from 'react';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import { Button, createMuiTheme, createStyles, Theme, ThemeProvider, withStyles, WithStyles } from '@material-ui/core';
 import Sidebar from './shared/sidebar/sidebar';
-import './CSS/App.css';
 
 import BusinessInfo from './business/business-info/BusinessInfo';
 import BusinessHome from './business/business-home/BusinessHome';
