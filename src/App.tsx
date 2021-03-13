@@ -2,15 +2,16 @@ import React from 'react';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import { Button, createMuiTheme, createStyles, Theme, ThemeProvider, withStyles, WithStyles } from '@material-ui/core';
 import Sidebar from './shared/sidebar/sidebar';
-import './CSS/App.css';
 
 import BusinessInfo from './business/business-info/BusinessInfo';
 import BusinessHome from './business/business-home/BusinessHome';
+
 import AppointmentsPage from './customer/customer-appointments/AppointmentPage';
 import { auth, firestore } from './config/FirebaseConfig';
 import { connect } from 'react-redux';
 import { StoreState, SystemState } from './shared/store/types';
 import { updateUser } from './shared/store/actions';
+import CustomerBusinessSearch from './customer/customer-business-search/CustomerBusinessSearch';
 
 const routes = [
   /* { path: "/help", component: Help },
@@ -137,8 +138,9 @@ class App extends React.Component<any, SystemState> {
                 <div>
                   <div>{this.props.system.user.firstName}</div>
                   <Button variant="contained" onClick={this.switchToEmployee}>Switch to Employee</Button>
-                  <AppointmentsPage />
-                  <BusinessInfo />
+                  {/* <AppointmentsPage />
+                  <BusinessInfo /> */}
+                  <CustomerBusinessSearch />
                 </div>
               ) : (
                 <div>

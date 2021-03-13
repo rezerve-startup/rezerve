@@ -10,6 +10,8 @@ import {
   CustomerActionTypes,
   UPDATE_CUSTOMER_PAST_APPOINTMENTS,
   UPDATE_CUSTOMER_UPCOMING_APPOINTMENTS,
+  ADD_FOUND_BUSINESS,
+  CLEAR_FOUND_BUSINESSES
 } from './types';
 
 const initialSystemState: SystemState = {
@@ -41,7 +43,7 @@ export function systemReducer(
 }
 
 const initialBusinessState: BusinessState = {
-  businessName: '3cut Barbershop',
+  businessName: '',
 };
 
 export function businessReducer(
@@ -62,7 +64,8 @@ export function businessReducer(
 
 const initialCustomerState: CustomerState = {
   pastAppointments: [],
-  upcomingAppointments: []
+  upcomingAppointments: [],
+  foundBusinesses: []
 }
 
 export function customerReducer(
@@ -81,6 +84,21 @@ export function customerReducer(
         ...state,
         upcomingAppointments: action.payload
       };
+    }
+    case ADD_FOUND_BUSINESS: {
+      return {
+        ...state,
+        foundBusinesses: [
+          ...state.foundBusinesses,
+          action.payload
+        ]
+      }
+    }
+    case CLEAR_FOUND_BUSINESSES: {
+      return {
+        ...state,
+        foundBusinesses: []
+      }
     }
     default:
       return state;
