@@ -8,7 +8,11 @@ import {
   CustomerActionTypes,
   UPDATE_CUSTOMER_PAST_APPOINTMENTS,
   UPDATE_CUSTOMER_UPCOMING_APPOINTMENTS,
+  CLEAR_FOUND_BUSINESSES,
+  ADD_FOUND_BUSINESS,
 } from './types';
+
+// ****** SYSTEM ACTIONS ***************
 
 export function updateSession(newSession: SystemState): SystemActionTypes {
   return {
@@ -24,6 +28,8 @@ export function updateUser(newUser: SystemState): SystemActionTypes {
   }
 }
 
+// ****** BUSINESS ACTIONS **************
+
 export function updateBusinessName(
   newBusinessName: string,
 ): BusinessActionTypes {
@@ -32,6 +38,8 @@ export function updateBusinessName(
     payload: newBusinessName,
   };
 }
+
+// ***** CUSTOMER ACTIONS *************
 
 export function updateCustomerPastAppointments(customerPastAppointment: any): CustomerActionTypes {
   return {
@@ -45,4 +53,17 @@ export function updateCustomerUpcomingAppointments(customerUpcomingAppointment: 
     type: UPDATE_CUSTOMER_UPCOMING_APPOINTMENTS,
     payload: customerUpcomingAppointment
   }
-} 
+}
+
+export function addBusinessFound(businessFound: any): CustomerActionTypes {
+  return {
+    type: ADD_FOUND_BUSINESS,
+    payload: businessFound
+  }
+}
+
+export function clearBusinessesFound(businessesFound: any[]): CustomerActionTypes {
+  return {
+    type: CLEAR_FOUND_BUSINESSES
+  }
+}

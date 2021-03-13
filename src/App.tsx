@@ -11,6 +11,7 @@ import { auth, firestore } from './config/FirebaseConfig';
 import { connect } from 'react-redux';
 import { StoreState, SystemState } from './shared/store/types';
 import { updateUser } from './shared/store/actions';
+import CustomerBusinessSearch from './customer/customer-business-search/CustomerBusinessSearch';
 
 const routes = [
   /* { path: "/help", component: Help },
@@ -137,8 +138,9 @@ class App extends React.Component<any, SystemState> {
                 <div>
                   <div>{this.props.system.user.firstName}</div>
                   <Button variant="contained" onClick={this.switchToEmployee}>Switch to Employee</Button>
-                  <AppointmentsPage />
-                  <BusinessInfo />
+                  {/* <AppointmentsPage />
+                  <BusinessInfo /> */}
+                  <CustomerBusinessSearch />
                 </div>
               ) : (
                 <div>
