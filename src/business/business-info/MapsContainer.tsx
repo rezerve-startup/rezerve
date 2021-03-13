@@ -15,9 +15,9 @@ export class MapContainer extends React.Component<any, any> {
   constructor(props: any) {
     super(props);
     this.state = {
-      currentLocation: {
-        lat: 59.95,
-        lng: 30.33
+      businessLocation: {
+        lat: this.props.businessLocation.latitude,
+        lng: this.props.businessLocation.longitude
       },
       markers: [],
       bounds: null
@@ -33,65 +33,19 @@ export class MapContainer extends React.Component<any, any> {
     );
   }
 
-  onSBLoad = ref => {
-    searchBox = ref;
-  }
-
-  onPlacesChanged = () => {
-    let markerArray: any = [];
-    let results = searchBox.getPlaces();
-    for (let i = 0; i < results.length; i++) {
-      let place: any = results[i].geometry.location;
-      markerArray.push(place);
-    }
-    this.setState({ markers: markerArray });
-    console.log(markerArray);
-  };
-
-  onBoundsChanged = (boundsIn) => {
-    console.log(map.getBounds());
-    this.setState({ bounds: boundsIn });
-  }
-
   render() {
     return (
       <div>
-        <div id="searchbox">
-          <StandaloneSearchBox
-            onLoad={this.onSBLoad}
-            onPlacesChanged={this.onPlacesChanged}
-            bounds={this.state.bounds}
-          >
-            <input
-              type="text"
-              placeholder="Customized your placeholder"
-              style={{
-                boxSizing: `border-box`,
-                border: `1px solid transparent`,
-                width: `240px`,
-                height: `32px`,
-                padding: `0 12px`,
-                borderRadius: `3px`,
-                boxShadow: `0 2px 6px rgba(0, 0, 0, 0.3)`,
-                fontSize: `14px`,
-                outline: `none`,
-                textOverflow: `ellipses`
-              }}
-            />
-          </StandaloneSearchBox>
-        </div>
-        <br />
         <div>
           <GoogleMap
-            center={this.state.currentLocation}
-            zoom={10}
+            center={this.state.businessLocation}
+            zoom={15}
             onLoad={map => this.onMapLoad(map)}
-            mapContainerStyle={{ height: '80vh', width: "100%" }}
+            mapContainerStyle={{ height: '30vh', width: "100%" }}
+            options={{ clickableIcons: false, disableDefaultUI: true, gestureHandling: "none" }}
             ref={map}
           >
-            {this.state.markers.map((mark, index) => (
-              <Marker key={index} position={mark} />
-            ))}
+            <Marker position={this.state.businessLocation} />
           </GoogleMap>
         </div>
       </div>

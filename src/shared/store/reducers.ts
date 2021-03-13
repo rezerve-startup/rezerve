@@ -41,7 +41,7 @@ export function systemReducer(
 }
 
 const initialBusinessState: BusinessState = {
-  businessName: '3cut Barbershop',
+  businessName: '',
 };
 
 export function businessReducer(

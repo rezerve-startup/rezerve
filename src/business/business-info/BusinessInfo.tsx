@@ -26,7 +26,8 @@ import MapsContainer from './MapsContainer';
 import { LoadScript } from '@react-google-maps/api';
 
 type BusinessInfoState = {
-  business: any;
+  businessKey: string;
+  businessInfo: any;
   businessName: string;
   businessReviews: any[];
   mapCenter: any;
@@ -44,7 +45,8 @@ class BusinessInfo extends React.Component<any, BusinessInfoState> {
   constructor(props: any) {
     super(props);
     this.state = {
-      business: undefined,
+      businessKey: this.props.selectedBusinessKey,
+      businessInfo: this.props.selectedBusinessInfo,
       businessName: props.business.businessName,
       businessReviews: [],
       mapCenter: {
@@ -65,20 +67,13 @@ class BusinessInfo extends React.Component<any, BusinessInfoState> {
   getBusinessInfoData() {
     const businessData = firestore
       .collection('businesses')
-      .doc('98amGMWjvPkULXgBerJq');
+      .doc(`${this.state.businessKey}`);
 
     businessData
       .get()
-      // Get business info data
-      .then((val) => {
-        const businessInfo = val.data();
-        this.setState({
-          business: businessInfo,
-        });
-      })
       // Get business reviews
       .then(() => {
-        this.state.business.reviews.forEach((reviewId: any) => {
+        this.state.businessInfo.reviews.forEach((reviewId: any) => {
           let tempBusinessReview;
 
           firestore.collection('reviews').doc(`${reviewId}`).get()
@@ -113,7 +108,7 @@ class BusinessInfo extends React.Component<any, BusinessInfoState> {
 
     return (
       <div className={classes.businessInfoPage}>
-        {this.state.business !== undefined ? (
+        {this.state.businessInfo !== undefined ? (
           <div className={classes.businessOverview}>
             <div className={classes.carouselContainer}>
               <Carousel navButtonsAlwaysVisible={true}>
@@ -131,12 +126,12 @@ class BusinessInfo extends React.Component<any, BusinessInfoState> {
 
             <div className={classes.businessInformation}>
               {/* The value that is being updated dynamically via state changes */}
-              <h5>{this.props.business.businessName}</h5>
+              <h5>{this.state.businessInfo.name}</h5>
               <h6>
-                {this.state.business.about.address},{' '}
-                {this.state.business.about.city},{' '}
-                {this.state.business.about.state}{' '}
-                {this.state.business.about.zipcode}
+                {this.state.businessInfo.about.address},{' '}
+                {this.state.businessInfo.about.city},{' '}
+                {this.state.businessInfo.about.state}{' '}
+                {this.state.businessInfo.about.zipcode}
               </h6>
               <div className={classes.distanceContainer}>
                 <LocationOn />
@@ -144,8 +139,8 @@ class BusinessInfo extends React.Component<any, BusinessInfoState> {
               </div>
               <div className={classes.mapContainerStyle}>
                 {/* <div> */}
-                <LoadScript googleMapsApiKey="" libraries={["places"]}>
-                  <MapsContainer></MapsContainer>
+                <LoadScript googleMapsApiKey="AIzaSyCJNy8CE-cgdwuYFX3kT3r-ELumZxjJeU0" libraries={["places"]}>
+                  <MapsContainer businessLocation={this.state.businessInfo.about.location}></MapsContainer>
                 </LoadScript>
                 {/* </div> */}
               </div>
@@ -156,7 +151,7 @@ class BusinessInfo extends React.Component<any, BusinessInfoState> {
                 <b>ABOUT US</b>
               </h6>
               <div className={classes.aboutContent}>
-                {this.state.business.description}
+                {this.state.businessInfo.description}
               </div>
             </div>
 
@@ -167,7 +162,7 @@ class BusinessInfo extends React.Component<any, BusinessInfoState> {
                 </h6>
                 <Rating
                   size="medium"
-                  value={this.state.business.performance.rating}
+                  value={this.state.businessInfo.performance.rating}
                   precision={0.5}
                   readOnly={true}
                 />
@@ -214,7 +209,7 @@ class BusinessInfo extends React.Component<any, BusinessInfoState> {
             <CircularProgress size={75} />
           </div>
         )}
-        <BusinessInfoDetails props={this.state.business} />
+        <BusinessInfoDetails props={this.state.businessInfo} />
       </div>
     );
   }
