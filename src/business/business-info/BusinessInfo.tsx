@@ -24,13 +24,15 @@ import cat2 from '../../assets/business-pictures/cat2.jpg';
 import cat3 from '../../assets/business-pictures/cat3.jpg';
 import MapsContainer from './MapsContainer';
 import { LoadScript } from '@react-google-maps/api';
+import { Business } from '../../models/Business.interface';
+import { Review } from '../../models/Review.interface';
+import { User } from '../../models/User.interface';
 
 type BusinessInfoState = {
   businessKey: string;
-  businessInfo: any;
+  businessInfo: Business;
   businessName: string;
-  businessReviews: any[];
-  mapCenter: any;
+  businessReviews: Review[];
 };
 
 function mapStateToProps(state: StoreState) {
@@ -39,8 +41,6 @@ function mapStateToProps(state: StoreState) {
   };
 }
 
-interface Props extends WithStyles<typeof styles> {}
-
 class BusinessInfo extends React.Component<any, BusinessInfoState> {
   constructor(props: any) {
     super(props);
@@ -48,11 +48,7 @@ class BusinessInfo extends React.Component<any, BusinessInfoState> {
       businessKey: this.props.selectedBusinessKey,
       businessInfo: this.props.selectedBusinessInfo,
       businessName: props.business.businessName,
-      businessReviews: [],
-      mapCenter: {
-        lat: -3.475,
-        lng: -38.523
-      }
+      businessReviews: []
     };
   }
 
@@ -78,13 +74,13 @@ class BusinessInfo extends React.Component<any, BusinessInfoState> {
 
           firestore.collection('reviews').doc(`${reviewId}`).get()
             .then((review) => {
-              tempBusinessReview = review.data();
+              tempBusinessReview = review.data() as Review;
             })
             .then(() => {
               firestore.collection('users').where('customerId', '==', `${tempBusinessReview.customerId}`).get()
                 .then((querySnapshot) => {
                   querySnapshot.forEach((doc) => {
-                    tempBusinessReview.poster = doc.data().firstName;
+                    tempBusinessReview.poster = (doc.data() as User).firstName;
                   })
                 })
                 .then(() => {
@@ -138,11 +134,9 @@ class BusinessInfo extends React.Component<any, BusinessInfoState> {
                 <p className={classes.distanceToBusiness}>0.02 Mi</p>
               </div>
               <div className={classes.mapContainerStyle}>
-                {/* <div> */}
-                <LoadScript googleMapsApiKey="AIzaSyCJNy8CE-cgdwuYFX3kT3r-ELumZxjJeU0" libraries={["places"]}>
+                <LoadScript googleMapsApiKey={`${process.env.REACT_APP_GOOGLE_MAPS_API_KEY}`} libraries={["places"]}>
                   <MapsContainer businessLocation={this.state.businessInfo.about.location}></MapsContainer>
                 </LoadScript>
-                {/* </div> */}
               </div>
             </div>
 

@@ -1,15 +1,8 @@
 // global google
-import { GoogleMap, LoadScript, Marker, StandaloneSearchBox } from '@react-google-maps/api'
-import React, {Component} from 'react'
+import { GoogleMap, Marker } from '@react-google-maps/api'
+import React from 'react'
 
-const mapStyle = {
-    width: '400px',
-    height: '400px'
-}
-
-let markerArray = [];
 let map;
-let searchBox;
 
 export class MapContainer extends React.Component<any, any> {
   constructor(props: any) {
@@ -18,9 +11,7 @@ export class MapContainer extends React.Component<any, any> {
       businessLocation: {
         lat: this.props.businessLocation.latitude,
         lng: this.props.businessLocation.longitude
-      },
-      markers: [],
-      bounds: null
+      }
     };
   }
 

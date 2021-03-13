@@ -19,30 +19,53 @@ import {
 import cat1 from '../../assets/business-pictures/cat1.jpg';
 import { firestore } from '../../config/FirebaseConfig';
 import { connect } from 'react-redux';
-import { LoadScript, StandaloneSearchBox } from '@react-google-maps/api';
+import { GoogleMap, LoadScript, StandaloneSearchBox } from '@react-google-maps/api';
 import BusinessInfo from '../../business/business-info/BusinessInfo';
+import { StoreState } from '../../shared/store/types';
+import { addBusinessFound, clearBusinessesFound } from '../../shared/store/actions';
+import { Business } from '../../models/Business.interface';
 
-interface Props extends WithStyles<typeof styles> {}
+type CustomerBusinessSearchState = {
+  searchBoxRef: any;
+  businessSelectedIndicator: boolean;
+  selectedBusiness: {
+    key: string;
+    businessInfo: Business | null;
+  } | null;
+  locationSearchValue: string | undefined;
+}
 
-let searchBox;
+let searchBox: any;
 
-class CustomerBusinessSearch extends React.Component<any, any> {
+function mapStateToProps(state: StoreState) {
+  return {
+    foundBusinesses: state.customer.foundBusinesses,
+  };
+}
+
+class CustomerBusinessSearch extends React.Component<any, CustomerBusinessSearchState> {
   constructor(props: any) {
     super(props);
+
     this.state = {
-        searchBoxRef: null,
-        businessesFound: [],
-        businessSelectedIndicator: false,
-        selectedBusiness: null,
-        areaSearchValue: ''
+      searchBoxRef: null,
+      businessSelectedIndicator: false,
+      selectedBusiness: null,
+      locationSearchValue: ''
     }
   }
 
+  dispatchClearBusinessesFound(): void {
+    this.props.clearBusinessesFound();
+  }
+
+  dispatchAddFoundBusiness(businessFound: any): void {
+    this.props.addBusinessFound(businessFound);
+  }
+
   // Reference https://stackoverflow.com/questions/46630507/how-to-run-a-geo-nearby-query-with-firestore
-  searchBarbershopsByLocation(latitude, longitude, distance) {
-    this.setState({
-      businessesFound: []
-    });
+  searchBarbershopsByLocation(latitude, longitude, distance): void {
+    this.dispatchClearBusinessesFound();
 
     let latUnit = 0.0144927536231884;
     let lngUnit = 0.0181818181818182;
@@ -60,19 +83,14 @@ class CustomerBusinessSearch extends React.Component<any, any> {
 
     query.get().then((snapshot) => {
       snapshot.forEach((doc) => {
-        let businessData = doc.data();
+        let businessData = doc.data() as Business;
 
         let businessToAdd = {
           key: doc.id,
           businessInfo: businessData
         }
 
-        this.setState({
-          businessesFound: [
-            ...this.state.businessesFound,
-            businessToAdd
-          ]
-        })
+        this.dispatchAddFoundBusiness(businessToAdd);
       });
     })
 
@@ -85,34 +103,38 @@ class CustomerBusinessSearch extends React.Component<any, any> {
   }
 
   onPlaceSelection = () => {
-    let searchedPlace = this.state.searchBoxRef.getPlaces()[0];
+    if (this.state.searchBoxRef) {
+      let searchedPlace = this.state.searchBoxRef.getPlaces()[0];
+  
+      this.setState({
+        locationSearchValue: searchedPlace.formatted_address
+      });
 
-    this.setState({
-      areaSearchValue: searchedPlace.formatted_address
-    });
+      if (searchedPlace.geometry) {
+        let latitude = searchedPlace.geometry.location.lat();
+        let longitude = searchedPlace.geometry.location.lng();
 
-    let latitude = searchedPlace.geometry.location.lat();
-    let longitude = searchedPlace.geometry.location.lng();
-
-    this.searchBarbershopsByLocation(latitude, longitude, 50);
+        this.searchBarbershopsByLocation(latitude, longitude, 50);
+      }
+    }
   }
 
-  selectBusiness(business) {
+  selectBusiness(business): void {
     this.setState({
       businessSelectedIndicator: true,
       selectedBusiness: business
     })
   }
 
-  returnToList() {
+  returnToList(): void {
     this.setState({
       businessSelectedIndicator: false,
       selectedBusiness: null,
     })
   }
 
-  handleSearchChange(e) {
-    this.setState({ areaSearchValue: e.target.value });
+  handleSearchChange(searchChangeEvent): void {
+    this.setState({ locationSearchValue: searchChangeEvent.target.value });
   }
 
   render() {
@@ -131,7 +153,7 @@ class CustomerBusinessSearch extends React.Component<any, any> {
                             ref={searchBox}
                         >
                                 <TextField id="standard-basic" placeholder="Search by city" 
-                                    value={this.state.areaSearchValue} 
+                                    value={this.state.locationSearchValue} 
                                     onChange={ this.handleSearchChange.bind(this) } 
                                     fullWidth
                                     InputProps={{
@@ -146,7 +168,7 @@ class CustomerBusinessSearch extends React.Component<any, any> {
                     </LoadScript>
                 </div>
                 <div>
-                  {this.state.businessesFound.map((business, i) => {
+                  {this.props.foundBusinesses.map((business, i) => {
                     return (
                       <Card className={classes.businessInfoPreview} key={i}>
                         <CardActionArea style={{height: '100%'}} onClick={() => this.selectBusiness(business)}>
@@ -182,7 +204,9 @@ class CustomerBusinessSearch extends React.Component<any, any> {
             <div className={classes.returnToListContainer}>
               <Button variant="contained" onClick={() => this.returnToList()}>Back to List</Button>
             </div>
-            <BusinessInfo selectedBusinessKey={this.state.selectedBusiness.key} selectedBusinessInfo={this.state.selectedBusiness.businessInfo} />
+            {this.state.selectedBusiness && (
+              <BusinessInfo selectedBusinessKey={this.state.selectedBusiness.key} selectedBusinessInfo={this.state.selectedBusiness.businessInfo} />
+            )}
           </div>
         )}
       </div>
@@ -248,6 +272,6 @@ const styles = (theme: Theme) =>
     }
   });
 
-export default connect(null, null)(
+export default connect(mapStateToProps, { addBusinessFound, clearBusinessesFound })(
   withStyles(styles, { withTheme: true })(CustomerBusinessSearch)
 );
