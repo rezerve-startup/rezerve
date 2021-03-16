@@ -17,7 +17,7 @@ import BusinessHome from './business/business-home/BusinessHome';
 import store from './shared/store/store';
 import BusinessAccountInfo from './business/BusinAccInfo';
 import BusinessSignUp from './business/BusinSignUp';
-import LandingPageNav from './business/LandingPageNav';
+import Landing from './business/LandingPage';
 
 const routes = [
   // { path: "/help", component: Help },
@@ -61,7 +61,7 @@ const App = () => {
     <div className={classes.root}>
       <ThemeProvider theme={theme}>
         {currentUser === 'business' && (
-          <LandingPageNav />
+          <Landing />
         )}
 
         {currentUser === 'customer' && (

@@ -1,113 +1,122 @@
 import React from 'react';
 import {
-    Button,
-    Container,
-    TextField,
-    Checkbox,
-    FormControlLabel,
-    Grid,
-    createStyles,
-    makeStyles,
-    Theme
+  Button,
+  Container,
+  TextField,
+  Checkbox,
+  FormControlLabel,
+  Grid,
+  createStyles,
+  makeStyles,
+  Theme,
 } from '@material-ui/core';
 import { Link, Route, BrowserRouter as Router, Switch } from 'react-router-dom';
 import BusinessAccountInfo from '../business/BusinAccInfo';
 
-const useStyles = makeStyles((theme:Theme) => 
-    createStyles({
-        root: {
-            backgroundColor: theme.palette.secondary.dark,
-            minHeight: '100vh',
-            color: theme.palette.secondary.light,
-            paddingTop: 30
-        },
-        nextButton: {
-            position: 'fixed',
-            bottom: theme.spacing(4),
-            right: theme.spacing(3)
-        },
-        textField: {
-            '& label.MuiInputLabel-root': {
-                color: theme.palette.primary.dark,
-              },
-          '& label.Mui-focused': {
-            color: theme.palette.secondary.light,
-          },
-          '& .MuiInputBase-input': {
-            color: theme.palette.primary.dark, // Text color
-          },
-          '& .MuiInput-underline:before': {
-            borderBottomColor: theme.palette.secondary.light,
-          },
-          '& .MuiInput-underline:hover:before': {
-            borderBottomColor: theme.palette.secondary.light,
-          },
-          '& .MuiInput-underline:after': {
-            borderBottomColor: theme.palette.secondary.light,
-          },
-        },
-        checkbox: {
-            color: theme.palette.secondary.light,
-            
-        },
-    })
+const useStyles = makeStyles((theme: Theme) =>
+  createStyles({
+    root: {
+      backgroundColor: theme.palette.secondary.dark,
+      minHeight: '100vh',
+      color: theme.palette.secondary.light,
+      paddingTop: 30,
+    },
+    nextButton: {
+      position: 'fixed',
+      bottom: theme.spacing(4),
+      right: theme.spacing(3),
+    },
+    textField: {
+      '& label.MuiInputLabel-root': {
+        color: theme.palette.primary.dark,
+      },
+      '& label.Mui-focused': {
+        color: theme.palette.secondary.light,
+      },
+      '& .MuiInputBase-input': {
+        color: theme.palette.primary.dark, // Text color
+      },
+      '& .MuiInput-underline:before': {
+        borderBottomColor: theme.palette.secondary.light,
+      },
+      '& .MuiInput-underline:hover:before': {
+        borderBottomColor: theme.palette.secondary.light,
+      },
+      '& .MuiInput-underline:after': {
+        borderBottomColor: theme.palette.secondary.light,
+      },
+    },
+    checkbox: {
+      color: theme.palette.secondary.light,
+    },
+  }),
 );
 
 function BusinessSignUp() {
-    const classes = useStyles();
-    return (
-            <Container className={classes.root} maxWidth={false}>
-                <form autoComplete="off">
-                    <Grid container spacing={4} direction="column"
-                         alignContent="center" alignItems="flex-start" justify="center" >
-                        <Grid item xs={12}>
-                            <h1>I&nbsp;am</h1>
-                        </Grid>
-                        <Grid item xs={12}>
-                            <FormControlLabel
-                                control={
-                                    <Checkbox className={classes.checkbox} />}
-                                label="Mobile stylist"
-                            />
-                        </Grid>
-                        <Grid item xs={12}>
-                            <FormControlLabel
-                                control={
-                                    <Checkbox className={classes.checkbox} />}
-                                label="Barber"
-                            />
-                        </Grid>
-                        <Grid item xs={12}>
-                            <FormControlLabel
-                                control={
-                                    <Checkbox className={classes.checkbox} />}
-                                label="Nail Salon"
-                            />
-                        </Grid>
-                        <Grid item xs={12} >
-                            <FormControlLabel
-                                control={
-                                    <Checkbox className={classes.checkbox} />}
-                                label="Other"
-                            />
-                        </Grid>
-                        <Grid item xs={7} sm={7} lg={7}>
-                            <TextField label="" disabled/>
-                        </Grid>
-                        <Grid item xs={12}>
-                            <Router>
-                                <Button variant="contained" color="primary" className={classes.nextButton}
-                                to={'/businAccountInfo'} component={Link}>
-                                Next
-                                </Button>
-                                <Switch>
-                                    <Route path="/businAccountInfo" component={BusinessAccountInfo} />
-                                </Switch>
-                            </Router>
-                        </Grid>
-                    </Grid>
-                </form>
-            </Container>
+  const classes = useStyles();
+  return (
+    <Container className={classes.root} maxWidth={false}>
+      <form autoComplete="off">
+        <Grid
+          container
+          spacing={4}
+          direction="column"
+          alignContent="center"
+          alignItems="flex-start"
+          justify="center"
+        >
+          <Grid item xs={12}>
+            <h1>I&nbsp;am</h1>
+          </Grid>
+          <Grid item xs={12}>
+            <FormControlLabel
+              control={<Checkbox className={classes.checkbox} />}
+              label="Mobile stylist"
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <FormControlLabel
+              control={<Checkbox className={classes.checkbox} />}
+              label="Barber"
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <FormControlLabel
+              control={<Checkbox className={classes.checkbox} />}
+              label="Nail Salon"
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <FormControlLabel
+              control={<Checkbox className={classes.checkbox} />}
+              label="Other"
+            />
+          </Grid>
+          <Grid item xs={7} sm={7} lg={7}>
+            <TextField label="" disabled />
+          </Grid>
+          <Grid item xs={12}>
+            <Router>
+              <Button
+                variant="contained"
+                color="primary"
+                className={classes.nextButton}
+                to={'/businAccountInfo'}
+                component={Link}
+              >
+                Next
+              </Button>
+              <Switch>
+                <Route
+                  path="/businAccountInfo"
+                  component={BusinessAccountInfo}
+                />
+              </Switch>
+            </Router>
+          </Grid>
+        </Grid>
+      </form>
+    </Container>
   );
 }
 /*function BusinessSignUp(props: any) {

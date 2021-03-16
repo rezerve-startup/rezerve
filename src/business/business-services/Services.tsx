@@ -29,6 +29,36 @@ class Services extends Component {
             <CardContent> Item Three </CardContent>
           </Card>
           </div>
+
+          <div className="item">
+          <Card>
+            <CardContent> Item Four </CardContent>
+          </Card>
+          </div>
+
+          <div className="item">
+          <Card>
+            <CardContent> Item Five </CardContent>
+          </Card>
+          </div>
+
+          <div className="item">
+          <Card>
+            <CardContent> Item Six </CardContent>
+          </Card>
+          </div>
+
+          <div className="item">
+          <Card>
+            <CardContent> Item Seven </CardContent>
+          </Card>
+          </div>
+
+          <div className="item">
+          <Card>
+            <CardContent> Item Eight </CardContent>
+          </Card>
+          </div>
         </div>
       </div>
     );
