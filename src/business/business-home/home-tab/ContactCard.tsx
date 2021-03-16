@@ -19,7 +19,8 @@ const styles = (theme: Theme) =>
       flexGrow: 1,
     },
     card: {
-      padding: theme.spacing(2),
+      padding: theme.spacing(1),
+      height: '400px'
     },
     contacts: {},
   });
@@ -47,7 +48,7 @@ class ContactCard extends React.Component<Props, State> {
     const { classes } = this.props;
 
     return (
-      <Card className={classes.card}>
+      <Card className={classes.card} elevation={0}>
         <Typography variant="h5">Contact Stylist</Typography>
         <Divider />
         {this.state.editInfo ? (

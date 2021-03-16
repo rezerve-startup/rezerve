@@ -1,7 +1,7 @@
-import app from 'firebase';
+import firebase from 'firebase';
 
 const firebaseConfig = {
-  apiKey: 'AIzaSyCWPWJ59aphpRf_EkMZfT9JGEWXm69rexg',
+  apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
   authDomain: 'rezerve-develop.firebaseapp.com',
   databaseURL: 'https://rezerve-develop.firebaseio.com/',
   projectId: 'rezerve-develop',
@@ -11,6 +11,8 @@ const firebaseConfig = {
   measurementId: 'G-CRN3J3ZPFW',
 };
 
-app.initializeApp(firebaseConfig);
+console.log(1, process.env);
+firebase.initializeApp(firebaseConfig);
 
-export const firestore = app.firestore();
+export const auth = firebase.auth();
+export const firestore = firebase.firestore();

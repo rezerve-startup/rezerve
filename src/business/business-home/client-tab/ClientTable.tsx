@@ -23,11 +23,12 @@ import {
   Fab,
   InputBase,
   Grow,
-  fade
+  fade,
 } from '@material-ui/core';
 import image from '../../../assets/avatar.jpg';
-import { Delete, Check, Add, Search } from '@material-ui/icons';
+import { Delete, Check, Add, Search, Message } from '@material-ui/icons';
 import { Client } from '../../models/BusinessHome';
+import { SpeedDial, SpeedDialAction, SpeedDialIcon } from '@material-ui/lab';
 
 function createData(name: string, numVisits: number, picture: string): Client {
   return { name, numVisits, picture };
@@ -45,6 +46,11 @@ const rows = [
   createData('Sample Client-9', 90, ''),
   createData('Sample Client-10', 100, ''),
 ];
+
+const fabActions = [
+  { icon: <Message /> , name: "Message" },
+  { icon: <Delete />, name: "Remove" }
+]
 
 function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
   if (b[orderBy] < a[orderBy]) {
@@ -220,8 +226,18 @@ const useToolbarStyles = makeStyles((theme: Theme) =>
       },
     },
     grow: {
-      flexGrow: 1
-    }
+      flexGrow: 1,
+    },
+    fab: {
+      position: 'absolute',
+      right: theme.spacing(2),
+      top: theme.spacing(1)
+    },
+    speedDial: {
+      position: 'absolute',
+      right: theme.spacing(1),
+      top: theme.spacing(1)
+    },
   }),
 );
 
@@ -233,6 +249,10 @@ const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
   const classes = useToolbarStyles();
   const { numSelected } = props;
   const [searching, setSearching] = React.useState(false);
+  const [open, setOpen] = React.useState(false);
+
+  const handleOpen = () => { setOpen(true) }
+  const handleClose = () => { setOpen(false) }
 
   return (
     <Toolbar
@@ -240,7 +260,6 @@ const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
         [classes.highlight]: numSelected > 0,
       })}
     >
-      
       {numSelected > 0 ? (
         <Typography
           className={classes.title}
@@ -277,20 +296,39 @@ const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
       </Grow>
       <div className={classes.grow} />
       {numSelected > 0 ? (
-        <Tooltip title="Delete">
-          <IconButton aria-label="delete">
-            <Delete />
-          </IconButton>
-        </Tooltip>
+        <SpeedDial
+          ariaLabel="client-speed-dial"
+          className={classes.speedDial}
+          icon={<SpeedDialIcon />}
+          onClose={handleClose}
+          onOpen={handleOpen}
+          open={open}
+          direction="down"
+          FabProps={{ size: 'small' }}
+        >
+          {fabActions.map((action) => (
+            <SpeedDialAction 
+              key={action.name}
+              icon={action.icon}
+              tooltipTitle={action.name}
+              tooltipOpen={true}
+              onClick={handleClose}
+            />
+          ))}
+        </SpeedDial>
+        
+        
       ) : (
         <Tooltip title="Invite Client">
-          <Fab 
+          <Fab
             color="primary"
             size="small"
-            aria-label="add-client" 
-            style={{ margin: '8px' }}
+            aria-label="add-client"
+            className={classes.fab}
+            variant="extended"
           >
-            <Add />
+            <Add style={{ marginRight: '8px' }}/>
+            Invite
           </Fab>
         </Tooltip>
       )}
@@ -409,8 +447,8 @@ export default function ClientTable() {
               rowCount={rows.length}
             />
             <TableBody>
-              {stableSort(rows, getComparator(order, orderBy))
-                .map((row, index) => {
+              {stableSort(rows, getComparator(order, orderBy)).map(
+                (row, index) => {
                   const isItemSelected = isSelected(row.name);
                   const labelId = `enhanced-table-checkbox-${index}`;
 
@@ -456,7 +494,8 @@ export default function ClientTable() {
                       <TableCell align="right">{row.numVisits}</TableCell>
                     </TableRow>
                   );
-                })}
+                },
+              )}
               {emptyRows > 0 && (
                 <TableRow>
                   <TableCell colSpan={6} />

@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-// import { CarouselItem, CarouselCaption, Carousel, CarouselControl, CarouselIndicators } from '../../customer/customer-signup/node_modules/reactstrap';
 import Carousel from 'react-material-ui-carousel';
 import { LocationOn } from '@material-ui/icons';
 import { Rating } from '@material-ui/lab';
@@ -11,16 +10,29 @@ import {
   createStyles,
   WithStyles,
   Theme,
+  Grid,
+  Button,
 } from '@material-ui/core';
 
 import { firestore } from '../../config/FirebaseConfig';
 import { connect } from 'react-redux';
 import { updateBusinessName } from '../../shared/store/actions';
 import { BusinessState, StoreState } from '../../shared/store/types';
+import BusinessInfoDetails from './business-info-details/BusinessInfoDetails';
+import cat1 from '../../assets/business-pictures/cat1.jpg';
+import cat2 from '../../assets/business-pictures/cat2.jpg';
+import cat3 from '../../assets/business-pictures/cat3.jpg';
+import MapsContainer from './MapsContainer';
+import { LoadScript } from '@react-google-maps/api';
+import { Business } from '../../models/Business.interface';
+import { Review } from '../../models/Review.interface';
+import { User } from '../../models/User.interface';
 
 type BusinessInfoState = {
-  business: any;
+  businessKey: string;
+  businessInfo: Business;
   businessName: string;
+  businessReviews: Review[];
 };
 
 function mapStateToProps(state: StoreState) {
@@ -29,14 +41,14 @@ function mapStateToProps(state: StoreState) {
   };
 }
 
-interface Props extends WithStyles<typeof styles> {}
-
 class BusinessInfo extends React.Component<any, BusinessInfoState> {
   constructor(props: any) {
     super(props);
     this.state = {
-      business: undefined,
+      businessKey: this.props.selectedBusinessKey,
+      businessInfo: this.props.selectedBusinessInfo,
       businessName: props.business.businessName,
+      businessReviews: []
     };
   }
 
@@ -45,27 +57,54 @@ class BusinessInfo extends React.Component<any, BusinessInfoState> {
   };
 
   componentDidMount() {
-    firestore.collection('businesses').onSnapshot((snapshot) => {
-      const selectedBusiness = snapshot.docs[0].data();
+    this.getBusinessInfoData();
+  }
 
-      this.setState({
-        business: selectedBusiness,
-      });
-    });
+  getBusinessInfoData() {
+    const businessData = firestore
+      .collection('businesses')
+      .doc(`${this.state.businessKey}`);
+
+    businessData
+      .get()
+      // Get business reviews
+      .then(() => {
+        this.state.businessInfo.reviews.forEach((reviewId: any) => {
+          let tempBusinessReview;
+
+          firestore.collection('reviews').doc(`${reviewId}`).get()
+            .then((review) => {
+              tempBusinessReview = review.data() as Review;
+            })
+            .then(() => {
+              firestore.collection('users').where('customerId', '==', `${tempBusinessReview.customerId}`).get()
+                .then((querySnapshot) => {
+                  querySnapshot.forEach((doc) => {
+                    tempBusinessReview.poster = (doc.data() as User).firstName;
+                  })
+                })
+                .then(() => {
+                  this.setState({
+                    businessReviews: [...this.state.businessReviews, tempBusinessReview]
+                  })
+                });
+            })
+        });
+      })
   }
 
   render() {
     const { classes } = this.props;
 
     const businessPictures = [
-      { imageUrl: 'cat1.jpg' },
-      { imageUrl: 'cat2.jpg' },
-      { imageUrl: 'cat3.jpg' },
+      { imageUrl: cat1 },
+      { imageUrl: cat2 },
+      { imageUrl: cat3 },
     ];
 
     return (
       <div className={classes.businessInfoPage}>
-        {this.state.business !== undefined ? (
+        {this.state.businessInfo !== undefined ? (
           <div className={classes.businessOverview}>
             <div className={classes.carouselContainer}>
               <Carousel navButtonsAlwaysVisible={true}>
@@ -74,6 +113,7 @@ class BusinessInfo extends React.Component<any, BusinessInfoState> {
                     <img
                       className={classes.businessPicture}
                       src={businessPicture.imageUrl}
+                      alt=""
                     />
                   </Paper>
                 ))}
@@ -82,14 +122,21 @@ class BusinessInfo extends React.Component<any, BusinessInfoState> {
 
             <div className={classes.businessInformation}>
               {/* The value that is being updated dynamically via state changes */}
-              <h5>{this.props.business.businessName}</h5>
+              <h5>{this.state.businessInfo.name}</h5>
               <h6>
-                {this.state.business.address}, {this.state.business.city},{' '}
-                {this.state.business.state} {this.state.business.zipcode}
+                {this.state.businessInfo.about.address},{' '}
+                {this.state.businessInfo.about.city},{' '}
+                {this.state.businessInfo.about.state}{' '}
+                {this.state.businessInfo.about.zipcode}
               </h6>
               <div className={classes.distanceContainer}>
                 <LocationOn />
                 <p className={classes.distanceToBusiness}>0.02 Mi</p>
+              </div>
+              <div className={classes.mapContainerStyle}>
+                <LoadScript googleMapsApiKey={`${process.env.REACT_APP_GOOGLE_MAPS_API_KEY}`} libraries={["places"]}>
+                  <MapsContainer businessLocation={this.state.businessInfo.about.location}></MapsContainer>
+                </LoadScript>
               </div>
             </div>
 
@@ -98,7 +145,7 @@ class BusinessInfo extends React.Component<any, BusinessInfoState> {
                 <b>ABOUT US</b>
               </h6>
               <div className={classes.aboutContent}>
-                {this.state.business.aboutBusiness}
+                {this.state.businessInfo.description}
               </div>
             </div>
 
@@ -109,42 +156,54 @@ class BusinessInfo extends React.Component<any, BusinessInfoState> {
                 </h6>
                 <Rating
                   size="medium"
-                  value={this.state.business.businessRating}
+                  value={this.state.businessInfo.performance.rating}
                   precision={0.5}
-                  readOnly
+                  readOnly={true}
                 />
               </div>
 
               <div>
-                <div className={classes.businessReview}>
-                  <div className={classes.reviewAvatar}>
-                    <Avatar />
-                  </div>
-                  <div className={classes.reviewContent}>
-                    <div>
-                      <b>Melissa</b>
+                {this.state.businessReviews.map((review, i) => {
+                  return (
+                    <div className={classes.businessReview} key={i}>
+                      <div className={classes.reviewAvatar}>
+                        <Avatar />
+                      </div>
+                      <div className={classes.reviewContent}>
+                        <div>
+                          <b>{review.poster}</b>
+                        </div>
+                        <div>{review.message}</div>
+                      </div>
+                      <div className={classes.reviewRating}>
+                        <div>
+                          {new Date(review.date.toDate()).toLocaleDateString()}
+                        </div>
+                        <div>
+                          <Rating
+                            size="small"
+                            value={review.rating}
+                            precision={0.5}
+                            readOnly={true}
+                            classes={{
+                              iconFilled: classes.starRatingFilled,
+                              iconHover: classes.starRatingHover,
+                            }}
+                          />
+                        </div>
+                      </div>
                     </div>
-                    <div>
-                      Brought my son for a haircut and it was perfect! He loved
-                      it and we will definitely be making another appointment
-                    </div>
-                  </div>
-                  <div className={classes.reviewRating}>
-                    <div>10/17/20</div>
-                    <Rating size="small" value={2.5} precision={0.5} readOnly />
-                  </div>
-                </div>
+                  );
+                })}
               </div>
             </div>
-            <button onClick={this.dispatchUpdateBusinessName}>
-              Update Business Name in Store
-            </button>
           </div>
         ) : (
           <div className={classes.loadingContainer}>
             <CircularProgress size={75} />
           </div>
         )}
+        <BusinessInfoDetails props={this.state.businessInfo} />
       </div>
     );
   }
@@ -160,7 +219,7 @@ const styles = (theme: Theme) =>
       height: '100%',
       color: 'white',
       textAlign: 'center',
-      alignItems: 'center',
+      alignItems: 'center'
     },
     businessOverview: {
       padding: '2.5rem',
@@ -173,6 +232,7 @@ const styles = (theme: Theme) =>
     },
     businessInformation: {
       color: 'black',
+      justifyContent: 'center'
     },
     distanceContainer: {
       display: 'flex',
@@ -202,6 +262,7 @@ const styles = (theme: Theme) =>
       display: 'flex',
       justifyContent: 'space-around',
       textAlign: 'start',
+      marginBottom: '0.5rem',
     },
     reviewAvatar: {
       flex: 1,
@@ -214,6 +275,8 @@ const styles = (theme: Theme) =>
     reviewRating: {
       flex: 2,
       marginLeft: '0.25rem',
+      textAlign: 'center',
+      alignContent: 'center'
     },
     loadingContainer: {
       display: 'flex',
@@ -221,8 +284,20 @@ const styles = (theme: Theme) =>
       alignItems: 'center',
       height: '100%',
     },
+    starRatingFilled: {
+      color: theme.palette.primary.main,
+    },
+    starRatingHover: {
+      color: theme.palette.primary.light,
+    },
+    mapContainerStyle: {
+      marginTop: '1rem',
+      marginBottom: '1rem',
+      paddingLeft: '1rem',
+      paddingRight: '1rem'
+    }
   });
 
 export default connect(mapStateToProps, { updateBusinessName })(
-  withStyles(styles, { withTheme: true })(BusinessInfo),
+  withStyles(styles, { withTheme: true })(BusinessInfo)
 );
