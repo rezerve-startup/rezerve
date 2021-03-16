@@ -7,6 +7,7 @@ import BusinessInfo from './business/business-info/BusinessInfo';
 import BusinessHome from './business/business-home/BusinessHome';
 
 import AppointmentsPage from './customer/customer-appointments/AppointmentPage';
+import BusinessProfile from './business/business-profile/business-profile';
 import { auth, firestore } from './config/FirebaseConfig';
 import { connect } from 'react-redux';
 import { StoreState, SystemState } from './shared/store/types';
@@ -39,6 +40,7 @@ const theme = createMuiTheme({
     },
   },
 });
+
 
 function mapStateToProps(state: StoreState) {
   return {
