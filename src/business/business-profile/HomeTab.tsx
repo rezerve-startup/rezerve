@@ -11,6 +11,7 @@ import {
 } from '@material-ui/core';
 
 import BusinessCard from './BusinessCard';
+import BBusinessCard from  './business-card'
 import AvailabilityCard from './AvailabilityCard'
 import PreferencesCard from './PreferencesCard';
 import ContactCard from '../business-home/home-tab/ContactCard';
@@ -47,7 +48,7 @@ class HomePanel extends React.Component<Props, State> {
           <Grid item={true} xs={isMobile ? 12 : 6}>
             <Grid container={true} spacing={2} direction="column">
               <Grid item={true} xs={true}>
-                <BusinessCard isMobile={isMobile} />
+                <BBusinessCard/>
               </Grid>
               <Grid item={true} xs={true}>
                 <Carousel

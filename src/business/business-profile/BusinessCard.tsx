@@ -56,6 +56,7 @@ export default function BusinessCard(props: Props) {
               readOnly={true}
             />
           </CardContent>
+          
         </Grid>
         <Grid item={true}>
           <CardMedia
