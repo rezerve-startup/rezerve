@@ -40,7 +40,7 @@ type State = {};
 class HomePanel extends React.Component<Props, State> {
   render() {
     const { classes, isMobile } = this.props;
-    const carouselComponents = [PreferencesCard, ContactCard, AvailabilityCard];
+    const carouselComponents = [AvailabilityCard, PreferencesCard, ContactCard];
 
     return (
       <div className={classes.root}>
