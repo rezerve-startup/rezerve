@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import Carousel from 'react-material-ui-carousel';
+import Home from '@material-ui/icons/Home';
 import { LocationOn } from '@material-ui/icons';
 import { Rating } from '@material-ui/lab';
 import {
@@ -32,7 +33,8 @@ type BusinessInfoState = {
   businessKey: string;
   businessInfo: Business;
   businessName: string;
-  businessReviews: Review[];
+  businessReviewsShown: Review[];
+  businessReviewsStored: Review[];
 };
 
 function mapStateToProps(state: StoreState) {
@@ -48,7 +50,8 @@ class BusinessInfo extends React.Component<any, BusinessInfoState> {
       businessKey: this.props.selectedBusinessKey,
       businessInfo: this.props.selectedBusinessInfo,
       businessName: props.business.businessName,
-      businessReviews: []
+      businessReviewsShown: [],
+      businessReviewsStored: []
     };
   }
 
@@ -69,6 +72,8 @@ class BusinessInfo extends React.Component<any, BusinessInfoState> {
       .get()
       // Get business reviews
       .then(() => {
+        let numberShown = 0;
+
         this.state.businessInfo.reviews.forEach((reviewId: any) => {
           let tempBusinessReview;
 
@@ -84,13 +89,44 @@ class BusinessInfo extends React.Component<any, BusinessInfoState> {
                   })
                 })
                 .then(() => {
-                  this.setState({
-                    businessReviews: [...this.state.businessReviews, tempBusinessReview]
-                  })
+                  if (numberShown < 3) {
+                    this.setState({
+                      businessReviewsShown: [...this.state.businessReviewsShown, tempBusinessReview]
+                    });
+
+                    numberShown += 1;
+                  } else {
+                    this.setState({
+                      businessReviewsStored: [...this.state.businessReviewsStored, tempBusinessReview]
+                    });
+                  }
                 });
             })
         });
       })
+  }
+
+  showMoreReviews() {
+    let tempReviewsStored = this.state.businessReviewsStored.slice();
+    let tempReviewsShown = this.state.businessReviewsShown.slice();
+
+    let valuesChanged = false;
+
+    for (let i = 0; i < 3; i++) {
+      if (tempReviewsStored[i]) {
+        tempReviewsShown.push(tempReviewsStored[i]);
+        tempReviewsStored.splice(i, 1);
+
+        valuesChanged = true;
+      }
+    }
+
+    if (valuesChanged) {
+      this.setState({
+        businessReviewsShown: tempReviewsShown,
+        businessReviewsStored: tempReviewsStored
+      });
+    }  
   }
 
   render() {
@@ -107,7 +143,9 @@ class BusinessInfo extends React.Component<any, BusinessInfoState> {
         {this.state.businessInfo !== undefined ? (
           <div className={classes.businessOverview}>
             <div className={classes.carouselContainer}>
-              <Carousel navButtonsAlwaysVisible={true} autoPlay={false}>
+              <Carousel 
+                navButtonsAlwaysVisible={true} autoPlay={false}
+              >
                 {businessPictures.map((businessPicture, i) => (
                   <Paper key={i}>
                     <img
@@ -165,7 +203,7 @@ class BusinessInfo extends React.Component<any, BusinessInfoState> {
               </div>
 
               <div>
-                {this.state.businessReviews.map((review, i) => {
+                {this.state.businessReviewsShown.map((review, i) => {
                   return (
                     <div className={classes.businessReview} key={i}>
                       <div className={classes.reviewAvatar}>
@@ -199,6 +237,12 @@ class BusinessInfo extends React.Component<any, BusinessInfoState> {
                 })}
               </div>
             </div>
+
+            {this.state.businessReviewsStored.length > 0 && 
+              <div>
+                <Button variant="contained" onClick={() => this.showMoreReviews()}>Show More</Button>
+              </div>
+            }
           </div>
         ) : (
           <div className={classes.loadingContainer}>
