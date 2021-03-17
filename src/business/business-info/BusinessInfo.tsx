@@ -107,7 +107,7 @@ class BusinessInfo extends React.Component<any, BusinessInfoState> {
         {this.state.businessInfo !== undefined ? (
           <div className={classes.businessOverview}>
             <div className={classes.carouselContainer}>
-              <Carousel navButtonsAlwaysVisible={true}>
+              <Carousel navButtonsAlwaysVisible={true} autoPlay={false}>
                 {businessPictures.map((businessPicture, i) => (
                   <Paper key={i}>
                     <img
@@ -122,16 +122,18 @@ class BusinessInfo extends React.Component<any, BusinessInfoState> {
 
             <div className={classes.businessInformation}>
               {/* The value that is being updated dynamically via state changes */}
-              <h5>{this.state.businessInfo.name}</h5>
-              <h6>
+              <div className={classes.businessInfoName}>{this.state.businessInfo.name}</div>
+              <div className={classes.businessInfoAddress}>
                 {this.state.businessInfo.about.address},{' '}
                 {this.state.businessInfo.about.city},{' '}
                 {this.state.businessInfo.about.state}{' '}
                 {this.state.businessInfo.about.zipcode}
-              </h6>
+              </div>
               <div className={classes.distanceContainer}>
-                <LocationOn />
-                <p className={classes.distanceToBusiness}>0.02 Mi</p>
+                <div>
+                  <LocationOn />
+                </div>
+                <div className={classes.distanceToBusiness}>0.02 Mi</div>
               </div>
               <div className={classes.mapContainerStyle}>
                 <LoadScript googleMapsApiKey={`${process.env.REACT_APP_GOOGLE_MAPS_API_KEY}`} libraries={["places"]}>
@@ -141,9 +143,9 @@ class BusinessInfo extends React.Component<any, BusinessInfoState> {
             </div>
 
             <div className={classes.aboutBusiness}>
-              <h6>
+              <div className={classes.aboutBusinessTitle}>
                 <b>ABOUT US</b>
-              </h6>
+              </div>
               <div className={classes.aboutContent}>
                 {this.state.businessInfo.description}
               </div>
@@ -151,9 +153,9 @@ class BusinessInfo extends React.Component<any, BusinessInfoState> {
 
             <div className={classes.reviewsContainer}>
               <div className={classes.overallReview}>
-                <h6>
+                <div>
                   <b>REVIEWS</b>
-                </h6>
+                </div>
                 <Rating
                   size="medium"
                   value={this.state.businessInfo.performance.rating}
@@ -228,16 +230,24 @@ const styles = (theme: Theme) =>
       width: '100%',
     },
     carouselContainer: {
-      marginBottom: '1rem',
+      marginBottom: '0.5rem',
     },
     businessInformation: {
       color: 'black',
       justifyContent: 'center'
     },
+    businessInfoName: {
+      fontSize: '2rem',
+      marginBottom: '0.25rem'
+    },
+    businessInfoAddress: {
+      marginBottom: '0.25rem'
+    },
     distanceContainer: {
       display: 'flex',
       justifyContent: 'center',
       color: 'red',
+      alignItems: 'center',
     },
     distanceToBusiness: {
       marginLeft: '0.25rem',
@@ -249,6 +259,9 @@ const styles = (theme: Theme) =>
       border: 'darkgray solid 1',
       marginBottom: '1rem',
     },
+    aboutBusinessTitle: {
+      marginBottom: '0.25rem'
+    },
     aboutContent: {
       textAlign: 'start',
     },
@@ -256,7 +269,7 @@ const styles = (theme: Theme) =>
       color: 'black',
     },
     overallReview: {
-      marginBottom: '0.5rem',
+      marginBottom: '1rem',
     },
     businessReview: {
       display: 'flex',

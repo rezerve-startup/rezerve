@@ -32,7 +32,7 @@ export class MapContainer extends React.Component<any, any> {
             center={this.state.businessLocation}
             zoom={15}
             onLoad={map => this.onMapLoad(map)}
-            mapContainerStyle={{ height: '30vh', width: "100%" }}
+            mapContainerStyle={{ height: '15vh', width: "100%" }}
             options={{ clickableIcons: false, disableDefaultUI: true, gestureHandling: "none" }}
             ref={map}
           >
