@@ -11,8 +11,13 @@ import {
   UPDATE_CUSTOMER_PAST_APPOINTMENTS,
   UPDATE_CUSTOMER_UPCOMING_APPOINTMENTS,
   ADD_FOUND_BUSINESS,
-  CLEAR_FOUND_BUSINESSES
+  CLEAR_FOUND_BUSINESSES,
+  ADD_EMPLOYEE_FOR_BUSINESS,
+  CLEAR_EMPLOYEES_FOR_BUSINESS,
+  SET_SELECTED_EMPLOYEE
 } from './types';
+
+// ************** System Reducer ******************
 
 const initialSystemState: SystemState = {
   loggedIn: false,
@@ -42,6 +47,8 @@ export function systemReducer(
   }
 }
 
+// ********** Business Reducer ****************
+
 const initialBusinessState: BusinessState = {
   businessName: '',
 };
@@ -62,10 +69,14 @@ export function businessReducer(
   }
 }
 
+// ***************** Customer Reducer *************************
+
 const initialCustomerState: CustomerState = {
   pastAppointments: [],
   upcomingAppointments: [],
-  foundBusinesses: []
+  foundBusinesses: [],
+  employeesForBusiness: [],
+  selectedEmployee: null
 }
 
 export function customerReducer(
@@ -98,6 +109,27 @@ export function customerReducer(
       return {
         ...state,
         foundBusinesses: []
+      }
+    }
+    case ADD_EMPLOYEE_FOR_BUSINESS: {
+      return {
+        ...state,
+        employeesForBusiness: [
+          ...state.employeesForBusiness,
+          action.payload
+        ]
+      }
+    }
+    case CLEAR_EMPLOYEES_FOR_BUSINESS: {
+      return {
+        ...state,
+        employeesForBusiness: []
+      }
+    }
+    case SET_SELECTED_EMPLOYEE: {
+      return {
+        ...state,
+        selectedEmployee: action.payload
       }
     }
     default:

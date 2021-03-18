@@ -8,4 +8,8 @@ export interface Employee {
     isOwner: boolean;
     reviews: Review[];
     todos: any[];
+    services: any[];
+    firstName?: string;
+    id: string;
+    position: string;
 }

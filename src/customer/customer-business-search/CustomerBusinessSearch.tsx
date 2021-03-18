@@ -22,7 +22,7 @@ import { connect } from 'react-redux';
 import { GoogleMap, LoadScript, StandaloneSearchBox } from '@react-google-maps/api';
 import BusinessInfo from '../../business/business-info/BusinessInfo';
 import { StoreState } from '../../shared/store/types';
-import { addBusinessFound, clearBusinessesFound } from '../../shared/store/actions';
+import { addBusinessFound, clearBusinessesFound, setSelectedEmployee, clearEmployeesForBusiness } from '../../shared/store/actions';
 import { Business } from '../../models/Business.interface';
 
 type CustomerBusinessSearchState = {
@@ -61,6 +61,14 @@ class CustomerBusinessSearch extends React.Component<any, CustomerBusinessSearch
 
   dispatchAddFoundBusiness(businessFound: any): void {
     this.props.addBusinessFound(businessFound);
+  }
+
+  dispatchSetSelectedEmployee(employee: any): void {
+    this.props.setSelectedEmployee(employee);
+  }
+
+  dispatchClearEmployeesForBusiness(): void {
+    this.props.clearEmployeesForBusiness();
   }
 
   // Reference https://stackoverflow.com/questions/46630507/how-to-run-a-geo-nearby-query-with-firestore
@@ -130,7 +138,10 @@ class CustomerBusinessSearch extends React.Component<any, CustomerBusinessSearch
     this.setState({
       businessSelectedIndicator: false,
       selectedBusiness: null,
-    })
+    });
+
+    this.dispatchClearEmployeesForBusiness();
+    this.dispatchSetSelectedEmployee(null);
   }
 
   handleSearchChange(searchChangeEvent): void {
@@ -272,6 +283,6 @@ const styles = (theme: Theme) =>
     }
   });
 
-export default connect(mapStateToProps, { addBusinessFound, clearBusinessesFound })(
+export default connect(mapStateToProps, { addBusinessFound, clearBusinessesFound, setSelectedEmployee, clearEmployeesForBusiness })(
   withStyles(styles, { withTheme: true })(CustomerBusinessSearch)
 );

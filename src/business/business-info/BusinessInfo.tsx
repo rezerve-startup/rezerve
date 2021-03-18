@@ -1,6 +1,5 @@
-import React, { Component } from 'react';
+import React from 'react';
 import Carousel from 'react-material-ui-carousel';
-import Home from '@material-ui/icons/Home';
 import { LocationOn } from '@material-ui/icons';
 import { Rating } from '@material-ui/lab';
 import {
@@ -9,16 +8,14 @@ import {
   Paper,
   withStyles,
   createStyles,
-  WithStyles,
   Theme,
-  Grid,
   Button,
 } from '@material-ui/core';
 
 import { firestore } from '../../config/FirebaseConfig';
 import { connect } from 'react-redux';
-import { updateBusinessName } from '../../shared/store/actions';
-import { BusinessState, StoreState } from '../../shared/store/types';
+import { addEmployeeForBusiness, clearEmployeesForBusiness, setSelectedEmployee } from '../../shared/store/actions';
+import { StoreState } from '../../shared/store/types';
 import BusinessInfoDetails from './business-info-details/BusinessInfoDetails';
 import cat1 from '../../assets/business-pictures/cat1.jpg';
 import cat2 from '../../assets/business-pictures/cat2.jpg';
@@ -28,6 +25,7 @@ import { LoadScript } from '@react-google-maps/api';
 import { Business } from '../../models/Business.interface';
 import { Review } from '../../models/Review.interface';
 import { User } from '../../models/User.interface';
+import { Employee } from '../../models/Employee.interface';
 
 type BusinessInfoState = {
   businessKey: string;
@@ -35,6 +33,7 @@ type BusinessInfoState = {
   businessName: string;
   businessReviewsShown: Review[];
   businessReviewsStored: Review[];
+  businessEmployees: any[]
 };
 
 function mapStateToProps(state: StoreState) {
@@ -51,19 +50,31 @@ class BusinessInfo extends React.Component<any, BusinessInfoState> {
       businessInfo: this.props.selectedBusinessInfo,
       businessName: props.business.businessName,
       businessReviewsShown: [],
-      businessReviewsStored: []
+      businessReviewsStored: [],
+      businessEmployees: []
     };
   }
 
-  dispatchUpdateBusinessName = () => {
-    this.props.updateBusinessName('Hello World!');
-  };
+  dispatchAddEmployeeForBusiness = (employee) => {
+    this.props.addEmployeeForBusiness(employee);
+  }
+
+  dispatchClearEmployeesForBusiness = () => {
+    this.props.clearEmployeesForBusiness();
+  }
+
+  dispatchSetSelectedEmployee = (selectedEmployee) => {
+    this.props.setSelectedEmployee(selectedEmployee);
+  }
 
   componentDidMount() {
     this.getBusinessInfoData();
   }
 
   getBusinessInfoData() {
+    this.dispatchClearEmployeesForBusiness();
+    this.dispatchSetSelectedEmployee(null);
+
     const businessData = firestore
       .collection('businesses')
       .doc(`${this.state.businessKey}`);
@@ -72,7 +83,7 @@ class BusinessInfo extends React.Component<any, BusinessInfoState> {
       .get()
       // Get business reviews
       .then(() => {
-        let numberShown = 0;
+        let numberReviewsShown = 0;
 
         this.state.businessInfo.reviews.forEach((reviewId: any) => {
           let tempBusinessReview;
@@ -89,12 +100,12 @@ class BusinessInfo extends React.Component<any, BusinessInfoState> {
                   })
                 })
                 .then(() => {
-                  if (numberShown < 3) {
+                  if (numberReviewsShown < 3) {
                     this.setState({
                       businessReviewsShown: [...this.state.businessReviewsShown, tempBusinessReview]
                     });
 
-                    numberShown += 1;
+                    numberReviewsShown += 1;
                   } else {
                     this.setState({
                       businessReviewsStored: [...this.state.businessReviewsStored, tempBusinessReview]
@@ -103,6 +114,48 @@ class BusinessInfo extends React.Component<any, BusinessInfoState> {
                 });
             })
         });
+      })
+      // Get employees
+      .then(() => {
+        this.state.businessInfo.employees.forEach((employeeId, index) => {
+          let tempEmployee: Employee;
+          let employeeUserId: string;
+
+          firestore.collection('employees').doc(`${employeeId}`).get()
+            .then((employee) => {
+              const employeeData = employee.data();
+
+              
+              if (employeeData) {
+                tempEmployee = {
+                  id: employee.id,
+                  appointments: employeeData.appointments,
+                  reviews: employeeData.reviews,
+                  services: employeeData.services,
+                  todos: employeeData.todos,
+                  isOwner: employeeData.isOwner,
+                  position: employeeData.position,
+                  clients: employeeData.clients
+                };
+              }
+
+              employeeUserId = employee.id;
+            })
+            .then(() => {
+              firestore.collection('users').where('employeeId', '==', `${employeeId}`).get()
+                .then((querySnapshot) => {
+                  querySnapshot.forEach((doc) => {
+                    const userData = doc.data();
+    
+                    if (userData) {
+                      tempEmployee.firstName = userData.firstName;
+                    }
+
+                    this.dispatchAddEmployeeForBusiness(tempEmployee);
+                  })
+                });
+            })
+        })
       })
   }
 
@@ -249,7 +302,7 @@ class BusinessInfo extends React.Component<any, BusinessInfoState> {
             <CircularProgress size={75} />
           </div>
         )}
-        <BusinessInfoDetails props={this.state.businessInfo} />
+        <BusinessInfoDetails />
       </div>
     );
   }
@@ -355,6 +408,6 @@ const styles = (theme: Theme) =>
     }
   });
 
-export default connect(mapStateToProps, { updateBusinessName })(
+export default connect(mapStateToProps, { addEmployeeForBusiness, clearEmployeesForBusiness, setSelectedEmployee })(
   withStyles(styles, { withTheme: true })(BusinessInfo)
 );
