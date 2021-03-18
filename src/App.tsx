@@ -20,6 +20,7 @@ import { auth, firestore } from './config/FirebaseConfig';
 import { connect } from 'react-redux';
 import { StoreState, SystemState } from './shared/store/types';
 import { updateUser } from './shared/store/actions';
+import TempLoginPage from './shared/TempLoginPage';
 
 
 
@@ -37,6 +38,8 @@ const routes = [
   { path: '/landing-page-loggedIn', component: LandingLoggedIn },
   { path: '/sign-up-page', component: SignupPage},
   { path: '/customer-sign-up', component: CustomerSignUp},
+  { path: '/temp-login', component: TempLoginPage },
+  { path: '/business-home', component: BusinessHome }
 ];
 
 let currentUser = 'business';

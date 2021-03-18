@@ -146,7 +146,7 @@ class CustomerBusinessSearch extends React.Component<any, CustomerBusinessSearch
 
           <div className={classes.customerBusinessSearchPage}>
                 <div className={classes.searchBoxContainer}>
-                    <LoadScript googleMapsApiKey="AIzaSyCJNy8CE-cgdwuYFX3kT3r-ELumZxjJeU0" libraries={["places"]}>
+                    <LoadScript googleMapsApiKey={`${process.env.REACT_APP_GOOGLE_MAPS_API_KEY}`} libraries={["places"]}>
                         <StandaloneSearchBox
                             onLoad={this.onLoad}
                             onPlacesChanged={this.onPlaceSelection}

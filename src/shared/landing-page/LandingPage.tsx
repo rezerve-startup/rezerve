@@ -28,6 +28,7 @@ import EmojiPeopleIcon from '@material-ui/icons/EmojiPeople';
 
 //import Services from './business-services/Services';
 import Search from './landingSearch';
+import CustomerBusinessSearch from '../../customer/customer-business-search/CustomerBusinessSearch';
 
 //import Sidebar from '../shared/sidebar/sidebar';
 
@@ -216,16 +217,16 @@ function LandingPageDefault() {
       </AppBar>
 
       <TabPanel tabValue={tabValue} index={0}>
-        Item One
+        <CustomerBusinessSearch filter="hair" />
       </TabPanel>
       <TabPanel tabValue={tabValue} index={2}>
-        Item Two
+        <CustomerBusinessSearch filter="nails" />
       </TabPanel>
       <TabPanel tabValue={tabValue} index={4}>
-        zzzzzzzzzzzz
+        <CustomerBusinessSearch filter="barber"/>
       </TabPanel>
       <TabPanel tabValue={tabValue} index={6}>
-        Item Four
+        <CustomerBusinessSearch filter="houseCall" />
       </TabPanel>
     </div>
   );

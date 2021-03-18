@@ -87,7 +87,7 @@ function BusinessPersonalInfoPage() {
             variant="contained"
             color="primary"
             className={classes.nextButton}
-            href='/appointments'
+            href='/temp-login'
           >
             Setup My Business Suite
           </Button>
