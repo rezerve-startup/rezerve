@@ -28,7 +28,7 @@ const routes = [
   { path: "/messages", component: Messages },
   { path: "/payment", component: PaymentInfo },
   { path: "/settings", component: Settings }, */
-  { path: '/appoinments', component: AppointmentsPage },
+  { path: '/appointments', component: AppointmentsPage },
   { path: '/business-info', component: BusinessInfo },
   { path: '/business-sign-up', component: BusinessSignUp },
   { path: '/business-account-info', component: BusinessAccountInfo },
