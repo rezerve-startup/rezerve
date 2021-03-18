@@ -1,54 +1,56 @@
-// import React, { useState } from 'react';
-// import {Form, FormGroup} from '../customer/customer-signup/node_modules/reactstrap';
-// import {Link} from '../customer/header/node_modules/react-router-dom';
-import './CSS/BusinSignUp.css';
-import './CSS/Signup.css';
+import React from 'react';
+import {
+    Button,
+    Container,
+    TextField,
+    Checkbox,
+    FormControl,
+    FormControlLabel,
+    Select,
+    MenuItem,
+    InputLabel,
+    Grid,
+    createStyles,
+    makeStyles,
+    Theme,
+} from '@material-ui/core';
 
-function SignUpPage1() {
-  // const [state,setState] = useState({
-  //         Customer: false,
-  //         Business: false,
-
-  // });
-
+const useStyles = makeStyles((theme: Theme) =>
+  createStyles({
+    root: {
+      backgroundColor: theme.palette.secondary.dark,
+      minHeight: '100vh',
+      color: theme.palette.secondary.light,
+      paddingTop: 15,
+  },
+    button: {
+      backgroundColor: theme.palette.secondary.dark,
+      color: theme.palette.secondary.light,
+      border: '1px solid white',
+      '&:hover': {
+        backgroundColor: theme.palette.secondary.dark,
+        color: theme.palette.secondary.light,
+      }
+    }
+  }),
+);
+  
+function SignUpPage() {
+  const classes = useStyles();
   return (
-    <div className="signUp-page">
-      {/* <Form onSubmit={handleSubmit}>
-                 <div className='container'>
-              
-                    <div className="row col col-11 col-md-auto offset-1 offset-sm-1">
-                        <h1><strong>Sign&nbsp;Up</strong></h1>
-                    </div>
-                
-                   <FormGroup row>
-                   <Link to = "/CustomSignUp">
-                        <div className="inputText row col-10 offset-2 offset-sm-0" >
-                            <label className ="labelContainer">
-                            <button class="button button1">Customer</button>
-                                </label>
-                        </div>
-                        </Link>
-                    </FormGroup> 
-                    <FormGroup row>
-                      <Link to = "/BusinSignUp">
-                          <div className="inputText row col-10 offset-2 offset-sm-6" >
-                              
-                                  <label  className ="labelContainer">         
-                           
-                                  <button class="button button1">Business</button>
-                            
-                                </label>
-                                
-                        </div>
-                        </Link>
-                    </FormGroup>
-                    
-                 
-               
-            </div>  
-             </Form> */}
-    </div>
+    <Container className={classes.root} maxWidth={false}>
+      <Grid container alignItems="center" direction='column'>
+        <Grid item>
+          <h4>Sign up</h4>
+          <Button className={classes.button} href='/customer-sign-up'>Customer</Button>
+        </Grid>
+        <Grid item>
+          <h4>Sign up</h4>
+          <Button className={classes.button} href='/business-sign-up'>Business</Button>
+        </Grid>
+      </Grid>
+    </Container>
   );
 }
 
-export default SignUpPage1;
+export default SignUpPage;

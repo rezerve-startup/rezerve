@@ -5,13 +5,23 @@ import Sidebar from './shared/sidebar/sidebar';
 
 import BusinessInfo from './business/business-info/BusinessInfo';
 import BusinessHome from './business/business-home/BusinessHome';
+import BusinessAccountInfo from './business/business-signup/BusinAccInfo';
+import BusinessSignUp from './business/business-signup/BusinSignUp';
+import BusinessPersonalInfo from './business/business-signup/BusinPersInfoPage'
+
+import LandingDefault from './shared/landing-page/LandingPage';
+import LandingLoggedIn from './shared/landing-page/LandingPageLog';
+
+import SignupPage from './shared/SignUpPage'
+import CustomerSignUp from './customer/customer-signup/CustomerCreationPage'
 
 import AppointmentsPage from './customer/customer-appointments/AppointmentPage';
 import { auth, firestore } from './config/FirebaseConfig';
 import { connect } from 'react-redux';
 import { StoreState, SystemState } from './shared/store/types';
 import { updateUser } from './shared/store/actions';
-import CustomerBusinessSearch from './customer/customer-business-search/CustomerBusinessSearch';
+
+
 
 const routes = [
   /* { path: "/help", component: Help },
@@ -20,6 +30,13 @@ const routes = [
   { path: "/settings", component: Settings }, */
   { path: '/appoinments', component: AppointmentsPage },
   { path: '/business-info', component: BusinessInfo },
+  { path: '/business-sign-up', component: BusinessSignUp },
+  { path: '/business-account-info', component: BusinessAccountInfo },
+  { path: '/business-personal-info', component: BusinessPersonalInfo },
+  { path: '/landing-page-default', component: LandingDefault },
+  { path: '/landing-page-loggedIn', component: LandingLoggedIn },
+  { path: '/sign-up-page', component: SignupPage},
+  { path: '/customer-sign-up', component: CustomerSignUp},
 ];
 
 let currentUser = 'business';
@@ -65,6 +82,7 @@ class App extends React.Component<any, SystemState> {
   dispatchUpdateUser = (newUser) => {
     this.props.updateUser(newUser)
   }
+
 
   loginEmployee() {
     // Other account is 'testcustomer@test.com', 'testcustomer'
@@ -119,7 +137,6 @@ class App extends React.Component<any, SystemState> {
       <div className={classes.root}>
         <ThemeProvider theme={theme}>
           <Router>
-            <Sidebar />
             <Switch>
               {routes.map((route, i) => (
                 <Route
@@ -129,30 +146,32 @@ class App extends React.Component<any, SystemState> {
                   component={route.component}
                 />
               ))}
-            </Switch>
-          </Router>
+            
+          
 
           <div>
             {this.props.system.user !== undefined ? (
               this.props.system.user.customerId !== '' ? (
                 <div>
-                  <div>{this.props.system.user.firstName}</div>
+                  {/*<div>{this.props.system.user.firstName}</div>
                   <Button variant="contained" onClick={this.switchToEmployee}>Switch to Employee</Button>
-                  {/* <AppointmentsPage />
+                   <AppointmentsPage />
                   <BusinessInfo /> */}
-                  <CustomerBusinessSearch />
+                  <LandingLoggedIn />
                 </div>
               ) : (
                 <div>
-                  <div>{this.props.system.user.firstName}</div>
-                  <Button variant="contained" onClick={this.switchToCustomer}>Switch to Customer</Button>
-                  <BusinessHome />
+                  {/*<div>{this.props.system.user.firstName}</div>
+                  <Button variant="contained" onClick={this.switchToCustomer}>Switch to Customer</Button>*/}
+                  <LandingDefault />
                 </div>
               )
             ) : (
               <div>Hello</div>
             )}
-          </div>    
+          </div>
+          </Switch>
+          </Router>
         </ThemeProvider>
       </div>
     );

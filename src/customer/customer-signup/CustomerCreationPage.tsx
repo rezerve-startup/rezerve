@@ -1,6 +1,7 @@
 import React from 'react';
 import { TextField, Checkbox } from '@material-ui/core/';
 import './customerSignup.css';
+import { Button } from '@material-ui/core'
 
 // const useStyles = makeStyles(theme => ({
 //     root: {
@@ -44,7 +45,7 @@ function CustomerCreationPage() {
       </div>
 
       <div>
-        <button className="button">Find Stylists & Book</button>
+        <Button variant="contained" color="primary" href='/landing-page-loggedIn'>Find Stylists & Book</Button>
       </div>
     </div>
   );
