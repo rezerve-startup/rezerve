@@ -24,8 +24,8 @@ export function updateSession(newSession: SystemState): SystemActionTypes {
 export function updateUser(newUser: SystemState): SystemActionTypes {
   return {
     type: UPDATE_USER,
-    payload: newUser
-  }
+    payload: newUser,
+  };
 }
 
 // ****** BUSINESS ACTIONS **************
@@ -41,29 +41,35 @@ export function updateBusinessName(
 
 // ***** CUSTOMER ACTIONS *************
 
-export function updateCustomerPastAppointments(customerPastAppointment: any): CustomerActionTypes {
+export function updateCustomerPastAppointments(
+  customerPastAppointment: any,
+): CustomerActionTypes {
   return {
     type: UPDATE_CUSTOMER_PAST_APPOINTMENTS,
-    payload: customerPastAppointment
-  }
-} 
+    payload: customerPastAppointment,
+  };
+}
 
-export function updateCustomerUpcomingAppointments(customerUpcomingAppointment: any): CustomerActionTypes {
+export function updateCustomerUpcomingAppointments(
+  customerUpcomingAppointment: any,
+): CustomerActionTypes {
   return {
     type: UPDATE_CUSTOMER_UPCOMING_APPOINTMENTS,
-    payload: customerUpcomingAppointment
-  }
+    payload: customerUpcomingAppointment,
+  };
 }
 
 export function addBusinessFound(businessFound: any): CustomerActionTypes {
   return {
     type: ADD_FOUND_BUSINESS,
-    payload: businessFound
-  }
+    payload: businessFound,
+  };
 }
 
-export function clearBusinessesFound(businessesFound: any[]): CustomerActionTypes {
+export function clearBusinessesFound(
+  businessesFound: any[],
+): CustomerActionTypes {
   return {
-    type: CLEAR_FOUND_BUSINESSES
-  }
+    type: CLEAR_FOUND_BUSINESSES,
+  };
 }

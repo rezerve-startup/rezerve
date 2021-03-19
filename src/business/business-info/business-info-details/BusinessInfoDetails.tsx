@@ -118,7 +118,7 @@ export default function BusinessInfoDetails(props: any) {
 
   const checkBoxCheck: any = () => {
     console.log(firstAvailable);
-  }
+  };
   return (
     <div className={classes.main}>
       <Grid container={true} spacing={1}>
@@ -139,7 +139,13 @@ export default function BusinessInfoDetails(props: any) {
         ))}
       </Grid>
       <FormControlLabel
-        control={<Checkbox name={'FirstAvailable'} value={firstAvailable} onChange={checkBoxCheck()} />}
+        control={
+          <Checkbox
+            name={'FirstAvailable'}
+            value={firstAvailable}
+            onChange={checkBoxCheck()}
+          />
+        }
         label="FIRST AVAILABLE"
       />
       {/* {firstAvailable === 'on' && (

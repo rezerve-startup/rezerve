@@ -18,7 +18,6 @@ import PanToolIcon from '@material-ui/icons/PanTool';
 import EmojiPeopleIcon from '@material-ui/icons/EmojiPeople';
 //----
 
-
 import CustomerBusinessSearch from '../../customer/customer-business-search/CustomerBusinessSearch';
 import Sidebar from '../sidebar/sidebar';
 
@@ -124,30 +123,25 @@ function LandingPageLoggedIn() {
   return (
     <div>
       <Sidebar />
-          <AppBar position="static">
-            <Tabs
-              centered
-              value={tabValue}
-              indicatorColor="primary"
-              variant="fullWidth"
-              
-              onChange={handleTabChange}
-              className={classes.navItem}
-            >
-              <Tab label="Hair" icon={<FaceIcon />} {...a11yProps(0)} />
-              <Divider orientation="vertical" flexItem />
-              <Tab label="Nail" icon={<PanToolIcon />} {...a11yProps(2)} />
-              <Divider orientation="vertical" flexItem />
-              <Tab
-                label="Barber"
-                icon={<EmojiPeopleIcon />}
-                {...a11yProps(4)}
-              />
-              <Divider orientation="vertical" flexItem />
-              <Tab label="House Calls" icon={<HomeIcon />} {...a11yProps(6)} />
-            </Tabs>
-          </AppBar>
-        
+      <AppBar position="static">
+        <Tabs
+          centered
+          value={tabValue}
+          indicatorColor="primary"
+          variant="fullWidth"
+          onChange={handleTabChange}
+          className={classes.navItem}
+        >
+          <Tab label="Hair" icon={<FaceIcon />} {...a11yProps(0)} />
+          <Divider orientation="vertical" flexItem />
+          <Tab label="Nail" icon={<PanToolIcon />} {...a11yProps(2)} />
+          <Divider orientation="vertical" flexItem />
+          <Tab label="Barber" icon={<EmojiPeopleIcon />} {...a11yProps(4)} />
+          <Divider orientation="vertical" flexItem />
+          <Tab label="House Calls" icon={<HomeIcon />} {...a11yProps(6)} />
+        </Tabs>
+      </AppBar>
+
       {/*</AppBar>*/}
 
       <TabPanel tabValue={tabValue} index={0}>
@@ -157,7 +151,7 @@ function LandingPageLoggedIn() {
         <CustomerBusinessSearch filter="nails" />
       </TabPanel>
       <TabPanel tabValue={tabValue} index={4}>
-        <CustomerBusinessSearch filter="barber"/>
+        <CustomerBusinessSearch filter="barber" />
       </TabPanel>
       <TabPanel tabValue={tabValue} index={6}>
         <CustomerBusinessSearch filter="houseCall" />

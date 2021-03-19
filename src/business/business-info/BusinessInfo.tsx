@@ -45,7 +45,7 @@ class BusinessInfo extends React.Component<any, BusinessInfoState> {
       businessKey: this.props.selectedBusinessKey,
       businessInfo: this.props.selectedBusinessInfo,
       businessName: props.business.businessName,
-      businessReviews: []
+      businessReviews: [],
     };
   }
 
@@ -69,25 +69,34 @@ class BusinessInfo extends React.Component<any, BusinessInfoState> {
         this.state.businessInfo.reviews.forEach((reviewId: any) => {
           let tempBusinessReview;
 
-          firestore.collection('reviews').doc(`${reviewId}`).get()
+          firestore
+            .collection('reviews')
+            .doc(`${reviewId}`)
+            .get()
             .then((review) => {
               tempBusinessReview = review.data() as Review;
             })
             .then(() => {
-              firestore.collection('users').where('customerId', '==', `${tempBusinessReview.customerId}`).get()
+              firestore
+                .collection('users')
+                .where('customerId', '==', `${tempBusinessReview.customerId}`)
+                .get()
                 .then((querySnapshot) => {
                   querySnapshot.forEach((doc) => {
                     tempBusinessReview.poster = (doc.data() as User).firstName;
-                  })
+                  });
                 })
                 .then(() => {
                   this.setState({
-                    businessReviews: [...this.state.businessReviews, tempBusinessReview]
-                  })
+                    businessReviews: [
+                      ...this.state.businessReviews,
+                      tempBusinessReview,
+                    ],
+                  });
                 });
-            })
+            });
         });
-      })
+      });
   }
 
   render() {
@@ -131,8 +140,13 @@ class BusinessInfo extends React.Component<any, BusinessInfoState> {
                 <p className={classes.distanceToBusiness}>0.02 Mi</p>
               </div>
               <div className={classes.mapContainerStyle}>
-                <LoadScript googleMapsApiKey={`${process.env.REACT_APP_GOOGLE_MAPS_API_KEY}`} libraries={["places"]}>
-                  <MapsContainer businessLocation={this.state.businessInfo.about.location}></MapsContainer>
+                <LoadScript
+                  googleMapsApiKey={`${process.env.REACT_APP_GOOGLE_MAPS_API_KEY}`}
+                  libraries={['places']}
+                >
+                  <MapsContainer
+                    businessLocation={this.state.businessInfo.about.location}
+                  ></MapsContainer>
                 </LoadScript>
               </div>
             </div>
@@ -216,7 +230,7 @@ const styles = (theme: Theme) =>
       height: '100%',
       color: 'white',
       textAlign: 'center',
-      alignItems: 'center'
+      alignItems: 'center',
     },
     businessOverview: {
       padding: '2.5rem',
@@ -229,7 +243,7 @@ const styles = (theme: Theme) =>
     },
     businessInformation: {
       color: 'black',
-      justifyContent: 'center'
+      justifyContent: 'center',
     },
     distanceContainer: {
       display: 'flex',
@@ -273,7 +287,7 @@ const styles = (theme: Theme) =>
       flex: 2,
       marginLeft: '0.25rem',
       textAlign: 'center',
-      alignContent: 'center'
+      alignContent: 'center',
     },
     loadingContainer: {
       display: 'flex',
@@ -291,10 +305,10 @@ const styles = (theme: Theme) =>
       marginTop: '1rem',
       marginBottom: '1rem',
       paddingLeft: '1rem',
-      paddingRight: '1rem'
-    }
+      paddingRight: '1rem',
+    },
   });
 
 export default connect(mapStateToProps, { updateBusinessName })(
-  withStyles(styles, { withTheme: true })(BusinessInfo)
+  withStyles(styles, { withTheme: true })(BusinessInfo),
 );

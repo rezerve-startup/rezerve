@@ -14,13 +14,12 @@ import {
   useMediaQuery,
   Stepper,
   Step,
-  StepLabel
+  StepLabel,
 } from '@material-ui/core/';
 import { makeStyles, useTheme } from '@material-ui/core/styles';
 import classes from '*.module.css';
 import './customer-checkout.css';
 import { Close } from '@material-ui/icons';
-
 
 function getSteps() {
   return ['Review Booking', 'Payment Setup', 'Confirm'];
@@ -29,11 +28,11 @@ function getSteps() {
 function getStepContent(stepIndex: number) {
   switch (stepIndex) {
     case 0:
-      return <ConfirmationCard/>;
+      return <ConfirmationCard />;
     case 1:
-      return <StripePaymentSetup/>;
+      return <StripePaymentSetup />;
     case 2:
-      return <BookingConfirmation/>;
+      return <BookingConfirmation />;
     default:
       return 'Our apologies, there has been a mishap with the booking process. Please try again later.';
   }
@@ -51,7 +50,7 @@ function StripePaymentSetup() {
   );
 }
 
-function PaymentInfo(){
+function PaymentInfo() {
   const classes = useStyles();
   return (
     <div className={classes.itemCard}>
@@ -66,7 +65,6 @@ function PaymentInfo(){
 
 function ConfirmationCard() {
   const classes = useStyles();
-
 
   return (
     <div className={classes.itemCard}>
@@ -86,7 +84,9 @@ function ConfirmationCard() {
         <h3>
           <strong>Haircut</strong>
         </h3>
-        <div  className={classes.priceAlign}><h3 className={classes.stat}>$35.00</h3></div>
+        <div className={classes.priceAlign}>
+          <h3 className={classes.stat}>$35.00</h3>
+        </div>
       </div>
 
       <Divider className={classes.divider0} />
@@ -94,34 +94,35 @@ function ConfirmationCard() {
         <h3>
           <strong>Sat 1/16/2021</strong>
         </h3>
-        <div  className={classes.timeAlign}><h3 className={classes.stat}>4:00pm</h3></div>
+        <div className={classes.timeAlign}>
+          <h3 className={classes.stat}>4:00pm</h3>
+        </div>
       </div>
     </div>
   );
 }
 
-function BookingConfirmation(){
+function BookingConfirmation() {
   const classes = useStyles();
-  return(
+  return (
     <div>
-      <ConfirmationCard/>
-      <PaymentInfo/>
-      
-      <div className={classes.itemPlus1}>
-         <span>  
-            <h3>
-              <strong>Receive Text Reminders/Updates</strong>
-              <Checkbox className={classes.checkbox} />
-            </h3>
-            
-            </span>
-          </div>
+      <ConfirmationCard />
+      <PaymentInfo />
 
-          <div className={classes.phoneField}>
-            <TextField type="tel" placeholder="Phone Number" />
-          </div>
+      <div className={classes.itemPlus1}>
+        <span>
+          <h3>
+            <strong>Receive Text Reminders/Updates</strong>
+            <Checkbox className={classes.checkbox} />
+          </h3>
+        </span>
+      </div>
+
+      <div className={classes.phoneField}>
+        <TextField type="tel" placeholder="Phone Number" />
+      </div>
     </div>
-)  
+  );
 }
 
 function CustomerCheckout() {
@@ -144,50 +145,58 @@ function CustomerCheckout() {
     setActiveStep(0);
   };
   const openOnClick = () => {
-    setOpen(true)
-    handleReset()
-  }
+    setOpen(true);
+    handleReset();
+  };
 
   const handleClose = () => {
-    setOpen(false)
-  }
+    setOpen(false);
+  };
 
-var backFunction = () => handleBack;
+  var backFunction = () => handleBack;
 
   return (
     <div>
-      <Button variant="contained" color="primary" onClick={openOnClick}>Open Checkout</Button>
-      <Dialog open={open} fullScreen={fullscreen} className={classes.receiptPage}>
-      
-
+      <Button variant="contained" color="primary" onClick={openOnClick}>
+        Open Checkout
+      </Button>
+      <Dialog
+        open={open}
+        fullScreen={fullscreen}
+        className={classes.receiptPage}
+      >
         <DialogContent>
           <Stepper activeStep={activeStep} alternativeLabel>
-          {steps.map((label) => (
-            <Step key={label}>
-              <StepLabel>{label}</StepLabel>
-            </Step>
-          ))}
-        </Stepper>
-        <Typography className={classes.instructions}>{getStepContent(activeStep)}</Typography>
+            {steps.map((label) => (
+              <Step key={label}>
+                <StepLabel>{label}</StepLabel>
+              </Step>
+            ))}
+          </Stepper>
+          <Typography className={classes.instructions}>
+            {getStepContent(activeStep)}
+          </Typography>
         </DialogContent>
 
-            <DialogActions>
-                <div>
-                     <Button
-                          onClick={activeStep == 0 ? handleClose : handleBack }
-                          className={classes.backButton}
-                        >
-                        Back
-                        </Button>
-                        <Button variant="contained" color="primary" 
-                        onClick={activeStep === steps.length - 1 ? handleClose : handleNext }>
-                          {activeStep === steps.length - 1 ? 'Confirm & Book' : 'Next'}
-                        </Button>
-                            
-                        
-                        
-                      </div>
-      </DialogActions>
+        <DialogActions>
+          <div>
+            <Button
+              onClick={activeStep == 0 ? handleClose : handleBack}
+              className={classes.backButton}
+            >
+              Back
+            </Button>
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={
+                activeStep === steps.length - 1 ? handleClose : handleNext
+              }
+            >
+              {activeStep === steps.length - 1 ? 'Confirm & Book' : 'Next'}
+            </Button>
+          </div>
+        </DialogActions>
       </Dialog>
     </div>
   );
@@ -233,13 +242,13 @@ const useStyles = makeStyles((theme) => ({
     position: 'absolute',
   },
 
-  priceAlign:{
-    position: 'relative'
+  priceAlign: {
+    position: 'relative',
   },
 
-  timeAlign:{
+  timeAlign: {
     right: '60px',
-    position: 'relative'
+    position: 'relative',
   },
 
   closeIcon: {

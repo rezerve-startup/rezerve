@@ -19,7 +19,6 @@ import {
   Select,
 } from '@material-ui/core';
 
-
 import LocationOnIcon from '@material-ui/icons/LocationOn';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 
@@ -29,7 +28,10 @@ import { connect } from 'react-redux';
 import { LoadScript, StandaloneSearchBox } from '@react-google-maps/api';
 import BusinessInfo from '../../business/business-info/BusinessInfo';
 import { StoreState } from '../../shared/store/types';
-import { addBusinessFound, clearBusinessesFound } from '../../shared/store/actions';
+import {
+  addBusinessFound,
+  clearBusinessesFound,
+} from '../../shared/store/actions';
 import { Business } from '../../models/Business.interface';
 
 type CustomerBusinessSearchState = {
@@ -40,7 +42,7 @@ type CustomerBusinessSearchState = {
     businessInfo: Business | null;
   } | null;
   locationSearchValue: string | undefined;
-}
+};
 
 let searchBox: any;
 
@@ -50,7 +52,10 @@ function mapStateToProps(state: StoreState) {
   };
 }
 
-class CustomerBusinessSearch extends React.Component<any, CustomerBusinessSearchState> {
+class CustomerBusinessSearch extends React.Component<
+  any,
+  CustomerBusinessSearchState
+> {
   constructor(props: any) {
     super(props);
 
@@ -58,8 +63,8 @@ class CustomerBusinessSearch extends React.Component<any, CustomerBusinessSearch
       searchBoxRef: null,
       businessSelectedIndicator: false,
       selectedBusiness: null,
-      locationSearchValue: ''
-    }
+      locationSearchValue: '',
+    };
   }
 
   dispatchClearBusinessesFound(): void {
@@ -77,16 +82,18 @@ class CustomerBusinessSearch extends React.Component<any, CustomerBusinessSearch
     let latUnit = 0.0144927536231884;
     let lngUnit = 0.0181818181818182;
 
-    let lowerLat = latitude - (latUnit * distance);
-    let lowerLng = longitude - (lngUnit * distance);
-    let upperLat = latitude + (latUnit * distance);
-    let upperLng = longitude + (lngUnit * distance);
+    let lowerLat = latitude - latUnit * distance;
+    let lowerLng = longitude - lngUnit * distance;
+    let upperLat = latitude + latUnit * distance;
+    let upperLng = longitude + lngUnit * distance;
 
     let lesserGeopoint = new firebase.firestore.GeoPoint(lowerLat, lowerLng);
     let greaterGeopoint = new firebase.firestore.GeoPoint(upperLat, upperLng);
 
-    let docRef= firestore.collection("businesses");
-    let query = docRef.where("about.location", ">=", lesserGeopoint).where("about.location", "<=", greaterGeopoint);
+    let docRef = firestore.collection('businesses');
+    let query = docRef
+      .where('about.location', '>=', lesserGeopoint)
+      .where('about.location', '<=', greaterGeopoint);
 
     query.get().then((snapshot) => {
       snapshot.forEach((doc) => {
@@ -94,27 +101,26 @@ class CustomerBusinessSearch extends React.Component<any, CustomerBusinessSearch
 
         let businessToAdd = {
           key: doc.id,
-          businessInfo: businessData
-        }
+          businessInfo: businessData,
+        };
 
         this.dispatchAddFoundBusiness(businessToAdd);
       });
-    })
-
+    });
   }
 
-  onLoad = ref => {
-      this.setState({
-          searchBoxRef: ref
-      });
-  }
+  onLoad = (ref) => {
+    this.setState({
+      searchBoxRef: ref,
+    });
+  };
 
   onPlaceSelection = () => {
     if (this.state.searchBoxRef) {
       let searchedPlace = this.state.searchBoxRef.getPlaces()[0];
-  
+
       this.setState({
-        locationSearchValue: searchedPlace.formatted_address
+        locationSearchValue: searchedPlace.formatted_address,
       });
 
       if (searchedPlace.geometry) {
@@ -124,20 +130,20 @@ class CustomerBusinessSearch extends React.Component<any, CustomerBusinessSearch
         this.searchBarbershopsByLocation(latitude, longitude, 50);
       }
     }
-  }
+  };
 
   selectBusiness(business): void {
     this.setState({
       businessSelectedIndicator: true,
-      selectedBusiness: business
-    })
+      selectedBusiness: business,
+    });
   }
 
   returnToList(): void {
     this.setState({
       businessSelectedIndicator: false,
       selectedBusiness: null,
-    })
+    });
   }
 
   handleSearchChange(searchChangeEvent): void {
@@ -150,95 +156,115 @@ class CustomerBusinessSearch extends React.Component<any, CustomerBusinessSearch
     return (
       <div>
         {this.state.businessSelectedIndicator === false ? (
-
           <div className={classes.customerBusinessSearchPage}>
-            <div  className={classes.changingColors}>
-                <div className={classes.searchBoxContainer}>
-                    <LoadScript googleMapsApiKey={`${process.env.REACT_APP_GOOGLE_MAPS_API_KEY}`} libraries={["places"]}>
-                        <StandaloneSearchBox
-                            onLoad={this.onLoad}
-                            onPlacesChanged={this.onPlaceSelection}
-                            ref={searchBox}
-                        >
-                                <TextField className={classes.search} id="standard-basic" placeholder="Search by city" 
-                                    value={this.state.locationSearchValue} 
-                                    onChange={ this.handleSearchChange.bind(this) } 
-                                    fullWidth
-                                    InputProps={{
-                                        startAdornment: (
-                                        <InputAdornment position="start">
-                                            <Search />
-                                        </InputAdornment>
-                                        ),
-                                    }}
-                                />
-                        </StandaloneSearchBox>
-                    </LoadScript>
-                </div>
-                  <Box m={1} className={classes.box}>
-                    <Grid container alignItems="center" justify="space-between">
-                      <Grid item>
-                        <div>
-                          Location&nbsp;
-                          <LocationOnIcon fontSize="small" style={{ color: '#FF2B2B' }} />
-                        </div>
-                      </Grid>
-                      <Grid item>
-                        <FormControl variant="outlined">
-                          <Select
-                            className={classes.select}
-                            native
-                            //onChange={handleChange}
-                            IconComponent={ExpandMoreIcon}
-                          >
-                            <option value={1}>SortBy: Near me</option>
-                            <option value={2}>SortBy: Ratings</option>
-                            <option value={3}>SortBy: Name </option>
-                          </Select>
-                        </FormControl>
-                      </Grid>
-                    </Grid>
-                  </Box>
-                <div>
+            <div className={classes.changingColors}>
+              <div className={classes.searchBoxContainer}>
+                <LoadScript
+                  googleMapsApiKey={`${process.env.REACT_APP_GOOGLE_MAPS_API_KEY}`}
+                  libraries={['places']}
+                >
+                  <StandaloneSearchBox
+                    onLoad={this.onLoad}
+                    onPlacesChanged={this.onPlaceSelection}
+                    ref={searchBox}
+                  >
+                    <TextField
+                      className={classes.search}
+                      id="standard-basic"
+                      placeholder="Search by city"
+                      value={this.state.locationSearchValue}
+                      onChange={this.handleSearchChange.bind(this)}
+                      fullWidth
+                      InputProps={{
+                        startAdornment: (
+                          <InputAdornment position="start">
+                            <Search />
+                          </InputAdornment>
+                        ),
+                      }}
+                    />
+                  </StandaloneSearchBox>
+                </LoadScript>
               </div>
-                  {this.props.foundBusinesses.map((business, i) => {
-                    return (
-                      <Card className={classes.businessInfoPreview} key={i}>
-                        <CardActionArea style={{height: '100%'}} onClick={() => this.selectBusiness(business)}>
-                          <CardMedia image={cat1} style={{height: '100%', position: 'relative'}}>
-                              <div className={classes.previewBusinessTitle}>{business.businessInfo.name}</div>
-                              <div className={classes.previewBottomInfo}>
-                                <div className={classes.previewBottomDistance}>
-                                  <LocationOn />0.2
-                                </div>
-                                <div>
-                                  <Rating
-                                    size="small"
-                                    value={business.businessInfo.performance.rating}
-                                    precision={0.5}
-                                    readOnly={true}
-                                    classes={{
-                                      iconFilled: classes.starRatingFilled,
-                                      iconHover: classes.starRatingHover,
-                                    }}
-                                  />
-                                </div>
-                              </div>
-                          </CardMedia>
-                        </CardActionArea>
-                      </Card>
-                    )
-                  })
-                  }
-                </div>
+              <Box m={1} className={classes.box}>
+                <Grid container alignItems="center" justify="space-between">
+                  <Grid item>
+                    <div>
+                      Location&nbsp;
+                      <LocationOnIcon
+                        fontSize="small"
+                        style={{ color: '#FF2B2B' }}
+                      />
+                    </div>
+                  </Grid>
+                  <Grid item>
+                    <FormControl variant="outlined">
+                      <Select
+                        className={classes.select}
+                        native
+                        //onChange={handleChange}
+                        IconComponent={ExpandMoreIcon}
+                      >
+                        <option value={1}>SortBy: Near me</option>
+                        <option value={2}>SortBy: Ratings</option>
+                        <option value={3}>SortBy: Name </option>
+                      </Select>
+                    </FormControl>
+                  </Grid>
+                </Grid>
+              </Box>
+              <div></div>
+              {this.props.foundBusinesses.map((business, i) => {
+                return (
+                  <Card className={classes.businessInfoPreview} key={i}>
+                    <CardActionArea
+                      style={{ height: '100%' }}
+                      onClick={() => this.selectBusiness(business)}
+                    >
+                      <CardMedia
+                        image={cat1}
+                        style={{ height: '100%', position: 'relative' }}
+                      >
+                        <div className={classes.previewBusinessTitle}>
+                          {business.businessInfo.name}
+                        </div>
+                        <div className={classes.previewBottomInfo}>
+                          <div className={classes.previewBottomDistance}>
+                            <LocationOn />
+                            0.2
+                          </div>
+                          <div>
+                            <Rating
+                              size="small"
+                              value={business.businessInfo.performance.rating}
+                              precision={0.5}
+                              readOnly={true}
+                              classes={{
+                                iconFilled: classes.starRatingFilled,
+                                iconHover: classes.starRatingHover,
+                              }}
+                            />
+                          </div>
+                        </div>
+                      </CardMedia>
+                    </CardActionArea>
+                  </Card>
+                );
+              })}
             </div>
+          </div>
         ) : (
           <div>
             <div className={classes.returnToListContainer}>
-              <Button variant="contained" onClick={() => this.returnToList()}>Back to List</Button>
+              <Button variant="contained" onClick={() => this.returnToList()}>
+                Back to List
+              </Button>
             </div>
             {this.state.selectedBusiness && (
-              <BusinessInfo selectedBusinessKey={this.state.selectedBusiness.key} selectedBusinessInfo={this.state.selectedBusiness.businessInfo} />
+              <BusinessInfo
+                selectedBusinessKey={this.state.selectedBusiness.key}
+                selectedBusinessInfo={this.state.selectedBusiness.businessInfo}
+              />
             )}
           </div>
         )}
@@ -253,14 +279,14 @@ const styles = (theme: Theme) =>
       flexGrow: 1,
     },
     customerBusinessSearchPage: {
-        justifyContent: 'center',
-        alignItems: 'center'
+      justifyContent: 'center',
+      alignItems: 'center',
     },
     searchBoxContainer: {
-        width: '100%',
+      width: '100%',
     },
     searchBox: {
-        color: theme.palette.primary.main,
+      color: theme.palette.primary.main,
     },
     search: {
       '& label.MuiInputLabel-root': {
@@ -312,7 +338,7 @@ const styles = (theme: Theme) =>
     },
     businessInfoPreview: {
       margin: '1rem',
-      height: '20vh'
+      height: '20vh',
     },
     previewBusinessTitle: {
       textAlign: 'center',
@@ -331,13 +357,13 @@ const styles = (theme: Theme) =>
       bottom: 0,
       width: '100%',
       display: 'flex',
-      justifyContent: 'space-between'
+      justifyContent: 'space-between',
     },
     previewBottomDistance: {
       alignItems: 'center',
       textAlign: 'center',
       color: theme.palette.primary.main,
-      fontSize: '16px'
+      fontSize: '16px',
     },
     starRatingFilled: {
       color: theme.palette.primary.main,
@@ -348,11 +374,11 @@ const styles = (theme: Theme) =>
     returnToListContainer: {
       display: 'flex',
       width: '100%',
-      justifyContent: 'center'
+      justifyContent: 'center',
     },
-      
   });
 
-export default connect(mapStateToProps, { addBusinessFound, clearBusinessesFound })(
-  withStyles(styles, { withTheme: true })(CustomerBusinessSearch)
-);
+export default connect(mapStateToProps, {
+  addBusinessFound,
+  clearBusinessesFound,
+})(withStyles(styles, { withTheme: true })(CustomerBusinessSearch));

@@ -12,7 +12,7 @@ import {
   SvgIconProps,
   useMediaQuery,
   useTheme,
-  Divider
+  Divider,
 } from '@material-ui/core';
 import { Home, List, Person, Assessment } from '@material-ui/icons';
 import ClientTab from './client-tab/ClientTab';
@@ -30,8 +30,8 @@ const styles = (theme: Theme) =>
       flexGrow: 1,
     },
     divider: {
-      marginTop: '8px'
-    }
+      marginTop: '8px',
+    },
   });
 
 interface CustomTab {
@@ -40,7 +40,7 @@ interface CustomTab {
 }
 
 interface Props extends WithStyles<typeof styles> {
-  isMobile: boolean
+  isMobile: boolean;
 }
 
 type State = {
@@ -162,8 +162,6 @@ class BusinessHome extends React.Component<Props, State> {
   };
 }
 
-
-
 function a11yProps(index: number) {
   return {
     id: `business-tab-${index}`,
@@ -197,11 +195,13 @@ export const withMediaQuery = (Component: any) => {
   return (props: any) => {
     const theme = useTheme();
     const isMobileProp = useMediaQuery(theme.breakpoints.down('sm'));
-    return <Component isMobile={isMobileProp} {...props} />
-  }
-}
+    return <Component isMobile={isMobileProp} {...props} />;
+  };
+};
 
-export default withMediaQuery(connect(
-  mapStateToProps,
-  null,
-)(withStyles(styles, { withTheme: true })(BusinessHome)));
+export default withMediaQuery(
+  connect(
+    mapStateToProps,
+    null,
+  )(withStyles(styles, { withTheme: true })(BusinessHome)),
+);

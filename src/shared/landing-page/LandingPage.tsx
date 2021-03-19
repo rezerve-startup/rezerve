@@ -66,7 +66,7 @@ const useStyles = makeStyles((theme: Theme) =>
     appBar: {
       backgroundColor: theme.palette.secondary.dark,
       color: theme.palette.secondary.light,
-    }
+    },
   }),
 );
 //--------------------------
@@ -119,60 +119,62 @@ function LandingPageDefault() {
     setTabValue(newTabValue);
   };
 
-
   return (
     <div>
       <AppBar className={classes.container} position="sticky">
         <Box m={1}>
           <Grid container alignItems="center" justify="space-between">
             <Grid item>
-            <Typography
-              className={classes.title}
-              variant="h6"
-              noWrap={true}
-              color="primary"
-              component={Link}
-              to="/"
-            >
-              ReZerve
-            </Typography>
+              <Typography
+                className={classes.title}
+                variant="h6"
+                noWrap={true}
+                color="primary"
+                component={Link}
+                to="/"
+              >
+                ReZerve
+              </Typography>
             </Grid>
             <Grid>
-              <Button className={classes.buttonLogin} variant="contained" href='/temp-login'>
+              <Button
+                className={classes.buttonLogin}
+                variant="contained"
+                href="/temp-login"
+              >
                 Log in
               </Button>
-              <Button className={classes.buttonSignup} variant="contained" href='/sign-up-page'>
+              <Button
+                className={classes.buttonSignup}
+                variant="contained"
+                href="/sign-up-page"
+              >
                 Sign Up
               </Button>
             </Grid>
           </Grid>
         </Box>
-        </AppBar>
+      </AppBar>
 
-        <div className={classes.appBar}>
-          <AppBar position="sticky">
-            <Tabs
-              centered
-              value={tabValue}
-              indicatorColor="primary"
-              variant="fullWidth"
-              onChange={handleTabChange}
-              className={classes.navItem}
-            >
-              <Tab label="Hair" icon={<FaceIcon />} {...a11yProps(0)} />
-              <Divider orientation="vertical" flexItem />
-              <Tab label="Nail" icon={<PanToolIcon />} {...a11yProps(2)} />
-              <Divider orientation="vertical" flexItem />
-              <Tab
-                label="Barber"
-                icon={<EmojiPeopleIcon />}
-                {...a11yProps(4)}
-              />
-              <Divider orientation="vertical" flexItem />
-              <Tab label="House Calls" icon={<HomeIcon />} {...a11yProps(6)} />
-            </Tabs>
-          </AppBar>
-        
+      <div className={classes.appBar}>
+        <AppBar position="sticky">
+          <Tabs
+            centered
+            value={tabValue}
+            indicatorColor="primary"
+            variant="fullWidth"
+            onChange={handleTabChange}
+            className={classes.navItem}
+          >
+            <Tab label="Hair" icon={<FaceIcon />} {...a11yProps(0)} />
+            <Divider orientation="vertical" flexItem />
+            <Tab label="Nail" icon={<PanToolIcon />} {...a11yProps(2)} />
+            <Divider orientation="vertical" flexItem />
+            <Tab label="Barber" icon={<EmojiPeopleIcon />} {...a11yProps(4)} />
+            <Divider orientation="vertical" flexItem />
+            <Tab label="House Calls" icon={<HomeIcon />} {...a11yProps(6)} />
+          </Tabs>
+        </AppBar>
       </div>
       <TabPanel tabValue={tabValue} index={0}>
         <CustomerBusinessSearch filter="hair" />
@@ -181,12 +183,11 @@ function LandingPageDefault() {
         <CustomerBusinessSearch filter="nails" />
       </TabPanel>
       <TabPanel tabValue={tabValue} index={4}>
-        <CustomerBusinessSearch filter="barber"/>
+        <CustomerBusinessSearch filter="barber" />
       </TabPanel>
       <TabPanel tabValue={tabValue} index={6}>
         <CustomerBusinessSearch filter="houseCall" />
       </TabPanel>
-      
     </div>
   );
 }

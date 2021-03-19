@@ -11,13 +11,13 @@ import {
   UPDATE_CUSTOMER_PAST_APPOINTMENTS,
   UPDATE_CUSTOMER_UPCOMING_APPOINTMENTS,
   ADD_FOUND_BUSINESS,
-  CLEAR_FOUND_BUSINESSES
+  CLEAR_FOUND_BUSINESSES,
 } from './types';
 
 const initialSystemState: SystemState = {
   loggedIn: false,
   session: '',
-  user: undefined
+  user: undefined,
 };
 
 export function systemReducer(
@@ -34,8 +34,8 @@ export function systemReducer(
     case UPDATE_USER: {
       return {
         ...state,
-        user: action.payload
-      }
+        user: action.payload,
+      };
     }
     default:
       return state;
@@ -65,40 +65,37 @@ export function businessReducer(
 const initialCustomerState: CustomerState = {
   pastAppointments: [],
   upcomingAppointments: [],
-  foundBusinesses: []
-}
+  foundBusinesses: [],
+};
 
 export function customerReducer(
   state = initialCustomerState,
-  action: CustomerActionTypes
+  action: CustomerActionTypes,
 ): CustomerState {
-  switch(action.type) {
+  switch (action.type) {
     case UPDATE_CUSTOMER_PAST_APPOINTMENTS: {
       return {
         ...state,
-        pastAppointments: action.payload
+        pastAppointments: action.payload,
       };
     }
     case UPDATE_CUSTOMER_UPCOMING_APPOINTMENTS: {
       return {
         ...state,
-        upcomingAppointments: action.payload
+        upcomingAppointments: action.payload,
       };
     }
     case ADD_FOUND_BUSINESS: {
       return {
         ...state,
-        foundBusinesses: [
-          ...state.foundBusinesses,
-          action.payload
-        ]
-      }
+        foundBusinesses: [...state.foundBusinesses, action.payload],
+      };
     }
     case CLEAR_FOUND_BUSINESSES: {
       return {
         ...state,
-        foundBusinesses: []
-      }
+        foundBusinesses: [],
+      };
     }
     default:
       return state;

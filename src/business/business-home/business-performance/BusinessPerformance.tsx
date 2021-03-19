@@ -44,7 +44,7 @@ class BusinessPerformance extends React.Component<
         rating: 0,
       },
       businessReviews: [],
-      business: undefined
+      business: undefined,
     };
   }
 
@@ -57,7 +57,8 @@ class BusinessPerformance extends React.Component<
       .collection('businesses')
       .doc('98amGMWjvPkULXgBerJq');
 
-    businessData.get()
+    businessData
+      .get()
       // Get business info data
       .then((val) => {
         const businessInfo = val.data();
@@ -73,26 +74,35 @@ class BusinessPerformance extends React.Component<
         this.state.business.reviews.forEach((reviewId: any) => {
           let tempBusinessReview;
 
-          firestore.collection('reviews').doc(`${reviewId}`).get()
+          firestore
+            .collection('reviews')
+            .doc(`${reviewId}`)
+            .get()
             .then((review) => {
               tempBusinessReview = review.data();
             })
             .then(() => {
-              firestore.collection('users').where('customerId', '==', `${tempBusinessReview.customerId}`).get()
+              firestore
+                .collection('users')
+                .where('customerId', '==', `${tempBusinessReview.customerId}`)
+                .get()
                 .then((querySnapshot) => {
                   querySnapshot.forEach((doc) => {
                     tempBusinessReview.poster = doc.data().firstName;
-                  })
+                  });
                 })
                 .then(() => {
                   console.log(tempBusinessReview);
                   this.setState({
-                    businessReviews: [...this.state.businessReviews, tempBusinessReview]
-                  })
+                    businessReviews: [
+                      ...this.state.businessReviews,
+                      tempBusinessReview,
+                    ],
+                  });
                 });
-            })
+            });
         });
-      })
+      });
   }
 
   handleChange = (_event: any, newTabSelected: number) => {
@@ -256,12 +266,12 @@ const styles = (theme: Theme) =>
       flex: 2,
       marginLeft: '0.25rem',
       textAlign: 'center',
-      alignContent: 'center'
+      alignContent: 'center',
     },
     selectedPeriodTabs: {
       display: 'flex',
-      justifyContent: 'center'
-    }
+      justifyContent: 'center',
+    },
   });
 
 export default connect(
