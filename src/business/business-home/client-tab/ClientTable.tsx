@@ -14,7 +14,6 @@ import {
   TableSortLabel,
   Checkbox,
   Tooltip,
-  IconButton,
   Theme,
   createStyles,
   makeStyles,
@@ -248,7 +247,7 @@ interface EnhancedTableToolbarProps {
 const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
   const classes = useToolbarStyles();
   const { numSelected } = props;
-  const [searching, setSearching] = React.useState(false);
+  const [searching] = React.useState(false);
   const [open, setOpen] = React.useState(false);
 
   const handleOpen = () => { setOpen(true) }

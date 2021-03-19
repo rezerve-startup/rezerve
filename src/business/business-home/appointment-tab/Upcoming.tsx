@@ -12,7 +12,7 @@ import {
   Avatar,
 } from '@material-ui/core';
 // tslint:disable-next-line: no-submodule-imports
-import { AccountCircle, Description } from '@material-ui/icons/';
+import {  Description } from '@material-ui/icons/';
 // tslint:disable-next-line: no-submodule-imports
 import DeleteIcon from '@material-ui/icons/Delete';
 // tslint:disable-next-line: no-submodule-imports

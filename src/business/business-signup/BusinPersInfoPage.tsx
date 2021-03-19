@@ -1,19 +1,13 @@
 import React from 'react';
 import {
-    Button,
-    Container,
-    TextField,
-    Checkbox,
-    FormControl,
-    FormControlLabel,
-    Select,
-    MenuItem,
-    InputLabel,
-    Grid,
-    createStyles,
-    makeStyles,
-    Theme,
-  } from '@material-ui/core';
+  Button,
+  Container,
+  TextField,
+  Grid,
+  createStyles,
+  makeStyles,
+  Theme,
+} from '@material-ui/core';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -61,40 +55,40 @@ const useStyles = makeStyles((theme: Theme) =>
 );
 
 function BusinessPersonalInfoPage() {
-    const classes = useStyles();
-    return(
+  const classes = useStyles();
+  return (
     <Container className={classes.root} maxWidth={false}>
-    <form autoComplete="off">
-      <Grid
-        container
-        spacing={4}
-        direction="column"
-        alignContent="center"
-        alignItems="flex-start"
-        justify="center"
-      >
-        <Grid item xs={12}>
-          <h1>Personal&nbsp;Info</h1>
+      <form autoComplete="off">
+        <Grid
+          container
+          spacing={4}
+          direction="column"
+          alignContent="center"
+          alignItems="flex-start"
+          justify="center"
+        >
+          <Grid item xs={12}>
+            <h1>Personal&nbsp;Info</h1>
+          </Grid>
+          <Grid item xs={12}>
+            <TextField className={classes.textField} label="Email" />
+          </Grid>
+          <Grid item xs={12}>
+            <TextField className={classes.textField} label="Phone number" />
+          </Grid>
+          <Grid item xs={12}>
+            <Button
+              variant="contained"
+              color="primary"
+              className={classes.nextButton}
+              href="/temp-login"
+            >
+              Setup My Business Suite
+            </Button>
+          </Grid>
         </Grid>
-        <Grid item xs={12}>
-          <TextField className={classes.textField} label="Email" />
-        </Grid>
-        <Grid item xs={12}>
-          <TextField className={classes.textField} label="Phone number" />
-        </Grid>
-        <Grid item xs={12}>
-          <Button
-            variant="contained"
-            color="primary"
-            className={classes.nextButton}
-            href='/temp-login'
-          >
-            Setup My Business Suite
-          </Button>
-        </Grid>
-      </Grid>
-    </form>
-  </Container>
+      </form>
+    </Container>
   );
 }
 

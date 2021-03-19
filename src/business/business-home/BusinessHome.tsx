@@ -22,6 +22,7 @@ import { connect } from 'react-redux';
 import { firestore } from '../../config/FirebaseConfig';
 import { StoreState } from '../../shared/store/types';
 import AppointmentPanel from './appointment-tab/AppointmentHome';
+import Sidebar from '../../shared/sidebar/sidebar';
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -102,6 +103,7 @@ class BusinessHome extends React.Component<Props, State> {
     // const isMobile = false;
     return (
       <div className={classes.root}>
+        <Sidebar />
         <Box m={1}>
           <AppBar position="static" color="transparent" elevation={0}>
             <Tabs

@@ -27,7 +27,6 @@ import {
   CalendarViewDay,
   ArrowDropDown,
 } from '@material-ui/icons';
-import logo from "../../assets/avatar.png";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -201,7 +200,7 @@ function Sidebar() {
                 className={classes.toolbarButton}
                 startIcon={<Forum />}
                 component={Link}
-                to="/messages"
+                to="/"
                 classes={{ text: classes.toolbarButtonText }}
               >
                 Messages
@@ -210,7 +209,7 @@ function Sidebar() {
                 className={classes.toolbarButton}
                 startIcon={<CalendarViewDay />}
                 component={Link}
-                to="/appointments"
+                to="/"
                 classes={{ text: classes.toolbarButtonText }}
               >
                 Appointments

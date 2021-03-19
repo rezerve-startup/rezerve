@@ -2,18 +2,12 @@ import React from 'react';
 import {
     Button,
     Container,
-    TextField,
-    Checkbox,
-    FormControl,
-    FormControlLabel,
-    Select,
-    MenuItem,
-    InputLabel,
     Grid,
     createStyles,
     makeStyles,
     Theme,
 } from '@material-ui/core';
+import ArrowForwardIcon from '@material-ui/icons/ArrowForward';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -25,13 +19,16 @@ const useStyles = makeStyles((theme: Theme) =>
   },
     button: {
       backgroundColor: theme.palette.secondary.dark,
-      color: theme.palette.secondary.light,
-      border: '1px solid white',
+      color: theme.palette.primary.light,
+      borderRadius: '0',
+      boxShadow: 'none',
+      borderBottom: '1px solid white',
       '&:hover': {
         backgroundColor: theme.palette.secondary.dark,
-        color: theme.palette.secondary.light,
+        color: theme.palette.primary.dark,
+        boxShadow: 'none',
       }
-    }
+    },
   }),
 );
   
@@ -39,14 +36,20 @@ function SignUpPage() {
   const classes = useStyles();
   return (
     <Container className={classes.root} maxWidth={false}>
-      <Grid container alignItems="center" direction='column'>
+      <Grid container alignItems="center" direction='column' spacing={5}>
         <Grid item>
-          <h4>Sign up</h4>
-          <Button className={classes.button} href='/customer-sign-up'>Customer</Button>
+          <h2>Sign up</h2>
+          <Button 
+          variant="contained"
+          endIcon={<ArrowForwardIcon />}
+           className={classes.button} href='/customer-sign-up'>Customer</Button>
         </Grid>
         <Grid item>
-          <h4>Sign up</h4>
-          <Button className={classes.button} href='/business-sign-up'>Business</Button>
+          <h2>Sign up</h2>
+          <Button
+          variant="contained"
+          endIcon={<ArrowForwardIcon />}
+           className={classes.button} href='/business-sign-up'>Business</Button>
         </Grid>
       </Grid>
     </Container>

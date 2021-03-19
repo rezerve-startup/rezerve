@@ -50,6 +50,11 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     checkbox: {
       color: theme.palette.secondary.light,
+      '&.Mui-checked': {
+        '& .MuiIconButton-label': {
+          color: theme.palette.primary.light,
+        },
+      },
     },
     inputlabel: {
       color: theme.palette.secondary.light,

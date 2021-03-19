@@ -9,25 +9,18 @@ import {
   Theme,
   Box,
   Grid,
-  FormControl,
-  Select,
-  useScrollTrigger,
   Divider,
   Typography,
   Button,
 } from '@material-ui/core';
 
 import HomeIcon from '@material-ui/icons/Home';
-import LocationOnIcon from '@material-ui/icons/LocationOn';
-import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 //Extra
 import FaceIcon from '@material-ui/icons/Face';
 import PanToolIcon from '@material-ui/icons/PanTool';
 import EmojiPeopleIcon from '@material-ui/icons/EmojiPeople';
 //----
 
-//import Services from './business-services/Services';
-import Search from './landingSearch';
 import CustomerBusinessSearch from '../../customer/customer-business-search/CustomerBusinessSearch';
 
 //import Sidebar from '../shared/sidebar/sidebar';
@@ -60,39 +53,20 @@ const useStyles = makeStyles((theme: Theme) =>
       backgroundColor: 'white',
       color: theme.palette.secondary.dark,
     },
-    select: {
-      color: theme.palette.secondary.light,
-      borderRadius: '30px',
-      '& .MuiOutlinedInput-notchedOutline': {
-        borderColor: theme.palette.secondary.light,
-      },
-      '&:hover': {
-        '& .MuiOutlinedInput-notchedOutline': {
-          borderColor: theme.palette.secondary.light,
-          borderWidth: '1px',
-        },
-      },
-      '&.Mui-focused': {
-        color: theme.palette.primary.light,
-        '& .MuiOutlinedInput-notchedOutline': {
-          borderColor: theme.palette.secondary.light,
-          borderWidth: '1px',
-        },
-      },
-      '&after': {
-        '& .MuiOutlinedInput-notchedOutline': {
-          borderColor: theme.palette.secondary.light,
-        },
-      },
-      '& .MuiSelect-icon': {
-        color: theme.palette.primary.light,
-      },
-    },
     rightBorder: {
       '& .MuiTabs-indicator': {
         color: theme.palette.primary.dark,
       },
     },
+    title: {
+      display: 'block',
+      color: theme.palette.background.paper,
+      textDecoration: 'none',
+    },
+    appBar: {
+      backgroundColor: theme.palette.secondary.dark,
+      color: theme.palette.secondary.light,
+    }
   }),
 );
 //--------------------------
@@ -145,7 +119,6 @@ function LandingPageDefault() {
     setTabValue(newTabValue);
   };
 
-  const trigger = useScrollTrigger();
 
   return (
     <div>
@@ -153,10 +126,19 @@ function LandingPageDefault() {
         <Box m={1}>
           <Grid container alignItems="center" justify="space-between">
             <Grid item>
-              <h1>ReZerve</h1>
+            <Typography
+              className={classes.title}
+              variant="h6"
+              noWrap={true}
+              color="primary"
+              component={Link}
+              to="/"
+            >
+              ReZerve
+            </Typography>
             </Grid>
             <Grid>
-              <Button className={classes.buttonLogin} variant="contained">
+              <Button className={classes.buttonLogin} variant="contained" href='/temp-login'>
                 Log in
               </Button>
               <Button className={classes.buttonSignup} variant="contained" href='/sign-up-page'>
@@ -165,8 +147,10 @@ function LandingPageDefault() {
             </Grid>
           </Grid>
         </Box>
-        <Box m={1}>
-          <AppBar position="static">
+        </AppBar>
+
+        <div className={classes.appBar}>
+          <AppBar position="sticky">
             <Tabs
               centered
               value={tabValue}
@@ -188,34 +172,8 @@ function LandingPageDefault() {
               <Tab label="House Calls" icon={<HomeIcon />} {...a11yProps(6)} />
             </Tabs>
           </AppBar>
-        </Box>
-        <Search />
-        <Box m={1}>
-          <Grid container alignItems="center" justify="space-between">
-            <Grid item>
-              <div>
-                Location&nbsp;
-                <LocationOnIcon fontSize="small" style={{ color: '#FF2B2B' }} />
-              </div>
-            </Grid>
-            <Grid item>
-              <FormControl variant="outlined">
-                <Select
-                  className={classes.select}
-                  native
-                  //onChange={handleChange}
-                  IconComponent={ExpandMoreIcon}
-                >
-                  <option value={1}>SortBy: Near me</option>
-                  <option value={2}>SortBy: Ratings</option>
-                  <option value={3}>SortBy: Name </option>
-                </Select>
-              </FormControl>
-            </Grid>
-          </Grid>
-        </Box>
-      </AppBar>
-
+        
+      </div>
       <TabPanel tabValue={tabValue} index={0}>
         <CustomerBusinessSearch filter="hair" />
       </TabPanel>
@@ -228,6 +186,7 @@ function LandingPageDefault() {
       <TabPanel tabValue={tabValue} index={6}>
         <CustomerBusinessSearch filter="houseCall" />
       </TabPanel>
+      
     </div>
   );
 }

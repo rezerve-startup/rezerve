@@ -7,27 +7,20 @@ import {
   createStyles,
   Theme,
   Box,
-  Grid,
-  FormControl,
-  Select,
-  useScrollTrigger,
   Divider,
   Typography,
 } from '@material-ui/core';
 
 import HomeIcon from '@material-ui/icons/Home';
-import LocationOnIcon from '@material-ui/icons/LocationOn';
-import ListIcon from '@material-ui/icons/List';
-import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 //Extra
 import FaceIcon from '@material-ui/icons/Face';
 import PanToolIcon from '@material-ui/icons/PanTool';
 import EmojiPeopleIcon from '@material-ui/icons/EmojiPeople';
 //----
 
-//import Services from './business-services/Services';
-import Search from './landingSearch';
-//import Sidebar from '../shared/sidebar/sidebar';
+
+import CustomerBusinessSearch from '../../customer/customer-business-search/CustomerBusinessSearch';
+import Sidebar from '../sidebar/sidebar';
 
 //--------------------------
 //CSS
@@ -128,21 +121,16 @@ function LandingPageLoggedIn() {
     setTabValue(newTabValue);
   };
 
-  const trigger = useScrollTrigger();
-
   return (
     <div>
-      <AppBar className={classes.container} position="sticky">
-        <Box m={1}>
-          <h1>ReZerve</h1>
-        </Box>
-        <Box m={1}>
+      <Sidebar />
           <AppBar position="static">
             <Tabs
               centered
               value={tabValue}
               indicatorColor="primary"
               variant="fullWidth"
+              
               onChange={handleTabChange}
               className={classes.navItem}
             >
@@ -159,45 +147,20 @@ function LandingPageLoggedIn() {
               <Tab label="House Calls" icon={<HomeIcon />} {...a11yProps(6)} />
             </Tabs>
           </AppBar>
-        </Box>
-        <Search />
-        <Box m={1}>
-          <Grid container alignItems="center" justify="space-between">
-            <Grid item>
-              <div>
-                Location&nbsp;
-                <LocationOnIcon fontSize="small" style={{ color: '#FF2B2B' }} />
-              </div>
-            </Grid>
-            <Grid item>
-              <FormControl variant="outlined">
-                <Select
-                  className={classes.select}
-                  native
-                  //onChange={handleChange}
-                  IconComponent={ExpandMoreIcon}
-                >
-                  <option value={1}>SortBy: Near me</option>
-                  <option value={2}>SortBy: Ratings</option>
-                  <option value={3}>SortBy: Name </option>
-                </Select>
-              </FormControl>
-            </Grid>
-          </Grid>
-        </Box>
-      </AppBar>
+        
+      {/*</AppBar>*/}
 
       <TabPanel tabValue={tabValue} index={0}>
-        Item One
+        <CustomerBusinessSearch filter="hair" />
       </TabPanel>
       <TabPanel tabValue={tabValue} index={2}>
-        Item Two
+        <CustomerBusinessSearch filter="nails" />
       </TabPanel>
       <TabPanel tabValue={tabValue} index={4}>
-        ZZZZZZZZZZZZZZZ
+        <CustomerBusinessSearch filter="barber"/>
       </TabPanel>
       <TabPanel tabValue={tabValue} index={6}>
-        Item Four
+        <CustomerBusinessSearch filter="houseCall" />
       </TabPanel>
     </div>
   );

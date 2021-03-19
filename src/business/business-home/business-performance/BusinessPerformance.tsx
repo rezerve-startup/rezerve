@@ -1,17 +1,11 @@
-import React, { Component } from 'react';
-import Carousel from 'react-material-ui-carousel';
-import { LocationOn } from '@material-ui/icons';
+import React from 'react';
 import { Rating } from '@material-ui/lab';
 import {
   CircularProgress,
   withStyles,
   createStyles,
-  WithStyles,
   Theme,
   Avatar,
-  Button,
-  Box,
-  AppBar,
   Tab,
   Tabs,
 } from '@material-ui/core';
@@ -32,7 +26,7 @@ type BusinessPerformanceState = {
   business: any;
 };
 
-interface Props extends WithStyles<typeof styles> {}
+//interface Props extends WithStyles<typeof styles> {}
 
 class BusinessPerformance extends React.Component<
   any,

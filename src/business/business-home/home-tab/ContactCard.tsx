@@ -11,7 +11,6 @@ import {
   Theme,
   Divider,
 } from '@material-ui/core';
-import { StringDecoder } from 'string_decoder';
 
 const styles = (theme: Theme) =>
   createStyles({

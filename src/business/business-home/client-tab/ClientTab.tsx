@@ -1,8 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import {
-  Box,
-  Paper,
   Theme,
   WithStyles,
   withStyles,

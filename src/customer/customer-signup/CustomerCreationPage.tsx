@@ -45,7 +45,7 @@ function CustomerCreationPage() {
       </div>
 
       <div>
-        <Button variant="contained" color="primary" href='/landing-page-loggedIn'>Find Stylists & Book</Button>
+        <Button variant="contained" color="primary" href='/temp-login'>Find Stylists & Book</Button>
       </div>
     </div>
   );

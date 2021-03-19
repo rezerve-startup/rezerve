@@ -1,4 +1,4 @@
-import { Button, Container, createStyles, Grid, makeStyles, Theme, withStyles } from '@material-ui/core';
+import { Button, Container, createStyles, Grid, Theme, withStyles } from '@material-ui/core';
 import React from 'react';
 import { connect } from 'react-redux';
 import { auth, firestore } from '../config/FirebaseConfig';
@@ -70,12 +70,16 @@ class TempLoginPage extends React.Component<any, any> {
             <Container className={classes.root} maxWidth={false}>
                 <Grid container alignItems="center" direction='column'>
                     <Grid item>
-                    <h4>Temp Login</h4>
-                    <Button className={classes.button} onClick={this.signInCustomer}>Customer</Button>
+                    <h3>Temp Login</h3>
+                    <Button 
+                    variant="contained"
+                    className={classes.button} onClick={this.signInCustomer}  href='/landing-page-loggedIn'>Customer</Button>
                     </Grid>
                     <Grid item>
-                    <h4>Temp Login</h4>
-                    <Button className={classes.button} onClick={this.signInEmployee} href='/business-home'>Business</Button>
+                    <h3>Temp Login</h3>
+                    <Button 
+                    variant="contained"
+                    className={classes.button} onClick={this.signInEmployee} href='/business-home'>Business</Button>
                     </Grid>
                 </Grid>
             </Container>

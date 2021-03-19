@@ -10,7 +10,6 @@ import {
   makeStyles,
   Theme,
 } from '@material-ui/core';
-import BusinessAccountInfo from './BusinAccInfo';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -47,6 +46,11 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     checkbox: {
       color: theme.palette.secondary.light,
+      '&.Mui-checked': {
+        '& .MuiIconButton-label': {
+          color: theme.palette.primary.light,
+        },
+      },
     },
   }),
 );
@@ -95,14 +99,14 @@ function BusinessSignUp() {
             <TextField label="" disabled />
           </Grid>
           <Grid item xs={12}>
-              <Button
-                variant="contained"
-                color="primary"
-                className={classes.nextButton}
-                href='/business-account-info'
-              >
-                Next
-              </Button>
+            <Button
+              variant="contained"
+              color="primary"
+              className={classes.nextButton}
+              href="/business-account-info"
+            >
+              Next
+            </Button>
           </Grid>
         </Grid>
       </form>

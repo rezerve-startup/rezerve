@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React from 'react';
 import Carousel from 'react-material-ui-carousel';
 import { LocationOn } from '@material-ui/icons';
 import { Rating } from '@material-ui/lab';
@@ -8,16 +8,13 @@ import {
   Paper,
   withStyles,
   createStyles,
-  WithStyles,
   Theme,
-  Grid,
-  Button,
 } from '@material-ui/core';
 
 import { firestore } from '../../config/FirebaseConfig';
 import { connect } from 'react-redux';
 import { updateBusinessName } from '../../shared/store/actions';
-import { BusinessState, StoreState } from '../../shared/store/types';
+import { StoreState } from '../../shared/store/types';
 import BusinessInfoDetails from './business-info-details/BusinessInfoDetails';
 import cat1 from '../../assets/business-pictures/cat1.jpg';
 import cat2 from '../../assets/business-pictures/cat2.jpg';

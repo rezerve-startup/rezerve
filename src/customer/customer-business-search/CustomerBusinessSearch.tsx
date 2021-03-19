@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React from 'react';
 import { Search } from '@material-ui/icons';
 import { Rating } from '@material-ui/lab';
 import { LocationOn } from '@material-ui/icons';
@@ -7,19 +7,26 @@ import {
   Card,
   withStyles,
   createStyles,
-  WithStyles,
   Theme,
   TextField,
   InputAdornment,
   CardActionArea,
   CardMedia,
   Button,
+  Box,
+  Grid,
+  FormControl,
+  Select,
 } from '@material-ui/core';
+
+
+import LocationOnIcon from '@material-ui/icons/LocationOn';
+import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 
 import cat1 from '../../assets/business-pictures/cat1.jpg';
 import { firestore } from '../../config/FirebaseConfig';
 import { connect } from 'react-redux';
-import { GoogleMap, LoadScript, StandaloneSearchBox } from '@react-google-maps/api';
+import { LoadScript, StandaloneSearchBox } from '@react-google-maps/api';
 import BusinessInfo from '../../business/business-info/BusinessInfo';
 import { StoreState } from '../../shared/store/types';
 import { addBusinessFound, clearBusinessesFound } from '../../shared/store/actions';
@@ -145,6 +152,7 @@ class CustomerBusinessSearch extends React.Component<any, CustomerBusinessSearch
         {this.state.businessSelectedIndicator === false ? (
 
           <div className={classes.customerBusinessSearchPage}>
+            <div  className={classes.changingColors}>
                 <div className={classes.searchBoxContainer}>
                     <LoadScript googleMapsApiKey={`${process.env.REACT_APP_GOOGLE_MAPS_API_KEY}`} libraries={["places"]}>
                         <StandaloneSearchBox
@@ -152,7 +160,7 @@ class CustomerBusinessSearch extends React.Component<any, CustomerBusinessSearch
                             onPlacesChanged={this.onPlaceSelection}
                             ref={searchBox}
                         >
-                                <TextField id="standard-basic" placeholder="Search by city" 
+                                <TextField className={classes.search} id="standard-basic" placeholder="Search by city" 
                                     value={this.state.locationSearchValue} 
                                     onChange={ this.handleSearchChange.bind(this) } 
                                     fullWidth
@@ -167,7 +175,32 @@ class CustomerBusinessSearch extends React.Component<any, CustomerBusinessSearch
                         </StandaloneSearchBox>
                     </LoadScript>
                 </div>
+                  <Box m={1} className={classes.box}>
+                    <Grid container alignItems="center" justify="space-between">
+                      <Grid item>
+                        <div>
+                          Location&nbsp;
+                          <LocationOnIcon fontSize="small" style={{ color: '#FF2B2B' }} />
+                        </div>
+                      </Grid>
+                      <Grid item>
+                        <FormControl variant="outlined">
+                          <Select
+                            className={classes.select}
+                            native
+                            //onChange={handleChange}
+                            IconComponent={ExpandMoreIcon}
+                          >
+                            <option value={1}>SortBy: Near me</option>
+                            <option value={2}>SortBy: Ratings</option>
+                            <option value={3}>SortBy: Name </option>
+                          </Select>
+                        </FormControl>
+                      </Grid>
+                    </Grid>
+                  </Box>
                 <div>
+              </div>
                   {this.props.foundBusinesses.map((business, i) => {
                     return (
                       <Card className={classes.businessInfoPreview} key={i}>
@@ -220,15 +253,62 @@ const styles = (theme: Theme) =>
       flexGrow: 1,
     },
     customerBusinessSearchPage: {
-        padding: '1.5rem',
         justifyContent: 'center',
         alignItems: 'center'
     },
     searchBoxContainer: {
-        width: '100%'
+        width: '100%',
     },
     searchBox: {
         color: theme.palette.primary.main,
+    },
+    search: {
+      '& label.MuiInputLabel-root': {
+        color: theme.palette.primary.dark,
+      },
+      '& label.Mui-focused': {
+        color: theme.palette.secondary.light,
+      },
+      '& .MuiInputBase-input': {
+        color: theme.palette.primary.dark, // Text color
+      },
+      '& .MuiInput-underline:before': {
+        borderBottomColor: theme.palette.secondary.light,
+      },
+      '& .MuiInput-underline:hover:before': {
+        borderBottomColor: theme.palette.secondary.light,
+      },
+      '& .MuiInput-underline:after': {
+        borderBottomColor: theme.palette.secondary.light,
+      },
+    },
+    select: {
+      borderRadius: '30px',
+      '& .MuiOutlinedInput-notchedOutline': {
+        borderColor: theme.palette.secondary.light,
+      },
+      '&:hover': {
+        '& .MuiOutlinedInput-notchedOutline': {
+          borderColor: theme.palette.secondary.light,
+          borderWidth: '1px',
+        },
+      },
+      '&.Mui-focused': {
+        color: theme.palette.primary.light,
+        '& .MuiOutlinedInput-notchedOutline': {
+          borderColor: theme.palette.secondary.light,
+          borderWidth: '1px',
+          boxShadow: 'none',
+        },
+      },
+      '&after': {
+        '& .MuiOutlinedInput-notchedOutline': {
+          borderColor: theme.palette.secondary.light,
+        },
+      },
+      '& .MuiSelect-icon': {
+        color: theme.palette.primary.light,
+      },
     },
     businessInfoPreview: {
       margin: '1rem',
@@ -269,7 +349,8 @@ const styles = (theme: Theme) =>
       display: 'flex',
       width: '100%',
       justifyContent: 'center'
-    }
+    },
+      
   });
 
 export default connect(mapStateToProps, { addBusinessFound, clearBusinessesFound })(

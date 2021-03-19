@@ -1,7 +1,6 @@
 import React from 'react';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
-import { Button, createMuiTheme, createStyles, Theme, ThemeProvider, withStyles, WithStyles } from '@material-ui/core';
-import Sidebar from './shared/sidebar/sidebar';
+import { createMuiTheme, createStyles, Theme, ThemeProvider, withStyles } from '@material-ui/core';
 
 import BusinessInfo from './business/business-info/BusinessInfo';
 import BusinessHome from './business/business-home/BusinessHome';
@@ -42,8 +41,8 @@ const routes = [
   { path: '/business-home', component: BusinessHome }
 ];
 
-let currentUser = 'business';
-let currentPage = 'business-home';
+//let currentUser = 'business';
+//let currentPage = 'business-home';
 
 const theme = createMuiTheme({
   palette: {
@@ -66,7 +65,7 @@ function mapStateToProps(state: StoreState) {
   }
 }
 
-interface Props extends WithStyles<typeof styles> {}
+//interface Props extends WithStyles<typeof styles> {}
 
 class App extends React.Component<any, SystemState> {
   constructor(props: any) {
@@ -170,7 +169,7 @@ class App extends React.Component<any, SystemState> {
                 </div>
               )
             ) : (
-              <div>Hello</div>
+              <div> </div>
             )}
           </div>
           </Switch>
