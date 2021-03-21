@@ -1,5 +1,3 @@
-import { Employee } from "../../models/Employee.interface";
-
 // ############# Store State ###############################
 export interface StoreState {
   system: SystemState;

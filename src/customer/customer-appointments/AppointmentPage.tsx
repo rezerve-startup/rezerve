@@ -5,7 +5,7 @@ import { Container, createStyles, Theme, withStyles } from '@material-ui/core';
 import AppointmentItem from './AppointmentItem';
 import List from '@material-ui/core/List';
 import { firestore } from '../../config/FirebaseConfig';
-import { CustomerState, StoreState } from '../../shared/store/types';
+import { StoreState } from '../../shared/store/types';
 import {
   updateCustomerPastAppointments,
   updateCustomerUpcomingAppointments,

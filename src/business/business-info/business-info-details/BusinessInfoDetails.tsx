@@ -5,7 +5,6 @@ import {
   FormControlLabel,
   Grid,
   Theme,
-  Fab,
   withStyles,
   RadioGroup,
   Radio,

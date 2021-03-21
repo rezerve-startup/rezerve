@@ -9,6 +9,7 @@ export interface Business {
         closingTime: string;
         location: firebase.firestore.GeoPoint
         openingTime: string;
+        daysOpen: string[];
         state: string;
         zipcode: string;
     };

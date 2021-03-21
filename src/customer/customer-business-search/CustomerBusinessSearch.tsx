@@ -39,6 +39,7 @@ type CustomerBusinessSearchState = {
     businessInfo: Business | null;
   } | null;
   locationSearchValue: string | undefined;
+  mapsLibraries: any[];
 };
 
 let searchBox: any;
@@ -61,6 +62,7 @@ class CustomerBusinessSearch extends React.Component<
       businessSelectedIndicator: false,
       selectedBusiness: null,
       locationSearchValue: '',
+      mapsLibraries: ['places']
     };
   }
 
@@ -169,7 +171,7 @@ class CustomerBusinessSearch extends React.Component<
               <div className={classes.searchBoxContainer}>
                 <LoadScript
                   googleMapsApiKey={`${process.env.REACT_APP_GOOGLE_MAPS_API_KEY}`}
-                  libraries={['places']}
+                  libraries={this.state.mapsLibraries}
                 >
                   <StandaloneSearchBox
                     onLoad={this.onLoad}

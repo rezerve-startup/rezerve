@@ -159,6 +159,7 @@ class App extends React.Component<any, SystemState> {
                 />
               ))}
 
+            </Switch>
               <div>
                 {this.props.system.user !== undefined ? (
                   this.props.system.user.customerId !== '' ? (
@@ -180,7 +181,6 @@ class App extends React.Component<any, SystemState> {
                   <div> </div>
                 )}
               </div>
-            </Switch>
           </Router>
         </ThemeProvider>
       </div>
