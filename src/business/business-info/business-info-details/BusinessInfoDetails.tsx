@@ -15,6 +15,7 @@ import cat1 from '../../../assets/business-pictures/cat1.jpg';
 import { connect } from 'react-redux';
 import { StoreState } from '../../../shared/store/types';
 import { setSelectedEmployee } from '../../../shared/store/actions';
+import moment from 'moment';
 
 function mapStateToProps(state: StoreState) {
   return {
@@ -29,40 +30,169 @@ class BusinessInfoDetails extends React.Component<any, any> {
     super(props);
     this.state = {
       businessEmployees: this.props.businessEmployees,
+      availableAppointmentTimes: [],
       selectedEmployee: null,
-      selectedDate: ''
+      selectedService: -1,
+      selectedDate: '',
+      selectedAppointmentSlot: -1
     };
   }
   
   componentDidMount() {
+    this.dispatchSetSelectedEmployee(null);
+
     this.setState({
-      selectedDate: ''
-    })
+      selectedEmployee: null,
+      selectedService: -1,
+      selectedAppointmentSlot: -1,
+      selectedDate: '',
+    });
   }
 
   dispatchSetSelectedEmployee = (selectedEmployee) => {
     this.props.setSelectedEmployee(selectedEmployee);
   }
 
-  handleSelectEmployee(e) {
+  handleSelectEmployee(e): void {
+    this.setState({
+      selectedService: -1,
+      availableAppointmentTimes: [],
+      selectedAppointmentSlot: -1
+    })
+
     const selectedId = e.target.value;
 
     for (let employee of this.props.businessEmployees) {
       if (employee.id === selectedId) {
-        console.log(employee);
         this.dispatchSetSelectedEmployee(employee);
       }
     }
   }
 
-  handleSelectedDateChange(e) {
+  handleSelectedDateChange(e): void {
     this.setState({
       selectedDate: e.target.value
-    })
+    });
   }
 
-  applyDate() {
-    console.log(this.state.selectedDate);
+  selectService(index: number): void {
+    this.setState({
+      selectedService: index,
+      selectedAppointmentSlot: -1,
+      availableAppointmentTimes: []
+    });
+  }
+
+  selectAppointmentSlot(index: number): void {
+    this.setState({
+      selectedAppointmentSlot: index,
+    });
+  }
+
+  getBusinessHoursDatetime(timeToConvert: string): Date {
+    const timezoneOffset = (new Date()).getTimezoneOffset();
+
+    // Parsing time from string solution adapted from https://stackoverflow.com/questions/141348/how-to-parse-a-time-into-a-date-object-from-user-input-in-javascript
+    let datetime = new Date(Date.parse(this.state.selectedDate));
+    datetime.setMinutes(datetime.getMinutes() + timezoneOffset);
+
+    const timeToSet = timeToConvert.match(/(\d+)(:(\d\d))?\s*(p?)/i);
+
+    if (timeToSet) {
+      datetime.setHours( parseInt(timeToSet[1],10) + ( ( parseInt(timeToSet[1],10) < 12 && timeToSet[4] ) ? 12 : 0) );
+      datetime.setMinutes( parseInt(timeToConvert[3],10) || 0 );
+      datetime.setSeconds(0, 0);
+    }
+
+    return datetime;
+  }
+
+  findAvailableTimes() {
+    this.setState({
+      availableAppointmentTimes: []
+    });
+
+    const currentDate = new Date().toISOString().slice(0, 10);
+    const parsedDate = Date.parse(this.state.selectedDate);
+
+    if (this.props.selectedEmployee !== null && this.state.selectedService !== -1 && 
+      this.state.selectedDate && parsedDate >= Date.parse(currentDate)) {
+      
+        const selectedDate = new Date(parsedDate);
+        const timezoneOffset = (new Date()).getTimezoneOffset();
+        selectedDate.setMinutes(selectedDate.getMinutes() + timezoneOffset);
+
+        let businessOpen = false;
+
+        for (const day of this.props.businessOpenDates) {
+          if (moment().day(day).day() === moment(selectedDate.toISOString()).day()) {
+            businessOpen = true;
+            break;
+          }
+        }
+
+        if (businessOpen) {
+
+          let openingDateTime = this.getBusinessHoursDatetime(this.props.businessOpeningTime);
+          let closingDateTime = this.getBusinessHoursDatetime(this.props.businessClosingTime);
+  
+          let closingTimeMoment = moment(closingDateTime.toISOString()).local();
+  
+          let tempMoment = moment(openingDateTime.toISOString()).local();
+  
+          let serviceLength = this.props.selectedEmployee.services[this.state.selectedService].length;
+  
+          let availableTimeSlots: any[] = [];
+  
+          while (
+            (tempMoment.valueOf() < closingDateTime.valueOf())
+          ) {
+            let startOfApptSlotMoment = tempMoment.clone();
+            let endOfApptSlotMoment = tempMoment.clone().add(serviceLength * 30, 'minutes');
+  
+            let slotAvailable = true;
+  
+            for (const appt of this.props.selectedEmployee.appointments) {
+              let existingApptMomentStart = moment(appt.datetime.toDate());
+              let existingApptMomentEnd = existingApptMomentStart.clone().add(appt.service.length * 30, 'minutes');
+  
+              if (
+                // Two appointments start at same time
+                startOfApptSlotMoment.isSame(existingApptMomentStart) ||
+                // Two appointments end at the same time
+                endOfApptSlotMoment.isSame(existingApptMomentEnd) ||
+                // The existing appointment overlaps on the left
+                (startOfApptSlotMoment.isBefore(existingApptMomentStart) && endOfApptSlotMoment.isAfter(existingApptMomentStart)) ||
+                // The existing appointment overlaps on the right
+                (startOfApptSlotMoment.isBefore(existingApptMomentEnd) && endOfApptSlotMoment.isAfter(existingApptMomentEnd))
+              ) {
+                slotAvailable = false;
+                break;
+              }
+            }
+  
+            // The appointment would end after business close
+            if (endOfApptSlotMoment.isAfter(closingTimeMoment)) {
+              slotAvailable = false;
+            }
+  
+            if (slotAvailable) {
+              const availableTime = tempMoment.format('h:mm A');
+              availableTimeSlots.push(availableTime); 
+            }    
+  
+            tempMoment.add(30, 'minutes');
+          }
+  
+          this.setState({
+            availableAppointmentTimes: availableTimeSlots
+          });
+        }
+    }
+  }
+
+  bookAppointment() {
+    console.log(this.state.selectedDate, this.state.selectedAppointmentSlot, this.state.selectedService, this.props.selectedEmployee);
   }
 
   render() {
@@ -106,9 +236,11 @@ class BusinessInfoDetails extends React.Component<any, any> {
 
             {this.props.selectedEmployee && this.props.selectedEmployee.services.map((service, index) => {
               return (
-                <Card className={classes.serviceCard} variant="outlined" key={index}>
+                <Card className={this.state.selectedService === index ? classes.selectedServiceCard : classes.serviceCard} 
+                  variant="outlined" key={index} onClick={() => this.selectService(index)}>
                   <div className={classes.serviceHeader}>{service.name}</div>
-                  <div className={classes.serviceCost}>
+                  <div className={classes.serviceLengthAndCost}>
+                    <div className={this.state.selectedService === index ? classes.selectedServiceCardServiceLength : classes.serviceLength}>{service.length * 30} min</div>
                     <div>${service.price}</div>
                   </div>
                 </Card>
@@ -131,43 +263,28 @@ class BusinessInfoDetails extends React.Component<any, any> {
               </div>
 
               <div className={classes.applyAppointmentDate}>
-                <Button variant="contained" onClick={() => this.applyDate()}>Apply</Button>
+                <Button variant="contained" onClick={() => this.findAvailableTimes()}>Apply</Button>
               </div>
+            </div>
 
-              {/* <div className={classes.appointmentMonth}>SEPTEMBER</div>
-              <div>
-                <div className={classes.dateContainer}>
-                  <p className={classes.dateLabel}>MON</p>
-                  <Fab size="medium" className={classes.dateCircle}>8</Fab>
-                </div>
-                <div className={classes.dateContainer}>
-                  <p className={classes.dateLabel}>TUES</p>
-                  <Fab size="medium" className={classes.dateCircle}>9</Fab>
-                </div>
-                <div className={classes.dateContainer}>
-                  <p className={classes.dateLabel}>WED</p>
-                  <Fab size="medium" className={classes.dateCircle}>10</Fab>
-                </div>
-                <div className={classes.dateContainer}>
-                  <p className={classes.dateLabel}>THU</p>
-                  <Fab size="medium" className={classes.dateCircle}>11</Fab>
-                </div>
-                <br></br>
-                <div className={classes.dateContainer}>
-                  <p className={classes.dateLabel}>FRI</p>
-                  <Fab size="medium" className={classes.dateCircle}>12</Fab>
-                </div>
-                <div className={classes.dateContainer}>
-                  <p className={classes.dateLabel}>SAT</p>
-                  <Fab size="medium" className={classes.dateCircle}>13</Fab>
-                </div>
-                <div className={classes.dateContainer}>
-                  <p className={classes.dateLabel}>SUN</p>
-                  <Fab size="medium" className={classes.dateCircle}>14</Fab>
-                </div>
-              </div> */}
+            <div className={classes.appointmentTimeSelection}>
+                {this.state.availableAppointmentTimes.map((apptTime, index) => {
+                  return (
+                    <div key={index} onClick={() => this.selectAppointmentSlot(index)} 
+                      className={`${this.state.selectedAppointmentSlot === index ? classes.selectedAppointmentSlot : classes.appointmentSlot}`}
+                    >{apptTime}</div>
+                  )
+                })}
+            </div>
+
+            <div className={classes.bookAppointment}>
+              <Button variant="contained" 
+                color='primary'
+                className={classes.bookAppointmentButton}
+                onClick={() => this.bookAppointment()}>BOOK</Button>
             </div>
           </div>
+
         }
       </div>
     )
@@ -197,6 +314,30 @@ const styles = (theme: Theme) =>
       justifyContent: 'space-between',
       fontWeight: 800
     },
+    selectedServiceCard: {
+      margin: '0.5rem',
+      padding: '1rem',
+      display: 'flex',
+      justifyContent: 'space-between',
+      fontWeight: 800,
+      backgroundColor: theme.palette.primary.main,
+      color: 'white'
+    },
+    serviceLengthAndCost: {
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center'
+    },
+    serviceLength: {
+      marginRight: '1rem',
+      fontSize: '0.75rem',
+      color: theme.palette.primary.main
+    },
+    selectedServiceCardServiceLength: {
+      marginRight: '1rem',
+      fontSize: '0.75rem',
+      color: 'white'
+    },
     dateContainer: {
       display: 'inline-block',
       marginLeft: '0.5rem',
@@ -224,6 +365,42 @@ const styles = (theme: Theme) =>
     },
     applyAppointmentDate: {
       marginLeft: '1rem'
+    },
+    appointmentTimeSelection: {
+      marginTop: '1.5rem',
+      display: 'flex',
+      justifyContent: 'center',
+      alignContent: 'center',
+      flexWrap: 'wrap'
+    },
+    appointmentSlot: {
+      border: `1px solid ${theme.palette.primary.main}`,
+      fontWeight: 800,
+      margin: '0.25rem',
+      width: '5rem',
+      color: theme.palette.primary.main
+    },
+    selectedAppointmentSlot: {
+      border: `1px solid ${theme.palette.primary.main}`,
+      fontWeight: 800,
+      margin: '0.25rem',
+      width: '5rem',
+      backgroundColor: theme.palette.primary.main,
+      color: 'white'
+    },
+    bookAppointment: {
+      marginTop: '1.5rem',
+      display: 'flex',
+      justifyContent: 'center',
+      alignContent: 'center'
+    },
+    bookAppointmentButton: {
+      backgroundColor: `${theme.palette.primary.main}`,
+      fontSize: '1.5rem',
+      paddingLeft: '2rem',
+      paddingRight: '2rem',
+      color: 'white',
+      width: 'auto'
     }
   }
 );

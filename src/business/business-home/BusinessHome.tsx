@@ -91,7 +91,6 @@ class BusinessHome extends React.Component<Props, State> {
         fetchedBusinesses.push(business);
       });
 
-      console.log(fetchedBusinesses);
       this.setState({
         business: fetchedBusinesses,
       });

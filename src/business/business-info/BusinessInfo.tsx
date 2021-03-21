@@ -42,6 +42,8 @@ function mapStateToProps(state: StoreState) {
   };
 }
 
+const mapsLibraries: any[] = ['places'];
+
 class BusinessInfo extends React.Component<any, BusinessInfoState> {
   constructor(props: any) {
     super(props);
@@ -85,8 +87,6 @@ class BusinessInfo extends React.Component<any, BusinessInfoState> {
       .then(() => {
         let numberReviewsShown = 0;
 
-        console.log(this.state.businessInfo);
-
         this.state.businessInfo.reviews.forEach((reviewId: any) => {
           let tempBusinessReview;
 
@@ -125,6 +125,9 @@ class BusinessInfo extends React.Component<any, BusinessInfoState> {
       })
       // Get employees
       .then(() => {
+        let employeeAppointments = [];
+        let employeeReviews = [];
+
         this.state.businessInfo.employees.forEach((employeeId, index) => {
           let tempEmployee: Employee;
 
@@ -136,8 +139,8 @@ class BusinessInfo extends React.Component<any, BusinessInfoState> {
               if (employeeData) {
                 tempEmployee = {
                   id: employee.id,
-                  appointments: employeeData.appointments,
-                  reviews: employeeData.reviews,
+                  reviews: [],
+                  appointments: [],
                   services: employeeData.services,
                   todos: employeeData.todos,
                   isOwner: employeeData.isOwner,
@@ -145,6 +148,30 @@ class BusinessInfo extends React.Component<any, BusinessInfoState> {
                   clients: employeeData.clients
                 };
               }
+            })
+            .then(() => {
+              firestore.collection('appointments').where('employeeId', '==', `${employeeId}`).get()
+                .then((querySnapshot) => {
+                  querySnapshot.forEach((doc) => {
+                    const appointmentData = doc.data();
+
+                    if (appointmentData) {
+                      tempEmployee.appointments.push(appointmentData);
+                    }
+                  })
+                })
+            })
+            .then(() => {
+              firestore.collection('reviews').where('employeeId', '==', `${employeeId}`).get()
+                .then((querySnapshot) => {
+                  querySnapshot.forEach((doc) => {
+                    const reviewInfo = doc.data();
+
+                    if (reviewInfo) {
+                      tempEmployee.reviews.push(reviewInfo);
+                    }
+                  })
+                })
             })
             .then(() => {
               firestore.collection('users').where('employeeId', '==', `${employeeId}`).get()
@@ -239,7 +266,7 @@ class BusinessInfo extends React.Component<any, BusinessInfoState> {
                 <div className={classes.mapContainerStyle}>
                   <LoadScript
                     googleMapsApiKey={`${process.env.REACT_APP_GOOGLE_MAPS_API_KEY}`}
-                    libraries={['places']}
+                    libraries={mapsLibraries}
                   >
                     <MapsContainer
                       businessLocation={this.state.businessInfo.about.location}
@@ -313,7 +340,7 @@ class BusinessInfo extends React.Component<any, BusinessInfoState> {
               }
             </div>
             <BusinessInfoDetails
-              businessOpenTime={this.state.businessInfo.about.openingTime}
+              businessOpeningTime={this.state.businessInfo.about.openingTime}
               businessClosingTime={this.state.businessInfo.about.closingTime}
               businessOpenDates={this.state.businessInfo.about.daysOpen}  
             />

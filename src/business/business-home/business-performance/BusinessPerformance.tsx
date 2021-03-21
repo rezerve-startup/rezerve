@@ -92,7 +92,6 @@ class BusinessPerformance extends React.Component<
                   });
                 })
                 .then(() => {
-                  console.log(tempBusinessReview);
                   this.setState({
                     businessReviews: [
                       ...this.state.businessReviews,

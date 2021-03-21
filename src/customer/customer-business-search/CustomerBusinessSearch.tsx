@@ -39,10 +39,10 @@ type CustomerBusinessSearchState = {
     businessInfo: Business | null;
   } | null;
   locationSearchValue: string | undefined;
-  mapsLibraries: any[];
 };
 
 let searchBox: any;
+const mapsLibraries: any[] = ['places'];
 
 function mapStateToProps(state: StoreState) {
   return {
@@ -61,8 +61,7 @@ class CustomerBusinessSearch extends React.Component<
       searchBoxRef: null,
       businessSelectedIndicator: false,
       selectedBusiness: null,
-      locationSearchValue: '',
-      mapsLibraries: ['places']
+      locationSearchValue: ''
     };
   }
 
@@ -171,7 +170,7 @@ class CustomerBusinessSearch extends React.Component<
               <div className={classes.searchBoxContainer}>
                 <LoadScript
                   googleMapsApiKey={`${process.env.REACT_APP_GOOGLE_MAPS_API_KEY}`}
-                  libraries={this.state.mapsLibraries}
+                  libraries={mapsLibraries}
                 >
                   <StandaloneSearchBox
                     onLoad={this.onLoad}
