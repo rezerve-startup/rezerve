@@ -27,10 +27,11 @@ import { StoreState, SystemState } from './shared/store/types';
 import { updateUser } from './shared/store/actions';
 import TempLoginPage from './shared/TempLoginPage';
 
+import CustomerCheckout from './customer/customer-checkout/customer-checkout';
+
 const routes = [
   /* { path: "/help", component: Help },
   { path: "/messages", component: Messages },
-  { path: "/payment", component: PaymentInfo },
   { path: "/settings", component: Settings }, */
   { path: '/appointments', component: AppointmentsPage },
   { path: '/business-info', component: BusinessInfo },
@@ -43,6 +44,7 @@ const routes = [
   { path: '/customer-sign-up', component: CustomerSignUp },
   { path: '/temp-login', component: TempLoginPage },
   { path: '/business-home', component: BusinessHome },
+  { path: 'payment', component: CustomerCheckout },
 ];
 
 //let currentUser = 'business';

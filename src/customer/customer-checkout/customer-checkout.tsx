@@ -16,6 +16,7 @@ import {
   Step,
   StepLabel,
 } from '@material-ui/core/';
+// tslint:disable-next-line: no-submodule-imports
 import { makeStyles, useTheme } from '@material-ui/core/styles';
 import classes from '*.module.css';
 import './customer-checkout.css';
@@ -38,6 +39,7 @@ function getStepContent(stepIndex: number) {
   }
 }
 function StripePaymentSetup() {
+  // tslint:disable-next-line: no-shadowed-variable
   const classes = useStyles();
   return (
     <div className={classes.itemCard}>
@@ -50,7 +52,8 @@ function StripePaymentSetup() {
   );
 }
 
-function PaymentInfo() {
+function PaymentInfo(){
+  // tslint:disable-next-line: no-shadowed-variable
   const classes = useStyles();
   return (
     <div className={classes.itemCard}>
@@ -64,6 +67,7 @@ function PaymentInfo() {
 }
 
 function ConfirmationCard() {
+  // tslint:disable-next-line: no-shadowed-variable
   const classes = useStyles();
 
   return (
@@ -102,7 +106,8 @@ function ConfirmationCard() {
   );
 }
 
-function BookingConfirmation() {
+function BookingConfirmation(){
+  // tslint:disable-next-line: no-shadowed-variable
   const classes = useStyles();
   return (
     <div>
@@ -127,6 +132,7 @@ function BookingConfirmation() {
 
 function CustomerCheckout() {
   const theme = useTheme();
+  // tslint:disable-next-line: no-shadowed-variable
   const classes = useStyles();
   const fullscreen = useMediaQuery(theme.breakpoints.down('md'));
   const [open, setOpen] = React.useState(false);
