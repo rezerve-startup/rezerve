@@ -1,9 +1,119 @@
 import React from 'react';
-// import {Form, FormGroup} from 'reactstrap';
-// import {Link} from 'react-router-dom';
-import './CSS/BusinSignUp.css';
+import {
+  Button,
+  Container,
+  TextField,
+  Checkbox,
+  FormControlLabel,
+  Grid,
+  createStyles,
+  makeStyles,
+  Theme,
+} from '@material-ui/core';
 
-function BusinessSignUp(props: any) {
+const useStyles = makeStyles((theme: Theme) =>
+  createStyles({
+    root: {
+      backgroundColor: theme.palette.secondary.dark,
+      minHeight: '100vh',
+      color: theme.palette.secondary.light,
+      paddingTop: 30,
+    },
+    nextButton: {
+      position: 'fixed',
+      bottom: theme.spacing(4),
+      right: theme.spacing(3),
+    },
+    textField: {
+      '& label.MuiInputLabel-root': {
+        color: theme.palette.primary.dark,
+      },
+      '& label.Mui-focused': {
+        color: theme.palette.secondary.light,
+      },
+      '& .MuiInputBase-input': {
+        color: theme.palette.primary.dark, // Text color
+      },
+      '& .MuiInput-underline:before': {
+        borderBottomColor: theme.palette.secondary.light,
+      },
+      '& .MuiInput-underline:hover:before': {
+        borderBottomColor: theme.palette.secondary.light,
+      },
+      '& .MuiInput-underline:after': {
+        borderBottomColor: theme.palette.secondary.light,
+      },
+    },
+    checkbox: {
+      color: theme.palette.secondary.light,
+      '&.Mui-checked': {
+        '& .MuiIconButton-label': {
+          color: theme.palette.primary.light,
+        },
+      },
+    },
+  }),
+);
+
+function BusinessSignUp() {
+  const classes = useStyles();
+  return (
+    <Container className={classes.root} maxWidth={false}>
+      <form autoComplete="off">
+        <Grid
+          container
+          spacing={4}
+          direction="column"
+          alignContent="center"
+          alignItems="flex-start"
+          justify="center"
+        >
+          <Grid item xs={12}>
+            <h1>I&nbsp;am</h1>
+          </Grid>
+          <Grid item xs={12}>
+            <FormControlLabel
+              control={<Checkbox className={classes.checkbox} />}
+              label="Mobile stylist"
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <FormControlLabel
+              control={<Checkbox className={classes.checkbox} />}
+              label="Barber"
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <FormControlLabel
+              control={<Checkbox className={classes.checkbox} />}
+              label="Nail Salon"
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <FormControlLabel
+              control={<Checkbox className={classes.checkbox} />}
+              label="Other"
+            />
+          </Grid>
+          <Grid item xs={7} sm={7} lg={7}>
+            <TextField label="" disabled />
+          </Grid>
+          <Grid item xs={12}>
+            <Button
+              variant="contained"
+              color="primary"
+              className={classes.nextButton}
+              href="/business-account-info"
+            >
+              Next
+            </Button>
+          </Grid>
+        </Grid>
+      </form>
+    </Container>
+  );
+}
+/*function BusinessSignUp(props: any) {
   // const [state, setState] = useState({
   //         hairstylist: false,
   //         barber: false,
@@ -34,15 +144,15 @@ function BusinessSignUp(props: any) {
   //     }
   // };
 
-  /* const handleSubmit = event =>{
+   const handleSubmit = event =>{
         console.log("Current State is" + JSON.stringify(state))
         event.preventDefault();
-    } */
+    } 
 
   return (
     <div className="business-signUp-page">
       <div className="container" id="businSignUp">
-        {/* <Form> onSubmit={handleSubmit}
+        { <Form> onSubmit={handleSubmit}
                     <div className="row col col-11 col-md-auto offset-2 offset-sm-0">
                         <h1>I am</h1>
                     </div>
@@ -97,10 +207,10 @@ function BusinessSignUp(props: any) {
                             </Link>
                         </div>
                     </FormGroup>
-                </Form> */}
+                </Form> }
       </div>
     </div>
   );
 }
-
+*/
 export default BusinessSignUp;

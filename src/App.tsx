@@ -1,29 +1,52 @@
 import React from 'react';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
-import { Button, createMuiTheme, createStyles, Theme, ThemeProvider, withStyles, WithStyles } from '@material-ui/core';
-import Sidebar from './shared/sidebar/sidebar';
+import {
+  createMuiTheme,
+  createStyles,
+  Theme,
+  ThemeProvider,
+  withStyles,
+} from '@material-ui/core';
 
 import BusinessInfo from './business/business-info/BusinessInfo';
 import BusinessHome from './business/business-home/BusinessHome';
+import BusinessAccountInfo from './business/business-signup/BusinAccInfo';
+import BusinessSignUp from './business/business-signup/BusinSignUp';
+import BusinessPersonalInfo from './business/business-signup/BusinPersInfoPage';
+
+import LandingDefault from './shared/landing-page/LandingPage';
+import LandingLoggedIn from './shared/landing-page/LandingPageLog';
+
+import SignupPage from './shared/SignUpPage';
+import CustomerSignUp from './customer/customer-signup/CustomerCreationPage';
 
 import AppointmentsPage from './customer/customer-appointments/AppointmentPage';
 import { auth, firestore } from './config/FirebaseConfig';
 import { connect } from 'react-redux';
 import { StoreState, SystemState } from './shared/store/types';
 import { updateUser } from './shared/store/actions';
-import CustomerBusinessSearch from './customer/customer-business-search/CustomerBusinessSearch';
+import TempLoginPage from './shared/TempLoginPage';
 
 const routes = [
   /* { path: "/help", component: Help },
   { path: "/messages", component: Messages },
   { path: "/payment", component: PaymentInfo },
   { path: "/settings", component: Settings }, */
-  { path: '/appoinments', component: AppointmentsPage },
+  { path: '/appointments', component: AppointmentsPage },
   { path: '/business-info', component: BusinessInfo },
+  { path: '/business-sign-up', component: BusinessSignUp },
+  { path: '/business-account-info', component: BusinessAccountInfo },
+  { path: '/business-personal-info', component: BusinessPersonalInfo },
+  { path: '/landing-page-default', component: LandingDefault },
+  { path: '/landing-page-loggedIn', component: LandingLoggedIn },
+  { path: '/sign-up-page', component: SignupPage },
+  { path: '/customer-sign-up', component: CustomerSignUp },
+  { path: '/temp-login', component: TempLoginPage },
+  { path: '/business-home', component: BusinessHome },
 ];
 
-let currentUser = 'business';
-let currentPage = 'business-home';
+//let currentUser = 'business';
+//let currentPage = 'business-home';
 
 const theme = createMuiTheme({
   palette: {
@@ -42,11 +65,11 @@ const theme = createMuiTheme({
 
 function mapStateToProps(state: StoreState) {
   return {
-    system: state.system
-  }
+    system: state.system,
+  };
 }
 
-interface Props extends WithStyles<typeof styles> {}
+//interface Props extends WithStyles<typeof styles> {}
 
 class App extends React.Component<any, SystemState> {
   constructor(props: any) {
@@ -55,7 +78,7 @@ class App extends React.Component<any, SystemState> {
       loggedIn: props.system.loggedIn,
       session: props.system.session,
       user: props.system.user,
-    }
+    };
   }
 
   componentDidMount(): void {
@@ -63,17 +86,21 @@ class App extends React.Component<any, SystemState> {
   }
 
   dispatchUpdateUser = (newUser) => {
-    this.props.updateUser(newUser)
-  }
+    this.props.updateUser(newUser);
+  };
 
   loginEmployee() {
     // Other account is 'testcustomer@test.com', 'testcustomer'
-    auth.signInWithEmailAndPassword('testemployee@test.com', 'testemployee')
+    auth
+      .signInWithEmailAndPassword('testemployee@test.com', 'testemployee')
       .then((userCredential) => {
         if (userCredential !== null && userCredential.user) {
           const user = userCredential.user;
 
-          firestore.collection('users').doc(`${user.uid}`).get()
+          firestore
+            .collection('users')
+            .doc(`${user.uid}`)
+            .get()
             .then((userObj) => {
               const userInfo = userObj.data();
               this.dispatchUpdateUser(userInfo);
@@ -83,12 +110,16 @@ class App extends React.Component<any, SystemState> {
   }
 
   loginCustomer() {
-    auth.signInWithEmailAndPassword('testCustomer@test.com', 'testcustomer')
+    auth
+      .signInWithEmailAndPassword('testCustomer@test.com', 'testcustomer')
       .then((userCredential) => {
         if (userCredential !== null && userCredential.user) {
           const user = userCredential.user;
 
-          firestore.collection('users').doc(`${user.uid}`).get()
+          firestore
+            .collection('users')
+            .doc(`${user.uid}`)
+            .get()
             .then((userObj) => {
               const userInfo = userObj.data();
               this.dispatchUpdateUser(userInfo);
@@ -104,22 +135,20 @@ class App extends React.Component<any, SystemState> {
   switchToEmployee = () => {
     this.logoutUser();
     this.loginEmployee();
-  }
+  };
 
   switchToCustomer = () => {
     this.logoutUser();
     this.loginCustomer();
-  }
+  };
 
   render() {
     const { classes } = this.props;
 
     return (
-
       <div className={classes.root}>
         <ThemeProvider theme={theme}>
           <Router>
-            <Sidebar />
             <Switch>
               {routes.map((route, i) => (
                 <Route
@@ -129,37 +158,37 @@ class App extends React.Component<any, SystemState> {
                   component={route.component}
                 />
               ))}
+
+              <div>
+                {this.props.system.user !== undefined ? (
+                  this.props.system.user.customerId !== '' ? (
+                    <div>
+                      {/*<div>{this.props.system.user.firstName}</div>
+                  <Button variant="contained" onClick={this.switchToEmployee}>Switch to Employee</Button>
+                   <AppointmentsPage />
+                  <BusinessInfo /> */}
+                      <LandingLoggedIn />
+                    </div>
+                  ) : (
+                    <div>
+                      {/*<div>{this.props.system.user.firstName}</div>
+                  <Button variant="contained" onClick={this.switchToCustomer}>Switch to Customer</Button>*/}
+                      <LandingDefault />
+                    </div>
+                  )
+                ) : (
+                  <div> </div>
+                )}
+              </div>
             </Switch>
           </Router>
-
-          <div>
-            {this.props.system.user !== undefined ? (
-              this.props.system.user.customerId !== '' ? (
-                <div>
-                  <div>{this.props.system.user.firstName}</div>
-                  <Button variant="contained" onClick={this.switchToEmployee}>Switch to Employee</Button>
-                  {/* <AppointmentsPage />
-                  <BusinessInfo /> */}
-                  <CustomerBusinessSearch />
-                </div>
-              ) : (
-                <div>
-                  <div>{this.props.system.user.firstName}</div>
-                  <Button variant="contained" onClick={this.switchToCustomer}>Switch to Customer</Button>
-                  <BusinessHome />
-                </div>
-              )
-            ) : (
-              <div>Hello</div>
-            )}
-          </div>    
         </ThemeProvider>
       </div>
     );
   }
-};
+}
 
-const styles = (theme: Theme) => 
+const styles = (theme: Theme) =>
   createStyles({
     root: {
       flex: 1,
@@ -168,4 +197,5 @@ const styles = (theme: Theme) =>
   });
 
 export default connect(mapStateToProps, { updateUser })(
-  withStyles(styles, { withTheme: true })(App));
+  withStyles(styles, { withTheme: true })(App),
+);

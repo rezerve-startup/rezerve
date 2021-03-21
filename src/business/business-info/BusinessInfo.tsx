@@ -88,16 +88,22 @@ class BusinessInfo extends React.Component<any, BusinessInfoState> {
         this.state.businessInfo.reviews.forEach((reviewId: any) => {
           let tempBusinessReview;
 
-          firestore.collection('reviews').doc(`${reviewId}`).get()
+          firestore
+            .collection('reviews')
+            .doc(`${reviewId}`)
+            .get()
             .then((review) => {
               tempBusinessReview = review.data() as Review;
             })
             .then(() => {
-              firestore.collection('users').where('customerId', '==', `${tempBusinessReview.customerId}`).get()
+              firestore
+                .collection('users')
+                .where('customerId', '==', `${tempBusinessReview.customerId}`)
+                .get()
                 .then((querySnapshot) => {
                   querySnapshot.forEach((doc) => {
                     tempBusinessReview.poster = (doc.data() as User).firstName;
-                  })
+                  });
                 })
                 .then(() => {
                   if (numberReviewsShown < 3) {
@@ -112,7 +118,7 @@ class BusinessInfo extends React.Component<any, BusinessInfoState> {
                     });
                   }
                 });
-            })
+            });
         });
       })
       // Get employees
@@ -227,8 +233,13 @@ class BusinessInfo extends React.Component<any, BusinessInfoState> {
                 <div className={classes.distanceToBusiness}>0.02 Mi</div>
               </div>
               <div className={classes.mapContainerStyle}>
-                <LoadScript googleMapsApiKey={`${process.env.REACT_APP_GOOGLE_MAPS_API_KEY}`} libraries={["places"]}>
-                  <MapsContainer businessLocation={this.state.businessInfo.about.location}></MapsContainer>
+                <LoadScript
+                  googleMapsApiKey={`${process.env.REACT_APP_GOOGLE_MAPS_API_KEY}`}
+                  libraries={['places']}
+                >
+                  <MapsContainer
+                    businessLocation={this.state.businessInfo.about.location}
+                  ></MapsContainer>
                 </LoadScript>
               </div>
             </div>
@@ -318,7 +329,7 @@ const styles = (theme: Theme) =>
       height: '100%',
       color: 'white',
       textAlign: 'center',
-      alignItems: 'center'
+      alignItems: 'center',
     },
     businessOverview: {
       padding: '2.5rem',
@@ -331,7 +342,7 @@ const styles = (theme: Theme) =>
     },
     businessInformation: {
       color: 'black',
-      justifyContent: 'center'
+      justifyContent: 'center',
     },
     businessInfoName: {
       fontSize: '2rem',
@@ -386,7 +397,7 @@ const styles = (theme: Theme) =>
       flex: 2,
       marginLeft: '0.25rem',
       textAlign: 'center',
-      alignContent: 'center'
+      alignContent: 'center',
     },
     loadingContainer: {
       display: 'flex',
@@ -404,8 +415,8 @@ const styles = (theme: Theme) =>
       marginTop: '1rem',
       marginBottom: '1rem',
       paddingLeft: '1rem',
-      paddingRight: '1rem'
-    }
+      paddingRight: '1rem',
+    },
   });
 
 export default connect(mapStateToProps, { addEmployeeForBusiness, clearEmployeesForBusiness, setSelectedEmployee })(

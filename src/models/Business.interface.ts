@@ -15,7 +15,6 @@ export interface Business {
     coverImage: string;
     description: string;
     employees: any[];
-    // employees: Employee[];
     name: string;
     numWorkers: number;
     performance: {

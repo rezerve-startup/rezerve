@@ -25,7 +25,7 @@ const styles = (theme: Theme) =>
     },
     card: {
       padding: theme.spacing(1),
-      height: '400px'
+      height: '400px',
     },
     openHours: {
       padding: theme.spacing(1),

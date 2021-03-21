@@ -1,13 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import {
-  Box,
-  Paper,
-  Theme,
-  WithStyles,
-  withStyles,
-  createStyles,
-} from '@material-ui/core';
+import { Theme, WithStyles, withStyles, createStyles } from '@material-ui/core';
 import ClientTable from './ClientTable';
 import { StoreState } from '../../../shared/store/types';
 

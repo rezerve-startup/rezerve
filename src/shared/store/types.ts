@@ -27,10 +27,7 @@ interface UpdateUserAction {
   payload: any;
 }
 
-export type SystemActionTypes = 
-  UpdateSessionAction |
-  UpdateUserAction
-;
+export type SystemActionTypes = UpdateSessionAction | UpdateUserAction;
 
 // ############ Business Types ##########################
 export interface BusinessState {
@@ -55,8 +52,10 @@ export interface CustomerState {
   selectedEmployee: any;
 }
 
-export const UPDATE_CUSTOMER_PAST_APPOINTMENTS = 'UPDATE_CUSTOMER_PAST_APPOINTMENTS';
-export const UPDATE_CUSTOMER_UPCOMING_APPOINTMENTS = 'UPDATE_CUSTOMER_UPCOMING_APPOINTMENTS';
+export const UPDATE_CUSTOMER_PAST_APPOINTMENTS =
+  'UPDATE_CUSTOMER_PAST_APPOINTMENTS';
+export const UPDATE_CUSTOMER_UPCOMING_APPOINTMENTS =
+  'UPDATE_CUSTOMER_UPCOMING_APPOINTMENTS';
 export const ADD_FOUND_BUSINESS = 'ADD_FOUND_BUSINESS';
 export const CLEAR_FOUND_BUSINESSES = 'CLEAR_FOUND_BUSINESSES';
 export const ADD_EMPLOYEE_FOR_BUSINESS = 'ADD_EMPLOYEE_FOR_BUSINESS';
@@ -65,12 +64,12 @@ export const SET_SELECTED_EMPLOYEE = 'SET_SELECTED_EMPLOYEE';
 
 interface UpdateCustomerPastAppointsmentsAction {
   type: typeof UPDATE_CUSTOMER_PAST_APPOINTMENTS;
-  payload: any[]
+  payload: any[];
 }
 
 interface UpdateCustomerUpcomingAppointsmentsAction {
   type: typeof UPDATE_CUSTOMER_UPCOMING_APPOINTMENTS;
-  payload: any[]
+  payload: any[];
 }
 
 interface AddFoundBusinessAction {
