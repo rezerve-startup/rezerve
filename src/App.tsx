@@ -21,6 +21,7 @@ import SignupPage from './shared/SignUpPage';
 import CustomerSignUp from './customer/customer-signup/CustomerCreationPage';
 
 import AppointmentsPage from './customer/customer-appointments/AppointmentPage';
+import BusinessProfile from './business/business-profile/business-profile';
 import { auth, firestore } from './config/FirebaseConfig';
 import { connect } from 'react-redux';
 import { StoreState, SystemState } from './shared/store/types';
@@ -62,6 +63,7 @@ const theme = createMuiTheme({
     },
   },
 });
+
 
 function mapStateToProps(state: StoreState) {
   return {
@@ -159,6 +161,7 @@ class App extends React.Component<any, SystemState> {
                 />
               ))}
 
+            </Switch>
               <div>
                 {this.props.system.user !== undefined ? (
                   this.props.system.user.customerId !== '' ? (
@@ -180,7 +183,6 @@ class App extends React.Component<any, SystemState> {
                   <div> </div>
                 )}
               </div>
-            </Switch>
           </Router>
         </ThemeProvider>
       </div>

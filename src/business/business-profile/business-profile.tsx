@@ -10,27 +10,19 @@ import {
   createStyles,
   withStyles,
   SvgIconProps,
-  useMediaQuery,
-  useTheme,
-  Divider,
 } from '@material-ui/core';
 import { Home, List, Person, Assessment } from '@material-ui/icons';
-import ClientTab from './client-tab/ClientTab';
-import HomePanel from './home-tab/HomeTab';
-import BusinessPerformance from './business-performance/BusinessPerformance';
+import ClientTab from '../business-home/client-tab/ClientTab';
+import HomePanel from './HomeTab';
 import { connect } from 'react-redux';
 import { firestore } from '../../config/FirebaseConfig';
 import { StoreState } from '../../shared/store/types';
-import AppointmentPanel from './appointment-tab/AppointmentHome';
-import Sidebar from '../../shared/sidebar/sidebar';
+import AppointmentPanel from '../business-home/appointment-tab/AppointmentHome';
 
-const styles = (theme: Theme) =>
+const styles = (_theme: Theme) =>
   createStyles({
     root: {
       flexGrow: 1,
-    },
-    divider: {
-      marginTop: '8px',
     },
   });
 
@@ -39,9 +31,7 @@ interface CustomTab {
   icon: React.ReactElement<SvgIconProps>;
 }
 
-interface Props extends WithStyles<typeof styles> {
-  isMobile: boolean;
-}
+interface Props extends WithStyles<typeof styles> {}
 
 type State = {
   business: any;
@@ -55,7 +45,7 @@ function mapStateToProps(state: StoreState) {
   };
 }
 
-class BusinessHome extends React.Component<Props, State> {
+class BusinessProfile extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = {
@@ -64,7 +54,7 @@ class BusinessHome extends React.Component<Props, State> {
         { label: 'Home', icon: <Home /> },
         { label: 'Appointments', icon: <List /> },
         { label: 'Clients', icon: <Person /> },
-        { label: 'Performance', icon: <Assessment /> },
+        { label: 'Preformance', icon: <Assessment /> },
       ],
       tabValue: 0,
     };
@@ -91,6 +81,7 @@ class BusinessHome extends React.Component<Props, State> {
         fetchedBusinesses.push(business);
       });
 
+      console.log(fetchedBusinesses);
       this.setState({
         business: fetchedBusinesses,
       });
@@ -99,19 +90,18 @@ class BusinessHome extends React.Component<Props, State> {
 
   render() {
     const { classes } = this.props;
-    // const isMobile = false;
+    const isMobile = true;
     return (
       <div className={classes.root}>
-        <Sidebar />
         <Box m={1}>
-          <AppBar position="static" color="transparent" elevation={0}>
+          <AppBar position="static" color="default">
             <Tabs
               value={this.state.tabValue}
               onChange={this.handleChange}
               aria-label="business-tabs"
               indicatorColor="primary"
-              centered={this.props.isMobile ? false : true}
-              variant={this.props.isMobile ? 'scrollable' : 'fullWidth'}
+              centered={isMobile ? false : true}
+              variant={isMobile ? 'scrollable' : 'fullWidth'}
               scrollButtons="on"
             >
               {this.state.tabs.map((tab: CustomTab, i: number) => (
@@ -122,25 +112,21 @@ class BusinessHome extends React.Component<Props, State> {
                   {...a11yProps(i)}
                 />
               ))}
-            </Tabs>
+          </Tabs>
           </AppBar>
-          <Divider className={classes.divider} variant="fullWidth" />
           <SwipeableViews
             index={this.state.tabValue}
             onChangeIndex={this.handleChangeIndex}
             enableMouseEvents={true}
           >
             <TabPanel value={this.state.tabValue} index={0}>
-              <HomePanel isMobile={this.props.isMobile} />
+              <HomePanel isMobile={isMobile} />
             </TabPanel>
             <TabPanel value={this.state.tabValue} index={1}>
               <AppointmentPanel />
             </TabPanel>
             <TabPanel value={this.state.tabValue} index={2}>
               <ClientTab employeeName="Test Employee" />
-            </TabPanel>
-            <TabPanel value={this.state.tabValue} index={3}>
-              <BusinessPerformance />
             </TabPanel>
           </SwipeableViews>
         </Box>
@@ -160,6 +146,8 @@ class BusinessHome extends React.Component<Props, State> {
     });
   };
 }
+
+
 
 function a11yProps(index: number) {
   return {
@@ -190,17 +178,7 @@ function TabPanel(props: TabPanelProps) {
   );
 }
 
-export const withMediaQuery = (Component: any) => {
-  return (props: any) => {
-    const theme = useTheme();
-    const isMobileProp = useMediaQuery(theme.breakpoints.down('sm'));
-    return <Component isMobile={isMobileProp} {...props} />;
-  };
-};
-
-export default withMediaQuery(
-  connect(
-    mapStateToProps,
-    null,
-  )(withStyles(styles, { withTheme: true })(BusinessHome)),
-);
+export default connect(
+  mapStateToProps,
+  null,
+)(withStyles(styles, { withTheme: true })(BusinessProfile));

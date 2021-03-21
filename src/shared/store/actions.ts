@@ -10,6 +10,9 @@ import {
   UPDATE_CUSTOMER_UPCOMING_APPOINTMENTS,
   CLEAR_FOUND_BUSINESSES,
   ADD_FOUND_BUSINESS,
+  ADD_EMPLOYEE_FOR_BUSINESS,
+  CLEAR_EMPLOYEES_FOR_BUSINESS,
+  SET_SELECTED_EMPLOYEE,
 } from './types';
 
 // ****** SYSTEM ACTIONS ***************
@@ -66,10 +69,28 @@ export function addBusinessFound(businessFound: any): CustomerActionTypes {
   };
 }
 
-export function clearBusinessesFound(
-  businessesFound: any[],
-): CustomerActionTypes {
+export function clearBusinessesFound(): CustomerActionTypes {
   return {
     type: CLEAR_FOUND_BUSINESSES,
   };
+}
+
+export function addEmployeeForBusiness(employeeToAdd: any): CustomerActionTypes {
+  return {
+    type: ADD_EMPLOYEE_FOR_BUSINESS,
+    payload: employeeToAdd
+  }
+}
+
+export function clearEmployeesForBusiness(): CustomerActionTypes {
+  return {
+    type: CLEAR_EMPLOYEES_FOR_BUSINESS
+  }
+}
+
+export function setSelectedEmployee(selectedEmployee): CustomerActionTypes {
+  return {
+    type: SET_SELECTED_EMPLOYEE,
+    payload: selectedEmployee
+  }
 }
