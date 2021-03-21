@@ -5,7 +5,7 @@ import { businessReducer, customerReducer, systemReducer } from './reducers';
 const rootReducer = combineReducers({
   system: systemReducer,
   business: businessReducer,
-  customer: customerReducer
+  customer: customerReducer,
 });
 
 const store = createStore(rootReducer, composeWithDevTools());

@@ -1,9 +1,11 @@
 export interface Appointment {
-    businessId: string;
-    cost: number;
-    customerId;
-    datetime: Date;
-    employeeId: string;
+  businessId: string;
+  customerId;
+  datetime: Date;
+  employeeId: string;
+  service: {
+    name: string;
     length: number;
-    services: string[];
+    price: number;
+  }
 }

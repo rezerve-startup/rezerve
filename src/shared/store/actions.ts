@@ -10,6 +10,9 @@ import {
   UPDATE_CUSTOMER_UPCOMING_APPOINTMENTS,
   CLEAR_FOUND_BUSINESSES,
   ADD_FOUND_BUSINESS,
+  ADD_EMPLOYEE_FOR_BUSINESS,
+  CLEAR_EMPLOYEES_FOR_BUSINESS,
+  SET_SELECTED_EMPLOYEE,
 } from './types';
 
 // ****** SYSTEM ACTIONS ***************
@@ -24,8 +27,8 @@ export function updateSession(newSession: SystemState): SystemActionTypes {
 export function updateUser(newUser: SystemState): SystemActionTypes {
   return {
     type: UPDATE_USER,
-    payload: newUser
-  }
+    payload: newUser,
+  };
 }
 
 // ****** BUSINESS ACTIONS **************
@@ -41,29 +44,53 @@ export function updateBusinessName(
 
 // ***** CUSTOMER ACTIONS *************
 
-export function updateCustomerPastAppointments(customerPastAppointment: any): CustomerActionTypes {
+export function updateCustomerPastAppointments(
+  customerPastAppointment: any,
+): CustomerActionTypes {
   return {
     type: UPDATE_CUSTOMER_PAST_APPOINTMENTS,
-    payload: customerPastAppointment
-  }
-} 
+    payload: customerPastAppointment,
+  };
+}
 
-export function updateCustomerUpcomingAppointments(customerUpcomingAppointment: any): CustomerActionTypes {
+export function updateCustomerUpcomingAppointments(
+  customerUpcomingAppointment: any,
+): CustomerActionTypes {
   return {
     type: UPDATE_CUSTOMER_UPCOMING_APPOINTMENTS,
-    payload: customerUpcomingAppointment
-  }
+    payload: customerUpcomingAppointment,
+  };
 }
 
 export function addBusinessFound(businessFound: any): CustomerActionTypes {
   return {
     type: ADD_FOUND_BUSINESS,
-    payload: businessFound
+    payload: businessFound,
+  };
+}
+
+export function clearBusinessesFound(): CustomerActionTypes {
+  return {
+    type: CLEAR_FOUND_BUSINESSES,
+  };
+}
+
+export function addEmployeeForBusiness(employeeToAdd: any): CustomerActionTypes {
+  return {
+    type: ADD_EMPLOYEE_FOR_BUSINESS,
+    payload: employeeToAdd
   }
 }
 
-export function clearBusinessesFound(businessesFound: any[]): CustomerActionTypes {
+export function clearEmployeesForBusiness(): CustomerActionTypes {
   return {
-    type: CLEAR_FOUND_BUSINESSES
+    type: CLEAR_EMPLOYEES_FOR_BUSINESS
+  }
+}
+
+export function setSelectedEmployee(selectedEmployee): CustomerActionTypes {
+  return {
+    type: SET_SELECTED_EMPLOYEE,
+    payload: selectedEmployee
   }
 }

@@ -12,7 +12,7 @@ import {
   SvgIconProps,
   useMediaQuery,
   useTheme,
-  Divider
+  Divider,
 } from '@material-ui/core';
 import { Home, List, Person, Assessment } from '@material-ui/icons';
 import ClientTab from './client-tab/ClientTab';
@@ -22,6 +22,7 @@ import { connect } from 'react-redux';
 import { firestore } from '../../config/FirebaseConfig';
 import { StoreState } from '../../shared/store/types';
 import AppointmentPanel from './appointment-tab/AppointmentHome';
+import Sidebar from '../../shared/sidebar/sidebar';
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -29,8 +30,8 @@ const styles = (theme: Theme) =>
       flexGrow: 1,
     },
     divider: {
-      marginTop: '8px'
-    }
+      marginTop: '8px',
+    },
   });
 
 interface CustomTab {
@@ -39,7 +40,7 @@ interface CustomTab {
 }
 
 interface Props extends WithStyles<typeof styles> {
-  isMobile: boolean
+  isMobile: boolean;
 }
 
 type State = {
@@ -90,7 +91,6 @@ class BusinessHome extends React.Component<Props, State> {
         fetchedBusinesses.push(business);
       });
 
-      console.log(fetchedBusinesses);
       this.setState({
         business: fetchedBusinesses,
       });
@@ -102,6 +102,7 @@ class BusinessHome extends React.Component<Props, State> {
     // const isMobile = false;
     return (
       <div className={classes.root}>
+        <Sidebar />
         <Box m={1}>
           <AppBar position="static" color="transparent" elevation={0}>
             <Tabs
@@ -160,8 +161,6 @@ class BusinessHome extends React.Component<Props, State> {
   };
 }
 
-
-
 function a11yProps(index: number) {
   return {
     id: `business-tab-${index}`,
@@ -195,11 +194,13 @@ export const withMediaQuery = (Component: any) => {
   return (props: any) => {
     const theme = useTheme();
     const isMobileProp = useMediaQuery(theme.breakpoints.down('sm'));
-    return <Component isMobile={isMobileProp} {...props} />
-  }
-}
+    return <Component isMobile={isMobileProp} {...props} />;
+  };
+};
 
-export default withMediaQuery(connect(
-  mapStateToProps,
-  null,
-)(withStyles(styles, { withTheme: true })(BusinessHome)));
+export default withMediaQuery(
+  connect(
+    mapStateToProps,
+    null,
+  )(withStyles(styles, { withTheme: true })(BusinessHome)),
+);

@@ -14,7 +14,6 @@ import {
   TableSortLabel,
   Checkbox,
   Tooltip,
-  IconButton,
   Theme,
   createStyles,
   makeStyles,
@@ -48,9 +47,9 @@ const rows = [
 ];
 
 const fabActions = [
-  { icon: <Message /> , name: "Message" },
-  { icon: <Delete />, name: "Remove" }
-]
+  { icon: <Message />, name: 'Message' },
+  { icon: <Delete />, name: 'Remove' },
+];
 
 function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
   if (b[orderBy] < a[orderBy]) {
@@ -231,12 +230,12 @@ const useToolbarStyles = makeStyles((theme: Theme) =>
     fab: {
       position: 'absolute',
       right: theme.spacing(2),
-      top: theme.spacing(1)
+      top: theme.spacing(1),
     },
     speedDial: {
       position: 'absolute',
       right: theme.spacing(1),
-      top: theme.spacing(1)
+      top: theme.spacing(1),
     },
   }),
 );
@@ -248,11 +247,15 @@ interface EnhancedTableToolbarProps {
 const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
   const classes = useToolbarStyles();
   const { numSelected } = props;
-  const [searching, setSearching] = React.useState(false);
+  const [searching] = React.useState(false);
   const [open, setOpen] = React.useState(false);
 
-  const handleOpen = () => { setOpen(true) }
-  const handleClose = () => { setOpen(false) }
+  const handleOpen = () => {
+    setOpen(true);
+  };
+  const handleClose = () => {
+    setOpen(false);
+  };
 
   return (
     <Toolbar
@@ -307,7 +310,7 @@ const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
           FabProps={{ size: 'small' }}
         >
           {fabActions.map((action) => (
-            <SpeedDialAction 
+            <SpeedDialAction
               key={action.name}
               icon={action.icon}
               tooltipTitle={action.name}
@@ -316,8 +319,6 @@ const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
             />
           ))}
         </SpeedDial>
-        
-        
       ) : (
         <Tooltip title="Invite Client">
           <Fab
@@ -327,7 +328,7 @@ const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
             className={classes.fab}
             variant="extended"
           >
-            <Add style={{ marginRight: '8px' }}/>
+            <Add style={{ marginRight: '8px' }} />
             Invite
           </Fab>
         </Tooltip>

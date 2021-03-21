@@ -9,12 +9,13 @@ export interface Business {
         closingTime: string;
         location: firebase.firestore.GeoPoint
         openingTime: string;
+        daysOpen: string[];
         state: string;
         zipcode: string;
     };
     coverImage: string;
     description: string;
-    employees: Employee[];
+    employees: any[];
     name: string;
     numWorkers: number;
     performance: {
