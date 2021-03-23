@@ -13,6 +13,9 @@ import {
   ADD_EMPLOYEE_FOR_BUSINESS,
   CLEAR_EMPLOYEES_FOR_BUSINESS,
   SET_SELECTED_EMPLOYEE,
+  SignUpActionTypes,
+  CREATE_NEW_BUSINESS,
+  CREATE_NEW_CUSTOMER
 } from './types';
 
 // ****** SYSTEM ACTIONS ***************
@@ -92,5 +95,23 @@ export function setSelectedEmployee(selectedEmployee): CustomerActionTypes {
   return {
     type: SET_SELECTED_EMPLOYEE,
     payload: selectedEmployee
+  }
+}
+
+/* SIGN UP ACTIONS */
+export function createNewCustomer(newCustomerId: string, newCustomer: any): SignUpActionTypes {
+  return {
+    type: CREATE_NEW_CUSTOMER,
+    payload: {
+      id: newCustomerId,
+      data: newCustomer 
+    }
+  }
+}
+
+export function createNewBusiness(newBusiness: any): SignUpActionTypes {
+  return {
+    type: CREATE_NEW_BUSINESS,
+    payload: newBusiness
   }
 }

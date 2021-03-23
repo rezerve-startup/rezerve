@@ -14,7 +14,11 @@ import {
   CLEAR_FOUND_BUSINESSES,
   ADD_EMPLOYEE_FOR_BUSINESS,
   CLEAR_EMPLOYEES_FOR_BUSINESS,
-  SET_SELECTED_EMPLOYEE
+  SET_SELECTED_EMPLOYEE,
+  CREATE_NEW_CUSTOMER,
+  CREATE_NEW_BUSINESS,
+  SignUpActionTypes,
+  SignUpState
 } from './types';
 
 // ************** System Reducer ******************
@@ -131,5 +135,31 @@ export function customerReducer(
     }
     default:
       return state;
+  }
+}
+
+const initialSignUpState: SignUpState = {
+  newUser: {}
+}
+
+export function signUpReducer(
+  state = initialSignUpState,
+  action: SignUpActionTypes,
+): SignUpState {
+  switch (action.type) {
+    case CREATE_NEW_BUSINESS: {
+      return {
+        ...state,
+        newUser: action.payload,
+      };
+    }
+    case CREATE_NEW_CUSTOMER: {
+      return {
+        ...state,
+        newUser: action.payload,
+      };
+    }
+    default:
+      return state
   }
 }

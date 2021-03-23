@@ -101,3 +101,31 @@ export type CustomerActionTypes =
   AddEmployeeForBusinessAction |
   ClearEmployeesForBusinessAction |
   SetSelectedEmployeeAction;
+
+
+// export interface NewCustomer {
+//   name: string;
+// }
+
+// export interface NewBusiness {
+//   name: string;
+// }
+
+export interface SignUpState {
+  newUser: any
+}
+
+export const CREATE_NEW_CUSTOMER = 'CREATE_NEW_CUSTOMER'
+export const CREATE_NEW_BUSINESS = 'CREATE_NEW_BUSINESS'
+
+interface CreateNewCustomer {
+  type: typeof CREATE_NEW_CUSTOMER;
+  payload: any;
+}
+
+interface CreateNewBusiness {
+  type: typeof CREATE_NEW_BUSINESS;
+  payload: any;
+}
+
+export type SignUpActionTypes = CreateNewCustomer | CreateNewBusiness

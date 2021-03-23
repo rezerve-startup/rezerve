@@ -51,6 +51,7 @@ const routes = [
 
 const theme = createMuiTheme({
   palette: {
+    type: 'dark',
     primary: {
       main: '#FE8488',
       light: '#FF6D6D',
@@ -160,10 +161,8 @@ class App extends React.Component<any, SystemState> {
                   component={route.component}
                 />
               ))}
-
-            </Switch>
               <div>
-                {this.props.system.user !== undefined ? (
+                {(this.props.system.user) ? (
                   this.props.system.user.customerId !== '' ? (
                     <div>
                       {/*<div>{this.props.system.user.firstName}</div>
@@ -183,6 +182,7 @@ class App extends React.Component<any, SystemState> {
                   <div> </div>
                 )}
               </div>
+            </Switch>
           </Router>
         </ThemeProvider>
       </div>
