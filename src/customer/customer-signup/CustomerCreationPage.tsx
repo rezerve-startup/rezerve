@@ -10,16 +10,26 @@ import {
   CardContent,
   Typography,
   CardActions,
+  CardMedia,
   InputAdornment,
   IconButton,
-  CircularProgress
+  CircularProgress,
+  Checkbox,
+  FormControlLabel,
+  ListItem,
+  ListItemAvatar,
+  List,
+  Avatar,
+  ListItemText,
+  ListSubheader,
 } from '@material-ui/core';
 import { SignUpState } from '../../shared/store/types';
 import { createNewCustomer } from '../../shared/store/actions';
 import { connect } from 'react-redux';
 import { auth, firestore } from '../../config/FirebaseConfig';
-import { Visibility, VisibilityOff } from '@material-ui/icons';
-import { AsYouType, parsePhoneNumber } from 'libphonenumber-js'
+import { Visibility, VisibilityOff, Image } from '@material-ui/icons';
+import { AsYouType, parsePhoneNumber } from 'libphonenumber-js';
+import { Alert } from '@material-ui/lab';
 
 interface Errors {
   email: string;
@@ -38,13 +48,15 @@ type State = {
   password: string;
   showPassword: boolean;
   validForm: boolean;
+  customerId: string;
+  isEmployee: boolean;
+  businesses: any[];
+  selectedBusiness: {} | undefined;
   errors: Errors;
-} & SignUpState;
+};
 
 function mapStateToProps(state: State) {
-  return {
-    newUser: state.newUser,
-  };
+  return {};
 }
 
 class CustomerCreationPage extends React.Component<any, State> {
@@ -59,7 +71,10 @@ class CustomerCreationPage extends React.Component<any, State> {
       phone: '501-888-8888',
       password: 'password',
       showPassword: false,
-      newUser: props.newUser,
+      customerId: '',
+      isEmployee: false,
+      businesses: [],
+      selectedBusiness: undefined,
       errors: {
         email: '',
         firstName: '',
@@ -72,11 +87,30 @@ class CustomerCreationPage extends React.Component<any, State> {
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
     this.toggleShowPassword = this.toggleShowPassword.bind(this);
+    this.toggleIsEmployee = this.toggleIsEmployee.bind(this);
+    this.handleBusinessSelect = this.handleBusinessSelect.bind(this);
     this.createNewCustomer = this.createNewCustomer.bind(this);
   }
 
   componentDidMount() {
-    this.validateForm(this.state.errors)
+    this.validateForm(this.state.errors);
+
+    const businesses = this.state.businesses;
+
+    firestore.collection('businesses').onSnapshot((snapshot) => {
+      snapshot.docs.forEach((doc) => {
+        const business = doc.data();
+        for (let index = 0; index < 10; index++) {
+          businesses.push({
+            name: business.name,
+            location: `${business.about.city}, ${business.about.state}`,
+            image: business.coverImage,
+          });
+        }
+      });
+    });
+
+    this.setState({ ...this.state, businesses });
   }
 
   validateEmail(email: string): boolean {
@@ -85,8 +119,8 @@ class CustomerCreationPage extends React.Component<any, State> {
   }
 
   validatePhone(phone: string): boolean {
-    const phoneNumber = parsePhoneNumber(phone)
-    return phoneNumber.isValid()
+    const phoneNumber = parsePhoneNumber(phone);
+    return phoneNumber.isValid();
   }
 
   validateForm = (errors: Errors) => {
@@ -122,9 +156,9 @@ class CustomerCreationPage extends React.Component<any, State> {
           value.length < 8 ? 'Password must be 8 characters long.' : '';
         break;
       case 'phone':
-        const num = new AsYouType('US')
-        num.input(value)
-        errors.phone = (num.isValid()) ? '' : 'Phone number is not valid';
+        const num = new AsYouType('US');
+        num.input(value);
+        errors.phone = num.isValid() ? '' : 'Phone number is not valid';
         break;
       default:
         break;
@@ -144,10 +178,18 @@ class CustomerCreationPage extends React.Component<any, State> {
     } else {
       console.log('Invalid form');
     }
-  };
+  }
 
   toggleShowPassword(event: React.MouseEvent<HTMLButtonElement>) {
-    this.setState({ ...this.state, showPassword: !this.state.showPassword })
+    this.setState({ ...this.state, showPassword: !this.state.showPassword });
+  }
+
+  toggleIsEmployee(event: React.MouseEvent<HTMLButtonElement>) {
+    this.setState({ ...this.state, isEmployee: !this.state.isEmployee });
+  }
+
+  handleBusinessSelect(business) {
+    this.setState({ ...this.state, selectedBusiness: business });
   }
 
   dispatchCreateCustomer = (newCustomerId: string) => (newCustomer: any) => {
@@ -155,21 +197,19 @@ class CustomerCreationPage extends React.Component<any, State> {
   };
 
   createNewCustomer() {
-    this.setState({ ...this.state, loading: true })
-    console.log('Creating new customer...');
-    
-    const errors = this.state.errors
+    this.setState({ ...this.state, loading: true });
+    const errors = this.state.errors;
 
-    auth.createUserWithEmailAndPassword(this.state.email, this.state.password)
+    auth
+      .createUserWithEmailAndPassword(this.state.email, this.state.password)
       .then((res) => {
-        console.log("Signup successful...adding user to DB")
-        
         const customerData = {
           appointments: [],
-          reviews: []
-        }
+          reviews: [],
+        };
 
-        firestore.collection('customers')
+        firestore
+          .collection('customers')
           .add(customerData)
           .then((docRef) => {
             const newUser = {
@@ -178,42 +218,43 @@ class CustomerCreationPage extends React.Component<any, State> {
               firstName: this.state.firstName,
               lastName: this.state.lastName,
               phone: this.state.phone,
-              employeeId: ''
-            }
+              employeeId: '',
+            };
 
-            firestore.collection('users')
+            firestore
+              .collection('users')
               .add(newUser)
               .then(() => {
-                console.log(`Created new user with id: ${docRef.id}`)
+                console.log(`Created new user with id: ${docRef.id}`);
               })
               .catch((e) => {
-                console.log(e)
-              })
+                console.log(e);
+              });
           })
           .catch((e) => {
-            console.log(e)
-          })
+            console.log(e);
+          });
       })
       .catch((err) => {
-        switch(err.code) {
+        switch (err.code) {
           case 'auth/email-already-in-use':
-            errors.email = 'This email is already in use.'
-            break
+            errors.email = 'This email is already in use.';
+            break;
           case 'auth/invalid-email':
-            errors.email = 'This email is invalid.'
-            break
+            errors.email = 'This email is invalid.';
+            break;
           case 'auth/weak-password':
-            errors.password = 'This password is too weak.'
-            break
+            errors.password = 'This password is too weak.';
+            break;
           default:
-            break
+            break;
         }
-        
-        this.setState({ ...this.state, validForm: false, errors })
+
+        this.setState({ ...this.state, validForm: false, errors });
       })
       .finally(() => {
-        this.setState({ ...this.state, loading: false })
-      })
+        this.setState({ ...this.state, loading: false });
+      });
   }
 
   render() {
@@ -269,11 +310,11 @@ class CustomerCreationPage extends React.Component<any, State> {
                     InputProps={{
                       endAdornment: (
                         <InputAdornment position="end">
-                          <IconButton onClick={this.toggleShowPassword} onMouseDown={this.toggleShowPassword}>
-                            { showPassword ? <Visibility /> : <VisibilityOff />}
+                          <IconButton onClick={this.toggleShowPassword}>
+                            {showPassword ? <Visibility /> : <VisibilityOff />}
                           </IconButton>
                         </InputAdornment>
-                      )
+                      ),
                     }}
                   />
                 </Grid>
@@ -314,11 +355,29 @@ class CustomerCreationPage extends React.Component<any, State> {
                 container={true}
                 spacing={1}
                 className={classes.businessSection}
+                justify="space-around"
               >
-                <Typography variant="body1" component="p">
-                  Are you an employee?
-                </Typography>
+                <Grid item={true} xs={8}>
+                  <FormControlLabel
+                    label="Are you an employee?"
+                    labelPlacement="start"
+                    value="Start"
+                    control={
+                      <Checkbox
+                        color="primary"
+                        value={this.state.isEmployee}
+                        onClick={this.toggleIsEmployee}
+                      />
+                    }
+                  />
+                </Grid>
               </Grid>
+              <BusinessSearchComponent
+                businesses={this.state.businesses}
+                isEmployee={this.state.isEmployee}
+                selectedBusiness={this.state.selectedBusiness}
+                onBusinessSelect={this.handleBusinessSelect}
+              />
             </CardContent>
             <CardActions style={{ justifyContent: 'center' }}>
               <AdornedButton
@@ -348,45 +407,147 @@ const styles = (theme: Theme) =>
       flex: 1,
     },
     card: {
-      padding: theme.spacing(1),
+      padding: '4px',
       height: '100vh',
+      overflow: 'auto',
     },
     title: {
       textAlign: 'center',
       fontSize: 28,
     },
     businessSection: {
-      paddingTop: theme.spacing(12),
+      paddingTop: theme.spacing(4),
     },
     button: {
       maxWidth: '200px',
-      margin: theme.spacing(2)
+      margin: theme.spacing(2),
     },
     spinner: {
-      marginLeft: theme.spacing(2)
+      marginLeft: theme.spacing(2),
+    },
+    listRoot: {
+      width: '100%',
+      maxHeight: '300px',
+      overflow: 'auto',
+      backgroundColor: theme.palette.secondary.main,
+    },
+    selectedBusiness: {
+      marginTop: theme.spacing(2)
+    },
+    businessRoot: {
+      display: 'flex',
+      marginTop: theme.spacing(1),
+      marginBottom: theme.spacing(2)
+    },
+    businessDetails: {
+      display: 'flex',
+      flexDirection: 'column'
+    },
+    businessContent: {
+      flex: '1 0 auto'
+    },
+    businessChange: {
+      display: 'flex',
+      justifyContent: 'start',
+      paddingLeft: theme.spacing(2),
+      paddingBottom: theme.spacing(1)
+    },
+    businessImage: {
+      width: 130,
+      height: 130
     }
   });
 
-const SpinnerAdornment = withStyles(styles, { withTheme: true })((props: any) => {
-  const { classes } = props
-  return (
-    <CircularProgress className={classes.spinner} size={20} />
-  )
-})
+const SpinnerAdornment = withStyles(styles, { withTheme: true })(
+  (props: any) => {
+    const { classes } = props;
+    return <CircularProgress className={classes.spinner} size={20} />;
+  },
+);
 
 const AdornedButton = (props) => {
-  const {
-    children,
-    loading,
-    ...rest
-  } = props
+  const { children, loading, ...rest } = props;
   return (
     <Button {...rest}>
       {children}
       {loading && <SpinnerAdornment {...rest} />}
     </Button>
-  )
-}
+  );
+};
+
+const BusinessSearchComponent = withStyles(styles, { withTheme: true })(
+  (props: any) => {
+    const { classes, isEmployee, selectedBusiness, businesses } = props;
+
+    function handleClick(business) {
+      props.onBusinessSelect(business);
+    }
+
+    function handleChange() {
+      props.onBusinessSelect(undefined)
+    }
+
+    return isEmployee && !selectedBusiness ? (
+      <List
+        subheader={
+          <ListSubheader>
+            Please select <strong>your</strong> business from below
+          </ListSubheader>
+        }
+        className={classes.listRoot}
+      >
+        {businesses.map((business, idx) => {
+          return (
+            <ListItem key={idx} onClick={() => handleClick(business)}>
+              <ListItemAvatar>
+                <Avatar>
+                  {business.image === 'Add Image' ? <Image /> : <Avatar src={business.image} />}
+                </Avatar>
+              </ListItemAvatar>
+              <ListItemText
+                primary={business.name}
+                secondary={business.location}
+              />
+            </ListItem>
+          );
+        })}
+      </List>
+    ) : isEmployee ? (
+      <div className={classes.selectedBusiness}>
+        <Typography variant="subtitle2" color="textSecondary" style={{ textAlign: 'center' }}>You are attempting to join:</Typography>
+        <Card className={classes.businessRoot} elevation={0}>
+          <div className={classes.businessDetails}>
+            <Grid container={true} justify="space-between">
+              <Grid item={true} xs={8}>
+                <CardContent className={classes.businessContent}>
+                  <Typography variant="h5" component="h5">
+                    { selectedBusiness.name }
+                  </Typography>
+                  <Typography variant="subtitle1" color="textSecondary">
+                    { selectedBusiness.location }
+                  </Typography>
+                </CardContent>
+                <div className={classes.businessChange}>
+                  <Button size="small" variant="outlined" onClick={handleChange}>Change</Button>
+                </div>
+              </Grid>
+              <Grid item={true} xs={4}>
+                <CardMedia 
+                  className={classes.businessImage}
+                  image={selectedBusiness.image}
+                  title="Business Image"
+                />
+              </Grid>
+            </Grid>
+          </div>
+        </Card>
+        <Alert severity="info">This will require approval from the business.</Alert>
+      </div>
+    ) : (
+      <div />
+    );
+  },
+);
 
 export default connect(mapStateToProps, { createNewCustomer })(
   withStyles(styles, { withTheme: true })(CustomerCreationPage),
