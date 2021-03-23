@@ -44,7 +44,7 @@ const routes = [
   { path: '/customer-sign-up', component: CustomerSignUp },
   { path: '/temp-login', component: TempLoginPage },
   { path: '/business-home', component: BusinessHome },
-  { path: 'payment', component: CustomerCheckout },
+  { path: '/payment', component: CustomerCheckout },
 ];
 
 //let currentUser = 'business';

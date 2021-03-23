@@ -1,4 +1,4 @@
-import React from 'react';
+/* import React from 'react';
 // import * as FaIcons from 'react-icons/fa'
 import {
   Divider,
@@ -19,11 +19,18 @@ import {
 // tslint:disable-next-line: no-submodule-imports
 import { makeStyles, useTheme } from '@material-ui/core/styles';
 import classes from '*.module.css';
-import './customer-checkout.css';
+
 import { Close } from '@material-ui/icons';
+
+import { Elements, CardElement, ElementsConsumer } from '@stripe/react-stripe-js';
+import { loadStripe } from '@stripe/stripe-js';
 
 function getSteps() {
   return ['Review Booking', 'Payment Setup', 'Confirm'];
+}
+
+function getStripeObject(){
+  return loadStripe('pk_test_TYooMQauvdEDq54NiTphI7jx');
 }
 
 function getStepContent(stepIndex: number) {
@@ -56,13 +63,33 @@ function PaymentInfo(){
   // tslint:disable-next-line: no-shadowed-variable
   const classes = useStyles();
   return (
-    <div className={classes.itemCard}>
-      <Divider className={classes.divider0} />
-      <h1>
-        <strong>Payment Info</strong>
-      </h1>
-      <Divider className={classes.divider0} />
-    </div>
+    <ElementsConsumer>
+      {({elements, stripe}) => (
+        return (
+          <form onSubmit={this.handleSubmit}>
+            <CardElement
+              options={{
+                style: {
+                  base: {
+                    fontSize: '16px',
+                    color: '#424770',
+                    '::placeholder': {
+                      color: '#aab7c4',
+                    },
+                  },
+                  invalid: {
+                    color: '#9e2146',
+                  },
+                },
+              }}
+            />
+            <button type="submit" disabled={!stripe}>
+              Pay
+            </button>
+          </form>
+        );
+      )}
+    </ElementsConsumer>
   );
 }
 
@@ -138,6 +165,7 @@ function CustomerCheckout() {
   const [open, setOpen] = React.useState(false);
   const [activeStep, setActiveStep] = React.useState(0);
   const steps = getSteps();
+  const Stripe = getStripeObject();
 
   const handleNext = () => {
     setActiveStep((prevActiveStep) => prevActiveStep + 1);
@@ -163,6 +191,7 @@ function CustomerCheckout() {
 
   return (
     <div>
+      <script src="https://js.stripe.com/v3/"/>
       <Button variant="contained" color="primary" onClick={openOnClick}>
         Open Checkout
       </Button>
@@ -172,7 +201,7 @@ function CustomerCheckout() {
         className={classes.receiptPage}
       >
         <DialogContent>
-          <Stepper activeStep={activeStep} alternativeLabel>
+          <Stepper activeStep={activeStep} alternativeLabel={true}>
             {steps.map((label) => (
               <Step key={label}>
                 <StepLabel>{label}</StepLabel>
@@ -187,7 +216,7 @@ function CustomerCheckout() {
         <DialogActions>
           <div>
             <Button
-              onClick={activeStep == 0 ? handleClose : handleBack}
+              onClick={activeStep === 0 ? handleClose : handleBack}
               className={classes.backButton}
             >
               Back
@@ -319,5 +348,90 @@ const useStyles = makeStyles((theme) => ({
     marginBottom: theme.spacing(1),
   },
 }));
+*/
+
+import React from 'react';
+import { loadStripe } from '@stripe/stripe-js';
+import {
+  CardElement,
+  Elements,
+  ElementsConsumer,
+} from '@stripe/react-stripe-js';
+import './customer-checkout.css';
+
+class CheckoutForm extends React.Component<any, any> {
+  handleSubmit = async (event) => {
+    // Block native form submission.
+    event.preventDefault();
+
+    const { stripe, elements } = this.props;
+
+    // Check to see if Stripe.js has not loaded
+    if (!stripe || !elements) {
+      return;
+    }
+
+    const cardElement = elements.getElement(CardElement);
+
+    const { error, paymentMethod } = await stripe.createPaymentMethod({
+      type: 'card',
+      card: cardElement,
+    });
+
+    //Error checking
+    if (error) {
+      console.log('[error]', error);
+    } else {
+      console.log('[PaymentMethod]', paymentMethod);
+    }
+  };
+
+  render() {
+    const { stripe } = this.props;
+    return (
+      <form onSubmit={this.handleSubmit}>
+        <CardElement
+          options={{
+            style: {
+              base: {
+                fontSize: '16px',
+                color: '#424770',
+                '::placeholder': {
+                  color: '#aab7c4',
+                },
+              },
+              invalid: {
+                color: '#9e2146',
+              },
+            },
+          }}
+        />
+        <button type="submit" disabled={!stripe}>
+          Pay
+        </button>
+      </form>
+    );
+  }
+}
+
+const InjectedCheckoutForm = () => {
+  return (
+    <ElementsConsumer>
+      {({ elements, stripe }) => (
+        <CheckoutForm elements={elements} stripe={stripe} />
+      )}
+    </ElementsConsumer>
+  );
+};
+
+const stripePromise = loadStripe('pk_test_6pRNASCoBOKtIshFeQd4XMUh');
+
+const CustomerCheckout = () => {
+  return (
+    <Elements stripe={stripePromise}>
+      <InjectedCheckoutForm />
+    </Elements>
+  );
+};
 
 export default CustomerCheckout;
