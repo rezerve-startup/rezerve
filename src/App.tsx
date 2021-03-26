@@ -11,14 +11,14 @@ import {
 import BusinessInfo from './business/business-info/BusinessInfo';
 import BusinessHome from './business/business-home/BusinessHome';
 import BusinessAccountInfo from './business/business-signup/BusinAccInfo';
-import BusinessSignUp from './business/business-signup/BusinSignUp';
+import BusinessSignUp from './business/business-signup/BusinessSignUp';
 import BusinessPersonalInfo from './business/business-signup/BusinPersInfoPage';
 
 import LandingDefault from './shared/landing-page/LandingPage';
 import LandingLoggedIn from './shared/landing-page/LandingPageLog';
 
-import SignupPage from './shared/SignUpPage';
-import CustomerSignUp from './customer/customer-signup/CustomerCreationPage';
+import SignupPage from './shared/sign-up/SignUpPage';
+import CustomerSignUp from './customer/customer-signup/CustomerSignUp';
 
 import AppointmentsPage from './customer/customer-appointments/AppointmentPage';
 import BusinessProfile from './business/business-profile/business-profile';
@@ -51,7 +51,6 @@ const routes = [
 
 const theme = createMuiTheme({
   palette: {
-    type: 'dark',
     primary: {
       main: '#FE8488',
       light: '#FF6D6D',
@@ -161,28 +160,28 @@ class App extends React.Component<any, SystemState> {
                   component={route.component}
                 />
               ))}
-              <div>
-                {(this.props.system.user) ? (
-                  this.props.system.user.customerId !== '' ? (
-                    <div>
-                      {/*<div>{this.props.system.user.firstName}</div>
-                  <Button variant="contained" onClick={this.switchToEmployee}>Switch to Employee</Button>
-                   <AppointmentsPage />
-                  <BusinessInfo /> */}
-                      <LandingLoggedIn />
-                    </div>
-                  ) : (
-                    <div>
-                      {/*<div>{this.props.system.user.firstName}</div>
-                  <Button variant="contained" onClick={this.switchToCustomer}>Switch to Customer</Button>*/}
-                      <LandingDefault />
-                    </div>
-                  )
-                ) : (
-                  <div> </div>
-                )}
-              </div>
             </Switch>
+            <div>
+            {(this.props.system.user) ? (
+              this.props.system.user.customerId !== '' ? (
+                <div>
+                  {/*<div>{this.props.system.user.firstName}</div>
+              <Button variant="contained" onClick={this.switchToEmployee}>Switch to Employee</Button>
+                <AppointmentsPage />
+              <BusinessInfo /> */}
+                  <LandingLoggedIn />
+                </div>
+              ) : (
+                <div>
+                  {/*<div>{this.props.system.user.firstName}</div>
+              <Button variant="contained" onClick={this.switchToCustomer}>Switch to Customer</Button>*/}
+                  <LandingDefault />
+                </div>
+              )
+            ) : (
+              <div> </div>
+            )}
+          </div>
           </Router>
         </ThemeProvider>
       </div>

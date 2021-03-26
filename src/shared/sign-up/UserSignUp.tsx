@@ -22,12 +22,21 @@ import {
   Avatar,
   ListItemText,
   ListSubheader,
+  Fab,
+  Dialog,
+  Snackbar,
 } from '@material-ui/core';
-import { SignUpState } from '../../shared/store/types';
 import { createNewCustomer } from '../../shared/store/actions';
 import { connect } from 'react-redux';
 import { auth, firestore } from '../../config/FirebaseConfig';
-import { Visibility, VisibilityOff, Image } from '@material-ui/icons';
+import {
+  Visibility,
+  VisibilityOff,
+  Image,
+  ArrowBack,
+  ArrowForward,
+  Close,
+} from '@material-ui/icons';
 import { AsYouType, parsePhoneNumber } from 'libphonenumber-js';
 import { Alert } from '@material-ui/lab';
 
@@ -40,6 +49,7 @@ interface Errors {
 }
 
 type State = {
+  open: boolean;
   loading: boolean;
   email: string;
   firstName: string;
@@ -53,16 +63,22 @@ type State = {
   businesses: any[];
   selectedBusiness: {} | undefined;
   errors: Errors;
+  snackbar: {
+    open: boolean;
+    message: string;
+    type: 'error' | 'success' | undefined;
+  };
 };
 
 function mapStateToProps(state: State) {
   return {};
 }
 
-class CustomerCreationPage extends React.Component<any, State> {
+class UserSignUp extends React.Component<any, State> {
   constructor(props: any) {
     super(props);
     this.state = {
+      open: false,
       loading: false,
       validForm: false,
       email: 'testuser@gmail.com',
@@ -82,12 +98,21 @@ class CustomerCreationPage extends React.Component<any, State> {
         phone: '',
         password: '',
       },
+      snackbar: {
+        open: false,
+        message: '',
+        type: undefined,
+      },
     };
 
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
     this.toggleShowPassword = this.toggleShowPassword.bind(this);
     this.toggleIsEmployee = this.toggleIsEmployee.bind(this);
+    this.openDialog = this.openDialog.bind(this);
+    this.closeDialog = this.closeDialog.bind(this);
+    this.openSnackbar = this.openSnackbar.bind(this);
+    this.handleCloseSnackbar = this.handleCloseSnackbar.bind(this);
     this.handleBusinessSelect = this.handleBusinessSelect.bind(this);
     this.createNewCustomer = this.createNewCustomer.bind(this);
   }
@@ -188,6 +213,36 @@ class CustomerCreationPage extends React.Component<any, State> {
     this.setState({ ...this.state, isEmployee: !this.state.isEmployee });
   }
 
+  openDialog(event: React.MouseEvent<HTMLButtonElement>) {
+    this.setState({ ...this.state, open: true });
+  }
+
+  closeDialog(event: React.MouseEvent<HTMLElement>) {
+    alert('Are you sure you want to cancel creating your account?');
+    this.setState({ ...this.state, open: false });
+  }
+
+  handleCloseSnackbar(
+    event: React.SyntheticEvent | React.MouseEvent,
+    reason?: string,
+  ) {
+    if (reason === 'clickaway') {
+      return;
+    }
+
+    this.setState({
+      ...this.state,
+      snackbar: { open: false, message: '', type: undefined },
+    });
+  }
+
+  openSnackbar(event: React.MouseEvent<HTMLButtonElement>) {
+    this.setState({
+      ...this.state,
+      snackbar: { open: true, message: 'Testing 1 2 3', type: 'success' },
+    });
+  }
+
   handleBusinessSelect(business) {
     this.setState({ ...this.state, selectedBusiness: business });
   }
@@ -253,146 +308,212 @@ class CustomerCreationPage extends React.Component<any, State> {
         this.setState({ ...this.state, validForm: false, errors });
       })
       .finally(() => {
-        this.setState({ ...this.state, loading: false });
+        this.setState({
+          ...this.state,
+          loading: false,
+          snackbar: {
+            open: true,
+            message: 'Successfully created your account',
+            type: 'success',
+          },
+        });
       });
   }
 
   render() {
     const { classes } = this.props;
-    const { errors, showPassword } = this.state;
+    const { errors, showPassword, snackbar } = this.state;
 
     return (
       <div className={classes.root}>
-        <Card className={classes.card} elevation={0}>
-          <form
-            className={classes.formRoot}
-            onSubmit={this.handleSubmit}
-            noValidate={true}
-            autoComplete="off"
-          >
-            <CardContent>
-              <Typography
-                className={classes.title}
-                gutterBottom={true}
-                variant="overline"
-                component="p"
-              >
-                Create Account
-              </Typography>
-              <Typography variant="caption" component="span">
-                * means required
-              </Typography>
-              <Grid container={true} spacing={2}>
-                <Grid item={true} xs={12}>
-                  <TextField
-                    name="email"
-                    label="Email"
-                    type="email"
-                    value={this.state.email}
-                    fullWidth={true}
-                    onChange={this.handleChange}
-                    error={errors.email.length > 0}
-                    helperText={errors.email}
-                    required={true}
-                  />
+        <Typography variant="h5" component="h5" className={classes.title}>
+          Sign Up
+        </Typography>
+        <Button
+          variant="contained"
+          endIcon={<ArrowForward />}
+          onClick={this.openDialog}
+          className={classes.customerButton}
+        >
+          Customer
+        </Button>
+        <Dialog
+          open={this.state.open}
+          fullScreen={true}
+          disableBackdropClick={true}
+        >
+          <Card className={classes.card} elevation={0}>
+            <form
+              className={classes.formRoot}
+              onSubmit={this.handleSubmit}
+              noValidate={true}
+              autoComplete="off"
+            >
+              <CardContent>
+                <Fab
+                  color="primary"
+                  size="small"
+                  variant="extended"
+                  onClick={this.closeDialog}
+                >
+                  <ArrowBack />
+                  &nbsp;Back
+                </Fab>
+                <Typography
+                  className={classes.title}
+                  gutterBottom={true}
+                  variant="overline"
+                  component="p"
+                >
+                  Create Account
+                </Typography>
+                <Typography
+                  variant="caption"
+                  component="p"
+                  color="textSecondary"
+                  align="center"
+                >
+                  * means required
+                </Typography>
+                <Grid container={true} spacing={2} style={{ marginTop: '4px' }}>
+                  <Grid item={true} xs={12}>
+                    <TextField
+                      name="email"
+                      label="Email"
+                      type="email"
+                      value={this.state.email}
+                      fullWidth={true}
+                      onChange={this.handleChange}
+                      error={errors.email.length > 0}
+                      helperText={errors.email}
+                      required={true}
+                      variant="outlined"
+                    />
+                  </Grid>
+                  <Grid item={true} xs={12}>
+                    <TextField
+                      name="password"
+                      label="Password"
+                      type={showPassword ? 'text' : 'password'}
+                      value={this.state.password}
+                      fullWidth={true}
+                      onChange={this.handleChange}
+                      error={errors.password.length > 0}
+                      helperText={errors.password}
+                      required={true}
+                      variant="outlined"
+                      InputProps={{
+                        endAdornment: (
+                          <InputAdornment position="end">
+                            <IconButton onClick={this.toggleShowPassword}>
+                              {showPassword ? (
+                                <Visibility />
+                              ) : (
+                                <VisibilityOff />
+                              )}
+                            </IconButton>
+                          </InputAdornment>
+                        ),
+                      }}
+                    />
+                  </Grid>
+                  <Grid item={true} xs={6}>
+                    <TextField
+                      name="firstName"
+                      label="First Name"
+                      value={this.state.firstName}
+                      fullWidth={true}
+                      onChange={this.handleChange}
+                      required={true}
+                      variant="outlined"
+                    />
+                  </Grid>
+                  <Grid item={true} xs={6}>
+                    <TextField
+                      name="lastName"
+                      label="Last Name"
+                      value={this.state.lastName}
+                      fullWidth={true}
+                      onChange={this.handleChange}
+                      required={true}
+                      variant="outlined"
+                    />
+                  </Grid>
+                  <Grid item={true} xs={12}>
+                    <TextField
+                      name="phone"
+                      label="Phone Number"
+                      value={this.state.phone}
+                      fullWidth={true}
+                      onChange={this.handleChange}
+                      error={errors.phone.length > 0}
+                      helperText={errors.phone}
+                      variant="outlined"
+                    />
+                  </Grid>
                 </Grid>
-                <Grid item={true} xs={12}>
-                  <TextField
-                    name="password"
-                    label="Password"
-                    type={showPassword ? 'text' : 'password'}
-                    value={this.state.password}
-                    fullWidth={true}
-                    onChange={this.handleChange}
-                    error={errors.password.length > 0}
-                    helperText={errors.password}
-                    required={true}
-                    InputProps={{
-                      endAdornment: (
-                        <InputAdornment position="end">
-                          <IconButton onClick={this.toggleShowPassword}>
-                            {showPassword ? <Visibility /> : <VisibilityOff />}
-                          </IconButton>
-                        </InputAdornment>
-                      ),
-                    }}
-                  />
-                </Grid>
-                <Grid item={true} xs={6}>
-                  <TextField
-                    name="firstName"
-                    label="First Name"
-                    value={this.state.firstName}
-                    fullWidth={true}
-                    onChange={this.handleChange}
-                    required={true}
-                  />
-                </Grid>
-                <Grid item={true} xs={6}>
-                  <TextField
-                    name="lastName"
-                    label="Last Name"
-                    value={this.state.lastName}
-                    fullWidth={true}
-                    onChange={this.handleChange}
-                    required={true}
-                  />
-                </Grid>
-                <Grid item={true} xs={12}>
-                  <TextField
-                    name="phone"
-                    label="Phone Number"
-                    value={this.state.phone}
-                    fullWidth={true}
-                    onChange={this.handleChange}
-                    error={errors.phone.length > 0}
-                    helperText={errors.phone}
-                  />
-                </Grid>
-              </Grid>
 
-              <Grid
-                container={true}
-                spacing={1}
-                className={classes.businessSection}
-                justify="space-around"
-              >
-                <Grid item={true} xs={8}>
-                  <FormControlLabel
-                    label="Are you an employee?"
-                    labelPlacement="start"
-                    value="Start"
-                    control={
-                      <Checkbox
-                        color="primary"
-                        value={this.state.isEmployee}
-                        onClick={this.toggleIsEmployee}
-                      />
-                    }
-                  />
+                <Grid
+                  container={true}
+                  spacing={1}
+                  className={classes.businessSection}
+                  justify="space-around"
+                >
+                  <Grid item={true} xs={8}>
+                    <FormControlLabel
+                      label="Are you an employee?"
+                      labelPlacement="start"
+                      value="Start"
+                      control={
+                        <Checkbox
+                          color="primary"
+                          value={this.state.isEmployee}
+                          onClick={this.toggleIsEmployee}
+                        />
+                      }
+                    />
+                  </Grid>
                 </Grid>
-              </Grid>
-              <BusinessSearchComponent
-                businesses={this.state.businesses}
-                isEmployee={this.state.isEmployee}
-                selectedBusiness={this.state.selectedBusiness}
-                onBusinessSelect={this.handleBusinessSelect}
-              />
-            </CardContent>
-            <CardActions style={{ justifyContent: 'center' }}>
-              <AdornedButton
-                className={classes.button}
-                color="primary"
-                variant="contained"
-                type="submit"
-                loading={this.state.loading}
-                disabled={!this.state.validForm}
-              >
-                Create Account
-              </AdornedButton>
-            </CardActions>
-          </form>
-        </Card>
+                <BusinessSearchComponent
+                  businesses={this.state.businesses}
+                  isEmployee={this.state.isEmployee}
+                  selectedBusiness={this.state.selectedBusiness}
+                  onBusinessSelect={this.handleBusinessSelect}
+                />
+              </CardContent>
+              <CardActions style={{ justifyContent: 'center' }}>
+                <AdornedButton
+                  className={classes.button}
+                  color="primary"
+                  variant="contained"
+                  type="submit"
+                  loading={this.state.loading}
+                  disabled={!this.state.validForm}
+                >
+                  Create Account
+                </AdornedButton>
+              </CardActions>
+            </form>
+          </Card>
+          <Snackbar
+            anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+            open={snackbar.open}
+            autoHideDuration={6000}
+            onClose={this.handleCloseSnackbar}
+            message={snackbar.message}
+            action={
+              <React.Fragment>
+                <IconButton
+                  size="small"
+                  color="inherit"
+                  onClick={this.handleCloseSnackbar}
+                >
+                  <Close />
+                </IconButton>
+              </React.Fragment>
+            }
+          />
+        </Dialog>
       </div>
     );
   }
@@ -409,11 +530,24 @@ const styles = (theme: Theme) =>
     card: {
       padding: '4px',
       height: '100vh',
-      overflow: 'auto',
+      overflow: 'auto'
     },
     title: {
       textAlign: 'center',
-      fontSize: 28,
+      fontSize: 24,
+    },
+    customerButton: {
+      backgroundColor: theme.palette.secondary.dark,
+      color: theme.palette.primary.light,
+      borderRadius: '0',
+      boxShadow: 'none',
+      borderBottom: '1px solid white',
+      '&:hover': {
+        backgroundColor: theme.palette.secondary.dark,
+        color: theme.palette.primary.dark,
+        boxShadow: 'none',
+      },
+      paddingTop: theme.spacing(2),
     },
     businessSection: {
       paddingTop: theme.spacing(4),
@@ -432,30 +566,30 @@ const styles = (theme: Theme) =>
       backgroundColor: theme.palette.secondary.main,
     },
     selectedBusiness: {
-      marginTop: theme.spacing(2)
+      marginTop: theme.spacing(2),
     },
     businessRoot: {
       display: 'flex',
       marginTop: theme.spacing(1),
-      marginBottom: theme.spacing(2)
+      marginBottom: theme.spacing(2),
     },
     businessDetails: {
       display: 'flex',
-      flexDirection: 'column'
+      flexDirection: 'column',
     },
     businessContent: {
-      flex: '1 0 auto'
+      flex: '1 0 auto',
     },
     businessChange: {
       display: 'flex',
       justifyContent: 'start',
       paddingLeft: theme.spacing(2),
-      paddingBottom: theme.spacing(1)
+      paddingBottom: theme.spacing(1),
     },
     businessImage: {
       width: 130,
-      height: 130
-    }
+      height: 130,
+    },
   });
 
 const SpinnerAdornment = withStyles(styles, { withTheme: true })(
@@ -484,7 +618,7 @@ const BusinessSearchComponent = withStyles(styles, { withTheme: true })(
     }
 
     function handleChange() {
-      props.onBusinessSelect(undefined)
+      props.onBusinessSelect(undefined);
     }
 
     return isEmployee && !selectedBusiness ? (
@@ -501,7 +635,11 @@ const BusinessSearchComponent = withStyles(styles, { withTheme: true })(
             <ListItem key={idx} onClick={() => handleClick(business)}>
               <ListItemAvatar>
                 <Avatar>
-                  {business.image === 'Add Image' ? <Image /> : <Avatar src={business.image} />}
+                  {business.image === 'Add Image' ? (
+                    <Image />
+                  ) : (
+                    <Avatar src={business.image} />
+                  )}
                 </Avatar>
               </ListItemAvatar>
               <ListItemText
@@ -514,25 +652,37 @@ const BusinessSearchComponent = withStyles(styles, { withTheme: true })(
       </List>
     ) : isEmployee ? (
       <div className={classes.selectedBusiness}>
-        <Typography variant="subtitle2" color="textSecondary" style={{ textAlign: 'center' }}>You are attempting to join:</Typography>
+        <Typography
+          variant="subtitle2"
+          color="textSecondary"
+          style={{ textAlign: 'center' }}
+        >
+          You are attempting to join:
+        </Typography>
         <Card className={classes.businessRoot} elevation={0}>
           <div className={classes.businessDetails}>
             <Grid container={true} justify="space-between">
               <Grid item={true} xs={8}>
                 <CardContent className={classes.businessContent}>
                   <Typography variant="h5" component="h5">
-                    { selectedBusiness.name }
+                    {selectedBusiness.name}
                   </Typography>
                   <Typography variant="subtitle1" color="textSecondary">
-                    { selectedBusiness.location }
+                    {selectedBusiness.location}
                   </Typography>
                 </CardContent>
                 <div className={classes.businessChange}>
-                  <Button size="small" variant="outlined" onClick={handleChange}>Change</Button>
+                  <Button
+                    size="small"
+                    variant="outlined"
+                    onClick={handleChange}
+                  >
+                    Change
+                  </Button>
                 </div>
               </Grid>
               <Grid item={true} xs={4}>
-                <CardMedia 
+                <CardMedia
                   className={classes.businessImage}
                   image={selectedBusiness.image}
                   title="Business Image"
@@ -541,7 +691,9 @@ const BusinessSearchComponent = withStyles(styles, { withTheme: true })(
             </Grid>
           </div>
         </Card>
-        <Alert severity="info">This will require approval from the business.</Alert>
+        <Alert severity="info">
+          This will require approval from the business.
+        </Alert>
       </div>
     ) : (
       <div />
@@ -550,5 +702,5 @@ const BusinessSearchComponent = withStyles(styles, { withTheme: true })(
 );
 
 export default connect(mapStateToProps, { createNewCustomer })(
-  withStyles(styles, { withTheme: true })(CustomerCreationPage),
+  withStyles(styles, { withTheme: true })(UserSignUp),
 );

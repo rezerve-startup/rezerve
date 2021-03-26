@@ -64,7 +64,6 @@ const useStyles = makeStyles((theme) => ({
     marginBottom: '2px',
   },
   menuButton: {
-    marginRight: theme.spacing(2),
     color: theme.palette.background.paper,
   },
   list: {
@@ -140,7 +139,7 @@ function Sidebar() {
   const mobileMenuId = 'primary-mobile-sidebar-menu';
   const renderMobileSidebar = (
     <SwipeableDrawer
-      anchor="left"
+      anchor="right"
       id={mobileMenuId}
       open={mobileSidebar.isSidebarOpen}
       onClose={handleMobileSidebar(false)}
@@ -173,16 +172,6 @@ function Sidebar() {
     <div className={classes.root}>
       <AppBar position="static" className={classes.appBar}>
         <Toolbar>
-          <div className={classes.sectionMobile}>
-            <IconButton
-              edge="start"
-              aria-label="menu"
-              className={classes.menuButton}
-              onClick={handleMobileSidebar(true)}
-            >
-              <MenuIcon />
-            </IconButton>
-          </div>
           <Typography
             className={classes.title}
             variant="h6"
@@ -226,6 +215,16 @@ function Sidebar() {
                 John Barber
               </Button>
             </Box>
+          </div>
+          <div className={classes.sectionMobile}>
+            <IconButton
+              edge="end"
+              aria-label="menu"
+              className={classes.menuButton}
+              onClick={handleMobileSidebar(true)}
+            >
+              <MenuIcon />
+            </IconButton>
           </div>
         </Toolbar>
       </AppBar>

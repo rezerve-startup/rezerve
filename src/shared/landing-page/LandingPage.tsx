@@ -13,7 +13,7 @@ import {
   Typography,
   Button,
 } from '@material-ui/core';
-
+import SignUpPage from '../sign-up/SignUpPage'
 import HomeIcon from '@material-ui/icons/Home';
 //Extra
 import FaceIcon from '@material-ui/icons/Face';
@@ -144,13 +144,7 @@ function LandingPageDefault() {
               >
                 Log in
               </Button>
-              <Button
-                className={classes.buttonSignup}
-                variant="contained"
-                href="/sign-up-page"
-              >
-                Sign Up
-              </Button>
+              <SignUpPage />
             </Grid>
           </Grid>
         </Box>
@@ -167,11 +161,11 @@ function LandingPageDefault() {
             className={classes.navItem}
           >
             <Tab label="Hair" icon={<FaceIcon />} {...a11yProps(0)} />
-            <Divider orientation="vertical" flexItem />
+            <MDivider />
             <Tab label="Nail" icon={<PanToolIcon />} {...a11yProps(2)} />
-            <Divider orientation="vertical" flexItem />
+            <MDivider />
             <Tab label="Barber" icon={<EmojiPeopleIcon />} {...a11yProps(4)} />
-            <Divider orientation="vertical" flexItem />
+            <MDivider />
             <Tab label="House Calls" icon={<HomeIcon />} {...a11yProps(6)} />
           </Tabs>
         </AppBar>
@@ -190,6 +184,10 @@ function LandingPageDefault() {
       </TabPanel>
     </div>
   );
+}
+
+function MDivider(props: any) {
+  return <Divider orientation="vertical" flexItem={true} />
 }
 
 export default LandingPageDefault;
