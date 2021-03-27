@@ -21,21 +21,13 @@ interface PassedProps {
 
 type Props = StyleProps & PassedProps;
 type State = {
-  business: any;
   employeeName: string;
 };
-
-function mapStateToProps(state: StoreState) {
-  return {
-    business: state.business,
-  };
-}
 
 class ClientTab extends React.Component<Props, State> {
   constructor(props: any) {
     super(props);
     this.state = {
-      business: undefined,
       employeeName: props.employeeName,
     };
   }
@@ -52,6 +44,6 @@ class ClientTab extends React.Component<Props, State> {
 }
 
 export default connect(
-  mapStateToProps,
+  null,
   null,
 )(withStyles(styles, { withTheme: true })(ClientTab));

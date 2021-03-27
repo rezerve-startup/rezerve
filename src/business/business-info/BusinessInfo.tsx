@@ -340,6 +340,7 @@ class BusinessInfo extends React.Component<any, BusinessInfoState> {
               }
             </div>
             <BusinessInfoDetails
+              businessId={this.state.businessKey}
               businessOpeningTime={this.state.businessInfo.about.openingTime}
               businessClosingTime={this.state.businessInfo.about.closingTime}
               businessOpenDates={this.state.businessInfo.about.daysOpen}  

@@ -1,3 +1,4 @@
+import { stat } from 'fs';
 import {
   SystemState,
   SystemActionTypes,
@@ -14,7 +15,10 @@ import {
   CLEAR_FOUND_BUSINESSES,
   ADD_EMPLOYEE_FOR_BUSINESS,
   CLEAR_EMPLOYEES_FOR_BUSINESS,
-  SET_SELECTED_EMPLOYEE
+  SET_SELECTED_EMPLOYEE,
+  SET_TO_DOS,
+  SET_EMPLOYEE_PHONE,
+  SET_EMPLOYEE_EMAIL
 } from './types';
 
 // ************** System Reducer ******************
@@ -41,6 +45,36 @@ export function systemReducer(
         ...state,
         user: action.payload,
       };
+    }
+    case SET_TO_DOS: {
+      return {
+        ...state,
+        user: {
+          ...state.user,
+          employeeInfo: {
+            ...state.user.employeeInfo,
+            todos: action.payload
+          }
+        }
+      }
+    }
+    case SET_EMPLOYEE_PHONE: {
+      return {
+        ...state,
+        user: {
+          ...state.user,
+          phone: action.payload
+        }
+      }
+    }
+    case SET_EMPLOYEE_EMAIL: {
+      return {
+        ...state,
+        user: {
+          ...state.user,
+          email: action.payload
+        }
+      }
     }
     default:
       return state;

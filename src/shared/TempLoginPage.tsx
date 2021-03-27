@@ -44,8 +44,64 @@ class TempLoginPage extends React.Component<any, any> {
             .get()
             .then((userObj) => {
               const userInfo = userObj.data();
-              console.log(userInfo);
-              this.dispatchUpdateUser(userInfo);
+
+              if (userInfo && userInfo.employeeId !== '') {
+                let employeeAppts: any[] = [];
+                let employeeReviews: any[] = [];
+
+                firestore.collection('employees').doc(userInfo.employeeId).get()
+                  .then((employeeObj) => {
+                    let employeeInfo = employeeObj.data();
+                    userInfo.employeeInfo = employeeInfo;
+                  })
+                  .then(() => {
+                    firestore.collection('reviews').where('employeeId', '==', `${userInfo.employeeId}`).get()
+                      .then((querySnapshot) => {
+                        querySnapshot.forEach((reviewDoc) => {
+                          employeeReviews.push(reviewDoc.data());
+                        });
+
+                        userInfo.employeeInfo.reviews = employeeReviews;
+                      })
+                  })
+                  .then(() => {
+                    firestore.collection('appointments').where('employeeId', '==', `${userInfo.employeeId}`).get()
+                      .then((querySnapshot) => {
+                        let employeeClients = {};
+
+                        querySnapshot.forEach((apptDoc) => {
+                          const apptData = apptDoc.data();
+                          employeeAppts.push(apptData);
+
+                          firestore.collection('users').where('customerId', '==', `${apptData.customerId}`).get()
+                            .then((querySnapshot) => {
+                              querySnapshot.forEach((userDoc) => {
+                                const userData = userDoc.data();
+                                let numVisits = 0;
+
+                                if (employeeClients[`${apptData.customerId}`]) {
+                                  let numVisits = employeeClients[`${apptData.customerId}`] + 1;
+
+                                  employeeClients[`${apptData.customerId}`].numVisits += 1;
+                                } else {
+                                  numVisits = 1;
+
+                                  employeeClients[`${apptData.customerId}`] = {
+                                    firstName: userData.firstName,
+                                    lastName: userData.lastName,
+                                    numVisits: numVisits
+                                  }
+                                }
+                              });
+                            })
+                        });
+
+                        userInfo.employeeInfo.appointments = employeeAppts;
+                        userInfo.employeeInfo.clients = employeeClients;
+                        this.dispatchUpdateUser(userInfo);
+                      })
+                  })
+              }
             });
         }
       });
@@ -90,7 +146,6 @@ class TempLoginPage extends React.Component<any, any> {
               variant="contained"
               className={classes.button}
               onClick={this.signInCustomer}
-              href="/landing-page-loggedIn"
             >
               Customer
             </Button>
@@ -101,7 +156,6 @@ class TempLoginPage extends React.Component<any, any> {
               variant="contained"
               className={classes.button}
               onClick={this.signInEmployee}
-              href="/business-home"
             >
               Business
             </Button>

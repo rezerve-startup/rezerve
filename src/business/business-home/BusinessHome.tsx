@@ -16,7 +16,7 @@ import {
 } from '@material-ui/core';
 import { Home, List, Person, Assessment } from '@material-ui/icons';
 import ClientTab from './client-tab/ClientTab';
-import HomePanel from './home-tab/HomeTab';
+import HomeTab from './home-tab/HomeTab';
 import BusinessPerformance from './business-performance/BusinessPerformance';
 import { connect } from 'react-redux';
 import { firestore } from '../../config/FirebaseConfig';
@@ -131,7 +131,7 @@ class BusinessHome extends React.Component<Props, State> {
             enableMouseEvents={true}
           >
             <TabPanel value={this.state.tabValue} index={0}>
-              <HomePanel isMobile={this.props.isMobile} />
+              <HomeTab isMobile={this.props.isMobile} />
             </TabPanel>
             <TabPanel value={this.state.tabValue} index={1}>
               <AppointmentPanel />

@@ -16,9 +16,12 @@ import { connect } from 'react-redux';
 import { StoreState } from '../../../shared/store/types';
 import { setSelectedEmployee } from '../../../shared/store/actions';
 import moment from 'moment';
+import { firestore } from '../../../config/FirebaseConfig';
+import firebase from 'firebase';
 
 function mapStateToProps(state: StoreState) {
   return {
+    user: state.system.user,
     businessEmployees: state.customer.employeesForBusiness,
     selectedEmployee: state.customer.selectedEmployee
   };
@@ -164,7 +167,11 @@ class BusinessInfoDetails extends React.Component<any, any> {
                 // The existing appointment overlaps on the left
                 (startOfApptSlotMoment.isBefore(existingApptMomentStart) && endOfApptSlotMoment.isAfter(existingApptMomentStart)) ||
                 // The existing appointment overlaps on the right
-                (startOfApptSlotMoment.isBefore(existingApptMomentEnd) && endOfApptSlotMoment.isAfter(existingApptMomentEnd))
+                (startOfApptSlotMoment.isBefore(existingApptMomentEnd) && endOfApptSlotMoment.isAfter(existingApptMomentEnd)) ||
+                // The existing appointment overlaps both sides
+                (existingApptMomentStart.isBefore(startOfApptSlotMoment) && existingApptMomentEnd.isAfter(endOfApptSlotMoment)) ||
+                //The existing appointment is contained within the time slot
+                (existingApptMomentStart.isAfter(startOfApptSlotMoment) && existingApptMomentEnd.isBefore(endOfApptSlotMoment))
               ) {
                 slotAvailable = false;
                 break;
@@ -177,7 +184,7 @@ class BusinessInfoDetails extends React.Component<any, any> {
             }
   
             if (slotAvailable) {
-              const availableTime = tempMoment.format('h:mm A');
+              const availableTime = tempMoment.clone();
               availableTimeSlots.push(availableTime); 
             }    
   
@@ -192,7 +199,24 @@ class BusinessInfoDetails extends React.Component<any, any> {
   }
 
   bookAppointment() {
-    console.log(this.state.selectedDate, this.state.selectedAppointmentSlot, this.state.selectedService, this.props.selectedEmployee);
+    firestore.collection('appointments').add({
+      businessId: this.props.businessId,
+      customerId: this.props.user.customerId,
+      datetime: new Date(this.state.availableAppointmentTimes[this.state.selectedAppointmentSlot]),
+      employeeId: this.props.selectedEmployee.id,
+      service: this.props.selectedEmployee.services[this.state.selectedService],
+      status: 'requested'
+    }).then((docRef) => {
+      firestore.collection('employees').doc(`${this.props.selectedEmployee.id}`).update({
+        appointments: firebase.firestore.FieldValue.arrayUnion(docRef.id)
+      }).then(() => {
+        firestore.collection('customers').doc(`${this.props.user.customerId}`).update({
+          appointments: firebase.firestore.FieldValue.arrayUnion(docRef.id)
+        })
+      });
+    }).catch((error) => {
+      console.log(error);
+    });
   }
 
   render() {
@@ -272,7 +296,7 @@ class BusinessInfoDetails extends React.Component<any, any> {
                   return (
                     <div key={index} onClick={() => this.selectAppointmentSlot(index)} 
                       className={`${this.state.selectedAppointmentSlot === index ? classes.selectedAppointmentSlot : classes.appointmentSlot}`}
-                    >{apptTime}</div>
+                    >{apptTime.format('h:mm A')}</div>
                   )
                 })}
             </div>
