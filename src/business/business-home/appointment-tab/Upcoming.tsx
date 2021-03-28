@@ -18,6 +18,9 @@ import DeleteIcon from '@material-ui/icons/Delete';
 // tslint:disable-next-line: no-submodule-imports
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import image from '../../../assets/avatar.jpg';
+import { connect } from 'react-redux';
+import { StoreState } from '../../../shared/store/types';
+import moment from 'moment';
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -44,6 +47,29 @@ const styles = (theme: Theme) =>
     },
   });
 
+function mapStateToProps(state: StoreState) {
+  let upcomingAppointments: any[] = [];
+  let appointments = state.system.user.employeeInfo.appointments;
+  let currentDate = Date.now();
+
+  for (let appointment of appointments) {
+    let appointmentDate: Date = appointment.datetime.toDate();
+
+    if (appointmentDate.valueOf() > currentDate) {
+
+      appointment.startTime = moment(appointmentDate.toISOString()).format('h:mm A');
+
+      upcomingAppointments.push(appointment);
+    }
+  }
+
+  upcomingAppointments.sort((appt1, appt2) => appt1.datetime.toDate() - appt2.datetime.toDate());
+
+  return ({
+    upcomingAppointments: upcomingAppointments
+  });
+}
+
 type State = {
   incomingSchedule: IncomingSchedule[];
 };
@@ -53,76 +79,16 @@ interface IncomingSchedule {
   name: string;
   apptType: string;
   start: string;
-  end: string;
   duration: string;
 }
 
-interface Props extends WithStyles<typeof styles> {}
+interface Props extends WithStyles<typeof styles> {
+  upcomingAppointments?: any[]
+}
 
 class Upcoming extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
-
-    this.state = {
-      incomingSchedule: [
-        {
-          id: 1,
-          name: 'Marcus',
-          apptType: 'Haircut',
-          start: '9:15am',
-          end: '9:30am',
-          duration: '15min',
-        },
-        {
-          id: 2,
-          name: 'Marcus',
-          apptType: 'Haircut',
-          start: '10:15am',
-          end: '11:00am',
-          duration: '45min',
-        },
-        {
-          id: 3,
-          name: 'Marcus',
-          apptType: 'Haircut',
-          start: '12:00pm',
-          end: '1:00pm',
-          duration: '60min',
-        },
-        {
-          id: 4,
-          name: 'Marcus',
-          apptType: 'Haircut',
-          start: '1:15pm',
-          end: '1:30pm',
-          duration: '15min',
-        },
-        {
-          id: 5,
-          name: 'Marcus',
-          apptType: 'Haircut',
-          start: '2:00pm',
-          end: '3:00pm',
-          duration: '60min',
-        },
-        {
-          id: 6,
-          name: 'Marcus',
-          apptType: 'Haircut',
-          start: '3:30pm',
-          end: '3:45pm',
-          duration: '15min',
-        },
-        {
-          id: 7,
-          name: 'Marcus',
-          apptType: 'Haircut',
-          start: '4:00',
-          end: '4:15',
-          duration: '15min',
-        },
-      ],
-    };
 
     this.handleClick = this.handleClick.bind(this);
   }
@@ -131,20 +97,20 @@ class Upcoming extends React.Component<Props, State> {
     const { classes } = this.props;
     return (
       <div className={classes.root}>
-        {this.state.incomingSchedule.map((item: IncomingSchedule) => (
-          <Accordion key={item.id}>
+        {this.props.upcomingAppointments?.map((appt, index) => (
+          <Accordion key={index}>
             <AccordionSummary
               expandIcon={<ExpandMoreIcon />}
               aria-controls="panel1a-content"
               id="panel1a-header"
             >
               <div className={classes.column}>
-                <Avatar alt="Marcus" src={image} className={classes.small} />
-                <Typography className={classes.heading}>{item.name}</Typography>
+                <Avatar src={image} className={classes.small} />
+                <Typography>{appt.client.firstName}</Typography>
               </div>
               <div className={classes.column}>
                 <Typography className={classes.heading}>
-                  {item.start}-{item.end}
+                  {appt.startTime}
                 </Typography>
               </div>
               <div className={classes.column}>
@@ -152,7 +118,7 @@ class Upcoming extends React.Component<Props, State> {
                   className={classes.heading}
                   style={{ margin: 'auto' }}
                 >
-                  {item.duration}
+                  {appt.service.length * 15} min
                 </Typography>
               </div>
             </AccordionSummary>
@@ -164,7 +130,7 @@ class Upcoming extends React.Component<Props, State> {
                 className={classes.button}
                 startIcon={<Description />}
                 // tslint:disable-next-line: jsx-no-lambda
-                onClick={() => this.handleClick(item)}
+                onClick={() => this.handleClick(appt)}
               >
                 Send Message
               </Button>
@@ -175,7 +141,7 @@ class Upcoming extends React.Component<Props, State> {
                 className={classes.button}
                 startIcon={<DeleteIcon />}
                 // tslint:disable-next-line: jsx-no-lambda
-                onClick={() => this.handleClick(item)}
+                onClick={() => this.handleClick(appt)}
               >
                 Cancel Appt.
               </Button>
@@ -204,4 +170,6 @@ class Upcoming extends React.Component<Props, State> {
   }
 }
 
-export default withStyles(styles, { withTheme: true })(Upcoming);
+export default connect(mapStateToProps, null)(
+  withStyles(styles, { withTheme: true })(Upcoming)
+);

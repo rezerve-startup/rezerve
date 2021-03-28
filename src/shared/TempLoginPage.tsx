@@ -71,7 +71,6 @@ class TempLoginPage extends React.Component<any, any> {
 
                         querySnapshot.forEach((apptDoc) => {
                           const apptData = apptDoc.data();
-                          employeeAppts.push(apptData);
 
                           firestore.collection('users').where('customerId', '==', `${apptData.customerId}`).get()
                             .then((querySnapshot) => {
@@ -79,19 +78,28 @@ class TempLoginPage extends React.Component<any, any> {
                                 const userData = userDoc.data();
                                 let numVisits = 0;
 
-                                if (employeeClients[`${apptData.customerId}`]) {
-                                  let numVisits = employeeClients[`${apptData.customerId}`] + 1;
-
-                                  employeeClients[`${apptData.customerId}`].numVisits += 1;
-                                } else {
-                                  numVisits = 1;
-
-                                  employeeClients[`${apptData.customerId}`] = {
-                                    firstName: userData.firstName,
-                                    lastName: userData.lastName,
-                                    numVisits: numVisits
+                                if (apptData.datetime.toDate() < Date.now()) {
+                                  if (employeeClients[`${apptData.customerId}`]) {
+                                    let numVisits = employeeClients[`${apptData.customerId}`] + 1;
+  
+                                    employeeClients[`${apptData.customerId}`].numVisits += 1;
+                                  } else {
+                                    numVisits = 1;
+  
+                                    employeeClients[`${apptData.customerId}`] = {
+                                      firstName: userData.firstName,
+                                      lastName: userData.lastName,
+                                      numVisits: numVisits
+                                    }
                                   }
                                 }
+
+                                apptData.client = {
+                                  firstName: userData.firstName,
+                                  lastName: userData.lastName
+                                }
+
+                                employeeAppts.push(apptData);
                               });
                             })
                         });

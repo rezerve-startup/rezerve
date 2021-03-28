@@ -44,10 +44,10 @@ function mapStateToProps(state: StoreState) {
 
   let upcomingAppts: any[] = [];
 
-  let dateNowMoment = moment(Date.now());
+  let dateNow = Date.now();
 
   allAppointments.forEach((appt) => {
-    if (moment(appt.datetime.toDate()).isAfter(dateNowMoment)) {
+    if (appt.datetime.toDate() > dateNow) {
       upcomingAppts.push(appt);
     }
   })

@@ -13,6 +13,9 @@ import {
   DayView,
   Appointments,
 } from '@devexpress/dx-react-scheduler-material-ui';
+import { StoreState } from '../../../shared/store/types';
+import { connect } from 'react-redux';
+import moment from 'moment';
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -39,8 +42,32 @@ const styles = (theme: Theme) =>
     },
   });
 
+function mapStateToProps(state: StoreState) {
+  console.log(state.system.user.employeeInfo);
+
+  let scheduleItems: any[] = [];
+
+  for (let appt of state.system.user.employeeInfo.appointments) {
+    let startDateMoment = moment(appt.datetime.toDate());
+    let endDateMoment = startDateMoment.add(30 * appt.service.length, 'minutes');
+
+    let apptToAdd = {
+      title: `${appt.service.name} with ${appt.client.firstName}`,
+      startDate: appt.datetime.toDate(),
+      endDate: endDateMoment.toDate()
+    };
+
+    scheduleItems.push(apptToAdd);
+  }
+
+  console.log(scheduleItems);
+
+  return({
+    scheduleItems: scheduleItems
+  });
+}
+
 type State = {
-  incomingSchedule: IncomingSchedule[];
   currentDate: string; // YYYY-MM-DD
 };
 
@@ -50,41 +77,18 @@ interface IncomingSchedule {
   title: string;
 }
 
-interface Props extends WithStyles<typeof styles> {}
+interface Props extends WithStyles<typeof styles> {
+  scheduleItems?: any[]
+}
 
-class Upcoming extends React.Component<Props, State> {
+class Calendar extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
 
+    let currentDate: Date = new Date(Date.now());
+
     this.state = {
-      incomingSchedule: [
-        {
-          startDate: '2021-02-06T11:30',
-          endDate: '2021-02-06T12:00',
-          title: 'Haircut with customer',
-        },
-        {
-          startDate: '2021-02-06T09:30',
-          endDate: '2021-02-06T10:00',
-          title: 'Haircut with Marcus',
-        },
-        {
-          startDate: '2021-02-06T10:45',
-          endDate: '2021-02-06T11:00',
-          title: 'Haircut with customer',
-        },
-        {
-          startDate: '2021-02-06T09:00',
-          endDate: '2021-02-06T11:00',
-          title: 'Haircut with customer',
-        },
-        {
-          startDate: '2021-02-06T08:00',
-          endDate: '2021-02-06T14:00',
-          title: 'Work Hours',
-        },
-      ],
-      currentDate: '2021-02-06',
+      currentDate: '2021-03-31',
     };
 
     // this.handleClick = this.handleClick.bind(this);
@@ -96,9 +100,9 @@ class Upcoming extends React.Component<Props, State> {
       <div className={classes.root}>
         <Divider />
         <Paper>
-          <Scheduler data={this.state.incomingSchedule}>
+          <Scheduler data={this.props.scheduleItems}>
             <ViewState currentDate={this.state.currentDate} />
-            <DayView startDayHour={8} endDayHour={16} />
+            <DayView startDayHour={8} endDayHour={17} />
             <Appointments />
           </Scheduler>
         </Paper>
@@ -107,4 +111,6 @@ class Upcoming extends React.Component<Props, State> {
   }
 }
 
-export default withStyles(styles, { withTheme: true })(Upcoming);
+export default connect(mapStateToProps, null) (
+  withStyles(styles, { withTheme: true })(Calendar)
+);

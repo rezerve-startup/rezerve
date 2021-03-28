@@ -21,7 +21,7 @@ import BusinessPerformance from './business-performance/BusinessPerformance';
 import { connect } from 'react-redux';
 import { firestore } from '../../config/FirebaseConfig';
 import { StoreState } from '../../shared/store/types';
-import AppointmentPanel from './appointment-tab/AppointmentHome';
+import AppointmentHome from './appointment-tab/AppointmentHome';
 import Sidebar from '../../shared/sidebar/sidebar';
 
 const styles = (theme: Theme) =>
@@ -134,10 +134,10 @@ class BusinessHome extends React.Component<Props, State> {
               <HomeTab isMobile={this.props.isMobile} />
             </TabPanel>
             <TabPanel value={this.state.tabValue} index={1}>
-              <AppointmentPanel />
+              <AppointmentHome />
             </TabPanel>
             <TabPanel value={this.state.tabValue} index={2}>
-              <ClientTab employeeName="Test Employee" />
+              <ClientTab />
             </TabPanel>
             <TabPanel value={this.state.tabValue} index={3}>
               <BusinessPerformance />
