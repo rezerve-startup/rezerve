@@ -350,12 +350,15 @@ const useStyles = makeStyles((theme) => ({
 }));
 */
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { loadStripe } from '@stripe/stripe-js';
 import {
   CardElement,
+  CardCvcElement,
   Elements,
   ElementsConsumer,
+  useStripe,
+  useElements,
 } from '@stripe/react-stripe-js';
 import './customer-checkout.css';
 
@@ -378,10 +381,12 @@ class CheckoutForm extends React.Component<any, any> {
       card: cardElement,
     });
 
-    //Error checking
+    // Error checking
     if (error) {
+      // tslint:disable-next-line: no-console
       console.log('[error]', error);
     } else {
+      // tslint:disable-next-line: no-console
       console.log('[PaymentMethod]', paymentMethod);
     }
   };
@@ -390,22 +395,7 @@ class CheckoutForm extends React.Component<any, any> {
     const { stripe } = this.props;
     return (
       <form onSubmit={this.handleSubmit}>
-        <CardElement
-          options={{
-            style: {
-              base: {
-                fontSize: '16px',
-                color: '#424770',
-                '::placeholder': {
-                  color: '#aab7c4',
-                },
-              },
-              invalid: {
-                color: '#9e2146',
-              },
-            },
-          }}
-        />
+        <CardElement options={cardStyle} />
         <button type="submit" disabled={!stripe}>
           Pay
         </button>
@@ -414,7 +404,25 @@ class CheckoutForm extends React.Component<any, any> {
   }
 }
 
-const InjectedCheckoutForm = () => {
+const cardStyle = {
+  style: {
+    base: {
+      color: '#32325d',
+      fontFamily: 'Courier, monospace',
+      fontSmoothing: 'antialiased',
+      fontSize: '16px',
+      '::placeholder': {
+        color: '#32325d',
+      },
+    },
+    invalid: {
+      color: '#fa755a',
+      iconColor: '#fa755a',
+    },
+  },
+};
+
+const PaymentInfo = () => {
   return (
     <ElementsConsumer>
       {({ elements, stripe }) => (
@@ -424,12 +432,13 @@ const InjectedCheckoutForm = () => {
   );
 };
 
+// Test API key
 const stripePromise = loadStripe('pk_test_6pRNASCoBOKtIshFeQd4XMUh');
 
 const CustomerCheckout = () => {
   return (
     <Elements stripe={stripePromise}>
-      <InjectedCheckoutForm />
+      <PaymentInfo />
     </Elements>
   );
 };
