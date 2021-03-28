@@ -433,7 +433,13 @@ const PaymentInfo = () => {
 };
 
 // Test API key
-const stripePromise = loadStripe('pk_test_6pRNASCoBOKtIshFeQd4XMUh');
+const stripePromise = loadStripe('pk_test_TYooMQauvdEDq54NiTphI7jx');
+
+const calculateOrderAmount = (items) => {
+
+  return 1400;
+};
+
 
 const CustomerCheckout = () => {
   return (
