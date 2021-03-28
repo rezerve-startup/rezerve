@@ -1,5 +1,25 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
+import {
+  Snackbar,
+  makeStyles,
+  Theme,
+  Button,
+  CircularProgress,
+} from '@material-ui/core';
+import MuiAlert, { Alert, AlertProps } from '@material-ui/lab';
 import { CardElement, useStripe, useElements } from '@stripe/react-stripe-js';
+
+const useStyles = makeStyles((theme: Theme) => ({
+  root: {
+    width: '100%',
+    '& > * + *': {
+      marginTop: theme.spacing(2),
+    },
+  },
+  spinner: {
+    marginLeft: theme.spacing(2),
+  },
+}));
 
 export default function CheckoutForm() {
   const [succeeded, setSucceeded] = React.useState<boolean>(false);
@@ -7,8 +27,31 @@ export default function CheckoutForm() {
   const [processing, setProcessing] = React.useState<boolean>(false);
   const [disabled, setDisabled] = React.useState<boolean>(true);
   const [clientSecret, setClientSecret] = React.useState<string>('');
+  const [snackSeverity, setSnackSeverity] = React.useState<
+    'error' | 'success' | 'info' | 'warning' | undefined
+  >(undefined);
+  const [snackMessage, setSnackMessage] = React.useState<string>('');
   const stripe = useStripe();
   const elements = useElements();
+  const classes = useStyles();
+  const [open, setOpen] = React.useState(false);
+
+  // Spinner on button
+  const SpinnerAdornment = (props: any) => {
+    // tslint:disable-next-line: no-shadowed-variable
+    const classes = useStyles();
+    return <CircularProgress className={classes.spinner} size={20} />;
+  };
+
+  const AdornedButton = (props) => {
+    const { children, loading, ...rest } = props;
+    return (
+      <Button {...rest}>
+        {children}
+        {loading && <SpinnerAdornment {...rest} />}
+      </Button>
+    );
+  };
 
   useEffect(() => {
     // Create PaymentIntent as soon as the page loads
@@ -65,44 +108,64 @@ export default function CheckoutForm() {
         },
       })
       .then((result) => {
-        setError(null);
-        setSucceeded(true);
+        if (result.error) {
+          setSnackSeverity('error');
+          setSnackMessage(`Error: ${result.error.message}`);
+        } else {
+          setError(null);
+          setSucceeded(true);
+          setSnackSeverity('success');
+          setSnackMessage('Payment processed');
+        }
       })
       .catch((e) => {
-        setError('Payment failed');
+        setSnackSeverity('error');
+        setSnackMessage(`Error: ${e.message}`);
       })
       .finally(() => {
         setProcessing(false);
+        setOpen(true);
       });
   };
 
+  const handleClose = (event?: React.SyntheticEvent, reason?: string) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+
+    setOpen(false);
+  };
+
   return (
-    <form id="payment-form" onSubmit={handleSubmit}>
-      <CardElement
-        id="card-element"
-        options={cardStyle}
-        onChange={handleChange}
-      />
-      <button disabled={processing || disabled || succeeded} id="submit">
-        <span id="button-text">
-          {processing ? <div className="spinner" id="spinner" /> : 'Pay now'}
-        </span>
-      </button>
-      {/* Show any error that happens when processing the payment */}
-      {error && (
-        <div className="card-error" role="alert">
-          {error}
-        </div>
-      )}
-      {/* Show a success message upon completion */}
-      <p className={succeeded ? 'result-message' : 'result-message hidden'}>
-        Payment succeeded, see the result in your
-        <a href={`https://dashboard.stripe.com/test/payments`}>
-          {' '}
-          Stripe dashboard.
-        </a>{' '}
-        Refresh the page to pay again.
-      </p>
-    </form>
+    <div>
+      <form id="payment-form" onSubmit={handleSubmit}>
+        <CardElement
+          id="card-element"
+          options={cardStyle}
+          onChange={handleChange}
+        />
+        <AdornedButton
+          disabled={processing || disabled || succeeded}
+          id="submit"
+          color="primary"
+          variant="contained"
+          type="submit"
+          loading={processing}
+          fullWidth={true}
+        >
+          {processing ? '' : 'Pay now'}
+        </AdornedButton>
+        <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
+          <Alert
+            onClose={handleClose}
+            variant="filled"
+            elevation={6}
+            severity={snackSeverity}
+          >
+            {snackMessage}
+          </Alert>
+        </Snackbar>
+      </form>
+    </div>
   );
 }
