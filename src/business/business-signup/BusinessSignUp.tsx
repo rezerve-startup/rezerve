@@ -25,6 +25,9 @@ import {
   Fab,
   Dialog,
   Snackbar,
+  Divider,
+  MobileStepper,
+  colors
 } from '@material-ui/core';
 import { connect } from 'react-redux';
 import { auth, firestore } from '../../config/FirebaseConfig';
@@ -35,11 +38,17 @@ import {
   ArrowBack,
   ArrowForward,
   Close,
+  KeyboardArrowLeft,
+  KeyboardArrowRight
 } from '@material-ui/icons';
 import { AsYouType, parsePhoneNumber } from 'libphonenumber-js';
 import { Alert } from '@material-ui/lab';
 import { StoreState, SystemState } from '../../shared/store/types';
+import { Business } from '../../types/Business'
+import { User } from '../../types/User'
 import BusinessRegisterLogin from './BusinessRegisterLogin';
+import UserInfoForm from '../../shared/sign-up/UserInfoForm'
+import BusinessInfoFrom from './BusinessInfoForm'
 
 
 interface Errors {}
@@ -53,6 +62,7 @@ function mapStateToProps(state: StoreState) {
 interface ComponentState {
   open: boolean;
   loading: boolean;
+  activeStep: number;
   validForm: boolean;
   creatingUserAccount: boolean;
   errors: Errors;
@@ -61,6 +71,18 @@ interface ComponentState {
     message: string;
     type: 'error' | 'success' | undefined;
   };
+  email: string;
+  firstName: string;
+  lastName: string;
+  phone: string;
+  password: string;
+  name: string;
+  address: string;
+  city: string;
+  state: string;
+  zipcode: string;
+  description: string;
+  coverImage: string;
 };
 
 type State = ComponentState & SystemState;
@@ -71,6 +93,7 @@ class BusinessSignUp extends React.Component<any, State> {
     this.state = {
       open: false,
       loading: false,
+      activeStep: 0,
       validForm: false,
       creatingUserAccount: false,
       errors: {},
@@ -79,89 +102,38 @@ class BusinessSignUp extends React.Component<any, State> {
         message: '',
         type: undefined,
       },
+      email: 'testuser@gmail.com',
+      firstName: 'Test',
+      lastName: 'User',
+      phone: '',
+      password: 'password',
+      name: '',
+      address: '',
+      city: '',
+      state: '',
+      zipcode: '',
+      description: '',
+      coverImage: '',
       loggedIn: props.system.loggedIn,
       session: props.system.session,
       user: props.system.user,
     };
-
-    // this.handleChange = this.handleChange.bind(this);
-    this.handleSubmit = this.handleSubmit.bind(this);
-    // this.createNewCustomer = this.createNewCustomer.bind(this);
   }
 
-  componentDidMount() {
-    this.validateForm(this.state.errors);
+  updateValue = (name: string, value: string, valid: boolean) => {
+    this.setState({ ...this.state, validForm: valid, [name]: value });
+  };
 
-    /* const businesses = this.state.businesses;
+  handleNext = () => { this.setState({ ...this.state, activeStep: this.state.activeStep + 1 })}
 
-    firestore.collection('businesses').onSnapshot((snapshot) => {
-      snapshot.docs.forEach((doc) => {
-        const business = doc.data();
-        for (let index = 0; index < 10; index++) {
-          businesses.push({
-            name: business.name,
-            location: `${business.about.city}, ${business.about.state}`,
-            image: business.coverImage,
-          });
-        }
-      });
-    });
-
-    this.setState({ ...this.state, businesses }); */
-  }
-
- /*  validateEmail(email: string): boolean {
-    const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-    return re.test(String(email).toLowerCase());
-  }
-
-  validatePhone(phone: string): boolean {
-    const phoneNumber = parsePhoneNumber(phone);
-    return phoneNumber.isValid();
-  }
-
-
-  handleChange(event: React.ChangeEvent<HTMLInputElement>) {
-    event.preventDefault();
-    const { name, value } = event.target;
-
-    const errors = this.state.errors;
-
-    switch (name) {
-      case 'email':
-        errors.email = this.validateEmail(value) ? '' : 'Email is not valid';
-        break;
-      case 'password':
-        errors.password =
-          value.length < 8 ? 'Password must be 8 characters long.' : '';
-        break;
-      case 'phone':
-        const num = new AsYouType('US');
-        num.input(value);
-        errors.phone = num.isValid() ? '' : 'Phone number is not valid';
-        break;
-      default:
-        break;
-    }
-
-    const validForm = this.validateForm(errors);
-    this.setState({ ...this.state, validForm, errors, [name]: value });
-  } */
-  validateForm = (errors: Errors) => {
-    let valid = true;
-    Object.values(errors).forEach(
-      (val: string) => val.length > 0 && (valid = false),
-    );
-
-    return valid;
-  }
+  handlePrev = () => { this.setState({ ...this.state, activeStep: this.state.activeStep - 1 })}
 
   handleSubmit(
     event: React.FormEvent<HTMLButtonElement> &
       React.FormEvent<HTMLFormElement>,
   ) {
     event.preventDefault();
-    if (this.validateForm(this.state.errors)) {
+    if (this.state.validForm) {
       console.log("Creating Business");
     } else {
       console.log('Invalid form');
@@ -269,57 +241,80 @@ class BusinessSignUp extends React.Component<any, State> {
           variant="contained"
           endIcon={<ArrowForward />}
           onClick={this.openDialog}
-          className={classes.customerButton}
+          className={classes.businessButton}
         >
           Business
         </Button>
         <Dialog open={this.state.open} fullScreen={true} disableBackdropClick={true}>
           <Card className={classes.card} elevation={0}>
-            <Fab
-              color="primary"
-              size="small"
-              variant="extended"
-            >
-              <ArrowBack />
-              &nbsp;Back
-            </Fab>
-            {(!loggedIn && !creatingUserAccount) ? (
-              <BusinessRegisterLogin handleSignUp={this.handleSignUp} />
-            ) : (
-              <form
-                className={classes.root}
-                onSubmit={this.handleSubmit}
-                noValidate={true}
-                autoComplete="off"
+            <CardContent style={{ padding: '4px' }}>
+              <Fab
+                className={classes.backFab}
+                color="primary"
+                size="small"
+                variant="extended"
               >
-                <CardContent>
-                  <Typography
-                    className={classes.title}
-                    gutterBottom={true}
-                    variant="overline"
-                    component="p"
+                <ArrowBack />
+                &nbsp;Back
+              </Fab>
+              {(!loggedIn && !creatingUserAccount) ? (
+                <BusinessRegisterLogin handleSignUp={this.handleSignUp} />
+              ) : (
+                <div className={classes.root}>
+                  <form
+                    className={classes.root}
+                    onSubmit={this.handleSubmit}
+                    noValidate={true}
+                    autoComplete="off"
                   >
-                    Create User Account
-                  </Typography>
-                  <Typography
-                    variant="caption"
-                    component="p"
-                    color="textSecondary"
-                    align="center"
-                  >
-                    * means required
-                  </Typography>
-                </CardContent>
-                <Typography
-                  className={classes.title}
-                  gutterBottom={true}
-                  variant="overline"
-                  component="p"
-                >
-                  Create Business Account
-                </Typography>
-              </form>
-            )}
+                    {(this.state.activeStep === 0) ? (
+                      <UserInfoForm
+                        title="Personal Info"
+                        email={this.state.email}
+                        firstName={this.state.firstName}
+                        lastName={this.state.lastName}
+                        phone={this.state.phone}
+                        password={this.state.password}
+                        updateValue={this.updateValue}
+                      />
+                    ) : (this.state.activeStep === 1) ? (
+                      <BusinessInfoFrom
+                        title="Business Info"
+                        name={this.state.name}
+                        address={this.state.address}
+                        city={this.state.city}
+                        state={this.state.state}
+                        zipcode={this.state.zipcode}
+                        description={this.state.description}
+                        coverImage={this.state.coverImage}
+                        updateValue={this.updateValue}
+                      />
+                    ) : (
+                      <Typography variant="subtitle1" component="p">Review</Typography>
+                    )
+                    }
+                  </form>
+                  <MobileStepper
+                    variant="dots"
+                    steps={3}
+                    position="bottom"
+                    activeStep={this.state.activeStep}
+                    nextButton={
+                      <Button size="small" variant="text" onClick={this.handleNext} disabled={!this.state.validForm || this.state.activeStep === 2} >
+                        Continue
+                        {<KeyboardArrowRight />}
+                      </Button>
+                    }
+                    backButton={
+                      <Button size="small" onClick={this.handlePrev} disabled={this.state.activeStep === 0}>
+                        {<KeyboardArrowLeft />}
+                        Back
+                      </Button>
+                    }
+                  />
+                </div>
+              )}
+            </CardContent>
           </Card>
         </Dialog>
       </div>
@@ -329,18 +324,17 @@ class BusinessSignUp extends React.Component<any, State> {
 
 const styles = (theme: Theme) => createStyles({
   root: {
-    flex: 1,
+    flexGrow: 1
   },
   card: {
     padding: '4px',
-    height: '200vh',
     overflow: 'auto'
   },
   title: {
     textAlign: 'center',
-    fontSize: '20'
+    fontSize: 24
   },
-  customerButton: {
+  businessButton: {
     backgroundColor: theme.palette.secondary.dark,
     color: theme.palette.primary.light,
     borderRadius: '0',

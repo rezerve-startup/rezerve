@@ -1,6 +1,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import {
+  colors,
   createMuiTheme,
   createStyles,
   Theme,
@@ -10,7 +11,7 @@ import {
 
 import BusinessInfo from './business/business-info/BusinessInfo';
 import BusinessHome from './business/business-home/BusinessHome';
-import BusinessAccountInfo from './business/business-signup/BusinAccInfo';
+import BusinessAccountInfo from './business/business-signup/BusinessInfoForm';
 import BusinessSignUp from './business/business-signup/BusinessSignUp';
 import BusinessPersonalInfo from './business/business-signup/BusinPersInfoPage';
 

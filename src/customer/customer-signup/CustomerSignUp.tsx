@@ -3,7 +3,6 @@ import {
   Button,
   Theme,
   createStyles,
-  TextField,
   Card,
   withStyles,
   Grid,
@@ -11,7 +10,6 @@ import {
   Typography,
   CardActions,
   CardMedia,
-  InputAdornment,
   IconButton,
   CircularProgress,
   Checkbox,
@@ -24,30 +22,14 @@ import {
   ListSubheader,
   Fab,
   Dialog,
-  Snackbar,
+  Snackbar
 } from '@material-ui/core';
 import { createNewCustomer } from '../../shared/store/actions';
 import { connect } from 'react-redux';
 import { auth, firestore } from '../../config/FirebaseConfig';
-import {
-  Visibility,
-  VisibilityOff,
-  Image,
-  ArrowBack,
-  ArrowForward,
-  Close,
-} from '@material-ui/icons';
-import { AsYouType, parsePhoneNumber } from 'libphonenumber-js';
+import { Image, ArrowBack, ArrowForward, Close } from '@material-ui/icons';
 import { Alert } from '@material-ui/lab';
-import UserSignUp from '../../shared/sign-up/UserSignUp';
-
-interface Errors {
-  email: string;
-  firstName: string;
-  lastName: string;
-  phone: string;
-  password: string;
-}
+import UserInfoForm from '../../shared/sign-up/UserInfoForm';
 
 type State = {
   open: boolean;
@@ -57,17 +39,15 @@ type State = {
   lastName: string;
   phone: string;
   password: string;
-  showPassword: boolean;
   validForm: boolean;
   customerId: string;
   isEmployee: boolean;
   businesses: any[];
   selectedBusiness: {} | undefined;
-  errors: Errors;
   snackbar: {
     open: boolean;
     message: string;
-    type: 'error' | 'success' | undefined;
+    type: "error" | "success" | "info" | "warning" | undefined;
   };
 };
 
@@ -87,40 +67,19 @@ class CustomerSignUp extends React.Component<any, State> {
       lastName: 'User',
       phone: '501-888-8888',
       password: 'password',
-      showPassword: false,
       customerId: '',
       isEmployee: false,
       businesses: [],
       selectedBusiness: undefined,
-      errors: {
-        email: '',
-        firstName: '',
-        lastName: '',
-        phone: '',
-        password: '',
-      },
       snackbar: {
         open: false,
         message: '',
         type: undefined,
       },
     };
-
-    this.handleChange = this.handleChange.bind(this);
-    this.handleSubmit = this.handleSubmit.bind(this);
-    this.toggleShowPassword = this.toggleShowPassword.bind(this);
-    this.toggleIsEmployee = this.toggleIsEmployee.bind(this);
-    this.openDialog = this.openDialog.bind(this);
-    this.closeDialog = this.closeDialog.bind(this);
-    this.openSnackbar = this.openSnackbar.bind(this);
-    this.handleCloseSnackbar = this.handleCloseSnackbar.bind(this);
-    this.handleBusinessSelect = this.handleBusinessSelect.bind(this);
-    this.createNewCustomer = this.createNewCustomer.bind(this);
   }
 
   componentDidMount() {
-    this.validateForm(this.state.errors);
-
     const businesses = this.state.businesses;
 
     firestore.collection('businesses').onSnapshot((snapshot) => {
@@ -139,94 +98,44 @@ class CustomerSignUp extends React.Component<any, State> {
     this.setState({ ...this.state, businesses });
   }
 
-  validateEmail(email: string): boolean {
-    const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-    return re.test(String(email).toLowerCase());
-  }
-
-  validatePhone(phone: string): boolean {
-    const phoneNumber = parsePhoneNumber(phone);
-    return phoneNumber.isValid();
-  }
-
-  validateForm = (errors: Errors) => {
-    let valid = true;
-    Object.values(errors).forEach(
-      (val: string) => val.length > 0 && (valid = false),
-    );
-
-    if (
-      this.state.email === '' ||
-      this.state.password === '' ||
-      this.state.firstName === '' ||
-      this.state.lastName === ''
-    ) {
-      valid = false;
-    }
-
-    return valid;
+  updateValue = (name: string, value: string, valid: boolean) => {
+    this.setState({ ...this.state, validForm: valid, [name]: value });
   };
 
-  handleChange(event: React.ChangeEvent<HTMLInputElement>) {
-    event.preventDefault();
-    const { name, value } = event.target;
-
-    const errors = this.state.errors;
-
-    switch (name) {
-      case 'email':
-        errors.email = this.validateEmail(value) ? '' : 'Email is not valid';
-        break;
-      case 'password':
-        errors.password =
-          value.length < 8 ? 'Password must be 8 characters long.' : '';
-        break;
-      case 'phone':
-        const num = new AsYouType('US');
-        num.input(value);
-        errors.phone = num.isValid() ? '' : 'Phone number is not valid';
-        break;
-      default:
-        break;
-    }
-
-    const validForm = this.validateForm(errors);
-    this.setState({ ...this.state, validForm, errors, [name]: value });
-  }
-
-  handleSubmit(
+  handleSubmit = (
     event: React.FormEvent<HTMLButtonElement> &
       React.FormEvent<HTMLFormElement>,
-  ) {
+  ) => {
     event.preventDefault();
-    if (this.validateForm(this.state.errors)) {
+    if (this.state.validForm) {
       this.createNewCustomer();
     } else {
       console.log('Invalid form');
     }
-  }
+  };
 
-  toggleShowPassword(event: React.MouseEvent<HTMLButtonElement>) {
-    this.setState({ ...this.state, showPassword: !this.state.showPassword });
-  }
+  toggleIsEmployee = (event: React.MouseEvent<HTMLButtonElement>) => {
+    const selectedBusiness = this.state.selectedBusiness !== undefined;
+    this.setState({
+      ...this.state,
+      isEmployee: !this.state.isEmployee,
+      validForm: selectedBusiness,
+    });
+  };
 
-  toggleIsEmployee(event: React.MouseEvent<HTMLButtonElement>) {
-    this.setState({ ...this.state, isEmployee: !this.state.isEmployee });
-  }
-
-  openDialog(event: React.MouseEvent<HTMLButtonElement>) {
+  openDialog = (event: React.MouseEvent<HTMLButtonElement>) => {
     this.setState({ ...this.state, open: true });
-  }
+  };
 
-  closeDialog(event: React.MouseEvent<HTMLElement>) {
+  closeDialog = (event: React.MouseEvent<HTMLElement>) => {
     alert('Are you sure you want to cancel creating your account?');
     this.setState({ ...this.state, open: false });
-  }
+  };
 
-  handleCloseSnackbar(
+  handleCloseSnackbar = (
     event: React.SyntheticEvent | React.MouseEvent,
     reason?: string,
-  ) {
+  ) => {
     if (reason === 'clickaway') {
       return;
     }
@@ -235,26 +144,30 @@ class CustomerSignUp extends React.Component<any, State> {
       ...this.state,
       snackbar: { open: false, message: '', type: undefined },
     });
-  }
+  };
 
-  openSnackbar(event: React.MouseEvent<HTMLButtonElement>) {
+  openSnackbar = (event: React.MouseEvent<HTMLButtonElement>) => {
     this.setState({
       ...this.state,
-      snackbar: { open: true, message: 'Testing 1 2 3', type: 'success' },
+      snackbar: { open: true, message: 'Testing 1 2 3', type: "success" },
     });
-  }
+  };
 
-  handleBusinessSelect(business) {
-    this.setState({ ...this.state, selectedBusiness: business });
-  }
+  handleBusinessSelect = (business) => {
+    const valid = business !== undefined && this.state.isEmployee;
+    this.setState({
+      ...this.state,
+      selectedBusiness: business,
+      validForm: valid,
+    });
+  };
 
   dispatchCreateCustomer = (newCustomerId: string) => (newCustomer: any) => {
     this.props.createNewCustomer(newCustomerId, newCustomer);
   };
 
-  createNewCustomer() {
+  createNewCustomer = () => {
     this.setState({ ...this.state, loading: true });
-    const errors = this.state.errors;
 
     auth
       .createUserWithEmailAndPassword(this.state.email, this.state.password)
@@ -285,6 +198,17 @@ class CustomerSignUp extends React.Component<any, State> {
               })
               .catch((e) => {
                 console.log(e);
+              })
+              .finally(() => {
+                this.setState({
+                  ...this.state,
+                  loading: false,
+                  snackbar: {
+                    open: true,
+                    message: 'Successfully created your account',
+                    type: "success",
+                  },
+                });
               });
           })
           .catch((e) => {
@@ -292,38 +216,37 @@ class CustomerSignUp extends React.Component<any, State> {
           });
       })
       .catch((err) => {
+        let message = ''
         switch (err.code) {
           case 'auth/email-already-in-use':
-            errors.email = 'This email is already in use.';
+            message = 'This email is already in use.';
             break;
           case 'auth/invalid-email':
-            errors.email = 'This email is invalid.';
+            message = 'This email is invalid.';
             break;
           case 'auth/weak-password':
-            errors.password = 'This password is too weak.';
+            message = 'This password is too weak.';
             break;
           default:
             break;
         }
 
-        this.setState({ ...this.state, validForm: false, errors });
-      })
-      .finally(() => {
         this.setState({
           ...this.state,
+          validForm: false,
           loading: false,
           snackbar: {
             open: true,
-            message: 'Successfully created your account',
-            type: 'success',
+            message,
+            type: 'error'
           },
         });
       });
-  }
+  };
 
   render() {
     const { classes } = this.props;
-    const { errors, showPassword, snackbar } = this.state;
+    const { snackbar } = this.state;
 
     return (
       <div className={classes.root}>
@@ -347,7 +270,6 @@ class CustomerSignUp extends React.Component<any, State> {
             <form
               className={classes.formRoot}
               onSubmit={this.handleSubmit}
-              noValidate={true}
               autoComplete="off"
             >
               <CardContent>
@@ -360,99 +282,15 @@ class CustomerSignUp extends React.Component<any, State> {
                   <ArrowBack />
                   &nbsp;Back
                 </Fab>
-                <Typography
-                  className={classes.title}
-                  gutterBottom={true}
-                  variant="overline"
-                  component="p"
-                >
-                  Create Account
-                </Typography>
-                <Typography
-                  variant="caption"
-                  component="p"
-                  color="textSecondary"
-                  align="center"
-                >
-                  * means required
-                </Typography>
-                <Grid container={true} spacing={2} style={{ marginTop: '4px' }}>
-                  <Grid item={true} xs={12}>
-                    <TextField
-                      name="email"
-                      label="Email"
-                      type="email"
-                      value={this.state.email}
-                      fullWidth={true}
-                      onChange={this.handleChange}
-                      error={errors.email.length > 0}
-                      helperText={errors.email}
-                      required={true}
-                      variant="outlined"
-                    />
-                  </Grid>
-                  <Grid item={true} xs={12}>
-                    <TextField
-                      name="password"
-                      label="Password"
-                      type={showPassword ? 'text' : 'password'}
-                      value={this.state.password}
-                      fullWidth={true}
-                      onChange={this.handleChange}
-                      error={errors.password.length > 0}
-                      helperText={errors.password}
-                      required={true}
-                      variant="outlined"
-                      InputProps={{
-                        endAdornment: (
-                          <InputAdornment position="end">
-                            <IconButton onClick={this.toggleShowPassword}>
-                              {showPassword ? (
-                                <Visibility />
-                              ) : (
-                                <VisibilityOff />
-                              )}
-                            </IconButton>
-                          </InputAdornment>
-                        ),
-                      }}
-                    />
-                  </Grid>
-                  <Grid item={true} xs={6}>
-                    <TextField
-                      name="firstName"
-                      label="First Name"
-                      value={this.state.firstName}
-                      fullWidth={true}
-                      onChange={this.handleChange}
-                      required={true}
-                      variant="outlined"
-                    />
-                  </Grid>
-                  <Grid item={true} xs={6}>
-                    <TextField
-                      name="lastName"
-                      label="Last Name"
-                      value={this.state.lastName}
-                      fullWidth={true}
-                      onChange={this.handleChange}
-                      required={true}
-                      variant="outlined"
-                    />
-                  </Grid>
-                  <Grid item={true} xs={12}>
-                    <TextField
-                      name="phone"
-                      label="Phone Number"
-                      value={this.state.phone}
-                      fullWidth={true}
-                      onChange={this.handleChange}
-                      error={errors.phone.length > 0}
-                      helperText={errors.phone}
-                      variant="outlined"
-                    />
-                  </Grid>
-                </Grid>
+                <UserInfoForm
+                  title="Create Account"
+                  email={this.state.email}
+                  firstName={this.state.firstName}
+                  lastName={this.state.lastName}
+                  phone={this.state.phone}
+                  password={this.state.password}
+                  updateValue={this.updateValue}
+                />
 
                 <Grid
                   container={true}
@@ -501,7 +339,6 @@ class CustomerSignUp extends React.Component<any, State> {
             open={snackbar.open}
             autoHideDuration={6000}
             onClose={this.handleCloseSnackbar}
-            message={snackbar.message}
             action={
               <React.Fragment>
                 <IconButton
@@ -513,7 +350,11 @@ class CustomerSignUp extends React.Component<any, State> {
                 </IconButton>
               </React.Fragment>
             }
-          />
+          >
+            <Alert onClose={this.handleCloseSnackbar} severity={snackbar.type} variant="filled" elevation={6}>
+              { snackbar.message }
+            </Alert>
+          </Snackbar>
         </Dialog>
       </div>
     );
@@ -531,7 +372,7 @@ const styles = (theme: Theme) =>
     card: {
       padding: '4px',
       height: '100vh',
-      overflow: 'auto'
+      overflow: 'auto',
     },
     title: {
       textAlign: 'center',
@@ -633,6 +474,7 @@ const BusinessSearchComponent = withStyles(styles, { withTheme: true })(
       >
         {businesses.map((business, idx) => {
           return (
+            // tslint:disable-next-line: jsx-no-lambda
             <ListItem key={idx} onClick={() => handleClick(business)}>
               <ListItemAvatar>
                 <Avatar>
@@ -703,5 +545,5 @@ const BusinessSearchComponent = withStyles(styles, { withTheme: true })(
 );
 
 export default connect(mapStateToProps, { createNewCustomer })(
-  withStyles(styles, { withTheme: true })(UserSignUp),
+  withStyles(styles, { withTheme: true })(CustomerSignUp),
 );
