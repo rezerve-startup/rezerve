@@ -350,103 +350,22 @@ const useStyles = makeStyles((theme) => ({
 }));
 */
 
-import React, { useState, useEffect } from 'react';
-import { loadStripe } from '@stripe/stripe-js';
-import {
-  CardElement,
-  CardCvcElement,
-  Elements,
-  ElementsConsumer,
-  useStripe,
-  useElements,
-} from '@stripe/react-stripe-js';
-import './customer-checkout.css';
+import React from "react";
+import { loadStripe } from "@stripe/stripe-js";
+import { Elements } from "@stripe/react-stripe-js";
+import CheckoutForm from "./CheckoutForm";
+import "./CustomerCheckout.css";
 
-class CheckoutForm extends React.Component<any, any> {
-  handleSubmit = async (event) => {
-    // Block native form submission.
-    event.preventDefault();
 
-    const { stripe, elements } = this.props;
+const promise = loadStripe("pk_test_TYooMQauvdEDq54NiTphI7jx");
 
-    // Check to see if Stripe.js has not loaded
-    if (!stripe || !elements) {
-      return;
-    }
-
-    const cardElement = elements.getElement(CardElement);
-
-    const { error, paymentMethod } = await stripe.createPaymentMethod({
-      type: 'card',
-      card: cardElement,
-    });
-
-    // Error checking
-    if (error) {
-      // tslint:disable-next-line: no-console
-      console.log('[error]', error);
-    } else {
-      // tslint:disable-next-line: no-console
-      console.log('[PaymentMethod]', paymentMethod);
-    }
-  };
-
-  render() {
-    const { stripe } = this.props;
-    return (
-      <form onSubmit={this.handleSubmit}>
-        <CardElement options={cardStyle} />
-        <button type="submit" disabled={!stripe}>
-          Pay
-        </button>
-      </form>
-    );
-  }
+export default function CustomerCheckout() {
+  return (
+    <div className="App">
+      <Elements stripe={promise}>
+        <CheckoutForm />
+      </Elements>
+    </div>
+  );
 }
 
-const cardStyle = {
-  style: {
-    base: {
-      color: '#32325d',
-      fontFamily: 'Courier, monospace',
-      fontSmoothing: 'antialiased',
-      fontSize: '16px',
-      '::placeholder': {
-        color: '#32325d',
-      },
-    },
-    invalid: {
-      color: '#fa755a',
-      iconColor: '#fa755a',
-    },
-  },
-};
-
-const PaymentInfo = () => {
-  return (
-    <ElementsConsumer>
-      {({ elements, stripe }) => (
-        <CheckoutForm elements={elements} stripe={stripe} />
-      )}
-    </ElementsConsumer>
-  );
-};
-
-// Test API key
-const stripePromise = loadStripe('pk_test_TYooMQauvdEDq54NiTphI7jx');
-
-const calculateOrderAmount = (items) => {
-
-  return 1400;
-};
-
-
-const CustomerCheckout = () => {
-  return (
-    <Elements stripe={stripePromise}>
-      <PaymentInfo />
-    </Elements>
-  );
-};
-
-export default CustomerCheckout;

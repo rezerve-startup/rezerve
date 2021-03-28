@@ -27,7 +27,7 @@ import { StoreState, SystemState } from './shared/store/types';
 import { updateUser } from './shared/store/actions';
 import TempLoginPage from './shared/TempLoginPage';
 
-import CustomerCheckout from './customer/customer-checkout/customer-checkout';
+import CustomerCheckout from './customer/customer-checkout/CustomerCheckout';
 
 const routes = [
   /* { path: "/help", component: Help },
