@@ -28,7 +28,7 @@ const styles = (theme: Theme) =>
       flexGrow: 1,
     },
     heading: {
-      fontSize: theme.typography.pxToRem(15),
+      fontSize: '0.9rem',
       fontWeight: theme.typography.fontWeightRegular,
     },
     button: {
@@ -43,8 +43,15 @@ const styles = (theme: Theme) =>
       color: theme.palette.text.secondary,
     },
     column: {
-      flexBasis: '33.33%',
+      fontSize: '0.75rem',
+      flexBasis: '50%'
     },
+    apptTimeColumn: {
+      height: '100%',
+      alignItems: 'center',
+      justifyContent: 'center',
+      display: 'flex'
+    }
   });
 
 function mapStateToProps(state: StoreState) {
@@ -58,6 +65,7 @@ function mapStateToProps(state: StoreState) {
     if (appointmentDate.valueOf() > currentDate) {
 
       appointment.startTime = moment(appointmentDate.toISOString()).format('h:mm A');
+      appointment.endTime = moment(appointmentDate.toISOString()).add(30 * appointment.service.length, 'minutes').format('h:mm A');
 
       upcomingAppointments.push(appointment);
     }
@@ -109,17 +117,11 @@ class Upcoming extends React.Component<Props, State> {
                 <Typography>{appt.client.firstName}</Typography>
               </div>
               <div className={classes.column}>
-                <Typography className={classes.heading}>
-                  {appt.startTime}
-                </Typography>
-              </div>
-              <div className={classes.column}>
-                <Typography
-                  className={classes.heading}
-                  style={{ margin: 'auto' }}
-                >
-                  {appt.service.length * 15} min
-                </Typography>
+                <div className={classes.apptTimeColumn}>
+                  <Typography className={classes.heading}>
+                    {appt.startTime} - {appt.endTime}
+                  </Typography>
+                </div>
               </div>
             </AccordionSummary>
             <AccordionDetails>
@@ -153,8 +155,6 @@ class Upcoming extends React.Component<Props, State> {
   }
 
   handleClick(item: IncomingSchedule) {
-    // tslint:disable-next-line: no-console
-    console.log(item);
     this.updateItem(item.id);
   }
 

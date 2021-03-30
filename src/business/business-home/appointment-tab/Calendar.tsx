@@ -43,7 +43,6 @@ const styles = (theme: Theme) =>
   });
 
 function mapStateToProps(state: StoreState) {
-  console.log(state.system.user.employeeInfo);
 
   let scheduleItems: any[] = [];
 
@@ -59,8 +58,6 @@ function mapStateToProps(state: StoreState) {
 
     scheduleItems.push(apptToAdd);
   }
-
-  console.log(scheduleItems);
 
   return({
     scheduleItems: scheduleItems

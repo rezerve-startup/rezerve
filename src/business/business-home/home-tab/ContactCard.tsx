@@ -166,8 +166,6 @@ class ContactCard extends React.Component<any, State> {
     const emailRegex = /.+@.+/;
 
     if (this.state.phone.match(phoneRegex) && this.state.email.match(emailRegex)) {
-      console.log(this.state.phone);
-
       this.dispatchSetEmployeePhone(this.state.phone);
       this.dispatchSetEmployeeEmail(this.state.email);
       this.update();

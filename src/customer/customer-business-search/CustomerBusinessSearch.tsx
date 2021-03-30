@@ -214,9 +214,9 @@ class CustomerBusinessSearch extends React.Component<
                         //onChange={handleChange}
                         IconComponent={ExpandMoreIcon}
                       >
-                        <option value={1}>SortBy: Near me</option>
-                        <option value={2}>SortBy: Ratings</option>
-                        <option value={3}>SortBy: Name </option>
+                        <option value={1}>Sort By: Near me</option>
+                        <option value={2}>Sort By: Ratings</option>
+                        <option value={3}>Sort By: Name </option>
                       </Select>
                     </FormControl>
                   </Grid>
@@ -240,9 +240,9 @@ class CustomerBusinessSearch extends React.Component<
                         <div className={classes.previewBottomInfo}>
                           <div className={classes.previewBottomDistance}>
                             <LocationOn />
-                            0.2
+                            0.2 mi
                           </div>
-                          <div>
+                          <div className={classes.previewBottomRating}>
                             <Rating
                               size="small"
                               value={business.businessInfo.performance.rating}
@@ -369,10 +369,14 @@ const styles = (theme: Theme) =>
       justifyContent: 'space-between',
     },
     previewBottomDistance: {
+      display: 'flex',
       alignItems: 'center',
       textAlign: 'center',
       color: theme.palette.primary.main,
       fontSize: '16px',
+    },
+    previewBottomRating: {
+      marginRight: '1rem',
     },
     starRatingFilled: {
       color: theme.palette.primary.main,
