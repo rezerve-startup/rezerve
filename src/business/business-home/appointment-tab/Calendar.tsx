@@ -97,16 +97,39 @@ class Calendar extends React.Component<Props, State> {
       <div className={classes.root}>
         <Divider />
         <Paper>
-          <Scheduler data={this.props.scheduleItems}>
+          <Scheduler 
+            data={this.props.scheduleItems}
+            
+          >
             <ViewState currentDate={this.state.currentDate} />
-            <DayView startDayHour={8} endDayHour={17} />
-            <Appointments />
+            <DayView startDayHour={8} endDayHour={17}/>
+            <Appointments
+              appointmentComponent={Appointment}
+            />
           </Scheduler>
         </Paper>
       </div>
     );
   }
 }
+
+const Appointment = ({
+  children, data, draggable, resources
+}) => {
+  return (
+  <Appointments.Appointment
+    className={'.dxsc-apt-content-layer .dxeBase'}
+    data={data}
+    draggable={draggable}
+    resources={resources}
+    style={{
+      backgroundColor: '#FE8488',
+      borderRadius: '8px',
+    }}
+  >
+    {children}
+  </Appointments.Appointment>
+)};
 
 export default connect(mapStateToProps, null) (
   withStyles(styles, { withTheme: true })(Calendar)
