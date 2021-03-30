@@ -16,12 +16,12 @@ import {
 } from '@material-ui/core';
 import { Home, List, Person, Assessment } from '@material-ui/icons';
 import ClientTab from './client-tab/ClientTab';
-import HomePanel from './home-tab/HomeTab';
+import HomeTab from './home-tab/HomeTab';
 import BusinessPerformance from './business-performance/BusinessPerformance';
 import { connect } from 'react-redux';
 import { firestore } from '../../config/FirebaseConfig';
 import { StoreState } from '../../shared/store/types';
-import AppointmentPanel from './appointment-tab/AppointmentHome';
+import AppointmentHome from './appointment-tab/AppointmentHome';
 import Sidebar from '../../shared/sidebar/sidebar';
 
 const styles = (theme: Theme) =>
@@ -131,13 +131,13 @@ class BusinessHome extends React.Component<Props, State> {
             enableMouseEvents={true}
           >
             <TabPanel value={this.state.tabValue} index={0}>
-              <HomePanel isMobile={this.props.isMobile} />
+              <HomeTab isMobile={this.props.isMobile} />
             </TabPanel>
             <TabPanel value={this.state.tabValue} index={1}>
-              <AppointmentPanel />
+              <AppointmentHome />
             </TabPanel>
             <TabPanel value={this.state.tabValue} index={2}>
-              <ClientTab employeeName="Test Employee" />
+              <ClientTab />
             </TabPanel>
             <TabPanel value={this.state.tabValue} index={3}>
               <BusinessPerformance />

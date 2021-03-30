@@ -16,7 +16,6 @@ function ProfilePage() {
 
   firestore.collection('users').onSnapshot((snapshot) => {
     const data = snapshot.docs[0].data().userData;
-    console.log(data);
 
     setName(data.username);
     setPhoneNumber(data.phone_number);

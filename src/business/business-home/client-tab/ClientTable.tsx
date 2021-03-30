@@ -28,6 +28,8 @@ import image from '../../../assets/avatar.jpg';
 import { Delete, Check, Add, Search, Message } from '@material-ui/icons';
 import { Client } from '../../models/BusinessHome';
 import { SpeedDial, SpeedDialAction, SpeedDialIcon } from '@material-ui/lab';
+import { connect } from 'react-redux';
+import { StoreState } from '../../../shared/store/types';
 
 function createData(name: string, numVisits: number, picture: string): Client {
   return { name, numVisits, picture };
@@ -67,8 +69,8 @@ function getComparator<Key extends keyof any>(
   order: Order,
   orderBy: Key,
 ): (
-  a: { [key in Key]: number | string },
-  b: { [key in Key]: number | string },
+  a: any,
+  b: any,
 ) => number {
   return order === 'desc'
     ? (a, b) => descendingComparator(a, b, orderBy)
@@ -366,7 +368,27 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 );
 
-export default function ClientTable() {
+function mapStateToProps(state: StoreState) {
+  let employeeClients: any = [];
+  for (const [key, val] of Object.entries(state.system.user.employeeInfo.clients)) {
+    let clientValue: any = val;
+    
+    const client = {
+      customerId: key,
+      firstName: clientValue.firstName,
+      lastName: clientValue.lastName,
+      numVisits: clientValue.numVisits
+    };
+
+    employeeClients.push(client);
+  }
+
+  return ({
+    employeeClients: employeeClients
+  });
+}
+
+const ClientTable = (props: any) => {
   const classes = useStyles();
   const [order, setOrder] = React.useState<Order>('asc');
   const [orderBy, setOrderBy] = React.useState<keyof Client>('numVisits');
@@ -385,19 +407,19 @@ export default function ClientTable() {
 
   const handleSelectAllClick = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.checked) {
-      const newSelecteds = rows.map((n) => n.name);
+      const newSelecteds = props.employeeClients.map((client) => client.customerId);
       setSelected(newSelecteds);
       return;
     }
     setSelected([]);
   };
 
-  const handleClick = (event: React.MouseEvent<unknown>, name: string) => {
-    const selectedIndex = selected.indexOf(name);
+  const handleClick = (event: React.MouseEvent<unknown>, customerId: string) => {
+    const selectedIndex = selected.indexOf(customerId);
     let newSelected: string[] = [];
 
     if (selectedIndex === -1) {
-      newSelected = newSelected.concat(selected, name);
+      newSelected = newSelected.concat(selected, customerId);
     } else if (selectedIndex === 0) {
       newSelected = newSelected.concat(selected.slice(1));
     } else if (selectedIndex === selected.length - 1) {
@@ -423,10 +445,10 @@ export default function ClientTable() {
     setPage(0);
   };
 
-  const isSelected = (name: string) => selected.indexOf(name) !== -1;
+  const isSelected = (customerId: string) => selected.indexOf(customerId) !== -1;
 
   const emptyRows =
-    rowsPerPage - Math.min(rowsPerPage, rows.length - page * rowsPerPage);
+    rowsPerPage - Math.min(rowsPerPage, props.employeeClients.length - page * rowsPerPage);
 
   return (
     <div className={classes.root}>
@@ -445,22 +467,22 @@ export default function ClientTable() {
               orderBy={orderBy}
               onSelectAllClick={handleSelectAllClick}
               onRequestSort={handleRequestSort}
-              rowCount={rows.length}
+              rowCount={props.employeeClients.length}
             />
             <TableBody>
-              {stableSort(rows, getComparator(order, orderBy)).map(
-                (row, index) => {
-                  const isItemSelected = isSelected(row.name);
+              {stableSort(props.employeeClients, getComparator(order, orderBy)).map(
+                (client, index) => {
+                  const isItemSelected = isSelected(client.customerId);
                   const labelId = `enhanced-table-checkbox-${index}`;
 
                   return (
                     <TableRow
                       hover
-                      onClick={(event) => handleClick(event, row.name)}
+                      onClick={(event) => handleClick(event, client.customerId)}
                       role="checkbox"
                       aria-checked={isItemSelected}
                       tabIndex={-1}
-                      key={row.name}
+                      key={client.customerId}
                       selected={isItemSelected}
                     >
                       <TableCell padding="checkbox">
@@ -490,9 +512,9 @@ export default function ClientTable() {
                         scope="row"
                         padding="none"
                       >
-                        {row.name}
+                        {client.firstName}
                       </TableCell>
-                      <TableCell align="right">{row.numVisits}</TableCell>
+                      <TableCell align="right">{client.numVisits}</TableCell>
                     </TableRow>
                   );
                 },
@@ -508,7 +530,7 @@ export default function ClientTable() {
         <TablePagination
           rowsPerPageOptions={[5, 10, 25]}
           component="div"
-          count={rows.length}
+          count={props.employeeClients.length}
           rowsPerPage={rowsPerPage}
           page={page}
           onChangePage={handleChangePage}
@@ -518,3 +540,7 @@ export default function ClientTable() {
     </div>
   );
 }
+
+export default connect(mapStateToProps, null)(
+  (ClientTable)
+);
