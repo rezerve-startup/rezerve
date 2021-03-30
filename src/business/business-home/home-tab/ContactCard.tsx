@@ -11,6 +11,10 @@ import {
   Theme,
   Divider,
 } from '@material-ui/core';
+import { StoreState } from '../../../shared/store/types';
+import { setEmployeeEmail, setEmployeePhone } from '../../../shared/store/actions';
+import { connect } from 'react-redux';
+import { auth, firestore } from '../../../config/FirebaseConfig';
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -32,15 +36,43 @@ type State = {
 
 interface Props extends WithStyles<typeof styles> {}
 
-class ContactCard extends React.Component<Props, State> {
-  constructor(props: Props) {
+function mapStateToProps(state: StoreState) {
+  return ({
+    employeeId: state.system.user.employeeId,
+    employeePhone: state.system.user.phone,
+    employeeEmail: state.system.user.email
+  });
+}
+
+class ContactCard extends React.Component<any, State> {
+  constructor(props) {
     super(props);
     this.state = {
       editInfo: true,
-      phone: '444-444-4444',
-      email: 'exampleEmail@email.com',
+      phone: props.employeePhone,
+      email: props.employeeEmail,
     };
     this.handleEdit = this.handleEdit.bind(this);
+  }
+
+  dispatchSetEmployeePhone(phoneNumber: string) {
+    this.props.setEmployeePhone(phoneNumber);
+  }
+
+  dispatchSetEmployeeEmail(email: string) {
+    this.props.setEmployeeEmail(email);
+  }
+
+  handleUpdatePhoneChange(e: any) {
+    this.setState({
+      phone: e.target.value
+    });
+  }
+
+  handleUpdateEmailChange(e: any) {
+    this.setState({
+      email: e.target.value
+    });
   }
 
   render() {
@@ -52,7 +84,7 @@ class ContactCard extends React.Component<Props, State> {
         <Divider />
         {this.state.editInfo ? (
           <Typography align="left" className={classes.contacts}>
-            Phone: {this.state.phone}
+            Phone: {this.props.employeePhone}
           </Typography>
         ) : (
           // Edit/Update Phone Number
@@ -60,7 +92,10 @@ class ContactCard extends React.Component<Props, State> {
             <TextField
               label="Change Phone number"
               id="edit-phone"
-              defaultValue={this.state.phone}
+              defaultValue={this.props.employeePhone}
+              placeholder={"123-456-7890"}
+              inputProps={{ pattern: /[0-9]{3}-[0-9]{3}-[0-9]{4}/}}
+              onChange={(e) => this.handleUpdatePhoneChange(e)}
             />
             <br />
           </form>
@@ -68,7 +103,7 @@ class ContactCard extends React.Component<Props, State> {
 
         {this.state.editInfo ? (
           <Typography className={classes.contacts} align="left">
-            Email: {this.state.email}
+            Email: {this.props.employeeEmail}
           </Typography>
         ) : (
           // Edit/Update Email
@@ -76,7 +111,10 @@ class ContactCard extends React.Component<Props, State> {
             <TextField
               label="Change email address"
               id="edit-email"
-              defaultValue={this.state.email}
+              defaultValue={this.props.employeeEmail}
+              placeholder={"user@gmail.com"}
+              inputProps={{ pattern: /.*@.*/}}
+              onChange={(e) => this.handleUpdateEmailChange(e)}
             />
           </form>
         )}
@@ -113,7 +151,7 @@ class ContactCard extends React.Component<Props, State> {
         break;
       }
       case 'SaveChanges': {
-        this.updateData();
+        this.updatePhoneAndEmail();
         break;
       }
     }
@@ -123,13 +161,24 @@ class ContactCard extends React.Component<Props, State> {
     this.setState({ editInfo: !this.state.editInfo });
   }
 
-  updateData() {
-    this.setState({
-      phone: this.state.phone,
-      email: this.state.email,
-    });
-    this.update();
+  updatePhoneAndEmail() {
+    const phoneRegex = /[0-9]{3}-[0-9]{3}-[0-9]{4}/;
+    const emailRegex = /.+@.+/;
+
+    if (this.state.phone.match(phoneRegex) && this.state.email.match(emailRegex)) {
+      this.dispatchSetEmployeePhone(this.state.phone);
+      this.dispatchSetEmployeeEmail(this.state.email);
+      this.update();
+
+      firestore.collection('users').doc(`${auth.currentUser?.uid}`).update({
+        phone: this.state.phone,
+        email: this.state.email
+      })
+    }
   }
 }
 
-export default withStyles(styles, { withTheme: true })(ContactCard);
+export default connect(mapStateToProps, { setEmployeePhone, setEmployeeEmail })(
+  withStyles(styles, { withTheme: true })(ContactCard)
+);
+

@@ -44,6 +44,7 @@ const routes = [
   { path: '/customer-sign-up', component: CustomerSignUp },
   { path: '/temp-login', component: TempLoginPage },
   { path: '/business-home', component: BusinessHome },
+  { path: '/', component: LandingDefault }
 ];
 
 //let currentUser = 'business';
@@ -81,10 +82,6 @@ class App extends React.Component<any, SystemState> {
       session: props.system.session,
       user: props.system.user,
     };
-  }
-
-  componentDidMount(): void {
-    this.loginEmployee();
   }
 
   dispatchUpdateUser = (newUser) => {
@@ -152,37 +149,21 @@ class App extends React.Component<any, SystemState> {
         <ThemeProvider theme={theme}>
           <Router>
             <Switch>
-              {routes.map((route, i) => (
-                <Route
-                  key={i}
-                  path={route.path}
-                  exact={true}
-                  component={route.component}
-                />
-              ))}
-
+              {this.props.system.user === undefined ? (
+                routes.map((route, i) => (
+                  <Route
+                    key={i}
+                    path={route.path}
+                    exact={true}
+                    component={route.component}
+                  />
+                ))
+              ) : this.props.system.user.customerId !== '' ? (
+                <LandingLoggedIn />
+              ) : (
+                <BusinessHome />
+              )}
             </Switch>
-              <div>
-                {this.props.system.user !== undefined ? (
-                  this.props.system.user.customerId !== '' ? (
-                    <div>
-                      {/*<div>{this.props.system.user.firstName}</div>
-                  <Button variant="contained" onClick={this.switchToEmployee}>Switch to Employee</Button>
-                   <AppointmentsPage />
-                  <BusinessInfo /> */}
-                      <LandingLoggedIn />
-                    </div>
-                  ) : (
-                    <div>
-                      {/*<div>{this.props.system.user.firstName}</div>
-                  <Button variant="contained" onClick={this.switchToCustomer}>Switch to Customer</Button>*/}
-                      <LandingDefault />
-                    </div>
-                  )
-                ) : (
-                  <div> </div>
-                )}
-              </div>
           </Router>
         </ThemeProvider>
       </div>

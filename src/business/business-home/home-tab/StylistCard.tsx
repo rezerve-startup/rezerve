@@ -12,6 +12,8 @@ import {
 } from '@material-ui/core';
 import { Rating } from '@material-ui/lab';
 import image from '../../../assets/avatar.jpg';
+import { connect } from 'react-redux';
+import { StoreState } from '../../../shared/store/types';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -31,26 +33,49 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 );
 
-type Props = {
-  isMobile: boolean;
+function mapStateToProps(state: StoreState) {
+  return {
+    employeeName: state.system.user.firstName,
+    employeeId: state.system.user.employeeId,
+    employeePosition: state.system.user.employeeInfo.position,
+    employeeReviews: state.system.user.employeeInfo.reviews
+  };
 };
 
-export default function StylistCard(props: Props) {
+function computeAvgReviewRating(reviews: any[]) {
+  let totalReviewRating = 0;
+
+  reviews.forEach((review) => {
+    totalReviewRating += review.rating;
+  });
+
+  return totalReviewRating / reviews.length;
+}
+
+type Props = {
+  isMobile: boolean;
+  employeeName?: string;
+  employeeId?: string;
+  employeePosition?: string;
+  employeeReviews?: any
+};
+
+const StylistCard = (props: Props) => {
   const { isMobile } = props;
   const classes = useStyles();
+
+  let avgEmployeeReview = computeAvgReviewRating(props.employeeReviews);
+
   return (
     <Card className={classes.card} elevation={0}>
       <Grid container={true} justify="space-between" spacing={2}>
         <Grid item={true}>
           <CardContent className={classes.userContent}>
-            <Typography variant="h5">Name</Typography>
-            <Typography variant="subtitle1" color="textSecondary">
-              Position
-            </Typography>
+            <Typography variant="h5">{props.employeeName}</Typography>
+            <Typography variant="subtitle1" color="textSecondary">{props.employeePosition}</Typography>
             <StyledRating
               className={classes.userRating}
-              value={3.5}
-              defaultValue={2.5}
+              value={avgEmployeeReview}
               precision={0.5}
               size={isMobile ? 'medium' : 'large'}
               readOnly={true}
@@ -77,3 +102,5 @@ const StyledRating = withStyles((theme) => ({
     color: theme.palette.primary.light,
   },
 }))(Rating);
+
+export default connect(mapStateToProps, null)(StylistCard);

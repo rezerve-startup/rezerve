@@ -13,6 +13,9 @@ import {
   ADD_EMPLOYEE_FOR_BUSINESS,
   CLEAR_EMPLOYEES_FOR_BUSINESS,
   SET_SELECTED_EMPLOYEE,
+  SET_TO_DOS,
+  SET_EMPLOYEE_PHONE,
+  SET_EMPLOYEE_EMAIL,
 } from './types';
 
 // ****** SYSTEM ACTIONS ***************
@@ -29,6 +32,27 @@ export function updateUser(newUser: SystemState): SystemActionTypes {
     type: UPDATE_USER,
     payload: newUser,
   };
+}
+
+export function setToDos(todos: any[]): SystemActionTypes {
+  return {
+    type: SET_TO_DOS,
+    payload: todos
+  }
+}
+
+export function setEmployeePhone(phone: string): SystemActionTypes {
+  return {
+    type: SET_EMPLOYEE_PHONE,
+    payload: phone
+  }
+}
+
+export function setEmployeeEmail(email: string): SystemActionTypes {
+  return {
+    type: SET_EMPLOYEE_EMAIL,
+    payload: email
+  }
 }
 
 // ****** BUSINESS ACTIONS **************

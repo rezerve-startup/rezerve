@@ -14,6 +14,9 @@ export interface SystemState {
 
 export const UPDATE_SESSION = 'UPDATE_SESSION';
 export const UPDATE_USER = 'UPDATE_USER';
+export const SET_TO_DOS = 'SET_TO_DOS';
+export const SET_EMPLOYEE_PHONE = 'SET_EMPLOYEE_PHONE';
+export const SET_EMPLOYEE_EMAIL = 'SET_EMPLOYEE_EMAIL';
 
 interface UpdateSessionAction {
   type: typeof UPDATE_SESSION;
@@ -25,7 +28,27 @@ interface UpdateUserAction {
   payload: any;
 }
 
-export type SystemActionTypes = UpdateSessionAction | UpdateUserAction;
+interface SetToDosAction {
+  type: typeof SET_TO_DOS;
+  payload: any;
+}
+
+interface SetEmployeePhoneAction {
+  type: typeof SET_EMPLOYEE_PHONE;
+  payload: any;
+}
+
+interface SetEmployeeEmailAction {
+  type: typeof SET_EMPLOYEE_EMAIL;
+  payload: any;
+}
+
+export type SystemActionTypes = 
+  UpdateSessionAction |
+  UpdateUserAction |
+  SetToDosAction |
+  SetEmployeePhoneAction |
+  SetEmployeeEmailAction;
 
 // ############ Business Types ##########################
 export interface BusinessState {
@@ -50,10 +73,8 @@ export interface CustomerState {
   selectedEmployee: any;
 }
 
-export const UPDATE_CUSTOMER_PAST_APPOINTMENTS =
-  'UPDATE_CUSTOMER_PAST_APPOINTMENTS';
-export const UPDATE_CUSTOMER_UPCOMING_APPOINTMENTS =
-  'UPDATE_CUSTOMER_UPCOMING_APPOINTMENTS';
+export const UPDATE_CUSTOMER_PAST_APPOINTMENTS = 'UPDATE_CUSTOMER_PAST_APPOINTMENTS';
+export const UPDATE_CUSTOMER_UPCOMING_APPOINTMENTS = 'UPDATE_CUSTOMER_UPCOMING_APPOINTMENTS';
 export const ADD_FOUND_BUSINESS = 'ADD_FOUND_BUSINESS';
 export const CLEAR_FOUND_BUSINESSES = 'CLEAR_FOUND_BUSINESSES';
 export const ADD_EMPLOYEE_FOR_BUSINESS = 'ADD_EMPLOYEE_FOR_BUSINESS';
