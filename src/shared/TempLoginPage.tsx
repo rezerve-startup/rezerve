@@ -9,7 +9,11 @@ import {
 import React from 'react';
 import { connect } from 'react-redux';
 import { auth, firestore } from '../config/FirebaseConfig';
-import { updateUser } from '../shared/store/actions';
+import { 
+  updateUser,
+  setUserInfo, 
+  setBusinessAvailability
+} from '../shared/store/actions';
 import { StoreState } from './store/types';
 
 function mapStateToProps(state: StoreState) {
@@ -29,6 +33,14 @@ class TempLoginPage extends React.Component<any, any> {
   dispatchUpdateUser = (newUser) => {
     this.props.updateUser(newUser);
   };
+
+  dispatchSetUserInfo = (userInfo) => {
+    this.props.setUserInfo(userInfo);
+  }
+
+  dispatchSetBusinessAvailability = (businessAvailability) => {
+    this.props.setBusinessAvailability(businessAvailability);
+  }
 
   loginEmployee() {
     // Other account is 'testcustomer@test.com', 'testcustomer'
@@ -100,13 +112,31 @@ class TempLoginPage extends React.Component<any, any> {
                                 }
 
                                 employeeAppts.push(apptData);
+                                
+                                userInfo.employeeInfo.appointments = employeeAppts;
+                                userInfo.employeeInfo.clients = employeeClients;
+
+                                this.dispatchSetUserInfo(userInfo);
                               });
                             })
                         });
+                      })
+                  })
+                  .then(() => {
+                    firestore.collection('businesses').where('employees', 'array-contains', `${userInfo.employeeId}`).get()
+                      .then((querySnapshot) => {
+                        querySnapshot.forEach((businessDoc) => {
+                          console.log(businessDoc.data());
+                          let businessInfoData = businessDoc.data();
 
-                        userInfo.employeeInfo.appointments = employeeAppts;
-                        userInfo.employeeInfo.clients = employeeClients;
-                        this.dispatchUpdateUser(userInfo);
+                          let businessAvailability = {
+                            daysOpen: businessInfoData.about.daysOpen,
+                            openingTime: businessInfoData.about.openingTime,
+                            closingTime: businessInfoData.about.closingTime
+                          };
+
+                          this.dispatchSetBusinessAvailability(businessAvailability);
+                        })
                       })
                   })
               }
@@ -196,6 +226,6 @@ const styles = (theme: Theme) =>
     },
   });
 
-export default connect(mapStateToProps, { updateUser })(
+export default connect(mapStateToProps, { updateUser, setUserInfo, setBusinessAvailability })(
   withStyles(styles, { withTheme: true })(TempLoginPage),
 );

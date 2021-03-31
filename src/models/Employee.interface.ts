@@ -4,6 +4,7 @@ import { Review } from './Review.interface';
 
 export interface Employee {
     appointments: any[];
+    availability: any[];
     clients: Customer[];
     isOwner: boolean;
     reviews: any[];

@@ -14,6 +14,7 @@ export interface SystemState {
 
 export const UPDATE_SESSION = 'UPDATE_SESSION';
 export const UPDATE_USER = 'UPDATE_USER';
+export const SET_USER_INFO = 'SET_USER_INFO';
 export const SET_TO_DOS = 'SET_TO_DOS';
 export const SET_EMPLOYEE_PHONE = 'SET_EMPLOYEE_PHONE';
 export const SET_EMPLOYEE_EMAIL = 'SET_EMPLOYEE_EMAIL';
@@ -25,6 +26,11 @@ interface UpdateSessionAction {
 
 interface UpdateUserAction {
   type: typeof UPDATE_USER;
+  payload: any;
+}
+
+interface SetUserInfoAction {
+  type: typeof SET_USER_INFO;
   payload: any;
 }
 
@@ -46,6 +52,7 @@ interface SetEmployeeEmailAction {
 export type SystemActionTypes = 
   UpdateSessionAction |
   UpdateUserAction |
+  SetUserInfoAction |
   SetToDosAction |
   SetEmployeePhoneAction |
   SetEmployeeEmailAction;
@@ -53,16 +60,28 @@ export type SystemActionTypes =
 // ############ Business Types ##########################
 export interface BusinessState {
   businessName: string;
+  businessAvailability: {
+    daysOpen: any[];
+    openingTime: string;
+    closingTime: string;
+  }
 }
 
 export const UPDATE_BUSINESS_NAME = 'UPDATE_BUSINESS_NAME';
+export const SET_BUSINESS_AVAILABILITY = 'SET_BUSINESS_AVAILABILITY';
 
 interface UpdateBusinessNameAction {
   type: typeof UPDATE_BUSINESS_NAME;
   payload: string;
 }
 
-export type BusinessActionTypes = UpdateBusinessNameAction;
+interface SetBusinessAvailabilityAction {
+  type: typeof SET_BUSINESS_AVAILABILITY,
+  payload: any
+}
+
+export type BusinessActionTypes = UpdateBusinessNameAction |
+  SetBusinessAvailabilityAction;
 
 // ############ Customer Types ##########################
 export interface CustomerState {

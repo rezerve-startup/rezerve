@@ -69,7 +69,6 @@ class BusinessPerformance extends React.Component<
       .then((val) => {
         const businessInfo = val.data();
         if (businessInfo !== undefined) {
-          console.log(businessInfo);
           this.setState({
             business: businessInfo,
             businessPerformance: businessInfo.performance,

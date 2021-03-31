@@ -20,6 +20,7 @@ import { firestore } from '../../../config/FirebaseConfig';
 import firebase from 'firebase';
 
 function mapStateToProps(state: StoreState) {
+  console.log(state.customer.employeesForBusiness);
   return {
     user: state.system.user,
     businessEmployees: state.customer.employeesForBusiness,
@@ -135,65 +136,78 @@ class BusinessInfoDetails extends React.Component<any, any> {
         }
 
         if (businessOpen) {
+          let employeeWorking = false;
+          let employeeAvailabilityOnDay;
 
-          let openingDateTime = this.getBusinessHoursDatetime(this.props.businessOpeningTime);
-          let closingDateTime = this.getBusinessHoursDatetime(this.props.businessClosingTime);
-  
-          let closingTimeMoment = moment(closingDateTime.toISOString()).local();
-  
-          let tempMoment = moment(openingDateTime.toISOString()).local();
-  
-          let serviceLength = this.props.selectedEmployee.services[this.state.selectedService].length;
-  
-          let availableTimeSlots: any[] = [];
-  
-          while (
-            (tempMoment.valueOf() < closingDateTime.valueOf())
-          ) {
-            let startOfApptSlotMoment = tempMoment.clone();
-            let endOfApptSlotMoment = tempMoment.clone().add(serviceLength * 30, 'minutes');
-  
-            let slotAvailable = true;
-  
-            for (const appt of this.props.selectedEmployee.appointments) {
-              let existingApptMomentStart = moment(appt.datetime.toDate());
-              let existingApptMomentEnd = existingApptMomentStart.clone().add(appt.service.length * 30, 'minutes');
-  
-              if (
-                // Two appointments start at same time
-                startOfApptSlotMoment.isSame(existingApptMomentStart) ||
-                // Two appointments end at the same time
-                endOfApptSlotMoment.isSame(existingApptMomentEnd) ||
-                // The existing appointment overlaps on the left
-                (startOfApptSlotMoment.isBefore(existingApptMomentStart) && endOfApptSlotMoment.isAfter(existingApptMomentStart)) ||
-                // The existing appointment overlaps on the right
-                (startOfApptSlotMoment.isBefore(existingApptMomentEnd) && endOfApptSlotMoment.isAfter(existingApptMomentEnd)) ||
-                // The existing appointment overlaps both sides
-                (existingApptMomentStart.isBefore(startOfApptSlotMoment) && existingApptMomentEnd.isAfter(endOfApptSlotMoment)) ||
-                //The existing appointment is contained within the time slot
-                (existingApptMomentStart.isAfter(startOfApptSlotMoment) && existingApptMomentEnd.isBefore(endOfApptSlotMoment))
-              ) {
-                slotAvailable = false;
-                break;
-              }
+          for (const employeeSchedule of this.props.selectedEmployee.availability) {
+            if (moment().day(employeeSchedule.day).day() === moment(selectedDate.toISOString()).day()) {
+              employeeWorking = true;
+              employeeAvailabilityOnDay = employeeSchedule;
+              break;
             }
-  
-            // The appointment would end after business close
-            if (endOfApptSlotMoment.isAfter(closingTimeMoment)) {
-              slotAvailable = false;
-            }
-  
-            if (slotAvailable) {
-              const availableTime = tempMoment.clone();
-              availableTimeSlots.push(availableTime); 
-            }    
-  
-            tempMoment.add(30, 'minutes');
           }
-  
-          this.setState({
-            availableAppointmentTimes: availableTimeSlots
-          });
+
+          if (employeeWorking) {
+            
+            let openingDateTime = this.getBusinessHoursDatetime(employeeAvailabilityOnDay?.start);
+            let closingDateTime = this.getBusinessHoursDatetime(employeeAvailabilityOnDay?.end);
+    
+            let closingTimeMoment = moment(closingDateTime.toISOString()).local();
+    
+            let tempMoment = moment(openingDateTime.toISOString()).local();
+    
+            let serviceLength = this.props.selectedEmployee.services[this.state.selectedService].length;
+    
+            let availableTimeSlots: any[] = [];
+    
+            while (
+              (tempMoment.valueOf() < closingDateTime.valueOf())
+            ) {
+              let startOfApptSlotMoment = tempMoment.clone();
+              let endOfApptSlotMoment = tempMoment.clone().add(serviceLength * 30, 'minutes');
+    
+              let slotAvailable = true;
+    
+              for (const appt of this.props.selectedEmployee.appointments) {
+                let existingApptMomentStart = moment(appt.datetime.toDate());
+                let existingApptMomentEnd = existingApptMomentStart.clone().add(appt.service.length * 30, 'minutes');
+    
+                if (
+                  // Two appointments start at same time
+                  startOfApptSlotMoment.isSame(existingApptMomentStart) ||
+                  // Two appointments end at the same time
+                  endOfApptSlotMoment.isSame(existingApptMomentEnd) ||
+                  // The existing appointment overlaps on the left
+                  (startOfApptSlotMoment.isBefore(existingApptMomentStart) && endOfApptSlotMoment.isAfter(existingApptMomentStart)) ||
+                  // The existing appointment overlaps on the right
+                  (startOfApptSlotMoment.isBefore(existingApptMomentEnd) && endOfApptSlotMoment.isAfter(existingApptMomentEnd)) ||
+                  // The existing appointment overlaps both sides
+                  (existingApptMomentStart.isBefore(startOfApptSlotMoment) && existingApptMomentEnd.isAfter(endOfApptSlotMoment)) ||
+                  //The existing appointment is contained within the time slot
+                  (existingApptMomentStart.isAfter(startOfApptSlotMoment) && existingApptMomentEnd.isBefore(endOfApptSlotMoment))
+                ) {
+                  slotAvailable = false;
+                  break;
+                }
+              }
+    
+              // The appointment would end after business close
+              if (endOfApptSlotMoment.isAfter(closingTimeMoment)) {
+                slotAvailable = false;
+              }
+    
+              if (slotAvailable) {
+                const availableTime = tempMoment.clone();
+                availableTimeSlots.push(availableTime); 
+              }    
+    
+              tempMoment.add(30, 'minutes');
+            }
+    
+            this.setState({
+              availableAppointmentTimes: availableTimeSlots
+            });
+          }
         }
     }
   }

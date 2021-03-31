@@ -140,6 +140,7 @@ class BusinessInfo extends React.Component<any, BusinessInfoState> {
               if (employeeData) {
                 tempEmployee = {
                   id: employee.id,
+                  availability: employeeData.availability,
                   reviews: [],
                   appointments: [],
                   services: employeeData.services,

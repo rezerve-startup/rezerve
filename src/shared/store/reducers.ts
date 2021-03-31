@@ -18,7 +18,9 @@ import {
   SET_SELECTED_EMPLOYEE,
   SET_TO_DOS,
   SET_EMPLOYEE_PHONE,
-  SET_EMPLOYEE_EMAIL
+  SET_EMPLOYEE_EMAIL,
+  SET_USER_INFO,
+  SET_BUSINESS_AVAILABILITY
 } from './types';
 
 // ************** System Reducer ******************
@@ -26,7 +28,7 @@ import {
 const initialSystemState: SystemState = {
   loggedIn: false,
   session: '',
-  user: undefined,
+  user: undefined
 };
 
 export function systemReducer(
@@ -45,6 +47,12 @@ export function systemReducer(
         ...state,
         user: action.payload,
       };
+    }
+    case SET_USER_INFO: {
+      return {
+        ...state,
+        user: action.payload
+      }
     }
     case SET_TO_DOS: {
       return {
@@ -85,6 +93,11 @@ export function systemReducer(
 
 const initialBusinessState: BusinessState = {
   businessName: '',
+  businessAvailability: {
+    daysOpen: [],
+    openingTime: '',
+    closingTime: ''
+  }
 };
 
 export function businessReducer(
@@ -97,6 +110,12 @@ export function businessReducer(
         ...state,
         businessName: action.payload,
       };
+    }
+    case SET_BUSINESS_AVAILABILITY: {
+      return {
+        ...state,
+        businessAvailability: action.payload
+      }
     }
     default:
       return state;

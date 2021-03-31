@@ -16,6 +16,8 @@ import {
   SET_TO_DOS,
   SET_EMPLOYEE_PHONE,
   SET_EMPLOYEE_EMAIL,
+  SET_USER_INFO,
+  SET_BUSINESS_AVAILABILITY
 } from './types';
 
 // ****** SYSTEM ACTIONS ***************
@@ -32,6 +34,13 @@ export function updateUser(newUser: SystemState): SystemActionTypes {
     type: UPDATE_USER,
     payload: newUser,
   };
+}
+
+export function setUserInfo(userInfo: any): SystemActionTypes {
+  return {
+    type: SET_USER_INFO,
+    payload: userInfo
+  }
 }
 
 export function setToDos(todos: any[]): SystemActionTypes {
@@ -64,6 +73,13 @@ export function updateBusinessName(
     type: UPDATE_BUSINESS_NAME,
     payload: newBusinessName,
   };
+}
+
+export function setBusinessAvailability(businessAvailability: any): BusinessActionTypes {
+  return {
+    type: SET_BUSINESS_AVAILABILITY,
+    payload: businessAvailability
+  }
 }
 
 // ***** CUSTOMER ACTIONS *************
