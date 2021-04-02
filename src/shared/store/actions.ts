@@ -17,7 +17,9 @@ import {
   SET_EMPLOYEE_PHONE,
   SET_EMPLOYEE_EMAIL,
   SET_USER_INFO,
-  SET_BUSINESS_AVAILABILITY
+  SET_BUSINESS_AVAILABILITY,
+  UPDATE_APPOINTMENT_STATUS,
+  ADD_SELECTED_EMPLOYEE_APPOINTMENT
 } from './types';
 
 // ****** SYSTEM ACTIONS ***************
@@ -61,6 +63,13 @@ export function setEmployeeEmail(email: string): SystemActionTypes {
   return {
     type: SET_EMPLOYEE_EMAIL,
     payload: email
+  }
+}
+
+export function updateAppointmentStatus(appointment: any): SystemActionTypes {
+  return {
+    type: UPDATE_APPOINTMENT_STATUS,
+    payload: appointment
   }
 }
 
@@ -132,5 +141,12 @@ export function setSelectedEmployee(selectedEmployee): CustomerActionTypes {
   return {
     type: SET_SELECTED_EMPLOYEE,
     payload: selectedEmployee
+  }
+}
+
+export function addSelectedEmployeeAppointment(appointmentToAdd): CustomerActionTypes {
+  return {
+    type: ADD_SELECTED_EMPLOYEE_APPOINTMENT,
+    payload: appointmentToAdd
   }
 }

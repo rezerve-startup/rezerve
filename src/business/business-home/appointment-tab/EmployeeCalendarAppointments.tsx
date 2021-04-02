@@ -6,6 +6,7 @@ import {
   Theme,
   Paper,
   Divider,
+  TextField,
 } from '@material-ui/core';
 import { ViewState } from '@devexpress/dx-react-scheduler';
 import {
@@ -40,6 +41,14 @@ const styles = (theme: Theme) =>
     column: {
       flexBasis: '33.33%',
     },
+    selectDateContainer: {
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center'
+    },
+    selectDate: {
+      margin: '0.5rem'
+    }
   });
 
 function mapStateToProps(state: StoreState) {
@@ -78,28 +87,47 @@ interface Props extends WithStyles<typeof styles> {
   scheduleItems?: any[]
 }
 
-class Calendar extends React.Component<Props, State> {
+class EmployeeCalendarAppointments extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
 
     let currentDate: Date = new Date(Date.now());
+    let currentDateMoment = moment(currentDate).format('YYYY-MM-DD');
+    console.log(currentDateMoment)
 
     this.state = {
-      currentDate: '2021-03-31',
+      currentDate: currentDateMoment,
     };
+  }
 
-    // this.handleClick = this.handleClick.bind(this);
+  handleDateChange(e) {
+    this.setState({
+      currentDate: e.target.value
+    })
   }
 
   render() {
     const { classes } = this.props;
     return (
       <div className={classes.root}>
+        <div className={classes.selectDateContainer}>
+          <TextField
+            id="date"
+            label="Select Date"
+            type="date"
+            defaultValue={this.state.currentDate}
+            value={this.state.currentDate}
+            onChange={(e) => this.handleDateChange(e)}
+            className={classes.selectDate}
+            InputLabelProps={{
+              shrink: true,
+            }}
+          />
+        </div>
         <Divider />
         <Paper>
           <Scheduler 
             data={this.props.scheduleItems}
-            
           >
             <ViewState currentDate={this.state.currentDate} />
             <DayView startDayHour={8} endDayHour={17}/>
@@ -132,5 +160,5 @@ const Appointment = ({
 )};
 
 export default connect(mapStateToProps, null) (
-  withStyles(styles, { withTheme: true })(Calendar)
+  withStyles(styles, { withTheme: true })(EmployeeCalendarAppointments)
 );

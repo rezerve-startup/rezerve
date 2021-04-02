@@ -31,15 +31,26 @@ const styles = (theme: Theme) =>
       // height: '27rem',
     },
     openHours: {
-      padding: theme.spacing(1),
       textAlign: 'center',
       backgroundColor: theme.palette.background.paper,
       insert: true,
     },
     dayOfWeek: {
-      marginRight: '100px',
-      fontSize: '14px',
+      // padding: theme.spacing(1),
+      display: 'flex',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      fontSize: '1rem',
     },
+    dayText: {
+      textAlign: 'left',
+      justifyContent: 'left',
+      marginRight: '0.5rem'
+    },
+    hourlyAvailability: {
+      display: 'flex',
+      alignItems: 'center'
+    }
   });
 
 type State = {
@@ -105,45 +116,30 @@ class AvailablityCard extends React.Component<Props, State> {
         <CardContent>
           <Typography variant="h5">Availability</Typography>
           <Divider />
-          <List>
             {this.state.employeeSchedule && this.state.employeeSchedule.map((item, index) => (
-              <ListItem key={item.day}>
-                <ListItemText
-                  primary={item.day}
-                  classes={{ primary: classes.dayOfWeek }}
-                />
-                <ListItemSecondaryAction>
-                  <Grid container={true} justify="flex-start" spacing={1}>
-                    <Grid item={true} xs={true}>
-                      <form noValidate={true}>
-                        <TextField
-                          id="time"
-                          type="Time"
-                          onChange={(e) => this.handleStartTimeChange(index, e)}
-                          disabled={editInfo}
-                          defaultValue={item.start}
-                          style={{ width: 104 }}
-                        />
-                      </form>
-                    </Grid>
-                    <Typography style={{ margin: 'auto' }}>-</Typography>
-                    <Grid item={true} xs={true}>
-                      <form noValidate={true}>
-                        <TextField
-                          id="time"
-                          type="Time"
-                          onChange={(e) => this.handleCloseTimeChange(index, e)}
-                          disabled={editInfo}
-                          defaultValue={item.end}
-                          style={{ width: 104 }}
-                        />
-                      </form>
-                    </Grid>
-                  </Grid>
-                </ListItemSecondaryAction>
-              </ListItem>
+              <div key={item.day} className={classes.dayOfWeek}>
+                <Typography className={classes.dayText}>{item.day}</Typography>
+                <div className={classes.hourlyAvailability}>
+                  <TextField
+                    id="time"
+                    type="Time"
+                    onChange={(e) => this.handleStartTimeChange(index, e)}
+                    disabled={editInfo}
+                    defaultValue={item.start}
+                  />
+                  <Typography style={{ marginRight: '0.25rem' }}>-</Typography>
+                  <TextField
+                    id="time"
+                    type="Time"
+                    onChange={(e) => this.handleCloseTimeChange(index, e)}
+                    disabled={editInfo}
+                    defaultValue={item.end}
+                    style={{ width: 104 }}
+                    size='small'
+                  />
+                </div>
+              </div>
             ))}
-          </List>
         </CardContent>
         <CardActions style={{ justifyContent: 'center'}}>
           {this.state.editInfo ? (

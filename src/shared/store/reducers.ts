@@ -20,7 +20,9 @@ import {
   SET_EMPLOYEE_PHONE,
   SET_EMPLOYEE_EMAIL,
   SET_USER_INFO,
-  SET_BUSINESS_AVAILABILITY
+  SET_BUSINESS_AVAILABILITY,
+  UPDATE_APPOINTMENT_STATUS,
+  ADD_SELECTED_EMPLOYEE_APPOINTMENT
 } from './types';
 
 // ************** System Reducer ******************
@@ -81,6 +83,20 @@ export function systemReducer(
         user: {
           ...state.user,
           email: action.payload
+        }
+      }
+    }
+    case UPDATE_APPOINTMENT_STATUS: {
+      return {
+        ...state,
+        user: {
+          ...state.user,
+          employeeInfo: {
+            ...state.user.employeeInfo,
+            appointments: state.user.employeeInfo.appointments.map(
+              (appt) => appt.id === action.payload.id ? {...appt, status: action.payload.status} : appt
+            )
+          }
         }
       }
     }
@@ -180,6 +196,18 @@ export function customerReducer(
       return {
         ...state,
         selectedEmployee: action.payload
+      }
+    }
+    case ADD_SELECTED_EMPLOYEE_APPOINTMENT: {
+      return {
+        ...state,
+        selectedEmployee: {
+          ...state.selectedEmployee,
+          appointments: [
+            ...state.selectedEmployee.appointments,
+            action.payload
+          ]
+        }
       }
     }
     default:

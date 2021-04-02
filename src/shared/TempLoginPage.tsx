@@ -84,6 +84,8 @@ class TempLoginPage extends React.Component<any, any> {
                         querySnapshot.forEach((apptDoc) => {
                           const apptData = apptDoc.data();
 
+                          apptData.appointmentId = apptDoc.id;
+
                           firestore.collection('users').where('customerId', '==', `${apptData.customerId}`).get()
                             .then((querySnapshot) => {
                               querySnapshot.forEach((userDoc) => {
