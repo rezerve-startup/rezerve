@@ -89,6 +89,9 @@ const styles = (theme: Theme) =>
     },
     requestedApptContainer: {
       marginBottom: '1rem'
+    },
+    noRequestedAppointments: {
+      fontStyle: 'italic'
     }
   });
 
@@ -97,20 +100,22 @@ function mapStateToProps(state: StoreState) {
   let appointments = state.system.user.employeeInfo.appointments;
   let currentDate = Date.now();
 
-  for (let appointment of appointments) {
-    let appointmentDate: Date = appointment.datetime.toDate();
-
-    if (appointmentDate.valueOf() > currentDate && appointment.status === 'requested') {
-
-      appointment.formattedDate = moment(appointmentDate.toISOString()).format('YYYY-MM-DD');
-      appointment.startTime = moment(appointmentDate.toISOString()).format('h:mm A');
-      appointment.endTime = moment(appointmentDate.toISOString()).add(30 * appointment.service.length, 'minutes').format('h:mm A');
-
-      upcomingAppointments.push(appointment);
+  if (appointments) {
+    for (let appointment of appointments) {
+      let appointmentDate: Date = appointment.datetime.toDate();
+  
+      if (appointmentDate.valueOf() > currentDate && appointment.status === 'requested') {
+  
+        appointment.formattedDate = moment(appointmentDate.toISOString()).format('YYYY-MM-DD');
+        appointment.startTime = moment(appointmentDate.toISOString()).format('h:mm A');
+        appointment.endTime = moment(appointmentDate.toISOString()).add(30 * appointment.service.length, 'minutes').format('h:mm A');
+  
+        upcomingAppointments.push(appointment);
+      }
     }
+  
+    upcomingAppointments.sort((appt1, appt2) => appt1.datetime.toDate() - appt2.datetime.toDate());
   }
-
-  upcomingAppointments.sort((appt1, appt2) => appt1.datetime.toDate() - appt2.datetime.toDate());
 
   return ({
     upcomingAppointments: upcomingAppointments
@@ -172,7 +177,10 @@ class EmployeeRequestedAppointments extends React.Component<Props, State> {
     return (
       <div className={classes.root}>
         <Typography className={classes.requestedAppointmentsText}>Requested Appointments</Typography>
-        {this.props.upcomingAppointments?.map((appt, index) => (
+        {this.props.upcomingAppointments?.length === 0 ? (
+          <Typography className={classes.noRequestedAppointments}>No Requested Appointments</Typography>
+        ) : (
+          this.props.upcomingAppointments?.map((appt, index) => (
           <Accordion key={index} className={classes.requestedApptContainer}>
             <AccordionSummary
               expandIcon={<ExpandMoreIcon />}
@@ -225,7 +233,7 @@ class EmployeeRequestedAppointments extends React.Component<Props, State> {
               </div>
             </AccordionDetails>
           </Accordion>
-        ))}
+        )))}
 
         <Dialog open={this.state.acceptAppointmentStatusDialogOpen} onClose={() => this.handleCloseAcceptAppointmentDialog()}>
           <DialogTitle>Accept Appointment</DialogTitle>

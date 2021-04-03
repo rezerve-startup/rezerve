@@ -94,9 +94,11 @@ class TempLoginPage extends React.Component<any, any> {
 
                                 if (apptData.datetime.toDate() < Date.now()) {
                                   if (employeeClients[`${apptData.customerId}`]) {
-                                    let numVisits = employeeClients[`${apptData.customerId}`] + 1;
-  
-                                    employeeClients[`${apptData.customerId}`].numVisits += 1;
+                                    if (apptData.status === 'accepted') {
+                                      let numVisits = employeeClients[`${apptData.customerId}`] + 1;
+    
+                                      employeeClients[`${apptData.customerId}`].numVisits += 1;
+                                    }
                                   } else {
                                     numVisits = 1;
   
@@ -140,6 +142,9 @@ class TempLoginPage extends React.Component<any, any> {
                           this.dispatchSetBusinessAvailability(businessAvailability);
                         })
                       })
+                  })
+                  .then(() => {
+                    this.dispatchSetUserInfo(userInfo);
                   })
               }
             });

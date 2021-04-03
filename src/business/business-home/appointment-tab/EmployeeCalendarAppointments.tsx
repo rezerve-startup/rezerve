@@ -53,20 +53,24 @@ const styles = (theme: Theme) =>
 
 function mapStateToProps(state: StoreState) {
 
+  let currentAppts = state.system.user.employeeInfo.appointments;
   let scheduleItems: any[] = [];
 
-  for (let appt of state.system.user.employeeInfo.appointments) {
-    let startDateMoment = moment(appt.datetime.toDate());
-    let endDateMoment = startDateMoment.add(30 * appt.service.length, 'minutes');
-
-    let apptToAdd = {
-      title: `${appt.service.name} with ${appt.client.firstName}`,
-      startDate: appt.datetime.toDate(),
-      endDate: endDateMoment.toDate()
-    };
-
-    scheduleItems.push(apptToAdd);
+  if (currentAppts) {
+    for (let appt of currentAppts) {
+      let startDateMoment = moment(appt.datetime.toDate());
+      let endDateMoment = startDateMoment.add(30 * appt.service.length, 'minutes');
+  
+      let apptToAdd = {
+        title: `${appt.service.name} with ${appt.client.firstName}`,
+        startDate: appt.datetime.toDate(),
+        endDate: endDateMoment.toDate()
+      };
+  
+      scheduleItems.push(apptToAdd);
+    }
   }
+
 
   return({
     scheduleItems: scheduleItems
@@ -93,7 +97,6 @@ class EmployeeCalendarAppointments extends React.Component<Props, State> {
 
     let currentDate: Date = new Date(Date.now());
     let currentDateMoment = moment(currentDate).format('YYYY-MM-DD');
-    console.log(currentDateMoment)
 
     this.state = {
       currentDate: currentDateMoment,
