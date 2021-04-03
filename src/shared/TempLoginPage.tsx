@@ -8,6 +8,7 @@ import {
 } from '@material-ui/core';
 import React from 'react';
 import { connect } from 'react-redux';
+import { Link, Redirect } from 'react-router-dom';
 import { auth, firestore } from '../config/FirebaseConfig';
 import {
   setUserEmployeeInfo,
@@ -18,7 +19,7 @@ import { StoreState } from './store/types';
 
 function mapStateToProps(state: StoreState) {
   return {
-    system: state.system,
+    user: state.system.user
   };
 }
 class TempLoginPage extends React.Component<any, any> {
@@ -26,7 +27,7 @@ class TempLoginPage extends React.Component<any, any> {
     super(props);
 
     this.state = {
-      user: props.system.user,
+      user: props.user,
     };
   }
 
@@ -112,60 +113,12 @@ class TempLoginPage extends React.Component<any, any> {
               const userInfo = userObj.data();
               this.dispatchSetUserCustomerInfo(userInfo);
 
-              if (userInfo && userInfo.customerId !== '') {
-                let customerAppts: any[] = [];
-                let customerReviews: any[] = [];
-
-                firestore.collection('customers').doc(userInfo.customerId).get()
-                  .then((customerObj) => {
-                    let customerInfo = customerObj.data();
-                    userInfo.customerInfo = customerInfo;
-                  })
-                  .then(() => {
-                    firestore.collection('reviews').where('customerId', '==', `${userInfo.customerId}`).get()
-                      .then((querySnapshot) => {
-                        querySnapshot.forEach((reviewDoc) => {
-                          customerReviews.push(reviewDoc.data());
-                        });
-
-                        userInfo.customerInfo.reviews = customerReviews;
-                      })
-                  })
-                  .then(() => {
-                    firestore.collection('appointments').where('customerId', '==', `${userInfo.customerId}`).get()
-                      .then((querySnapshot) => {
-                        querySnapshot.forEach((apptDoc) => {
-                          const apptData = apptDoc.data();
-
-                          apptData.appointmentId = apptDoc.id;
-
-                          firestore.collection('users').where('employeeId', '==', `${apptData.employeeId}`).get()
-                            .then((querySnapshot) => {
-                              querySnapshot.forEach((userDoc) => {
-                                const userData = userDoc.data();
-
-                                apptData.employee = {
-                                  firstName: userData.firstName,
-                                  lastName: userData.lastName
-                                }
-
-                                customerAppts.push(apptData);
-                                
-                                userInfo.customerInfo.appointments = customerAppts;
-
-                                this.dispatchSetUserCustomerInfo(userInfo);
-                              });
-                            })
-                        });
-                      })
-                  })
-                  .then(() => {
-                    this.dispatchSetUserCustomerInfo(userInfo);
-                  })
-              }
-            });
+              
+            }
+          );
         }
-      });
+      }
+    );
   }
 
   signInEmployee = () => {
@@ -178,6 +131,18 @@ class TempLoginPage extends React.Component<any, any> {
 
   render() {
     const { classes } = this.props;
+
+    if (this.props.user) {
+      if (this.props.user.employeeId === '') {
+        return (
+          <Redirect to={'/customer-logged-in'} />
+        )
+      } else if (this.props.user.customerId === '') {
+        return (
+          <Redirect to={'/business-home'} />
+        )
+      }
+    }
 
     return (
       <Container className={classes.root} maxWidth={false}>

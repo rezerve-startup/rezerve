@@ -19,7 +19,7 @@ import EmojiPeopleIcon from '@material-ui/icons/EmojiPeople';
 //----
 
 import CustomerBusinessSearch from '../../customer/customer-business-search/CustomerBusinessSearch';
-import Sidebar from '../sidebar/sidebar';
+import Sidebar from '../sidebar/Sidebar';
 
 //--------------------------
 //CSS

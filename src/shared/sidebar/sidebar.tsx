@@ -1,6 +1,5 @@
 import React from 'react';
-import { sidebarData } from './sidebarData';
-import { Link } from 'react-router-dom';
+import { Link, Redirect } from 'react-router-dom';
 import {
   Typography,
   Divider,
@@ -25,8 +24,216 @@ import {
   Menu as MenuIcon,
   Forum,
   CalendarViewDay,
+  Help,
+  Settings,
+  ExitToApp,
   ArrowDropDown,
 } from '@material-ui/icons';
+import { connect } from 'react-redux';
+import { StoreState } from '../store/types';
+import { logoutUser } from '../store/actions';
+import { auth } from '../../config/FirebaseConfig';
+
+const sidebarDataWithoutLogout = [
+  {
+    title: 'Messages',
+    path: '/messages',
+    icon: <Forum />,
+    cName: 'nav-text',
+  },
+  {
+    title: 'Appointments',
+    path: '/appointments',
+    icon: <CalendarViewDay />,
+    cName: 'nav-text',
+  },
+  {
+    title: 'Help',
+    path: '/help',
+    icon: <Help />,
+    cName: 'nav-text',
+  },
+  {
+    title: 'Settings',
+    path: '/settings',
+    icon: <Settings />,
+    cName: 'nav-text',
+  },
+];
+
+function mapStateToProps(state: StoreState) {
+  return ({
+    user: state.system.user
+  })
+}
+
+const Sidebar = (props: any) => {
+  const classes = useStyles();
+
+  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const [mobileSidebar, setMobileSidebar] = React.useState({
+    isSidebarOpen: false,
+  });
+
+  const isMenuOpen = Boolean(anchorEl);
+
+  const handleMobileSidebar = (value: boolean) => (
+    _event: React.KeyboardEvent | React.MouseEvent,
+  ) => {
+    setMobileSidebar({ ...mobileSidebar, isSidebarOpen: value });
+  };
+
+  const handleMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleMenuClose = () => {
+    setAnchorEl(null);
+  };
+
+  const dispatchLogoutUser = () => {
+    props.logoutUser();
+  }
+
+  function logoutUser() {
+    auth.signOut().then(() => {
+      dispatchLogoutUser();
+    })
+  }
+
+  if (props.user === undefined) {
+    return (
+      <Redirect to={'/'} />
+    )
+  } else {
+    const menuId = 'primary-desktop-dropdown-menu';
+    const renderDropdownMenuDesktop = (
+      <Menu
+        id={menuId}
+        classes={{ paper: classes.menu }}
+        anchorEl={anchorEl}
+        getContentAnchorEl={null}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+        keepMounted={true}
+        transformOrigin={{ vertical: 'top', horizontal: 'center' }}
+        open={isMenuOpen}
+        onClose={handleMenuClose}
+      >
+        {sidebarDataWithoutLogout.slice(2).map((obj, i) => (
+          <MenuItem button={true} key={i} component={Link} to={obj.path}>
+            <ListItemIcon className={classes.listIcon}>{obj.icon}</ListItemIcon>
+            <ListItemText className={classes.listText} primary={obj.title} />
+          </MenuItem>
+        ))}
+        <ListItem button={true} onClick={() => logoutUser()}>
+          <ListItemIcon className={classes.listIcon}>{<ExitToApp />}</ListItemIcon>
+          <ListItemText className={classes.listText} primary={'Logout'} />
+        </ListItem>
+      </Menu>
+    );
+
+    const mobileMenuId = 'primary-mobile-sidebar-menu';
+    const renderMobileSidebar = (
+      <SwipeableDrawer
+        anchor="left"
+        id={mobileMenuId}
+        open={mobileSidebar.isSidebarOpen}
+        onClose={handleMobileSidebar(false)}
+        onOpen={handleMobileSidebar(true)}
+        classes={{ paper: classes.sidebar }}
+      >
+        <div className={classes.list} role="presentation">
+          <List>
+            <ListItem>
+              <ListItemAvatar>
+                <Avatar src="../../assets/avatar.jpg" />
+              </ListItemAvatar>
+              <ListItemText className={classes.listText} primary={`${props.user.firstName} ${props.user.lastName}`} />
+            </ListItem>
+            <Divider className={classes.divider} />
+            {sidebarDataWithoutLogout.map((obj, i) => (
+              <ListItem button={true} key={i} component={Link} to={obj.path}>
+                <ListItemIcon className={classes.listIcon}>
+                  {obj.icon}
+                </ListItemIcon>
+                <ListItemText className={classes.listText} primary={obj.title} />
+              </ListItem>
+            ))}
+            <ListItem button={true} onClick={() => logoutUser()}>
+              <ListItemIcon className={classes.listIcon}>{<ExitToApp />}</ListItemIcon>
+              <ListItemText className={classes.listText} primary={'Logout'} />
+            </ListItem>
+          </List>
+        </div>
+      </SwipeableDrawer>
+    );
+
+    return (
+      <div className={classes.root}>
+        <AppBar position="static" className={classes.appBar}>
+          <Toolbar>
+            <div className={classes.sectionMobile}>
+              <IconButton
+                edge="start"
+                aria-label="menu"
+                className={classes.menuButton}
+                onClick={handleMobileSidebar(true)}
+              >
+                <MenuIcon />
+              </IconButton>
+            </div>
+            <Typography
+              className={classes.title}
+              variant="h6"
+              noWrap={true}
+              color="primary"
+              component={Link}
+              to="/"
+            >
+              ReZerve
+            </Typography>
+            <div className={classes.root} />
+            <div className={classes.sectionDesktop}>
+              <Box display="flex">
+                <Button
+                  className={classes.toolbarButton}
+                  startIcon={<Forum />}
+                  component={Link}
+                  to="/"
+                  classes={{ text: classes.toolbarButtonText }}
+                >
+                  Messages
+                </Button>
+                <Button
+                  className={classes.toolbarButton}
+                  startIcon={<CalendarViewDay />}
+                  component={Link}
+                  to="/"
+                  classes={{ text: classes.toolbarButtonText }}
+                >
+                  Appointments
+                </Button>
+                <Button
+                  className={classes.toolbarButton}
+                  aria-label="user-account"
+                  aria-controls={menuId}
+                  aria-haspopup="true"
+                  onClick={handleMenuOpen}
+                  startIcon={<AccountCircle />}
+                  endIcon={<ArrowDropDown />}
+                >
+                  {props.user.firstName} {props.user.lastName}
+                </Button>
+              </Box>
+            </div>
+          </Toolbar>
+        </AppBar>
+        {renderDropdownMenuDesktop}
+        {renderMobileSidebar}
+      </div>
+    );
+  }
+}
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -91,148 +298,6 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-function Sidebar() {
-  const classes = useStyles();
-
-  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-  const [mobileSidebar, setMobileSidebar] = React.useState({
-    isSidebarOpen: false,
-  });
-
-  const isMenuOpen = Boolean(anchorEl);
-
-  const handleMobileSidebar = (value: boolean) => (
-    _event: React.KeyboardEvent | React.MouseEvent,
-  ) => {
-    setMobileSidebar({ ...mobileSidebar, isSidebarOpen: value });
-  };
-
-  const handleMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorEl(event.currentTarget);
-  };
-
-  const handleMenuClose = () => {
-    setAnchorEl(null);
-  };
-
-  const menuId = 'primary-desktop-dropdown-menu';
-  const renderMenu = (
-    <Menu
-      id={menuId}
-      classes={{ paper: classes.menu }}
-      anchorEl={anchorEl}
-      getContentAnchorEl={null}
-      anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
-      keepMounted={true}
-      transformOrigin={{ vertical: 'top', horizontal: 'center' }}
-      open={isMenuOpen}
-      onClose={handleMenuClose}
-    >
-      {sidebarData.slice(2).map((obj, i) => (
-        <MenuItem button={true} key={i} component={Link} to={obj.path}>
-          <ListItemIcon className={classes.listIcon}>{obj.icon}</ListItemIcon>
-          <ListItemText className={classes.listText} primary={obj.title} />
-        </MenuItem>
-      ))}
-    </Menu>
-  );
-
-  const mobileMenuId = 'primary-mobile-sidebar-menu';
-  const renderMobileSidebar = (
-    <SwipeableDrawer
-      anchor="left"
-      id={mobileMenuId}
-      open={mobileSidebar.isSidebarOpen}
-      onClose={handleMobileSidebar(false)}
-      onOpen={handleMobileSidebar(true)}
-      classes={{ paper: classes.sidebar }}
-    >
-      <div className={classes.list} role="presentation">
-        <List>
-          <ListItem>
-            <ListItemAvatar>
-              <Avatar src="../../assets/avatar.jpg" />
-            </ListItemAvatar>
-            <ListItemText className={classes.listText} primary="John Barber" />
-          </ListItem>
-          <Divider className={classes.divider} />
-          {sidebarData.map((obj, i) => (
-            <ListItem button={true} key={i} component={Link} to={obj.path}>
-              <ListItemIcon className={classes.listIcon}>
-                {obj.icon}
-              </ListItemIcon>
-              <ListItemText className={classes.listText} primary={obj.title} />
-            </ListItem>
-          ))}
-        </List>
-      </div>
-    </SwipeableDrawer>
-  );
-
-  return (
-    <div className={classes.root}>
-      <AppBar position="static" className={classes.appBar}>
-        <Toolbar>
-          <div className={classes.sectionMobile}>
-            <IconButton
-              edge="start"
-              aria-label="menu"
-              className={classes.menuButton}
-              onClick={handleMobileSidebar(true)}
-            >
-              <MenuIcon />
-            </IconButton>
-          </div>
-          <Typography
-            className={classes.title}
-            variant="h6"
-            noWrap={true}
-            color="primary"
-            component={Link}
-            to="/"
-          >
-            ReZerve
-          </Typography>
-          <div className={classes.root} />
-          <div className={classes.sectionDesktop}>
-            <Box display="flex">
-              <Button
-                className={classes.toolbarButton}
-                startIcon={<Forum />}
-                component={Link}
-                to="/"
-                classes={{ text: classes.toolbarButtonText }}
-              >
-                Messages
-              </Button>
-              <Button
-                className={classes.toolbarButton}
-                startIcon={<CalendarViewDay />}
-                component={Link}
-                to="/"
-                classes={{ text: classes.toolbarButtonText }}
-              >
-                Appointments
-              </Button>
-              <Button
-                className={classes.toolbarButton}
-                aria-label="user-account"
-                aria-controls={menuId}
-                aria-haspopup="true"
-                onClick={handleMenuOpen}
-                startIcon={<AccountCircle />}
-                endIcon={<ArrowDropDown />}
-              >
-                John Barber
-              </Button>
-            </Box>
-          </div>
-        </Toolbar>
-      </AppBar>
-      {renderMenu}
-      {renderMobileSidebar}
-    </div>
-  );
-}
-
-export default Sidebar;
+export default connect(mapStateToProps, { logoutUser })(
+  Sidebar
+);

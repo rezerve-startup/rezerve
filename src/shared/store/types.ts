@@ -24,6 +24,7 @@ export const SET_TO_DOS = 'SET_TO_DOS';
 export const SET_EMPLOYEE_PHONE = 'SET_EMPLOYEE_PHONE';
 export const SET_EMPLOYEE_EMAIL = 'SET_EMPLOYEE_EMAIL';
 export const UPDATE_APPOINTMENT_STATUS = 'UPDATE_APPOINTMENT_STATUS';
+export const LOGOUT_USER = 'LOGOUT_USER';
 
 interface UpdateSessionAction {
   type: typeof UPDATE_SESSION;
@@ -79,9 +80,13 @@ interface SetEmployeeEmailAction {
   payload: any;
 }
 
-interface updateAppointmentStatusAction {
+interface UpdateAppointmentStatusAction {
   type: typeof UPDATE_APPOINTMENT_STATUS,
   payload: any;
+}
+
+interface LogoutUserAction {
+  type: typeof LOGOUT_USER
 }
 
 export type SystemActionTypes = 
@@ -96,7 +101,8 @@ export type SystemActionTypes =
   SetToDosAction |
   SetEmployeePhoneAction |
   SetEmployeeEmailAction |
-  updateAppointmentStatusAction;
+  UpdateAppointmentStatusAction |
+  LogoutUserAction;
 
 // ############ Business Types ##########################
 export interface BusinessState {
