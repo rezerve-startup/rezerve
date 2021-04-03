@@ -9,12 +9,20 @@ import {
   RadioGroup,
   Radio,
   TextField,
-  Button
+  Button,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
+  DialogActions,
+  Snackbar,
+  IconButton
 } from '@material-ui/core';
+import CloseIcon from '@material-ui/icons/Close';
 import cat1 from '../../../assets/business-pictures/cat1.jpg';
 import { connect } from 'react-redux';
 import { StoreState } from '../../../shared/store/types';
-import { setSelectedEmployee } from '../../../shared/store/actions';
+import { setSelectedEmployee, addSelectedEmployeeAppointment } from '../../../shared/store/actions';
 import moment from 'moment';
 import { firestore } from '../../../config/FirebaseConfig';
 import firebase from 'firebase';
@@ -37,7 +45,9 @@ class BusinessInfoDetails extends React.Component<any, any> {
       selectedEmployee: null,
       selectedService: -1,
       selectedDate: '',
-      selectedAppointmentSlot: -1
+      selectedAppointmentSlot: -1,
+      bookingMessageOpen: false,
+      bookingMessage: ''
     };
   }
   
@@ -54,6 +64,10 @@ class BusinessInfoDetails extends React.Component<any, any> {
 
   dispatchSetSelectedEmployee = (selectedEmployee) => {
     this.props.setSelectedEmployee(selectedEmployee);
+  }
+
+  dispatchAddAppointment = (appointmentToAdd) => {
+    this.props.addSelectedEmployeeAppointment(appointmentToAdd);
   }
 
   handleSelectEmployee(e): void {
@@ -82,7 +96,8 @@ class BusinessInfoDetails extends React.Component<any, any> {
     this.setState({
       selectedService: index,
       selectedAppointmentSlot: -1,
-      availableAppointmentTimes: []
+      availableAppointmentTimes: [],
+      bookDialogOpen: false
     });
   }
 
@@ -135,65 +150,81 @@ class BusinessInfoDetails extends React.Component<any, any> {
         }
 
         if (businessOpen) {
+          let employeeWorking = false;
+          let employeeAvailabilityOnDay;
 
-          let openingDateTime = this.getBusinessHoursDatetime(this.props.businessOpeningTime);
-          let closingDateTime = this.getBusinessHoursDatetime(this.props.businessClosingTime);
-  
-          let closingTimeMoment = moment(closingDateTime.toISOString()).local();
-  
-          let tempMoment = moment(openingDateTime.toISOString()).local();
-  
-          let serviceLength = this.props.selectedEmployee.services[this.state.selectedService].length;
-  
-          let availableTimeSlots: any[] = [];
-  
-          while (
-            (tempMoment.valueOf() < closingDateTime.valueOf())
-          ) {
-            let startOfApptSlotMoment = tempMoment.clone();
-            let endOfApptSlotMoment = tempMoment.clone().add(serviceLength * 30, 'minutes');
-  
-            let slotAvailable = true;
-  
-            for (const appt of this.props.selectedEmployee.appointments) {
-              let existingApptMomentStart = moment(appt.datetime.toDate());
-              let existingApptMomentEnd = existingApptMomentStart.clone().add(appt.service.length * 30, 'minutes');
-  
-              if (
-                // Two appointments start at same time
-                startOfApptSlotMoment.isSame(existingApptMomentStart) ||
-                // Two appointments end at the same time
-                endOfApptSlotMoment.isSame(existingApptMomentEnd) ||
-                // The existing appointment overlaps on the left
-                (startOfApptSlotMoment.isBefore(existingApptMomentStart) && endOfApptSlotMoment.isAfter(existingApptMomentStart)) ||
-                // The existing appointment overlaps on the right
-                (startOfApptSlotMoment.isBefore(existingApptMomentEnd) && endOfApptSlotMoment.isAfter(existingApptMomentEnd)) ||
-                // The existing appointment overlaps both sides
-                (existingApptMomentStart.isBefore(startOfApptSlotMoment) && existingApptMomentEnd.isAfter(endOfApptSlotMoment)) ||
-                //The existing appointment is contained within the time slot
-                (existingApptMomentStart.isAfter(startOfApptSlotMoment) && existingApptMomentEnd.isBefore(endOfApptSlotMoment))
-              ) {
-                slotAvailable = false;
-                break;
-              }
+          for (const employeeSchedule of this.props.selectedEmployee.availability) {
+            if (moment().day(employeeSchedule.day).day() === moment(selectedDate.toISOString()).day()) {
+              employeeWorking = true;
+              employeeAvailabilityOnDay = employeeSchedule;
+              break;
             }
-  
-            // The appointment would end after business close
-            if (endOfApptSlotMoment.isAfter(closingTimeMoment)) {
-              slotAvailable = false;
-            }
-  
-            if (slotAvailable) {
-              const availableTime = tempMoment.clone();
-              availableTimeSlots.push(availableTime); 
-            }    
-  
-            tempMoment.add(30, 'minutes');
           }
-  
-          this.setState({
-            availableAppointmentTimes: availableTimeSlots
-          });
+
+          if (employeeWorking) {
+            
+            let openingDateTime = this.getBusinessHoursDatetime(employeeAvailabilityOnDay?.start);
+            let closingDateTime = this.getBusinessHoursDatetime(employeeAvailabilityOnDay?.end);
+    
+            let closingTimeMoment = moment(closingDateTime.toISOString()).local();
+    
+            let tempMoment = moment(openingDateTime.toISOString()).local();
+    
+            let serviceLength = this.props.selectedEmployee.services[this.state.selectedService].length;
+    
+            let availableTimeSlots: any[] = [];
+    
+            while (
+              (tempMoment.valueOf() < closingDateTime.valueOf())
+            ) {
+              let startOfApptSlotMoment = tempMoment.clone();
+              let endOfApptSlotMoment = tempMoment.clone().add(serviceLength * 30, 'minutes');
+    
+              let slotAvailable = true;
+    
+              for (const appt of this.props.selectedEmployee.appointments) {
+                console.log(appt);
+                if (appt.status !== 'cancelled') {
+                  let existingApptMomentStart = moment(appt.datetime.toDate());
+                  let existingApptMomentEnd = existingApptMomentStart.clone().add(appt.service.length * 30, 'minutes');
+      
+                  if (
+                    // Two appointments start at same time
+                    startOfApptSlotMoment.isSame(existingApptMomentStart) ||
+                    // Two appointments end at the same time
+                    endOfApptSlotMoment.isSame(existingApptMomentEnd) ||
+                    // The existing appointment overlaps on the left
+                    (startOfApptSlotMoment.isBefore(existingApptMomentStart) && endOfApptSlotMoment.isAfter(existingApptMomentStart)) ||
+                    // The existing appointment overlaps on the right
+                    (startOfApptSlotMoment.isBefore(existingApptMomentEnd) && endOfApptSlotMoment.isAfter(existingApptMomentEnd)) ||
+                    // The existing appointment overlaps both sides
+                    (existingApptMomentStart.isBefore(startOfApptSlotMoment) && existingApptMomentEnd.isAfter(endOfApptSlotMoment)) ||
+                    //The existing appointment is contained within the time slot
+                    (existingApptMomentStart.isAfter(startOfApptSlotMoment) && existingApptMomentEnd.isBefore(endOfApptSlotMoment))
+                  ) {
+                    slotAvailable = false;
+                    break;
+                  }
+                }
+              }
+    
+              // The appointment would end after business close
+              if (endOfApptSlotMoment.isAfter(closingTimeMoment)) {
+                slotAvailable = false;
+              }
+    
+              if (slotAvailable) {
+                const availableTime = tempMoment.clone();
+                availableTimeSlots.push(availableTime); 
+              }    
+    
+              tempMoment.add(30, 'minutes');
+            }
+    
+            this.setState({
+              availableAppointmentTimes: availableTimeSlots
+            });
+          }
         }
     }
   }
@@ -213,9 +244,67 @@ class BusinessInfoDetails extends React.Component<any, any> {
         firestore.collection('customers').doc(`${this.props.user.customerId}`).update({
           appointments: firebase.firestore.FieldValue.arrayUnion(docRef.id)
         })
+        .then(() => {
+          let appointmentToAdd = {
+            businessId: this.props.businessId,
+            customerId: this.props.user.customerId,
+            datetime: firebase.firestore.Timestamp.fromDate(new Date(this.state.availableAppointmentTimes[this.state.selectedAppointmentSlot])),
+            employeeId: this.props.selectedEmployee.id,
+            service: this.props.selectedEmployee.services[this.state.selectedService],
+            status: 'requested'
+          }
+          this.dispatchAddAppointment(appointmentToAdd);
+
+          this.resetBookings();
+          this.handleCloseBookDialog();
+          this.showSuccessfulBooking();
+        })
       });
     }).catch((error) => {
       console.log(error);
+      this.showFailedBooking();
+    });
+  }
+
+  resetBookings() {
+    this.setState({
+      selectedEmployee: null,
+      selectedService: -1,
+      selectedAppointmentSlot: -1,
+      selectedDate: '',
+      availableAppointmentTimes: []
+    });
+  }
+
+  handleOpenBookDialog() {
+    this.setState({
+      bookDialogOpen: true
+    });
+  }
+
+  handleCloseBookDialog() {
+    this.setState({
+      bookDialogOpen: false
+    });
+  }
+
+  handleCloseBookingMessage() {
+    this.setState({
+      bookingMessageOpen: false
+    });
+  }
+
+  showSuccessfulBooking() {
+    this.setState({
+      bookingMessageOpen: true,
+      bookingMessage: 'Booking Requested'
+    });
+  }
+
+  showFailedBooking() {
+    this.setState({
+      bookingMessageOpen: true,
+      bookingMessage: 'Failed Booking'
     });
   }
 
@@ -223,93 +312,124 @@ class BusinessInfoDetails extends React.Component<any, any> {
     const { classes } = this.props;
 
     return (
-      <div className={classes.businessInfoDetails}>
-        { this.props.businessEmployees.length > 0 &&
-          <div>
-            <RadioGroup aria-label="employee" name="employees" onChange={(e) => this.handleSelectEmployee(e)}>
-              <Grid container={true} spacing={1}>
-                {this.props.businessEmployees.map((employee) => {
-                  return (
-                    <Grid container={true} item={true} xs={4} key={employee.id} className={classes.employeeSelection}>
-                      <img
-                        className={classes.businessPicture}
-                        src={cat1}
-                        alt=''
-                      />
-                      <FormControlLabel
-                        value={employee.id}
-                        control={
-                          <Radio />
-                        }
-                        label={employee.firstName}
-                      />
-                      <div className={classes.employeePosition}><i>{employee.position}</i></div>
-                    </Grid>
-                  )})
-                }
-              </Grid>
+      <div>
+        <div className={classes.businessInfoDetails}>
+          { this.props.businessEmployees.length > 0 &&
+            <div>
+              <RadioGroup aria-label="employee" name="employees" onChange={(e) => this.handleSelectEmployee(e)}>
+                <Grid container={true} spacing={1}>
+                  {this.props.businessEmployees.map((employee) => {
+                    return (
+                      <Grid container={true} item={true} xs={4} key={employee.id} className={classes.employeeSelection}>
+                        <img
+                          className={classes.businessPicture}
+                          src={cat1}
+                          alt=''
+                        />
+                        <FormControlLabel
+                          value={employee.id}
+                          control={
+                            <Radio />
+                          }
+                          label={employee.firstName}
+                        />
+                        <div className={classes.employeePosition}><i>{employee.position}</i></div>
+                      </Grid>
+                    )})
+                  }
+                </Grid>
 
-              <div className={classes.firstAvailableSelection}>
-                <FormControlLabel
-                  value={'First-Available'}
-                  control={<Radio />}
-                  label={'FIRST AVAILABLE'}
-                />
+                <div className={classes.firstAvailableSelection}>
+                  <FormControlLabel
+                    value={'First-Available'}
+                    control={<Radio />}
+                    label={'FIRST AVAILABLE'}
+                  />
+                </div>
+              </RadioGroup>
+
+              {this.props.selectedEmployee && this.props.selectedEmployee.services.map((service, index) => {
+                return (
+                  <Card className={this.state.selectedService === index ? classes.selectedServiceCard : classes.serviceCard} 
+                    variant="outlined" key={index} onClick={() => this.selectService(index)}>
+                    <div className={classes.serviceHeader}>{service.name}</div>
+                    <div className={classes.serviceLengthAndCost}>
+                      <div className={this.state.selectedService === index ? classes.selectedServiceCardServiceLength : classes.serviceLength}>{service.length * 30} min</div>
+                      <div>${service.price}</div>
+                    </div>
+                  </Card>
+                )
+              })}
+
+              <div className={classes.appointmentSelection}>
+                <div className={classes.setAppointmentDate}>
+                  <TextField
+                    id="date"
+                    label="Select Date"
+                    type="date"
+                    value={this.state.selectedDate}
+                    onChange={(e) => this.handleSelectedDateChange(e)}
+                    className={classes.textField}
+                    InputLabelProps={{
+                      shrink: true,
+                    }}
+                  />
+                </div>
+
+                <div className={classes.applyAppointmentDate}>
+                  <Button variant="contained" onClick={() => this.findAvailableTimes()}>Apply</Button>
+                </div>
               </div>
-            </RadioGroup>
 
-            {this.props.selectedEmployee && this.props.selectedEmployee.services.map((service, index) => {
-              return (
-                <Card className={this.state.selectedService === index ? classes.selectedServiceCard : classes.serviceCard} 
-                  variant="outlined" key={index} onClick={() => this.selectService(index)}>
-                  <div className={classes.serviceHeader}>{service.name}</div>
-                  <div className={classes.serviceLengthAndCost}>
-                    <div className={this.state.selectedService === index ? classes.selectedServiceCardServiceLength : classes.serviceLength}>{service.length * 30} min</div>
-                    <div>${service.price}</div>
-                  </div>
-                </Card>
-              )
-            })}
-
-            <div className={classes.appointmentSelection}>
-              <div className={classes.setAppointmentDate}>
-                <TextField
-                  id="date"
-                  label="Select Date"
-                  type="date"
-                  value={this.state.selectedDate}
-                  onChange={(e) => this.handleSelectedDateChange(e)}
-                  className={classes.textField}
-                  InputLabelProps={{
-                    shrink: true,
-                  }}
-                />
+              <div className={classes.appointmentTimeSelection}>
+                  {this.state.availableAppointmentTimes.map((apptTime, index) => {
+                    return (
+                      <div key={index} onClick={() => this.selectAppointmentSlot(index)} 
+                        className={`${this.state.selectedAppointmentSlot === index ? classes.selectedAppointmentSlot : classes.appointmentSlot}`}
+                      >{apptTime.format('h:mm A')}</div>
+                    )
+                  })}
               </div>
 
-              <div className={classes.applyAppointmentDate}>
-                <Button variant="contained" onClick={() => this.findAvailableTimes()}>Apply</Button>
+              <div className={classes.bookAppointment}>
+                <Button variant="contained" 
+                  color='primary'
+                  className={classes.bookAppointmentButton}
+                  onClick={() => this.handleOpenBookDialog()}>BOOK</Button>
               </div>
             </div>
 
-            <div className={classes.appointmentTimeSelection}>
-                {this.state.availableAppointmentTimes.map((apptTime, index) => {
-                  return (
-                    <div key={index} onClick={() => this.selectAppointmentSlot(index)} 
-                      className={`${this.state.selectedAppointmentSlot === index ? classes.selectedAppointmentSlot : classes.appointmentSlot}`}
-                    >{apptTime.format('h:mm A')}</div>
-                  )
-                })}
-            </div>
+          }
+        </div>
 
-            <div className={classes.bookAppointment}>
-              <Button variant="contained" 
-                color='primary'
-                className={classes.bookAppointmentButton}
-                onClick={() => this.bookAppointment()}>BOOK</Button>
-            </div>
-          </div>
+        <Dialog open={this.state.bookDialogOpen} onClose={() => this.handleCloseBookDialog()}>
+          <DialogTitle>Book Appointment?</DialogTitle>
+          <DialogContent>
+            <DialogContentText>Are you sure you want to book this appointment?</DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={() => this.bookAppointment()}>Yes</Button>
+            <Button onClick={() => this.handleCloseBookDialog()}>No</Button>
+          </DialogActions>
+        </Dialog>
 
-        }
+        <Snackbar
+          anchorOrigin={{
+            vertical: 'top',
+            horizontal: 'right',
+          }}
+          open={this.state.bookingMessageOpen}
+          autoHideDuration={6000}
+          onClose={() => this.handleCloseBookingMessage()}
+          message={this.state.bookingMessage}
+          action={
+            <React.Fragment>
+              <IconButton size="small" aria-label="close" color="inherit" onClick={() => this.handleCloseBookingMessage()}>
+                <CloseIcon fontSize="small" />
+              </IconButton>
+            </React.Fragment>
+          }
+        />
       </div>
     )
   }
@@ -429,6 +549,6 @@ const styles = (theme: Theme) =>
   }
 );
 
-export default connect(mapStateToProps, { setSelectedEmployee })(
+export default connect(mapStateToProps, { setSelectedEmployee, addSelectedEmployeeAppointment })(
   withStyles(styles, { withTheme: true })(BusinessInfoDetails)
 );

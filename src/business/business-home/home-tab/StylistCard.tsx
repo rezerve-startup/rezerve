@@ -34,11 +34,20 @@ const useStyles = makeStyles((theme: Theme) =>
 );
 
 function mapStateToProps(state: StoreState) {
+  let employeeReviews = state.system.user.employeeInfo.reviews;
+  let reviewsToAdd: any[] = [];
+
+  if (employeeReviews) {
+    for (const review of employeeReviews) {
+      reviewsToAdd.push(review);
+    }
+  }
+
   return {
     employeeName: state.system.user.firstName,
     employeeId: state.system.user.employeeId,
     employeePosition: state.system.user.employeeInfo.position,
-    employeeReviews: state.system.user.employeeInfo.reviews
+    employeeReviews: reviewsToAdd
   };
 };
 

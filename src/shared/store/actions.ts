@@ -16,6 +16,10 @@ import {
   SET_TO_DOS,
   SET_EMPLOYEE_PHONE,
   SET_EMPLOYEE_EMAIL,
+  SET_USER_INFO,
+  SET_BUSINESS_AVAILABILITY,
+  UPDATE_APPOINTMENT_STATUS,
+  ADD_SELECTED_EMPLOYEE_APPOINTMENT
 } from './types';
 
 // ****** SYSTEM ACTIONS ***************
@@ -32,6 +36,13 @@ export function updateUser(newUser: SystemState): SystemActionTypes {
     type: UPDATE_USER,
     payload: newUser,
   };
+}
+
+export function setUserInfo(userInfo: any): SystemActionTypes {
+  return {
+    type: SET_USER_INFO,
+    payload: userInfo
+  }
 }
 
 export function setToDos(todos: any[]): SystemActionTypes {
@@ -55,6 +66,13 @@ export function setEmployeeEmail(email: string): SystemActionTypes {
   }
 }
 
+export function updateAppointmentStatus(appointment: any): SystemActionTypes {
+  return {
+    type: UPDATE_APPOINTMENT_STATUS,
+    payload: appointment
+  }
+}
+
 // ****** BUSINESS ACTIONS **************
 
 export function updateBusinessName(
@@ -64,6 +82,13 @@ export function updateBusinessName(
     type: UPDATE_BUSINESS_NAME,
     payload: newBusinessName,
   };
+}
+
+export function setBusinessAvailability(businessAvailability: any): BusinessActionTypes {
+  return {
+    type: SET_BUSINESS_AVAILABILITY,
+    payload: businessAvailability
+  }
 }
 
 // ***** CUSTOMER ACTIONS *************
@@ -116,5 +141,12 @@ export function setSelectedEmployee(selectedEmployee): CustomerActionTypes {
   return {
     type: SET_SELECTED_EMPLOYEE,
     payload: selectedEmployee
+  }
+}
+
+export function addSelectedEmployeeAppointment(appointmentToAdd): CustomerActionTypes {
+  return {
+    type: ADD_SELECTED_EMPLOYEE_APPOINTMENT,
+    payload: appointmentToAdd
   }
 }

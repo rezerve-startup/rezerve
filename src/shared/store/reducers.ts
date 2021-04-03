@@ -18,7 +18,11 @@ import {
   SET_SELECTED_EMPLOYEE,
   SET_TO_DOS,
   SET_EMPLOYEE_PHONE,
-  SET_EMPLOYEE_EMAIL
+  SET_EMPLOYEE_EMAIL,
+  SET_USER_INFO,
+  SET_BUSINESS_AVAILABILITY,
+  UPDATE_APPOINTMENT_STATUS,
+  ADD_SELECTED_EMPLOYEE_APPOINTMENT
 } from './types';
 
 // ************** System Reducer ******************
@@ -26,7 +30,7 @@ import {
 const initialSystemState: SystemState = {
   loggedIn: false,
   session: '',
-  user: undefined,
+  user: undefined
 };
 
 export function systemReducer(
@@ -45,6 +49,12 @@ export function systemReducer(
         ...state,
         user: action.payload,
       };
+    }
+    case SET_USER_INFO: {
+      return {
+        ...state,
+        user: action.payload
+      }
     }
     case SET_TO_DOS: {
       return {
@@ -76,6 +86,20 @@ export function systemReducer(
         }
       }
     }
+    case UPDATE_APPOINTMENT_STATUS: {
+      return {
+        ...state,
+        user: {
+          ...state.user,
+          employeeInfo: {
+            ...state.user.employeeInfo,
+            appointments: state.user.employeeInfo.appointments.map(
+              (appt) => appt.id === action.payload.id ? {...appt, status: action.payload.status} : appt
+            )
+          }
+        }
+      }
+    }
     default:
       return state;
   }
@@ -85,6 +109,11 @@ export function systemReducer(
 
 const initialBusinessState: BusinessState = {
   businessName: '',
+  businessAvailability: {
+    daysOpen: [],
+    openingTime: '',
+    closingTime: ''
+  }
 };
 
 export function businessReducer(
@@ -97,6 +126,12 @@ export function businessReducer(
         ...state,
         businessName: action.payload,
       };
+    }
+    case SET_BUSINESS_AVAILABILITY: {
+      return {
+        ...state,
+        businessAvailability: action.payload
+      }
     }
     default:
       return state;
@@ -161,6 +196,18 @@ export function customerReducer(
       return {
         ...state,
         selectedEmployee: action.payload
+      }
+    }
+    case ADD_SELECTED_EMPLOYEE_APPOINTMENT: {
+      return {
+        ...state,
+        selectedEmployee: {
+          ...state.selectedEmployee,
+          appointments: [
+            ...state.selectedEmployee.appointments,
+            action.payload
+          ]
+        }
       }
     }
     default:
