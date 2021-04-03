@@ -19,10 +19,15 @@ import {
   SET_TO_DOS,
   SET_EMPLOYEE_PHONE,
   SET_EMPLOYEE_EMAIL,
-  SET_USER_INFO,
   SET_BUSINESS_AVAILABILITY,
   UPDATE_APPOINTMENT_STATUS,
-  ADD_SELECTED_EMPLOYEE_APPOINTMENT
+  ADD_SELECTED_EMPLOYEE_APPOINTMENT,
+  CLEAR_USER_INFO,
+  SET_USER_EMPLOYEE_INFO,
+  SET_USER_CUSTOMER_INFO,
+  SET_USER_EMPLOYEE_APPOINTMENTS,
+  SET_EMPLOYEE_CLIENTS,
+  SET_EMPLOYEE_REVIEWS
 } from './types';
 
 // ************** System Reducer ******************
@@ -50,7 +55,55 @@ export function systemReducer(
         user: action.payload,
       };
     }
-    case SET_USER_INFO: {
+    case CLEAR_USER_INFO: {
+      return {
+        ...state,
+        user: undefined
+      }
+    }
+    case SET_USER_EMPLOYEE_INFO: {
+      return {
+        ...state,
+        user: action.payload
+      }
+    }
+    case SET_USER_EMPLOYEE_APPOINTMENTS: {
+      return {
+        ...state,
+        user: {
+          ...state.user,
+          employeeInfo: {
+            ...state.user.employeeInfo,
+            appointments: action.payload
+          }
+        }
+      }
+    }
+    case SET_EMPLOYEE_CLIENTS: {
+      return {
+        ...state,
+        user: {
+          ...state.user,
+          employeeInfo: {
+            ...state.user.employeeInfo,
+            clients: action.payload
+          }
+        }
+      }
+    }
+    case SET_EMPLOYEE_REVIEWS: {
+      return {
+        ...state,
+        user: {
+          ...state.user,
+          employeeInfo: {
+            ...state.user.employeeInfo,
+            reviews: action.payload
+          }
+        }
+      }
+    }
+    case SET_USER_CUSTOMER_INFO: {
       return {
         ...state,
         user: action.payload

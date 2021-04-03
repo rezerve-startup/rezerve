@@ -183,7 +183,6 @@ class BusinessInfoDetails extends React.Component<any, any> {
               let slotAvailable = true;
     
               for (const appt of this.props.selectedEmployee.appointments) {
-                console.log(appt);
                 if (appt.status !== 'cancelled') {
                   let existingApptMomentStart = moment(appt.datetime.toDate());
                   let existingApptMomentEnd = existingApptMomentStart.clone().add(appt.service.length * 30, 'minutes');

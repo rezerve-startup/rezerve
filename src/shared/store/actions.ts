@@ -16,10 +16,15 @@ import {
   SET_TO_DOS,
   SET_EMPLOYEE_PHONE,
   SET_EMPLOYEE_EMAIL,
-  SET_USER_INFO,
+  CLEAR_USER_INFO,
+  SET_USER_EMPLOYEE_INFO,
+  SET_USER_CUSTOMER_INFO,
   SET_BUSINESS_AVAILABILITY,
   UPDATE_APPOINTMENT_STATUS,
-  ADD_SELECTED_EMPLOYEE_APPOINTMENT
+  ADD_SELECTED_EMPLOYEE_APPOINTMENT,
+  SET_USER_EMPLOYEE_APPOINTMENTS,
+  SET_EMPLOYEE_CLIENTS,
+  SET_EMPLOYEE_REVIEWS
 } from './types';
 
 // ****** SYSTEM ACTIONS ***************
@@ -38,10 +43,44 @@ export function updateUser(newUser: SystemState): SystemActionTypes {
   };
 }
 
-export function setUserInfo(userInfo: any): SystemActionTypes {
+export function clearUserInfo(): SystemActionTypes {
   return {
-    type: SET_USER_INFO,
-    payload: userInfo
+    type: CLEAR_USER_INFO
+  }
+}
+
+export function setUserEmployeeInfo(userEmployeeInfo: any): SystemActionTypes {
+  return {
+    type: SET_USER_EMPLOYEE_INFO,
+    payload: userEmployeeInfo
+  }
+}
+
+export function setUserEmployeeAppointments(employeeAppointments: any[]): SystemActionTypes {
+  return {
+    type: SET_USER_EMPLOYEE_APPOINTMENTS,
+    payload: employeeAppointments
+  }
+}
+
+export function setEmployeeClients(employeeClients: any): SystemActionTypes {
+  return {
+    type: SET_EMPLOYEE_CLIENTS,
+    payload: employeeClients
+  }
+}
+
+export function setEmployeeReviews(employeeReviews: any[]): SystemActionTypes {
+  return {
+    type: SET_EMPLOYEE_REVIEWS,
+    payload: employeeReviews
+  }
+}
+
+export function setUserCustomerInfo(userCustomerInfo: any): SystemActionTypes {
+  return {
+    type: SET_USER_CUSTOMER_INFO,
+    payload: userCustomerInfo
   }
 }
 
