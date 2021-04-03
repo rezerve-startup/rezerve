@@ -30,7 +30,7 @@ import { connect } from 'react-redux';
 import { StoreState } from '../../../shared/store/types';
 import moment from 'moment';
 
-import { updateAppointmentStatus } from '../../../shared/store/actions';
+import { updateAppointmentStatus, setUserEmployeeAppointments } from '../../../shared/store/actions';
 import { firestore } from '../../../config/FirebaseConfig';
 
 const styles = (theme: Theme) =>
@@ -118,7 +118,8 @@ function mapStateToProps(state: StoreState) {
   }
 
   return ({
-    upcomingAppointments: upcomingAppointments
+    upcomingAppointments: upcomingAppointments,
+    employeeId: state.system.user.employeeId
   });
 }
 
@@ -140,7 +141,9 @@ interface IncomingSchedule {
 
 interface Props extends WithStyles<typeof styles> {
   upcomingAppointments?: any[],
-  updateAppointmentStatus?: any
+  updateAppointmentStatus?: any,
+  setUserEmployeeAppointments?: any,
+  employeeId?: string
 }
 
 class EmployeeRequestedAppointments extends React.Component<Props, State> {
@@ -154,6 +157,14 @@ class EmployeeRequestedAppointments extends React.Component<Props, State> {
       selectedAppointment: undefined,
       selectedAction: '',
     }
+  }
+
+  componentDidMount() {
+    this.getEmployeeAppointments();
+  }
+
+  dispatchSetUserEmployeeAppointments(employeeAppts) {
+    this.props.setUserEmployeeAppointments(employeeAppts);
   }
 
   dispatchUpdateAppointmentStatus(appt: any) {
@@ -170,6 +181,35 @@ class EmployeeRequestedAppointments extends React.Component<Props, State> {
     this.setState({
       cancelAppointmentStatusDialogOpen: false
     })
+  }
+
+  getEmployeeAppointments() {
+    firestore.collection('appointments').where('employeeId', '==', `${this.props.employeeId}`).get()
+      .then((querySnapshot) => {
+        let employeeAppts: any[] = [];
+
+        querySnapshot.forEach((apptDoc) => {
+          const apptData = apptDoc.data();
+
+          apptData.appointmentId = apptDoc.id;
+
+          firestore.collection('users').where('customerId', '==', `${apptData.customerId}`).get()
+            .then((querySnapshot) => {
+              querySnapshot.forEach((userDoc) => {
+                const userData = userDoc.data();
+
+                apptData.client = {
+                  firstName: userData.firstName,
+                  lastName: userData.lastName
+                }
+
+                employeeAppts.push(apptData);
+
+                this.dispatchSetUserEmployeeAppointments(employeeAppts);
+              });
+            })
+        });
+      })
   }
 
   render() {
@@ -293,6 +333,6 @@ class EmployeeRequestedAppointments extends React.Component<Props, State> {
   }
 }
 
-export default connect(mapStateToProps, { updateAppointmentStatus })(
+export default connect(mapStateToProps, { updateAppointmentStatus, setUserEmployeeAppointments })(
   withStyles(styles, { withTheme: true })(EmployeeRequestedAppointments)
 );

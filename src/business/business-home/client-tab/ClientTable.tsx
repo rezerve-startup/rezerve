@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import clsx from 'clsx';
 import {
   Toolbar,
@@ -23,6 +23,7 @@ import {
   InputBase,
   Grow,
   fade,
+  withStyles,
 } from '@material-ui/core';
 import image from '../../../assets/avatar.jpg';
 import { Delete, Check, Add, Search, Message } from '@material-ui/icons';
@@ -30,23 +31,8 @@ import { Client } from '../../models/BusinessHome';
 import { SpeedDial, SpeedDialAction, SpeedDialIcon } from '@material-ui/lab';
 import { connect } from 'react-redux';
 import { StoreState } from '../../../shared/store/types';
-
-function createData(name: string, numVisits: number, picture: string): Client {
-  return { name, numVisits, picture };
-}
-
-const rows = [
-  createData('Sample Client-1', 10, ''),
-  createData('Sample Client-2', 20, ''),
-  createData('Sample Client-3', 30, ''),
-  createData('Sample Client-4', 40, ''),
-  createData('Sample Client-5', 50, ''),
-  createData('Sample Client-6', 60, ''),
-  createData('Sample Client-7', 70, ''),
-  createData('Sample Client-8', 80, ''),
-  createData('Sample Client-9', 90, ''),
-  createData('Sample Client-10', 100, ''),
-];
+import { setEmployeeClients } from '../../../shared/store/actions';
+import { firestore } from '../../../config/FirebaseConfig';
 
 const fabActions = [
   { icon: <Message />, name: 'Message' },
@@ -390,7 +376,8 @@ function mapStateToProps(state: StoreState) {
 
 
   return ({
-    employeeClients: clientsToAdd
+    employeeClients: clientsToAdd,
+    employeeId: state.system.user.employeeId
   });
 }
 
@@ -401,6 +388,49 @@ const ClientTable = (props: any) => {
   const [selected, setSelected] = React.useState<string[]>([]);
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
+
+  useEffect(function() {
+    firestore.collection('appointments').where('employeeId', '==', `${props.employeeId}`).get()
+      .then((querySnapshot) => {
+        let employeeClients = {};
+
+        querySnapshot.forEach((apptDoc) => {
+          const apptData = apptDoc.data();
+
+          firestore.collection('users').where('customerId', '==', `${apptData.customerId}`).get()
+            .then((querySnapshot) => {
+              querySnapshot.forEach((userDoc) => {
+                const userData = userDoc.data();
+                let numVisits = 0;
+
+                if (apptData.datetime.toDate() < Date.now()) {
+                  if (employeeClients[`${apptData.customerId}`]) {
+                    if (apptData.status === 'accepted') {
+                      let numVisits = employeeClients[`${apptData.customerId}`] + 1;
+
+                      employeeClients[`${apptData.customerId}`].numVisits += 1;
+                    }
+                  } else {
+                    numVisits = 1;
+
+                    employeeClients[`${apptData.customerId}`] = {
+                      firstName: userData.firstName,
+                      lastName: userData.lastName,
+                      numVisits: numVisits
+                    }
+                  }
+                }
+
+                dispatchSetEmployeeClients(employeeClients);
+              });
+            })
+        });
+      })
+  }, []);
+
+  const dispatchSetEmployeeClients = (employeeClients: any) => {
+    props.setEmployeeClients(employeeClients);
+  }
 
   const handleRequestSort = (
     event: React.MouseEvent<unknown>,
@@ -502,15 +532,6 @@ const ClientTable = (props: any) => {
                             </Avatar>
                           }
                         />
-                        {/* <Avatar
-                          className={
-                            isItemSelected
-                              ? classes.checkedAvatar
-                              : classes.uncheckedAvatar
-                          }
-                          classes={{ img: classes.avatarImage }}
-                          src={image}
-                        /> */}
                       </TableCell>
                       <TableCell
                         component="th"
@@ -547,6 +568,6 @@ const ClientTable = (props: any) => {
   );
 }
 
-export default connect(mapStateToProps, null)(
-  (ClientTable)
+export default connect(mapStateToProps, { setEmployeeClients })(
+  ClientTable
 );

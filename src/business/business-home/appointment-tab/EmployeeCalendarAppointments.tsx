@@ -118,7 +118,6 @@ class EmployeeCalendarAppointments extends React.Component<Props, State> {
             id="date"
             label="Select Date"
             type="date"
-            defaultValue={this.state.currentDate}
             value={this.state.currentDate}
             onChange={(e) => this.handleDateChange(e)}
             className={classes.selectDate}

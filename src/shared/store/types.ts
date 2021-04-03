@@ -14,7 +14,12 @@ export interface SystemState {
 
 export const UPDATE_SESSION = 'UPDATE_SESSION';
 export const UPDATE_USER = 'UPDATE_USER';
-export const SET_USER_INFO = 'SET_USER_INFO';
+export const CLEAR_USER_INFO = 'CLEAR_USER_INFO';
+export const SET_USER_EMPLOYEE_INFO = 'SET_USER_EMPLOYEE_INFO';
+export const SET_USER_EMPLOYEE_APPOINTMENTS = 'SET_USER_EMPLOYEE_APPOINTMENTS';
+export const SET_EMPLOYEE_CLIENTS = 'SET_EMPLOYEE_CLIENTS';
+export const SET_EMPLOYEE_REVIEWS = 'SET_EMPLOYEE_REVIEWS';
+export const SET_USER_CUSTOMER_INFO = 'SET_USER_CUSTOMER_INFO';
 export const SET_TO_DOS = 'SET_TO_DOS';
 export const SET_EMPLOYEE_PHONE = 'SET_EMPLOYEE_PHONE';
 export const SET_EMPLOYEE_EMAIL = 'SET_EMPLOYEE_EMAIL';
@@ -30,8 +35,32 @@ interface UpdateUserAction {
   payload: any;
 }
 
-interface SetUserInfoAction {
-  type: typeof SET_USER_INFO;
+interface ClearUserInfoAction {
+  type: typeof CLEAR_USER_INFO;
+}
+
+interface SetUserEmployeeInfoAction {
+  type: typeof SET_USER_EMPLOYEE_INFO;
+  payload: any;
+}
+
+interface SetUserEmployeeAppointmentsAction {
+  type: typeof SET_USER_EMPLOYEE_APPOINTMENTS;
+  payload: any;
+}
+
+interface SetEmployeeClientsAction {
+  type: typeof SET_EMPLOYEE_CLIENTS,
+  payload: any;
+}
+
+interface SetEmployeeReviewsAction {
+  type: typeof SET_EMPLOYEE_REVIEWS,
+  payload: any[];
+}
+
+interface SetUserCustomerInfoAction {
+  type: typeof SET_USER_CUSTOMER_INFO;
   payload: any;
 }
 
@@ -58,7 +87,12 @@ interface updateAppointmentStatusAction {
 export type SystemActionTypes = 
   UpdateSessionAction |
   UpdateUserAction |
-  SetUserInfoAction |
+  ClearUserInfoAction |
+  SetUserEmployeeInfoAction |
+  SetUserEmployeeAppointmentsAction |
+  SetEmployeeClientsAction |
+  SetEmployeeReviewsAction |
+  SetUserCustomerInfoAction |
   SetToDosAction |
   SetEmployeePhoneAction |
   SetEmployeeEmailAction |
