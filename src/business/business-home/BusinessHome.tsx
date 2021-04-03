@@ -41,6 +41,7 @@ interface CustomTab {
 
 interface Props extends WithStyles<typeof styles> {
   isMobile: boolean;
+  business?: any;
 }
 
 type State = {
@@ -102,48 +103,52 @@ class BusinessHome extends React.Component<Props, State> {
     // const isMobile = false;
     return (
       <div className={classes.root}>
-        <Sidebar />
-        <Box m={1}>
-          <AppBar position="static" color="transparent" elevation={0}>
-            <Tabs
-              value={this.state.tabValue}
-              onChange={this.handleChange}
-              aria-label="business-tabs"
-              indicatorColor="primary"
-              centered={this.props.isMobile ? false : true}
-              variant={this.props.isMobile ? 'scrollable' : 'fullWidth'}
-              scrollButtons="on"
+        {this.props.business && 
+        <div>
+          <Sidebar />
+          <Box m={1}>
+            <AppBar position="static" color="transparent" elevation={0}>
+              <Tabs
+                value={this.state.tabValue}
+                onChange={this.handleChange}
+                aria-label="business-tabs"
+                indicatorColor="primary"
+                centered={this.props.isMobile ? false : true}
+                variant={this.props.isMobile ? 'scrollable' : 'fullWidth'}
+                scrollButtons="on"
+              >
+                {this.state.tabs.map((tab: CustomTab, i: number) => (
+                  <Tab
+                    key={i}
+                    label={tab.label}
+                    icon={tab.icon}
+                    {...a11yProps(i)}
+                  />
+                ))}
+              </Tabs>
+            </AppBar>
+            <Divider className={classes.divider} variant="fullWidth" />
+            <SwipeableViews
+              index={this.state.tabValue}
+              onChangeIndex={this.handleChangeIndex}
+              enableMouseEvents={true}
             >
-              {this.state.tabs.map((tab: CustomTab, i: number) => (
-                <Tab
-                  key={i}
-                  label={tab.label}
-                  icon={tab.icon}
-                  {...a11yProps(i)}
-                />
-              ))}
-            </Tabs>
-          </AppBar>
-          <Divider className={classes.divider} variant="fullWidth" />
-          <SwipeableViews
-            index={this.state.tabValue}
-            onChangeIndex={this.handleChangeIndex}
-            enableMouseEvents={true}
-          >
-            <TabPanel value={this.state.tabValue} index={0}>
-              <HomeTab isMobile={this.props.isMobile} />
-            </TabPanel>
-            <TabPanel value={this.state.tabValue} index={1}>
-              <AppointmentHome />
-            </TabPanel>
-            <TabPanel value={this.state.tabValue} index={2}>
-              <ClientTab />
-            </TabPanel>
-            <TabPanel value={this.state.tabValue} index={3}>
-              <BusinessPerformance />
-            </TabPanel>
-          </SwipeableViews>
-        </Box>
+              <TabPanel value={this.state.tabValue} index={0}>
+                <HomeTab isMobile={this.props.isMobile} />
+              </TabPanel>
+              <TabPanel value={this.state.tabValue} index={1}>
+                <AppointmentHome />
+              </TabPanel>
+              <TabPanel value={this.state.tabValue} index={2}>
+                <ClientTab />
+              </TabPanel>
+              <TabPanel value={this.state.tabValue} index={3}>
+                <BusinessPerformance />
+              </TabPanel>
+            </SwipeableViews>
+          </Box>
+        </div>
+        }
       </div>
     );
   }

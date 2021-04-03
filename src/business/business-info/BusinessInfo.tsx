@@ -140,6 +140,7 @@ class BusinessInfo extends React.Component<any, BusinessInfoState> {
               if (employeeData) {
                 tempEmployee = {
                   id: employee.id,
+                  availability: employeeData.availability,
                   reviews: [],
                   appointments: [],
                   services: employeeData.services,
@@ -234,7 +235,7 @@ class BusinessInfo extends React.Component<any, BusinessInfoState> {
                   navButtonsAlwaysVisible={true} autoPlay={false}
                 >
                   {businessPictures.map((businessPicture, i) => (
-                    <Paper key={i}>
+                    <Paper key={i} elevation={0}>
                       <img
                         className={classes.businessPicture}
                         src={businessPicture.imageUrl}

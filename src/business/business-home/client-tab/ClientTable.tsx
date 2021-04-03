@@ -369,22 +369,28 @@ const useStyles = makeStyles((theme: Theme) =>
 );
 
 function mapStateToProps(state: StoreState) {
-  let employeeClients: any = [];
-  for (const [key, val] of Object.entries(state.system.user.employeeInfo.clients)) {
-    let clientValue: any = val;
-    
-    const client = {
-      customerId: key,
-      firstName: clientValue.firstName,
-      lastName: clientValue.lastName,
-      numVisits: clientValue.numVisits
-    };
+  const employeeClients = state.system.user.employeeInfo.clients;
 
-    employeeClients.push(client);
+  let clientsToAdd: any = [];
+
+  if (employeeClients) {
+    for (const [key, val] of Object.entries(employeeClients)) {
+      let clientValue: any = val;
+      
+      const client = {
+        customerId: key,
+        firstName: clientValue.firstName,
+        lastName: clientValue.lastName,
+        numVisits: clientValue.numVisits
+      };
+  
+      clientsToAdd.push(client);
+    }
   }
 
+
   return ({
-    employeeClients: employeeClients
+    employeeClients: clientsToAdd
   });
 }
 

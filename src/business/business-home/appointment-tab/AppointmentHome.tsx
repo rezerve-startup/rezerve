@@ -10,8 +10,8 @@ import {
 } from '@material-ui/core';
 import { CalendarToday, Description } from '@material-ui/icons';
 import SwipeableViews from 'react-swipeable-views';
-import Upcoming from './Upcoming';
-import Calendar from './Calendar';
+import EmployeeCalendarAppointments from './EmployeeCalendarAppointments';
+import EmployeeRequestedAppointments from './EmployeeRequestedAppointments';
 
 const useStyles = makeStyles({
   root: {
@@ -67,10 +67,10 @@ export default function AppointmentHome() {
           enableMouseEvents={true}
         >
           <TabPanel value={value} index={0}>
-            <Upcoming />
+            <EmployeeRequestedAppointments />
           </TabPanel>
           <TabPanel value={value} index={1}>
-            <Calendar />
+            <EmployeeCalendarAppointments />
           </TabPanel>
         </SwipeableViews>
       </Box>

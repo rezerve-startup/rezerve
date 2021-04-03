@@ -39,9 +39,19 @@ const styles = (theme: Theme) =>
   });
 
 function mapStateToProps(state: StoreState) {
+  let employeeTodos = state.system.user.employeeInfo.todos;
+
+  let todosToAdd: any[] = [];
+
+  if (employeeTodos) {
+    for (const todo of employeeTodos) {
+      todosToAdd.push(todo);
+    }
+  }
+
   return {
     employeeId: state.system.user.employeeId,
-    employeeTodos: state.system.user.employeeInfo.todos
+    employeeTodos: todosToAdd
   }
 }
 
