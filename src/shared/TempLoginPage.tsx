@@ -9,9 +9,9 @@ import {
 import React from 'react';
 import { connect } from 'react-redux';
 import { auth, firestore } from '../config/FirebaseConfig';
-import { 
-  updateUser,
-  setUserInfo, 
+import {
+  setUserEmployeeInfo,
+  setUserCustomerInfo, 
   setBusinessAvailability
 } from '../shared/store/actions';
 import { StoreState } from './store/types';
@@ -30,12 +30,12 @@ class TempLoginPage extends React.Component<any, any> {
     };
   }
 
-  dispatchUpdateUser = (newUser) => {
-    this.props.updateUser(newUser);
-  };
+  dispatchSetUserEmployeeInfo = (userEmployeeInfo) => {
+    this.props.setUserEmployeeInfo(userEmployeeInfo);
+  }
 
-  dispatchSetUserInfo = (userInfo) => {
-    this.props.setUserInfo(userInfo);
+  dispatchSetUserCustomerInfo = (userCustomerInfo) => {
+    this.props.setUserCustomerInfo(userCustomerInfo)
   }
 
   dispatchSetBusinessAvailability = (businessAvailability) => {
@@ -58,79 +58,24 @@ class TempLoginPage extends React.Component<any, any> {
               const userInfo = userObj.data();
 
               if (userInfo && userInfo.employeeId !== '') {
-                let employeeAppts: any[] = [];
-                let employeeReviews: any[] = [];
 
                 firestore.collection('employees').doc(userInfo.employeeId).get()
                   .then((employeeObj) => {
                     let employeeInfo = employeeObj.data();
-                    userInfo.employeeInfo = employeeInfo;
-                  })
-                  .then(() => {
-                    firestore.collection('reviews').where('employeeId', '==', `${userInfo.employeeId}`).get()
-                      .then((querySnapshot) => {
-                        querySnapshot.forEach((reviewDoc) => {
-                          employeeReviews.push(reviewDoc.data());
-                        });
 
-                        userInfo.employeeInfo.reviews = employeeReviews;
-                      })
-                  })
-                  .then(() => {
-                    firestore.collection('appointments').where('employeeId', '==', `${userInfo.employeeId}`).get()
-                      .then((querySnapshot) => {
-                        let employeeClients = {};
-
-                        querySnapshot.forEach((apptDoc) => {
-                          const apptData = apptDoc.data();
-
-                          apptData.appointmentId = apptDoc.id;
-
-                          firestore.collection('users').where('customerId', '==', `${apptData.customerId}`).get()
-                            .then((querySnapshot) => {
-                              querySnapshot.forEach((userDoc) => {
-                                const userData = userDoc.data();
-                                let numVisits = 0;
-
-                                if (apptData.datetime.toDate() < Date.now()) {
-                                  if (employeeClients[`${apptData.customerId}`]) {
-                                    if (apptData.status === 'accepted') {
-                                      let numVisits = employeeClients[`${apptData.customerId}`] + 1;
-    
-                                      employeeClients[`${apptData.customerId}`].numVisits += 1;
-                                    }
-                                  } else {
-                                    numVisits = 1;
-  
-                                    employeeClients[`${apptData.customerId}`] = {
-                                      firstName: userData.firstName,
-                                      lastName: userData.lastName,
-                                      numVisits: numVisits
-                                    }
-                                  }
-                                }
-
-                                apptData.client = {
-                                  firstName: userData.firstName,
-                                  lastName: userData.lastName
-                                }
-
-                                employeeAppts.push(apptData);
-                                
-                                userInfo.employeeInfo.appointments = employeeAppts;
-                                userInfo.employeeInfo.clients = employeeClients;
-
-                                this.dispatchSetUserInfo(userInfo);
-                              });
-                            })
-                        });
-                      })
+                    let employeeInfoToAdd = {
+                      availability: employeeInfo?.availability,
+                      isOwner: employeeInfo?.isOwner,
+                      position: employeeInfo?.position,
+                      services: employeeInfo?.services,
+                      todos: employeeInfo?.todos
+                    }
+                    userInfo.employeeInfo = employeeInfoToAdd;
                   })
                   .then(() => {
                     firestore.collection('businesses').where('employees', 'array-contains', `${userInfo.employeeId}`).get()
                       .then((querySnapshot) => {
                         querySnapshot.forEach((businessDoc) => {
-                          console.log(businessDoc.data());
                           let businessInfoData = businessDoc.data();
 
                           let businessAvailability = {
@@ -144,7 +89,7 @@ class TempLoginPage extends React.Component<any, any> {
                       })
                   })
                   .then(() => {
-                    this.dispatchSetUserInfo(userInfo);
+                    this.dispatchSetUserEmployeeInfo(userInfo);
                   })
               }
             });
@@ -165,7 +110,59 @@ class TempLoginPage extends React.Component<any, any> {
             .get()
             .then((userObj) => {
               const userInfo = userObj.data();
-              this.dispatchUpdateUser(userInfo);
+              this.dispatchSetUserCustomerInfo(userInfo);
+
+              if (userInfo && userInfo.customerId !== '') {
+                let customerAppts: any[] = [];
+                let customerReviews: any[] = [];
+
+                firestore.collection('customers').doc(userInfo.customerId).get()
+                  .then((customerObj) => {
+                    let customerInfo = customerObj.data();
+                    userInfo.customerInfo = customerInfo;
+                  })
+                  .then(() => {
+                    firestore.collection('reviews').where('customerId', '==', `${userInfo.customerId}`).get()
+                      .then((querySnapshot) => {
+                        querySnapshot.forEach((reviewDoc) => {
+                          customerReviews.push(reviewDoc.data());
+                        });
+
+                        userInfo.customerInfo.reviews = customerReviews;
+                      })
+                  })
+                  .then(() => {
+                    firestore.collection('appointments').where('customerId', '==', `${userInfo.customerId}`).get()
+                      .then((querySnapshot) => {
+                        querySnapshot.forEach((apptDoc) => {
+                          const apptData = apptDoc.data();
+
+                          apptData.appointmentId = apptDoc.id;
+
+                          firestore.collection('users').where('employeeId', '==', `${apptData.employeeId}`).get()
+                            .then((querySnapshot) => {
+                              querySnapshot.forEach((userDoc) => {
+                                const userData = userDoc.data();
+
+                                apptData.employee = {
+                                  firstName: userData.firstName,
+                                  lastName: userData.lastName
+                                }
+
+                                customerAppts.push(apptData);
+                                
+                                userInfo.customerInfo.appointments = customerAppts;
+
+                                this.dispatchSetUserCustomerInfo(userInfo);
+                              });
+                            })
+                        });
+                      })
+                  })
+                  .then(() => {
+                    this.dispatchSetUserCustomerInfo(userInfo);
+                  })
+              }
             });
         }
       });
@@ -233,6 +230,6 @@ const styles = (theme: Theme) =>
     },
   });
 
-export default connect(mapStateToProps, { updateUser, setUserInfo, setBusinessAvailability })(
+export default connect(mapStateToProps, { setUserEmployeeInfo, setUserCustomerInfo, setBusinessAvailability })(
   withStyles(styles, { withTheme: true })(TempLoginPage),
 );

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import {
   Grid,
   Card,
@@ -14,6 +14,8 @@ import { Rating } from '@material-ui/lab';
 import image from '../../../assets/avatar.jpg';
 import { connect } from 'react-redux';
 import { StoreState } from '../../../shared/store/types';
+import { setEmployeeReviews } from '../../../shared/store/actions';
+import { firestore } from '../../../config/FirebaseConfig';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -66,7 +68,8 @@ type Props = {
   employeeName?: string;
   employeeId?: string;
   employeePosition?: string;
-  employeeReviews?: any
+  employeeReviews?: any;
+  setEmployeeReviews?: any;
 };
 
 const StylistCard = (props: Props) => {
@@ -74,6 +77,23 @@ const StylistCard = (props: Props) => {
   const classes = useStyles();
 
   let avgEmployeeReview = computeAvgReviewRating(props.employeeReviews);
+
+  useEffect(function() {
+    firestore.collection('reviews').where('employeeId', '==', `${props.employeeId}`).get()
+      .then((querySnapshot) => {
+        let employeeReviews: any[] = [];
+
+        querySnapshot.forEach((reviewDoc) => {
+          employeeReviews.push(reviewDoc.data());
+        });
+
+        dispatchSetEmployeeReviews(employeeReviews);
+      })
+  }, []);
+
+  const dispatchSetEmployeeReviews = (employeeReviews: any[]) => {
+    props.setEmployeeReviews(employeeReviews);
+  }
 
   return (
     <Card className={classes.card} elevation={0}>
@@ -112,4 +132,4 @@ const StyledRating = withStyles((theme) => ({
   },
 }))(Rating);
 
-export default connect(mapStateToProps, null)(StylistCard);
+export default connect(mapStateToProps, { setEmployeeReviews })(StylistCard);
