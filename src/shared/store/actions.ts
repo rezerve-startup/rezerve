@@ -24,7 +24,8 @@ import {
   ADD_SELECTED_EMPLOYEE_APPOINTMENT,
   SET_USER_EMPLOYEE_APPOINTMENTS,
   SET_EMPLOYEE_CLIENTS,
-  SET_EMPLOYEE_REVIEWS
+  SET_EMPLOYEE_REVIEWS,
+  LOGOUT_USER
 } from './types';
 
 // ****** SYSTEM ACTIONS ***************
@@ -109,6 +110,12 @@ export function updateAppointmentStatus(appointment: any): SystemActionTypes {
   return {
     type: UPDATE_APPOINTMENT_STATUS,
     payload: appointment
+  }
+}
+
+export function logoutUser(): SystemActionTypes {
+  return {
+    type: LOGOUT_USER
   }
 }
 

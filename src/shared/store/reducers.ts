@@ -27,7 +27,8 @@ import {
   SET_USER_CUSTOMER_INFO,
   SET_USER_EMPLOYEE_APPOINTMENTS,
   SET_EMPLOYEE_CLIENTS,
-  SET_EMPLOYEE_REVIEWS
+  SET_EMPLOYEE_REVIEWS,
+  LOGOUT_USER
 } from './types';
 
 // ************** System Reducer ******************
@@ -151,6 +152,12 @@ export function systemReducer(
             )
           }
         }
+      }
+    }
+    case LOGOUT_USER: {
+      return {
+        ...state,
+        user: undefined
       }
     }
     default:
