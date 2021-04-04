@@ -25,13 +25,13 @@ import { Description } from '@material-ui/icons/';
 import DeleteIcon from '@material-ui/icons/Delete';
 // tslint:disable-next-line: no-submodule-imports
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-import image from '../../../assets/avatar.jpg';
+import image from '../../assets/avatar.jpg';
 import { connect } from 'react-redux';
-import { StoreState } from '../../../shared/store/types';
+import { StoreState } from '../../shared/store/types';
 import moment from 'moment';
 
-import { updateEmployeeAppointmentStatus, setUserEmployeeAppointments } from '../../../shared/store/actions';
-import { firestore } from '../../../config/FirebaseConfig';
+import { updateCustomerAppointmentStatus, setUserCustomerAppointments } from '../../shared/store/actions';
+import { firestore } from '../../config/FirebaseConfig';
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -68,7 +68,7 @@ const styles = (theme: Theme) =>
       alignItems: 'center',
       display: 'flex'
     },
-    requestedAppointmentsText: {
+    upcomingAppointmentsText: {
       fontSize: '1.5rem',
       marginTop: '1rem',
       marginBottom: '1rem'
@@ -78,19 +78,19 @@ const styles = (theme: Theme) =>
       flexDirection: 'column',
       width: '100%',
     },
-    customerAvatarContainer: {
+    employeeAvatarContainer: {
       display: 'flex',
       marginBottom: '0.5rem'
     },
-    acceptOrDenyContainer: {
+    cancelContainer: {
       display: 'flex',
       justifyContent: 'center',
       alignItems: 'center'
     },
-    requestedApptContainer: {
+    upcomingApptContainer: {
       marginBottom: '1rem'
     },
-    noRequestedAppointments: {
+    noUpcomingAppointmentsText: {
       fontStyle: 'italic'
     },
     appointmentServiceContainer: {
@@ -103,14 +103,14 @@ const styles = (theme: Theme) =>
 
 function mapStateToProps(state: StoreState) {
   let upcomingAppointments: any[] = [];
-  let appointments = state.system.user.employeeInfo.appointments;
+  let appointments = state.system.user.customerInfo.appointments;
   let currentDate = Date.now();
 
   if (appointments) {
     for (let appointment of appointments) {
       let appointmentDate: Date = appointment.datetime.toDate();
   
-      if (appointmentDate.valueOf() > currentDate && appointment.status === 'requested') {
+      if (appointmentDate.valueOf() > currentDate && appointment.status === 'accepted') {
   
         appointment.formattedDate = moment(appointmentDate.toISOString()).format('YYYY-MM-DD');
         appointment.startTime = moment(appointmentDate.toISOString()).format('h:mm A');
@@ -125,13 +125,12 @@ function mapStateToProps(state: StoreState) {
 
   return ({
     upcomingAppointments: upcomingAppointments,
-    employeeId: state.system.user.employeeId
+    customerId: state.system.user.customerId
   });
 }
 
 type State = {
   incomingSchedule: IncomingSchedule[];
-  acceptAppointmentStatusDialogOpen: boolean;
   cancelAppointmentStatusDialogOpen: boolean;
   selectedAppointment: any;
   selectedAction: string;
@@ -147,18 +146,17 @@ interface IncomingSchedule {
 
 interface Props extends WithStyles<typeof styles> {
   upcomingAppointments?: any[],
-  updateEmployeeAppointmentStatus?: any,
-  setUserEmployeeAppointments?: any,
-  employeeId?: string
+  updateCustomerAppointmentStatus?: any,
+  setUserCustomerAppointments?: any,
+  customerId?: string
 }
 
-class EmployeeRequestedAppointments extends React.Component<Props, State> {
+class CustomerUpcomingAppointments extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
 
     this.state = {
       incomingSchedule: [],
-      acceptAppointmentStatusDialogOpen: false,
       cancelAppointmentStatusDialogOpen: false,
       selectedAppointment: undefined,
       selectedAction: '',
@@ -166,21 +164,15 @@ class EmployeeRequestedAppointments extends React.Component<Props, State> {
   }
 
   componentDidMount() {
-    this.getEmployeeAppointments();
+    this.getCustomerAppointments();
   }
 
-  dispatchSetUserEmployeeAppointments(employeeAppts) {
-    this.props.setUserEmployeeAppointments(employeeAppts);
+  dispatchSetUserCustomerAppointments(customerAppointments: any[]) {
+    this.props.setUserCustomerAppointments(customerAppointments)
   }
 
-  dispatchUpdateEmployeeAppointmentStatus(appt: any) {
-    this.props.updateEmployeeAppointmentStatus(appt);
-  }
-
-  handleCloseAcceptAppointmentDialog() {
-    this.setState({
-      acceptAppointmentStatusDialogOpen: false
-    })
+  dispatchUpdateCustomerAppointmentStatus(appt: any) {
+    this.props.updateCustomerAppointmentStatus(appt);
   }
 
   handleCloseCancelAppointmentDialog() {
@@ -189,45 +181,45 @@ class EmployeeRequestedAppointments extends React.Component<Props, State> {
     })
   }
 
-  getEmployeeAppointments() {
-    firestore.collection('appointments').where('employeeId', '==', `${this.props.employeeId}`).get()
+  getCustomerAppointments() {
+    firestore.collection('appointments').where('customerId', '==', `${this.props.customerId}`).get()
       .then((querySnapshot) => {
-        let employeeAppts: any[] = [];
+        let customerAppts: any[] = [];
 
         querySnapshot.forEach((apptDoc) => {
           const apptData = apptDoc.data();
 
           apptData.appointmentId = apptDoc.id;
 
-          firestore.collection('users').where('customerId', '==', `${apptData.customerId}`).get()
+          firestore.collection('users').where('employeeId', '==', `${apptData.employeeId}`).get()
             .then((querySnapshot) => {
               querySnapshot.forEach((userDoc) => {
                 const userData = userDoc.data();
 
-                apptData.client = {
+                apptData.employee = {
                   firstName: userData.firstName,
                   lastName: userData.lastName
                 }
 
-                employeeAppts.push(apptData);
+                customerAppts.push(apptData);
 
-                this.dispatchSetUserEmployeeAppointments(employeeAppts);
+                this.dispatchSetUserCustomerAppointments(customerAppts);
               });
             })
         });
-      })
+      });
   }
 
   render() {
     const { classes } = this.props;
     return (
       <div className={classes.root}>
-        <Typography className={classes.requestedAppointmentsText}>Requested Appointments</Typography>
+        <Typography className={classes.upcomingAppointmentsText}>Upcoming Appointments</Typography>
         {this.props.upcomingAppointments?.length === 0 ? (
-          <Typography className={classes.noRequestedAppointments}>No Requested Appointments</Typography>
+          <Typography className={classes.noUpcomingAppointmentsText}>No Upcoming Appointments</Typography>
         ) : (
           this.props.upcomingAppointments?.map((appt, index) => (
-          <Accordion key={index} className={classes.requestedApptContainer}>
+          <Accordion key={index} className={classes.upcomingApptContainer}>
             <AccordionSummary
               expandIcon={<ExpandMoreIcon />}
               aria-controls="panel1a-content"
@@ -248,26 +240,15 @@ class EmployeeRequestedAppointments extends React.Component<Props, State> {
             </AccordionSummary>
             <AccordionDetails>
               <div className={classes.accordionDetails}>
-                <div className={classes.customerAvatarContainer}>
+                <div className={classes.employeeAvatarContainer}>
                   <Avatar src={image} className={classes.small} />
-                  <Typography>{appt.client.firstName}</Typography>
+                  <Typography>{appt.employee.firstName}</Typography>
                 </div>
                 <div className={classes.appointmentServiceContainer}>
                   <Typography>{appt.service.name}</Typography>
-                  <Typography>{appt.service.price}</Typography>
+                  <Typography>${appt.service.price}</Typography>
                 </div>
-                <div className={classes.acceptOrDenyContainer}>
-                  <Button
-                    size="small"
-                    color="primary"
-                    variant="contained"
-                    className={classes.button}
-                    startIcon={<Description />}
-                    // tslint:disable-next-line: jsx-no-lambda
-                    onClick={() => this.acceptAppointment(appt)}
-                  >
-                    Accept
-                  </Button>
+                <div className={classes.cancelContainer}>
                   <Button
                     size="small"
                     color="secondary"
@@ -275,26 +256,15 @@ class EmployeeRequestedAppointments extends React.Component<Props, State> {
                     className={classes.button}
                     startIcon={<DeleteIcon />}
                     // tslint:disable-next-line: jsx-no-lambda
-                    onClick={() => this.declineAppointment(appt)}
+                    onClick={() => this.cancelAppointment(appt)}
                   >
-                    Decline
+                    Cancel
                   </Button>
                 </div>
               </div>
             </AccordionDetails>
           </Accordion>
         )))}
-
-        <Dialog open={this.state.acceptAppointmentStatusDialogOpen} onClose={() => this.handleCloseAcceptAppointmentDialog()}>
-          <DialogTitle>Accept Appointment</DialogTitle>
-          <DialogContent>
-            <DialogContentText>Are you sure you would like to accept this appointment?</DialogContentText>
-          </DialogContent>
-          <DialogActions>
-            <Button onClick={() => this.updateAppointmentStatus()}>Yes</Button>
-            <Button onClick={() => this.handleCloseAcceptAppointmentDialog()}>No</Button>
-          </DialogActions>
-        </Dialog>
 
         <Dialog open={this.state.cancelAppointmentStatusDialogOpen} onClose={() => this.handleCloseCancelAppointmentDialog()}>
           <DialogTitle>Cancel Appointment</DialogTitle>
@@ -310,15 +280,7 @@ class EmployeeRequestedAppointments extends React.Component<Props, State> {
     );
   }
 
-  acceptAppointment(appt: any) {
-    this.setState({
-      acceptAppointmentStatusDialogOpen: true,
-      selectedAppointment: appt,
-      selectedAction: 'accepted'
-    });
-  }
-
-  declineAppointment(appt: any) {
+  cancelAppointment(appt: any) {
     this.setState({
       cancelAppointmentStatusDialogOpen: true,
       selectedAppointment: appt,
@@ -333,16 +295,15 @@ class EmployeeRequestedAppointments extends React.Component<Props, State> {
     firestore.collection('appointments').doc(`${appointmentToUpdate.appointmentId}`).update({
       status: appointmentToUpdate.status
     }).then(() => {
-      this.dispatchUpdateEmployeeAppointmentStatus(appointmentToUpdate);
+      this.dispatchUpdateCustomerAppointmentStatus(appointmentToUpdate);
 
       this.setState({
-        acceptAppointmentStatusDialogOpen: false,
         cancelAppointmentStatusDialogOpen: false,
-      })
+      });
     });
   }
 }
 
-export default connect(mapStateToProps, { updateEmployeeAppointmentStatus, setUserEmployeeAppointments })(
-  withStyles(styles, { withTheme: true })(EmployeeRequestedAppointments)
+export default connect(mapStateToProps, { updateCustomerAppointmentStatus, setUserCustomerAppointments })(
+  withStyles(styles, { withTheme: true })(CustomerUpcomingAppointments)
 );

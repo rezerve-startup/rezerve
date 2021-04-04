@@ -20,10 +20,12 @@ export const SET_USER_EMPLOYEE_APPOINTMENTS = 'SET_USER_EMPLOYEE_APPOINTMENTS';
 export const SET_EMPLOYEE_CLIENTS = 'SET_EMPLOYEE_CLIENTS';
 export const SET_EMPLOYEE_REVIEWS = 'SET_EMPLOYEE_REVIEWS';
 export const SET_USER_CUSTOMER_INFO = 'SET_USER_CUSTOMER_INFO';
+export const SET_USER_CUSTOMER_APPOINTMENTS = 'SET_USER_CUSTOMER_APPOINTMENTS';
 export const SET_TO_DOS = 'SET_TO_DOS';
 export const SET_EMPLOYEE_PHONE = 'SET_EMPLOYEE_PHONE';
 export const SET_EMPLOYEE_EMAIL = 'SET_EMPLOYEE_EMAIL';
-export const UPDATE_APPOINTMENT_STATUS = 'UPDATE_APPOINTMENT_STATUS';
+export const UPDATE_EMPLOYEE_APPOINTMENT_STATUS = 'UPDATE_EMPLOYEE_APPOINTMENT_STATUS';
+export const UPDATE_CUSTOMER_APPOINTMENT_STATUS = 'UPDATE_CUSTOMER_APPOINTMENT_STATUS';
 export const LOGOUT_USER = 'LOGOUT_USER';
 
 interface UpdateSessionAction {
@@ -65,6 +67,11 @@ interface SetUserCustomerInfoAction {
   payload: any;
 }
 
+interface SetUserCustomerAppointmentsAction {
+  type: typeof SET_USER_CUSTOMER_APPOINTMENTS,
+  payload: any[];
+}
+
 interface SetToDosAction {
   type: typeof SET_TO_DOS;
   payload: any;
@@ -80,8 +87,13 @@ interface SetEmployeeEmailAction {
   payload: any;
 }
 
-interface UpdateAppointmentStatusAction {
-  type: typeof UPDATE_APPOINTMENT_STATUS,
+interface UpdateEmployeeAppointmentStatusAction {
+  type: typeof UPDATE_EMPLOYEE_APPOINTMENT_STATUS,
+  payload: any;
+}
+
+interface UpdateCustomerAppointmentStatusAction {
+  type: typeof UPDATE_CUSTOMER_APPOINTMENT_STATUS,
   payload: any;
 }
 
@@ -98,10 +110,12 @@ export type SystemActionTypes =
   SetEmployeeClientsAction |
   SetEmployeeReviewsAction |
   SetUserCustomerInfoAction |
+  SetUserCustomerAppointmentsAction |
   SetToDosAction |
   SetEmployeePhoneAction |
   SetEmployeeEmailAction |
-  UpdateAppointmentStatusAction |
+  UpdateEmployeeAppointmentStatusAction |
+  UpdateCustomerAppointmentStatusAction |
   LogoutUserAction;
 
 // ############ Business Types ##########################
@@ -148,16 +162,6 @@ export const CLEAR_EMPLOYEES_FOR_BUSINESS = 'CLEAR_EMPLOYEES_FOR_BUSINESS';
 export const SET_SELECTED_EMPLOYEE = 'SET_SELECTED_EMPLOYEE';
 export const ADD_SELECTED_EMPLOYEE_APPOINTMENT = 'ADD_SELECTED_EMPLOYEE_APPOINTMENT';
 
-interface UpdateCustomerPastAppointsmentsAction {
-  type: typeof UPDATE_CUSTOMER_PAST_APPOINTMENTS;
-  payload: any[];
-}
-
-interface UpdateCustomerUpcomingAppointsmentsAction {
-  type: typeof UPDATE_CUSTOMER_UPCOMING_APPOINTMENTS;
-  payload: any[];
-}
-
 interface AddFoundBusinessAction {
   type: typeof ADD_FOUND_BUSINESS;
   payload: any;
@@ -187,8 +191,6 @@ interface AddSelectedEmployeeAppointmentAction {
 }
 
 export type CustomerActionTypes = 
-  UpdateCustomerPastAppointsmentsAction |
-  UpdateCustomerUpcomingAppointsmentsAction |
   AddFoundBusinessAction |
   ClearFoundBusinessesAction |
   AddEmployeeForBusinessAction |
