@@ -23,6 +23,7 @@ import { firestore } from '../../config/FirebaseConfig';
 import { StoreState } from '../../shared/store/types';
 import AppointmentHome from './appointment-tab/AppointmentHome';
 import Sidebar from '../../shared/sidebar/Sidebar';
+import { Redirect } from 'react-router';
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -42,6 +43,7 @@ interface CustomTab {
 interface Props extends WithStyles<typeof styles> {
   isMobile: boolean;
   business?: any;
+  user?: any;
 }
 
 type State = {
@@ -53,6 +55,7 @@ type State = {
 function mapStateToProps(state: StoreState) {
   return {
     business: state.business,
+    user: state.system.user
   };
 }
 
@@ -101,6 +104,11 @@ class BusinessHome extends React.Component<Props, State> {
   render() {
     const { classes } = this.props;
     // const isMobile = false;
+
+    if (this.props.user === undefined) {
+      return <Redirect to={'/'} />
+    }
+
     return (
       <div className={classes.root}>
         {this.props.business && 

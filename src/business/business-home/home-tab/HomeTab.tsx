@@ -19,6 +19,7 @@ import TodoList from './TodoList';
 import { connect } from 'react-redux';
 import { StoreState } from '../../../shared/store/types';
 import { firestore } from '../../../config/FirebaseConfig';
+import { Redirect } from 'react-router';
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -39,12 +40,12 @@ interface Props extends WithStyles<typeof styles> {
   isMobile: boolean;
   upcomingAppts?: any[];
   employeeId?: string;
-  setUserEmployeeAppointments?: any;
+  setUserEmployeeAppointments?: any
 }
 type State = {};
 
 function mapStateToProps(state: StoreState) {
-  let allAppointments = state.system.user.employeeInfo.appointments;
+  let allAppointments = state.system.user.employeeInfo?.appointments;
 
   let upcomingAppts: any[] = [];
 
