@@ -12,9 +12,19 @@ import {
 } from '../../shared/store/actions';
 
 function mapStateToProps(state: StoreState) {
+  let currentAppointments = state.system.user.customerInfo.appointments;
+  let appointmentsToAdd: any[] = [];
+
+  if (currentAppointments) {
+    for (const appointment of currentAppointments) {
+      appointmentsToAdd.push(appointment);
+    }
+  }
+
   return {
     customer: state.customer,
     user: state.system.user,
+    appointments: appointmentsToAdd
   };
 }
 
@@ -39,79 +49,36 @@ class AppointmentsPage extends React.Component<any, any> {
     this.props.updateCustomerUpcomingAppointment(upcomingAppointment);
   }
 
+  dispatchSetUserCustomerAppointments(customerAppointments: any[]) {
+    this.props.setUserCustomerAppointments()
+  }
+
   getCustomerAppointments() {
-    // Get appointment ids for customer
-    firestore
-      .collection('customers')
-      .doc(`${this.props.user.customerId}`)
-      .get()
-      .then((customerObj) => {
-        const appointmentDoc = customerObj.data();
+    firestore.collection('appointments').where('employeeId', '==', `${this.props.customerId}`).get()
+      .then((querySnapshot) => {
+        let customerAppts: any[] = [];
 
-        if (appointmentDoc) {
-          const appointmentIds = appointmentDoc.appointments;
+        querySnapshot.forEach((apptDoc) => {
+          const apptData = apptDoc.data();
 
-          appointmentIds.forEach((appointmentId: string) => {
-            // Get appointment objects for customer
-            firestore
-              .collection('appointments')
-              .doc(`${appointmentId}`)
-              .get()
-              .then((appointmentObj) => {
-                const appointmentDoc = appointmentObj.data();
+          apptData.appointmentId = apptDoc.id;
 
-                if (appointmentDoc) {
-                  // Get business name of the appointment
-                  firestore
-                    .collection('businesses')
-                    .doc(`${appointmentDoc.businessId}`)
-                    .get()
-                    .then((businessObj) => {
-                      const businessDoc = businessObj.data();
+          firestore.collection('users').where('employeeId', '==', `${apptData.employeeId}`).get()
+            .then((querySnapshot) => {
+              querySnapshot.forEach((userDoc) => {
+                const userData = userDoc.data();
 
-                      if (businessDoc) {
-                        const appointmentDatetime = appointmentDoc.datetime.toDate();
-
-                        const appointmentDateString = appointmentDatetime.toLocaleString(
-                          [],
-                          {
-                            dateStyle: 'short',
-                            timeStyle: 'short',
-                          },
-                        );
-
-                        const appointmentObject = {
-                          appointmentId: `${appointmentObj.id}`,
-                          businessName: `${businessDoc.name}`,
-                          appointmentDate: `${appointmentDateString}`,
-                          appointmentPrice: `$${appointmentDoc.cost}`,
-                        };
-                        if (
-                          appointmentDatetime >
-                          new Date(new Date().toDateString())
-                        ) {
-                          this.setState({
-                            upcomingAppointments: [
-                              ...this.state.upcomingAppointments,
-                              appointmentObject,
-                            ],
-                          });
-                          // this.dispatchUpdateCustomerUpcomingAppointment(appointmentObject);
-                        } else {
-                          this.setState({
-                            pastAppointments: [
-                              ...this.state.pastAppointments,
-                              appointmentObject,
-                            ],
-                          });
-                          // this.dispatchUpdateCustomerPastAppointment(appointmentObject);
-                        }
-                      }
-                    });
+                apptData.employee = {
+                  firstName: userData.firstName,
+                  lastName: userData.lastName
                 }
+
+                customerAppts.push(apptData);
+
+                this.dispatchSetUserCustomerAppointments(customerAppts);
               });
-          });
-        }
+            })
+        });
       });
   }
 
