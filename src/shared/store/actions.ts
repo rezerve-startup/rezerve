@@ -20,12 +20,14 @@ import {
   SET_USER_EMPLOYEE_INFO,
   SET_USER_CUSTOMER_INFO,
   SET_BUSINESS_AVAILABILITY,
-  UPDATE_APPOINTMENT_STATUS,
   ADD_SELECTED_EMPLOYEE_APPOINTMENT,
   SET_USER_EMPLOYEE_APPOINTMENTS,
   SET_EMPLOYEE_CLIENTS,
   SET_EMPLOYEE_REVIEWS,
-  LOGOUT_USER
+  LOGOUT_USER,
+  SET_USER_CUSTOMER_APPOINTMENTS,
+  UPDATE_EMPLOYEE_APPOINTMENT_STATUS,
+  UPDATE_CUSTOMER_APPOINTMENT_STATUS
 } from './types';
 
 // ****** SYSTEM ACTIONS ***************
@@ -85,6 +87,13 @@ export function setUserCustomerInfo(userCustomerInfo: any): SystemActionTypes {
   }
 }
 
+export function setUserCustomerAppointments(customerAppointments: any[]): SystemActionTypes {
+  return {
+    type: SET_USER_CUSTOMER_APPOINTMENTS,
+    payload: customerAppointments
+  }
+}
+
 export function setToDos(todos: any[]): SystemActionTypes {
   return {
     type: SET_TO_DOS,
@@ -106,9 +115,16 @@ export function setEmployeeEmail(email: string): SystemActionTypes {
   }
 }
 
-export function updateAppointmentStatus(appointment: any): SystemActionTypes {
+export function updateEmployeeAppointmentStatus(appointment: any): SystemActionTypes {
   return {
-    type: UPDATE_APPOINTMENT_STATUS,
+    type: UPDATE_EMPLOYEE_APPOINTMENT_STATUS,
+    payload: appointment
+  }
+}
+
+export function updateCustomerAppointmentStatus(appointment: any): SystemActionTypes {
+  return {
+    type: UPDATE_CUSTOMER_APPOINTMENT_STATUS,
     payload: appointment
   }
 }
@@ -138,24 +154,6 @@ export function setBusinessAvailability(businessAvailability: any): BusinessActi
 }
 
 // ***** CUSTOMER ACTIONS *************
-
-export function updateCustomerPastAppointments(
-  customerPastAppointment: any,
-): CustomerActionTypes {
-  return {
-    type: UPDATE_CUSTOMER_PAST_APPOINTMENTS,
-    payload: customerPastAppointment,
-  };
-}
-
-export function updateCustomerUpcomingAppointments(
-  customerUpcomingAppointment: any,
-): CustomerActionTypes {
-  return {
-    type: UPDATE_CUSTOMER_UPCOMING_APPOINTMENTS,
-    payload: customerUpcomingAppointment,
-  };
-}
 
 export function addBusinessFound(businessFound: any): CustomerActionTypes {
   return {

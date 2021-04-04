@@ -111,9 +111,18 @@ class TempLoginPage extends React.Component<any, any> {
             .get()
             .then((userObj) => {
               const userInfo = userObj.data();
-              this.dispatchSetUserCustomerInfo(userInfo);
-
               
+              if (userInfo && userInfo.customerId !== '') {
+                firestore.collection('customers').doc(userInfo.customerId).get()
+                  .then((customerObj) => {
+                    let customerInfo = customerObj.data();
+
+                    let customerInfoToAdd = {}
+                    userInfo.customerInfo = customerInfoToAdd;
+
+                    this.dispatchSetUserCustomerInfo(userInfo);
+                  })
+              }
             }
           );
         }
@@ -135,7 +144,7 @@ class TempLoginPage extends React.Component<any, any> {
     if (this.props.user) {
       if (this.props.user.employeeId === '') {
         return (
-          <Redirect to={'/customer-logged-in'} />
+          <Redirect to={'/customer-home'} />
         )
       } else if (this.props.user.customerId === '') {
         return (

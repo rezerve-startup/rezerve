@@ -20,7 +20,6 @@ import {
   SET_EMPLOYEE_PHONE,
   SET_EMPLOYEE_EMAIL,
   SET_BUSINESS_AVAILABILITY,
-  UPDATE_APPOINTMENT_STATUS,
   ADD_SELECTED_EMPLOYEE_APPOINTMENT,
   CLEAR_USER_INFO,
   SET_USER_EMPLOYEE_INFO,
@@ -28,7 +27,10 @@ import {
   SET_USER_EMPLOYEE_APPOINTMENTS,
   SET_EMPLOYEE_CLIENTS,
   SET_EMPLOYEE_REVIEWS,
-  LOGOUT_USER
+  LOGOUT_USER,
+  SET_USER_CUSTOMER_APPOINTMENTS,
+  UPDATE_EMPLOYEE_APPOINTMENT_STATUS,
+  UPDATE_CUSTOMER_APPOINTMENT_STATUS
 } from './types';
 
 // ************** System Reducer ******************
@@ -110,6 +112,18 @@ export function systemReducer(
         user: action.payload
       }
     }
+    case SET_USER_CUSTOMER_APPOINTMENTS: {
+      return {
+        ...state,
+        user: {
+          ...state.user,
+          customerInfo: {
+            ...state.user.customerInfo,
+            appointments: action.payload
+          }
+        }
+      }
+    }
     case SET_TO_DOS: {
       return {
         ...state,
@@ -140,7 +154,7 @@ export function systemReducer(
         }
       }
     }
-    case UPDATE_APPOINTMENT_STATUS: {
+    case UPDATE_EMPLOYEE_APPOINTMENT_STATUS: {
       return {
         ...state,
         user: {
@@ -148,7 +162,21 @@ export function systemReducer(
           employeeInfo: {
             ...state.user.employeeInfo,
             appointments: state.user.employeeInfo.appointments.map(
-              (appt) => appt.id === action.payload.id ? {...appt, status: action.payload.status} : appt
+              (appt) => appt.appointmentId === action.payload.appointmentId ? {...appt, status: action.payload.status} : appt
+            )
+          }
+        }
+      }
+    }
+    case UPDATE_CUSTOMER_APPOINTMENT_STATUS: {
+      return {
+        ...state,
+        user: {
+          ...state.user,
+          customerInfo: {
+            ...state.user.customerInfo,
+            appointments: state.user.customerInfo.appointments.map(
+              (appt) => appt.appointmentId === action.payload.appointmentId ? {...appt, status: action.payload.status} : appt
             )
           }
         }
@@ -213,18 +241,6 @@ export function customerReducer(
   action: CustomerActionTypes,
 ): CustomerState {
   switch (action.type) {
-    case UPDATE_CUSTOMER_PAST_APPOINTMENTS: {
-      return {
-        ...state,
-        pastAppointments: action.payload,
-      };
-    }
-    case UPDATE_CUSTOMER_UPCOMING_APPOINTMENTS: {
-      return {
-        ...state,
-        upcomingAppointments: action.payload,
-      };
-    }
     case ADD_FOUND_BUSINESS: {
       return {
         ...state,

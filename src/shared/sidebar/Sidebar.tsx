@@ -28,6 +28,7 @@ import {
   Settings,
   ExitToApp,
   ArrowDropDown,
+  Search,
 } from '@material-ui/icons';
 import { connect } from 'react-redux';
 import { StoreState } from '../store/types';
@@ -39,6 +40,12 @@ const sidebarDataWithoutLogout = [
     title: 'Messages',
     path: '/messages',
     icon: <Forum />,
+    cName: 'nav-text',
+  },
+  {
+    title: 'Business Search',
+    path: '/customer-home',
+    icon: <Search />,
     cName: 'nav-text',
   },
   {
@@ -119,7 +126,7 @@ const Sidebar = (props: any) => {
         open={isMenuOpen}
         onClose={handleMenuClose}
       >
-        {sidebarDataWithoutLogout.slice(2).map((obj, i) => (
+        {sidebarDataWithoutLogout.slice(3).map((obj, i) => (
           <MenuItem button={true} key={i} component={Link} to={obj.path}>
             <ListItemIcon className={classes.listIcon}>{obj.icon}</ListItemIcon>
             <ListItemText className={classes.listText} primary={obj.title} />
@@ -151,14 +158,18 @@ const Sidebar = (props: any) => {
               <ListItemText className={classes.listText} primary={`${props.user.firstName} ${props.user.lastName}`} />
             </ListItem>
             <Divider className={classes.divider} />
-            {sidebarDataWithoutLogout.map((obj, i) => (
-              <ListItem button={true} key={i} component={Link} to={obj.path}>
-                <ListItemIcon className={classes.listIcon}>
-                  {obj.icon}
-                </ListItemIcon>
-                <ListItemText className={classes.listText} primary={obj.title} />
-              </ListItem>
-            ))}
+            {sidebarDataWithoutLogout.map((obj, i) => {
+                if (!(props.user.customerId === '') || !(obj.title === 'Appointments' || obj.title === 'Business Search')) {
+                    return (
+                        <ListItem button={true} key={i} component={Link} to={obj.path}>
+                            <ListItemIcon className={classes.listIcon}>
+                            {obj.icon}
+                            </ListItemIcon>
+                            <ListItemText className={classes.listText} primary={obj.title} />
+                        </ListItem>
+                    )
+                }
+            })}
             <ListItem button={true} onClick={() => logoutUser()}>
               <ListItemIcon className={classes.listIcon}>{<ExitToApp />}</ListItemIcon>
               <ListItemText className={classes.listText} primary={'Logout'} />
@@ -199,20 +210,33 @@ const Sidebar = (props: any) => {
                   className={classes.toolbarButton}
                   startIcon={<Forum />}
                   component={Link}
-                  to="/"
+                  to="/messages"
                   classes={{ text: classes.toolbarButtonText }}
                 >
                   Messages
                 </Button>
-                <Button
-                  className={classes.toolbarButton}
-                  startIcon={<CalendarViewDay />}
-                  component={Link}
-                  to="/"
-                  classes={{ text: classes.toolbarButtonText }}
-                >
-                  Appointments
-                </Button>
+                {props.user.customerId !== '' && 
+                    <div>
+                        <Button
+                            className={classes.toolbarButton}
+                            startIcon={<Search />}
+                            component={Link}
+                            to="/customer-home"
+                            classes={{ text: classes.toolbarButtonText }}
+                        >
+                        Business Search
+                        </Button>
+                        <Button
+                            className={classes.toolbarButton}
+                            startIcon={<CalendarViewDay />}
+                            component={Link}
+                            to="/appointments"
+                            classes={{ text: classes.toolbarButtonText }}
+                        >
+                        Appointments
+                        </Button>
+                    </div>
+                }
                 <Button
                   className={classes.toolbarButton}
                   aria-label="user-account"

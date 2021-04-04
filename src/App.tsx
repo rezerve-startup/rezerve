@@ -20,7 +20,6 @@ import LandingLoggedIn from './shared/landing-page/LandingPageLog';
 import SignupPage from './shared/SignUpPage';
 import CustomerSignUp from './customer/customer-signup/CustomerCreationPage';
 
-import AppointmentsPage from './customer/customer-appointments/AppointmentPage';
 import BusinessProfile from './business/business-profile/business-profile';
 import { auth, firestore } from './config/FirebaseConfig';
 import { connect } from 'react-redux';
@@ -28,13 +27,14 @@ import { StoreState, SystemState } from './shared/store/types';
 import { updateUser } from './shared/store/actions';
 import TempLoginPage from './shared/TempLoginPage';
 import SignUpPage from './shared/SignUpPage';
+import CustomerAppointmentHome from './customer/customer-appointments/CustomerAppointmentHome';
 
 const routes = [
   /* { path: "/help", component: Help },
   { path: "/messages", component: Messages },
   { path: "/payment", component: PaymentInfo },
   { path: "/settings", component: Settings }, */
-  { path: '/appointments', component: AppointmentsPage },
+  { path: '/appointments', component: CustomerAppointmentHome },
   { path: '/business-info', component: BusinessInfo },
   { path: '/business-sign-up', component: BusinessSignUp },
   { path: '/business-account-info', component: BusinessAccountInfo },
@@ -158,8 +158,8 @@ class App extends React.Component<any, SystemState> {
               <Route path={'/sign-up-page'} exact={true} component={SignUpPage}/>
               <Route path={'/customer-sign-up'} exact={true} component={CustomerSignUp}/>
               <Route path={'/temp-login'} exact={true} component={TempLoginPage}/>
-              <Route path={'/appointments'} exact={true} component={AppointmentsPage}/>
-              <Route path={'/customer-logged-in'} exact={true} component={LandingLoggedIn}/>
+              <Route path={'/appointments'} exact={true} component={CustomerAppointmentHome}/>
+              <Route path={'/customer-home'} exact={true} component={LandingLoggedIn}/>
               <Route path={'/business-info'} exact={true} component={BusinessInfo}/>
               <Route path={'/business-home'} exact={true} component={BusinessHome}/>
               <Route path={'**'} exact><Redirect to={'/'}></Redirect></Route>
