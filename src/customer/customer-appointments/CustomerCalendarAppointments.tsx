@@ -14,7 +14,7 @@ import {
   DayView,
   Appointments,
 } from '@devexpress/dx-react-scheduler-material-ui';
-import { StoreState } from '../../../shared/store/types';
+import { StoreState } from '../../shared/store/types';
 import { connect } from 'react-redux';
 import moment from 'moment';
 
@@ -53,7 +53,7 @@ const styles = (theme: Theme) =>
 
 function mapStateToProps(state: StoreState) {
 
-  let currentAppts = state.system.user.employeeInfo.appointments;
+  let currentAppts = state.system.user.customerInfo.appointments;
   let scheduleItems: any[] = [];
 
   if (currentAppts) {
@@ -63,7 +63,7 @@ function mapStateToProps(state: StoreState) {
         let endDateMoment = startDateMoment.add(30 * appt.service.length, 'minutes');
     
         let apptToAdd = {
-          title: `${appt.service.name} with ${appt.client.firstName}`,
+          title: `${appt.service.name} with ${appt.employee.firstName}`,
           startDate: appt.datetime.toDate(),
           endDate: endDateMoment.toDate()
         };
@@ -93,7 +93,7 @@ interface Props extends WithStyles<typeof styles> {
   scheduleItems?: any[]
 }
 
-class EmployeeCalendarAppointments extends React.Component<Props, State> {
+class CustomerCalendarAppointments extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
 
@@ -164,5 +164,5 @@ const Appointment = ({
 )};
 
 export default connect(mapStateToProps, null) (
-  withStyles(styles, { withTheme: true })(EmployeeCalendarAppointments)
+  withStyles(styles, { withTheme: true })(CustomerCalendarAppointments)
 );
