@@ -60,8 +60,8 @@ type State = {
 
 function mapStateToProps(state: StoreState) {
   return({
-    employeeId: state.system.user.employeeId,
-    employeeSchedule: state.system.user.employeeInfo.availability,
+    employeeId: state.system.user?.employeeId,
+    employeeSchedule: state.system.user.employeeInfo?.availability,
     businessSchedule: state.business.businessAvailability
   })
 }
@@ -111,6 +111,7 @@ class AvailablityCard extends React.Component<Props, State> {
   render() {
     const { classes } = this.props;
     const { editInfo } = this.state;
+
     return (
       <Card className={classes.card} elevation={0}>
         <CardContent>
