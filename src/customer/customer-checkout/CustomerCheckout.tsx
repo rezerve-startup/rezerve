@@ -1,4 +1,4 @@
-/* import React from 'react';
+import React from 'react';
 // import * as FaIcons from 'react-icons/fa'
 import {
   Divider,
@@ -18,12 +18,14 @@ import {
 } from '@material-ui/core/';
 // tslint:disable-next-line: no-submodule-imports
 import { makeStyles, useTheme } from '@material-ui/core/styles';
-import classes from '*.module.css';
+import { loadStripe } from "@stripe/stripe-js";
+import { Elements } from "@stripe/react-stripe-js";
+import CheckoutForm from "./CheckoutForm";
+import "./CustomerCheckout.css";
 
-import { Close } from '@material-ui/icons';
+const promise = loadStripe("pk_test_TYooMQauvdEDq54NiTphI7jx");
 
-import { Elements, CardElement, ElementsConsumer } from '@stripe/react-stripe-js';
-import { loadStripe } from '@stripe/stripe-js';
+
 
 function getSteps() {
   return ['Review Booking', 'Payment Setup', 'Confirm'];
@@ -49,49 +51,14 @@ function StripePaymentSetup() {
   // tslint:disable-next-line: no-shadowed-variable
   const classes = useStyles();
   return (
-    <div className={classes.itemCard}>
-      <Divider className={classes.divider0} />
-      <h1>
-        <strong>Stripe Payment Setup</strong>
-      </h1>
-      <Divider className={classes.divider0} />
+    <div className="App">
+      <Elements stripe={promise}>
+        <CheckoutForm />
+      </Elements>
     </div>
   );
 }
 
-function PaymentInfo(){
-  // tslint:disable-next-line: no-shadowed-variable
-  const classes = useStyles();
-  return (
-    <ElementsConsumer>
-      {({elements, stripe}) => (
-        return (
-          <form onSubmit={this.handleSubmit}>
-            <CardElement
-              options={{
-                style: {
-                  base: {
-                    fontSize: '16px',
-                    color: '#424770',
-                    '::placeholder': {
-                      color: '#aab7c4',
-                    },
-                  },
-                  invalid: {
-                    color: '#9e2146',
-                  },
-                },
-              }}
-            />
-            <button type="submit" disabled={!stripe}>
-              Pay
-            </button>
-          </form>
-        );
-      )}
-    </ElementsConsumer>
-  );
-}
 
 function ConfirmationCard() {
   // tslint:disable-next-line: no-shadowed-variable
@@ -139,8 +106,6 @@ function BookingConfirmation(){
   return (
     <div>
       <ConfirmationCard />
-      <PaymentInfo />
-
       <div className={classes.itemPlus1}>
         <span>
           <h3>
@@ -348,22 +313,6 @@ const useStyles = makeStyles((theme) => ({
     marginBottom: theme.spacing(1),
   },
 }));
-*/
 
-import { loadStripe } from "@stripe/stripe-js";
-import { Elements } from "@stripe/react-stripe-js";
-import CheckoutForm from "./CheckoutForm";
-import "./CustomerCheckout.css";
-
-const promise = loadStripe("pk_test_TYooMQauvdEDq54NiTphI7jx");
-
-export default function CustomerCheckout() {
-  return (
-    <div className="App">
-      <Elements stripe={promise}>
-        <CheckoutForm />
-      </Elements>
-    </div>
-  );
-}
+export default CustomerCheckout;
 
