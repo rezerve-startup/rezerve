@@ -1,5 +1,4 @@
 import React from 'react';
-// import * as FaIcons from 'react-icons/fa'
 import {
   Divider,
   Checkbox,
@@ -7,32 +6,25 @@ import {
   Dialog,
   DialogContent,
   Button,
-  DialogTitle,
   DialogActions,
   Typography,
-  Fab,
   useMediaQuery,
   Stepper,
   Step,
   StepLabel,
+  // tslint:disable-next-line: no-submodule-imports
 } from '@material-ui/core/';
 // tslint:disable-next-line: no-submodule-imports
 import { makeStyles, useTheme } from '@material-ui/core/styles';
-import { loadStripe } from "@stripe/stripe-js";
-import { Elements } from "@stripe/react-stripe-js";
-import CheckoutForm from "./CheckoutForm";
-import "./CustomerCheckout.css";
+import { loadStripe } from '@stripe/stripe-js';
+import { Elements } from '@stripe/react-stripe-js';
+import CheckoutForm from './CheckoutForm';
+import './CustomerCheckout.css';
 
-const promise = loadStripe("pk_test_TYooMQauvdEDq54NiTphI7jx");
-
-
+const promise = loadStripe('pk_test_TYooMQauvdEDq54NiTphI7jx');
 
 function getSteps() {
   return ['Review Booking', 'Payment Setup', 'Confirm'];
-}
-
-function getStripeObject(){
-  return loadStripe('pk_test_TYooMQauvdEDq54NiTphI7jx');
 }
 
 function getStepContent(stepIndex: number) {
@@ -47,6 +39,11 @@ function getStepContent(stepIndex: number) {
       return 'Our apologies, there has been a mishap with the booking process. Please try again later.';
   }
 }
+
+function confirmPayment() {
+  return false;
+}
+
 function StripePaymentSetup() {
   // tslint:disable-next-line: no-shadowed-variable
   const classes = useStyles();
@@ -58,7 +55,6 @@ function StripePaymentSetup() {
     </div>
   );
 }
-
 
 function ConfirmationCard() {
   // tslint:disable-next-line: no-shadowed-variable
@@ -100,7 +96,7 @@ function ConfirmationCard() {
   );
 }
 
-function BookingConfirmation(){
+function BookingConfirmation() {
   // tslint:disable-next-line: no-shadowed-variable
   const classes = useStyles();
   return (
@@ -128,9 +124,9 @@ function CustomerCheckout() {
   const classes = useStyles();
   const fullscreen = useMediaQuery(theme.breakpoints.down('md'));
   const [open, setOpen] = React.useState(false);
+  const [succeeded, setSucceeded] = React.useState<boolean>(false);
   const [activeStep, setActiveStep] = React.useState(0);
   const steps = getSteps();
-  const Stripe = getStripeObject();
 
   const handleNext = () => {
     setActiveStep((prevActiveStep) => prevActiveStep + 1);
@@ -143,6 +139,7 @@ function CustomerCheckout() {
   const handleReset = () => {
     setActiveStep(0);
   };
+
   const openOnClick = () => {
     setOpen(true);
     handleReset();
@@ -152,11 +149,16 @@ function CustomerCheckout() {
     setOpen(false);
   };
 
-  var backFunction = () => handleBack;
+  const handleConfirmPaid = () => {
+    confirmPayment();
+  };
+
+  // tslint:disable-next-line: prefer-const
+  const backFunction = () => handleBack;
 
   return (
     <div>
-      <script src="https://js.stripe.com/v3/"/>
+      <script src="https://js.stripe.com/v3/" />
       <Button variant="contained" color="primary" onClick={openOnClick}>
         Open Checkout
       </Button>
@@ -173,7 +175,7 @@ function CustomerCheckout() {
               </Step>
             ))}
           </Stepper>
-          <Typography className={classes.instructions}>
+          <Typography component={'span'} className={classes.instructions}>
             {getStepContent(activeStep)}
           </Typography>
         </DialogContent>
@@ -315,4 +317,3 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default CustomerCheckout;
-
