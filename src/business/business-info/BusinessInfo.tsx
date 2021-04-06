@@ -459,8 +459,8 @@ class BusinessInfo extends React.Component<any, BusinessInfoState> {
                       iconHover: classes.starRatingHover,
                     }}
                   />
-                  <DialogContentText>
-                    Here you can write the review about a specific employee
+                  <DialogContentText className={classes.dialogContentText}>
+                    Which employee did you meet with
                   </DialogContentText>
                   <RadioGroup aria-label="employee" name="employees" onChange={(e) => this.changeReviewEmployee(e)}>
                     {this.state.businessEmployees.map((employee) => {
@@ -634,9 +634,9 @@ const styles = (theme: Theme) =>
       flexDirection: 'column',
       alignItems: 'center',
     },
-    // dialogText: {
-    //   alignItems: 'center',
-    // }
+    dialogContentText: {
+      marginTop: '1rem',
+    }
   });
 
 export default connect(mapStateToProps, { addEmployeeForBusiness, clearEmployeesForBusiness, setSelectedEmployee })(
