@@ -35,7 +35,6 @@ export default function CheckoutForm() {
   const elements = useElements();
   const classes = useStyles();
   const [open, setOpen] = React.useState(false);
-  const [stripeLoaded, setStripeLoaded] = React.useState(false);
 
   // Spinner on button
   const SpinnerAdornment = (props: any) => {
@@ -69,7 +68,6 @@ export default function CheckoutForm() {
       })
       .then((data) => {
         setClientSecret(data.clientSecret);
-        setStripeLoaded(true);
       });
   }, []);
 
@@ -138,40 +136,36 @@ export default function CheckoutForm() {
     setOpen(false);
   };
 
-  if (stripeLoaded === false) {
-    return  <div/>;
-  } else {
-    return (
-      <div>
-        <form id="payment-form" onSubmit={handleSubmit}>
-          <CardElement
-            id="card-element"
-            options={cardStyle}
-            onChange={handleChange}
-          />
-          <AdornedButton
-            disabled={processing || disabled || succeeded}
-            id="submit"
-            color="primary"
-            variant="contained"
-            type="submit"
-            loading={processing}
-            fullWidth={true}
+  return (
+    <div>
+      <form id="payment-form" onSubmit={handleSubmit}>
+        <CardElement
+          id="card-element"
+          options={cardStyle}
+          onChange={handleChange}
+        />
+        <AdornedButton
+          disabled={processing || disabled || succeeded}
+          id="submit"
+          color="primary"
+          variant="contained"
+          type="submit"
+          loading={processing}
+          fullWidth={true}
+        >
+          {processing ? '' : 'Pay now'}
+        </AdornedButton>
+        <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
+          <Alert
+            onClose={handleClose}
+            variant="filled"
+            elevation={6}
+            severity={snackSeverity}
           >
-            {processing ? '' : 'Pay now'}
-          </AdornedButton>
-          <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
-            <Alert
-              onClose={handleClose}
-              variant="filled"
-              elevation={6}
-              severity={snackSeverity}
-            >
-              {snackMessage}
-            </Alert>
-          </Snackbar>
-        </form>
-      </div>
-    );
-  }
+            {snackMessage}
+          </Alert>
+        </Snackbar>
+      </form>
+    </div>
+  );
 }
