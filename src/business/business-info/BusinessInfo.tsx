@@ -11,6 +11,10 @@ import {
   Theme,
   Button,
   List,
+  RadioGroup,
+  FormControlLabel,
+  Radio,
+  Grid
 } from '@material-ui/core';
 
 import { firestore } from '../../config/FirebaseConfig';
@@ -27,6 +31,8 @@ import { Business } from '../../models/Business.interface';
 import { Review } from '../../models/Review.interface';
 import { User } from '../../models/User.interface';
 import { Employee } from '../../models/Employee.interface';
+import { Dialog, DialogTitle, DialogContent, DialogContentText, TextField, DialogActions } from '@material-ui/core';
+import firebase from 'firebase';
 
 type BusinessInfoState = {
   businessKey: string;
@@ -34,12 +40,15 @@ type BusinessInfoState = {
   businessName: string;
   businessReviewsShown: Review[];
   businessReviewsStored: Review[];
-  businessEmployees: any[]
+  businessEmployees: any[];
+  isAddReviewOpen: boolean;
+  addReview: Review;
 };
 
 function mapStateToProps(state: StoreState) {
   return {
     business: state.business,
+    customerId: state.system.user.customerId,
   };
 }
 
@@ -54,12 +63,28 @@ class BusinessInfo extends React.Component<any, BusinessInfoState> {
       businessName: props.business.businessName,
       businessReviewsShown: [],
       businessReviewsStored: [],
-      businessEmployees: []
+      businessEmployees: [],
+      isAddReviewOpen: false,
+      addReview: {
+        businessId: this.props.selectedBusinessKey,
+        customerId: this.props.customerId,
+        date: firebase.firestore.Timestamp.fromDate(new Date()),
+        employeeId: '',
+        message: '',
+        rating: 0,
+        poster: '',
+      },
     };
   }
 
   dispatchAddEmployeeForBusiness = (employee) => {
     this.props.addEmployeeForBusiness(employee);
+    
+    const employees = this.state.businessEmployees;
+    employees.push(employee);
+    this.setState({
+      businessEmployees: employees,
+    });
   }
 
   dispatchClearEmployeesForBusiness = () => {
@@ -215,6 +240,76 @@ class BusinessInfo extends React.Component<any, BusinessInfoState> {
     }  
   }
 
+  handleAddReviewOpen() {
+    this.setState({
+      isAddReviewOpen: true
+    });
+  }
+
+  handleAddReviewClose() {
+    this.setState({
+      isAddReviewOpen: false
+    });
+  }
+
+  handleAddReviewSave() {
+    const review = this.state.addReview;
+    review.date = firebase.firestore.Timestamp.fromDate(new Date());
+    let reviewIds: string[];
+
+    const businessRef = firestore.collection('businesses').doc(`${this.state.businessKey}`);
+
+    businessRef.get().then((value) => {
+      reviewIds = value.data()?.reviews;
+    });
+
+    firestore.collection('reviews').add(review).then((value) => {
+      reviewIds.push(value.id);
+      businessRef.update({
+        reviews: reviewIds,
+      })
+    });
+    
+    this.setState({
+      addReview: {
+        businessId: this.props.selectedBusinessKey,
+        customerId: '',
+        date: firebase.firestore.Timestamp.fromDate(new Date()),
+        employeeId: '',
+        message: '',
+        rating: 0,
+        poster: '',
+      },
+    })
+    this.setState({
+      isAddReviewOpen: false
+    });
+  }
+
+  changeReviewRating(value) {
+    const review = this.state.addReview;
+    review.rating = value;
+    this.setState({
+      addReview: review,
+    })
+  }
+
+  changeReviewMessage(e) {
+    const review = this.state.addReview;
+    review.message = e.target.value;
+    this.setState({
+      addReview: review,
+    })
+  }
+
+  changeReviewEmployee(e) {
+    const review = this.state.addReview;
+    review.employeeId = e.target.value;
+    this.setState({
+      addReview: review,
+    })
+  }
+
   render() {
     const { classes } = this.props;
 
@@ -340,7 +435,76 @@ class BusinessInfo extends React.Component<any, BusinessInfoState> {
                 <div>
                   <Button variant="contained" onClick={() => this.showMoreReviews()}>Show More</Button>
                 </div>
-              }
+              } 
+              <Button variant="contained" color="primary" onClick={() => this.handleAddReviewOpen()} className={classes.addReview}>Add Review</Button>
+              <Dialog open={this.state.isAddReviewOpen} onClose={() => this.handleAddReviewClose()} aria-labelledby="form-dialog-title">
+                <DialogTitle id="form-dialog-title">Add Review</DialogTitle>
+                <DialogContent className={classes.dialogContent}>
+                  <DialogContentText>
+                    How was your experience at
+                  </DialogContentText>
+                  <DialogContentText>
+                    {this.state.businessInfo.name}
+                  </DialogContentText>
+                  <Rating
+                    size="small"
+                    name="rating"
+                    value={this.state.addReview.rating}
+                    precision={0.5}
+                    onChange={(event, newValue) => {
+                      this.changeReviewRating(newValue);
+                    }}
+                    classes={{
+                      iconFilled: classes.starRatingFilled,
+                      iconHover: classes.starRatingHover,
+                    }}
+                  />
+                  <DialogContentText>
+                    Here you can write the review about a specific employee
+                  </DialogContentText>
+                  <RadioGroup aria-label="employee" name="employees" onChange={(e) => this.changeReviewEmployee(e)}>
+                    {this.state.businessEmployees.map((employee) => {
+                      return (
+                        <div key={employee.id}>
+                          <FormControlLabel
+                            labelPlacement="end"
+                            value={employee.id}
+                            control={
+                              <Radio />
+                            }
+                            label={employee.firstName}
+                          />
+                        </div>
+                      )})
+                    }
+                    <FormControlLabel
+                      labelPlacement="end"
+                      value=""
+                      control={<Radio />}
+                      label="Business Only"
+                    />
+                  </RadioGroup>
+                  <TextField
+                    autoFocus={true}
+                    margin="dense"
+                    id="review"
+                    label="Leave your review!"
+                    type="text"
+                    onChange={(event) => {
+                      this.changeReviewMessage(event);
+                    }}
+                    fullWidth={true}
+                  />
+                </DialogContent>
+                <DialogActions>
+                  <Button onClick={() => this.handleAddReviewClose()} color="primary">
+                    Cancel
+                  </Button>
+                  <Button onClick={() => this.handleAddReviewSave()} color="primary">
+                    Save
+                  </Button>
+                </DialogActions>
+              </Dialog>
             </div>
             <BusinessInfoDetails
               businessId={this.state.businessKey}
@@ -460,7 +624,19 @@ const styles = (theme: Theme) =>
     reviewsList: {
       maxHeight: '10rem',
       overflow: 'auto'
-    }
+    },
+    addReview: {
+      marginTop: '0.5rem',
+      color: 'white',
+    },
+    dialogContent: {
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+    },
+    // dialogText: {
+    //   alignItems: 'center',
+    // }
   });
 
 export default connect(mapStateToProps, { addEmployeeForBusiness, clearEmployeesForBusiness, setSelectedEmployee })(
