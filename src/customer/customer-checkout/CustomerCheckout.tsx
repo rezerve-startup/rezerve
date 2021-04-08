@@ -17,7 +17,8 @@ import {
 // tslint:disable-next-line: no-submodule-imports
 import { makeStyles, useTheme } from '@material-ui/core/styles';
 import { loadStripe } from '@stripe/stripe-js';
-import { Elements } from '@stripe/react-stripe-js';
+import { Elements, CardElement, useStripe, useElements  } from '@stripe/react-stripe-js';
+
 import CheckoutForm from './CheckoutForm';
 import './CustomerCheckout.css';
 
@@ -158,7 +159,6 @@ function CustomerCheckout() {
 
   return (
     <div>
-      <script src="https://js.stripe.com/v3/" />
       <Button variant="contained" color="primary" onClick={openOnClick}>
         Open Checkout
       </Button>
@@ -316,4 +316,25 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default CustomerCheckout;
+export default CustomerCheckout; 
+
+// import React from "react";
+// import { loadStripe } from "@stripe/stripe-js";
+// import { Elements } from "@stripe/react-stripe-js";
+// import CheckoutForm from "./CheckoutForm";
+// import "./CustomerCheckout.css";
+// // Make sure to call loadStripe outside of a component’s render to avoid
+// // recreating the Stripe object on every render.
+// // loadStripe is initialized with a fake API key.
+// // Sign in to see examples pre-filled with your key.
+// const promise = loadStripe("pk_test_TYooMQauvdEDq54NiTphI7jx");
+// export default function CustomerCheckout() {
+//   return (
+//     <div className="App">
+//       <Elements stripe={promise}>
+//         <CheckoutForm />
+//       </Elements>
+//     </div>
+//   );
+// }
+
