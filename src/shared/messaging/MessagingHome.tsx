@@ -1,4 +1,4 @@
-import { Avatar, createStyles, Paper, Theme, Typography, withStyles } from '@material-ui/core';
+import { Avatar, Button, createStyles, Paper, TextField, Theme, Typography, withStyles } from '@material-ui/core';
 import React from 'react';
 import { connect } from 'react-redux';
 import { Redirect } from 'react-router';
@@ -6,6 +6,8 @@ import { StoreState } from '../store/types';
 import { setUserEmployeeConversations, setUserCustomerConversations } from '../store/actions';
 import Sidebar from '../sidebar/Sidebar';
 import { firestore } from '../../config/FirebaseConfig';
+import { ArrowUpward, Close } from '@material-ui/icons';
+import firebase from 'firebase';
 
 function mapStateToProps(state: StoreState) {
     let employeeConversationsToAdd: any = undefined;
@@ -53,7 +55,8 @@ class MessagingHome extends React.Component<any, any> {
         
         this.state = {
             conversationSelectedOn: false,
-            selectedConversation: null
+            selectedConversation: null,
+            messageToSend: ''
         }
     }
 
@@ -88,6 +91,8 @@ class MessagingHome extends React.Component<any, any> {
                                         lastName: userData.lastName
                                     }
 
+                                    conversationData.conversationId = conversationDoc.id;
+
                                     conversations.push(conversationData);
 
                                     this.dispatchSetUserCustomerConversations(conversations);
@@ -112,6 +117,7 @@ class MessagingHome extends React.Component<any, any> {
                                         firstName: userData.firstName,
                                         lastName: userData.lastName
                                     }
+                                    conversationData.conversationId = conversationDoc.id;
 
                                     conversations.push(conversationData);
 
@@ -121,6 +127,12 @@ class MessagingHome extends React.Component<any, any> {
                     });
                 });
         }
+    }
+
+    handleOnChangeMessage(e) {
+        this.setState({
+            messageToSend: e.target.value
+        });
     }
 
     renderCurrentConversations() {
@@ -172,42 +184,95 @@ class MessagingHome extends React.Component<any, any> {
     renderSelectedConversation() {
         const { classes } = this.props;
 
-        return (
-            <div className={classes.selectedConversationWidth}>
-                {this.state.selectedConversation?.messages.map((messageData, index) => {
-                    if (messageData.senderId === this.props.senderId) {
-                        return (
-                            <div key={index} className={classes.currentUserMessage}>
-                                <div className={classes.messageBoxStyling}>
-                                    <div className={classes.messageContent}>{messageData.message}</div>
-                                </div>
-                            </div>
-                        )
-                    } else {
-                        return (
-                            <div key={index} className={classes.otherUserMessage}>
-                                <div className={classes.messageBoxStyling}>
-                                    <div className={classes.messageContent}>{messageData.message}</div>
-                                </div>
-                            </div>
-                        )
-                    }
-                })}
+        let otherUser = this.state.selectedConversation.customer ? this.state.selectedConversation.customer : this.state.selectedConversation.employee;
 
-                <div>
-                    
+        return (
+            <div className={classes.selectedConversationContainer}>
+                <div className={classes.conversationHeader}>
+                    <div className={classes.conversationHeaderInfo}>
+                        <Avatar />
+                        <Typography className={classes.conversationHeaderText}>{otherUser.firstName}</Typography>
+                    </div>
+                    <div>
+                        <div onClick={() => this.closeSelectedConversation()}>
+                            <Close color="primary" fontSize="large"/>
+                        </div>
+                    </div>
+                </div>
+
+                <div className={classes.messagesDisplay}>
+                    {this.state.selectedConversation?.messages.map((messageData, index) => {
+                        if (messageData.senderId === this.props.senderId) {
+                            return (
+                                <div key={index} className={classes.currentUserMessage}>
+                                    <div className={classes.currentUserMessageBoxStyling}>
+                                        <div className={classes.currentUserMessageContent}>{messageData.message}</div>
+                                    </div>
+                                </div>
+                            )
+                        } else {
+                            return (
+                                <div key={index} className={classes.otherUserMessage}>
+                                    <div className={classes.otherUserMessageBoxStyling}>
+                                        <div className={classes.otherUserMessageContent}>{messageData.message}</div>
+                                    </div>
+                                </div>
+                            )
+                        }
+                    })}
+                </div>
+
+                <div className={classes.sendMessageContainer}>
+                    <TextField 
+                        className={classes.messageToSend} 
+                        type="text"
+                        value={this.state.messageToSend}
+                        onChange={(e) => this.handleOnChangeMessage(e)}
+                    />
+                    <Button variant="contained" color="primary" className={classes.sendArrow} onClick={() => this.sendMessage()} disabled={this.state.messageToSend === '' ? true : false}>
+                        <ArrowUpward />
+                    </Button>
                 </div>
             </div>
         );
+    }
 
+    sendMessage() {
+        if (this.state.messageToSend !== '') {
+            let messagesToUpdate= this.state.selectedConversation.messages;
+
+            const messageToAdd = {
+                senderId: this.props.senderId,
+                message: this.state.messageToSend,
+                datetime: firebase.firestore.Timestamp.fromDate(new Date(Date.now()))
+            }
+
+            messagesToUpdate.push(messageToAdd);
+
+            firestore.collection('messages').doc(`${this.state.selectedConversation.conversationId}`).update({
+                messages: messagesToUpdate
+            }).then(() => {
+                this.setState({
+                    messageToSend: ''
+                });
+            })
+        }
     }
 
     selectConversation(conversationToSelect) {
-        console.log(conversationToSelect);
         this.setState({
             conversationSelectedOn: true,
             selectedConversation: conversationToSelect
         })
+    }
+
+    closeSelectedConversation() {
+        this.setState({
+            conversationSelectedOn: false,
+            selectedConversation: null
+        });
+
+        this.getConversations();
     }
 
     render() {
@@ -219,14 +284,12 @@ class MessagingHome extends React.Component<any, any> {
 
         return (
             <div className={classes.root}>
-                <Sidebar />
+                {/* <Sidebar /> */}
                 <div className={classes.messagingContainer}>
                     {this.state.conversationSelectedOn ? (
-                        <div>
-                            {this.renderSelectedConversation()}
-                        </div>
+                        this.renderSelectedConversation()
                     ) : (
-                        <div>
+                        <div className={classes.conversationsContainer}>
                             <Typography className={classes.messagingHeaderText}>Messages</Typography>
                             {this.renderCurrentConversations()}
                         </div>
@@ -240,14 +303,19 @@ class MessagingHome extends React.Component<any, any> {
 const styles = (theme: Theme) =>
   createStyles({
     root: {
-      flexGrow: 1,
+        backgroundColor: theme.palette.secondary.dark,
+        height: '100%'
     },
     messagingContainer: {
+        height: '100%',
+    },
+    conversationsContainer: {
         padding: '1rem'
     },
     messagingHeaderText: {
         fontSize: '1.5rem',
-        marginBottom: '1rem'
+        marginBottom: '1rem',
+        color: 'white'
     },
     noCurrentConversations: {
         fontStyle: 'italic'
@@ -263,28 +331,89 @@ const styles = (theme: Theme) =>
     convoOtherPersonHeader: {
         fontStyle: 'italic'
     },
-    messageBoxStyling: {
-        border: '3px solid black',
-        borderRadius: '0.5rem',
+    currentUserMessageBoxStyling: {
+        borderColor: theme.palette.primary.main,
+        borderRadius: '2rem',
         marginBottom: '0.5rem',
         maxWidth: '40vw',
         display: 'inline-block',
-        overflow: 'auto'
+        overflow: 'auto',
+    },
+    otherUserMessageBoxStyling: {
+        borderColor: 'gray',
+        borderRadius: '2rem',
+        marginBottom: '0.5rem',
+        maxWidth: '40vw',
+        display: 'inline-block',
+        overflow: 'auto',
     },
     currentUserMessage: {
         justifyContent: 'right',
         textAlign: 'right',
+        paddingRight: '1rem'
     },
     otherUserMessage: {
         justifyContent: 'left',
         textAlign: 'left',
+        paddingLeft: '1rem'
     },
-    messageContent: {
-        padding: '0.5rem'
+    currentUserMessageContent: {
+        padding: '1rem',
+        backgroundColor: theme.palette.primary.main,
+        color: 'white'
     },
-    selectedConversationWidth: {
+    otherUserMessageContent: {
+        padding: '1rem',
+        backgroundColor: 'gray',
+        color: 'white'
+    },
+    selectedConversationContainer: {
         width: '100%',
-        verticalAlign: 'top'
+        height: '100%',
+        display: 'flex',
+        flexDirection: 'column',
+    },
+    messagesDisplay: {
+        width: '100%',
+        flex: 5,
+    },
+    conversationHeader: {
+        width: '100%',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-around',
+        marginBottom: '0.5rem',
+        flex: 1
+    },
+    conversationHeaderInfo: {
+        display: 'flex',
+        alignItems: 'center',
+    },
+    conversationHeaderText: {
+        color: 'white',
+        marginLeft: '2rem',
+        fontSize: '1.5rem'
+    },
+    sendMessageContainer: {
+        width: '100%',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-around',
+        marginTop: '0.5rem',
+        backgroundColor: 'lightgray',
+        flex: 1
+    },
+    messageToSend: {
+        backgroundColor: 'white',
+        margin: '1rem',
+        flexGrow: 8
+    },
+    sendArrow: {
+        flex: 1,
+        marginRight: '1rem',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center'
     }
   });
 

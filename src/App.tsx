@@ -177,12 +177,12 @@ const styles = (theme: Theme) =>
   createStyles({
     root: {
       flex: 1,
-      height: '100vh',
+      height: '100vh'
     },
   });
 
 export default connect(mapStateToProps, { updateUser })(
   withStyles(styles, { withTheme: true })(
-    withRouter(App)
+    App
   )
 );
