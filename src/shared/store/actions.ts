@@ -27,7 +27,9 @@ import {
   LOGOUT_USER,
   SET_USER_CUSTOMER_APPOINTMENTS,
   UPDATE_EMPLOYEE_APPOINTMENT_STATUS,
-  UPDATE_CUSTOMER_APPOINTMENT_STATUS
+  UPDATE_CUSTOMER_APPOINTMENT_STATUS,
+  SET_USER_EMPLOYEE_CONVERSATIONS,
+  SET_USER_CUSTOMER_CONVERSATIONS
 } from './types';
 
 // ****** SYSTEM ACTIONS ***************
@@ -66,6 +68,13 @@ export function setUserEmployeeAppointments(employeeAppointments: any[]): System
   }
 }
 
+export function setUserEmployeeConversations(employeeConversations: any[]): SystemActionTypes {
+  return {
+    type: SET_USER_EMPLOYEE_CONVERSATIONS,
+    payload: employeeConversations
+  }
+}
+
 export function setEmployeeClients(employeeClients: any): SystemActionTypes {
   return {
     type: SET_EMPLOYEE_CLIENTS,
@@ -91,6 +100,13 @@ export function setUserCustomerAppointments(customerAppointments: any[]): System
   return {
     type: SET_USER_CUSTOMER_APPOINTMENTS,
     payload: customerAppointments
+  }
+}
+
+export function setUserCustomerConversations(customerConversations: any[]): SystemActionTypes {
+  return {
+    type: SET_USER_CUSTOMER_CONVERSATIONS,
+    payload: customerConversations
   }
 }
 

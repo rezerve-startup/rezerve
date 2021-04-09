@@ -28,6 +28,7 @@ import { updateUser } from './shared/store/actions';
 import TempLoginPage from './shared/TempLoginPage';
 import SignUpPage from './shared/SignUpPage';
 import CustomerAppointmentHome from './customer/customer-appointments/CustomerAppointmentHome';
+import MessagingHome from './shared/messaging/MessagingHome';
 
 const routes = [
   /* { path: "/help", component: Help },
@@ -162,6 +163,7 @@ class App extends React.Component<any, SystemState> {
               <Route path={'/customer-home'} exact={true} component={LandingLoggedIn}/>
               <Route path={'/business-info'} exact={true} component={BusinessInfo}/>
               <Route path={'/business-home'} exact={true} component={BusinessHome}/>
+              <Route path={'/messages'} exact={true} component={MessagingHome}/>
               <Route path={'**'} exact><Redirect to={'/'}></Redirect></Route>
             </Switch>
           </Router>
@@ -175,12 +177,12 @@ const styles = (theme: Theme) =>
   createStyles({
     root: {
       flex: 1,
-      height: '100vh',
+      height: '100vh'
     },
   });
 
 export default connect(mapStateToProps, { updateUser })(
   withStyles(styles, { withTheme: true })(
-    withRouter(App)
+    App
   )
 );

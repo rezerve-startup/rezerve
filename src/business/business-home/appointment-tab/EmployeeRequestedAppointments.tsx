@@ -15,10 +15,7 @@ import {
   DialogContent,
   DialogContentText,
   DialogActions,
-  Snackbar,
-  IconButton,
 } from '@material-ui/core';
-import CloseIcon from '@material-ui/icons/Close';
 // tslint:disable-next-line: no-submodule-imports
 import { Description } from '@material-ui/icons/';
 // tslint:disable-next-line: no-submodule-imports

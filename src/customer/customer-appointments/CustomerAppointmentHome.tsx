@@ -11,7 +11,7 @@ import {
 import { CalendarToday, Description } from '@material-ui/icons';
 import SwipeableViews from 'react-swipeable-views';
 import CustomerCalendarAppointments from './CustomerCalendarAppointments';
-import CustomerUpcomingAppointments from './CustomerUpcomingAppointments';
+import CustomerUpcomingAppointments from './CustomerAppointments';
 import Sidebar from '../../shared/sidebar/Sidebar';
 import { StoreState } from '../../shared/store/types';
 import { Redirect } from 'react-router';

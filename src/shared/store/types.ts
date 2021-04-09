@@ -17,10 +17,12 @@ export const UPDATE_USER = 'UPDATE_USER';
 export const CLEAR_USER_INFO = 'CLEAR_USER_INFO';
 export const SET_USER_EMPLOYEE_INFO = 'SET_USER_EMPLOYEE_INFO';
 export const SET_USER_EMPLOYEE_APPOINTMENTS = 'SET_USER_EMPLOYEE_APPOINTMENTS';
+export const SET_USER_EMPLOYEE_CONVERSATIONS = 'SET_USER_EMPLOYEE_CONVERSATIONS';
 export const SET_EMPLOYEE_CLIENTS = 'SET_EMPLOYEE_CLIENTS';
 export const SET_EMPLOYEE_REVIEWS = 'SET_EMPLOYEE_REVIEWS';
 export const SET_USER_CUSTOMER_INFO = 'SET_USER_CUSTOMER_INFO';
 export const SET_USER_CUSTOMER_APPOINTMENTS = 'SET_USER_CUSTOMER_APPOINTMENTS';
+export const SET_USER_CUSTOMER_CONVERSATIONS = 'SET_USER_CUSTOMER_CONVERSATIONS';
 export const SET_TO_DOS = 'SET_TO_DOS';
 export const SET_EMPLOYEE_PHONE = 'SET_EMPLOYEE_PHONE';
 export const SET_EMPLOYEE_EMAIL = 'SET_EMPLOYEE_EMAIL';
@@ -52,6 +54,11 @@ interface SetUserEmployeeAppointmentsAction {
   payload: any;
 }
 
+interface SetUserEmployeeConversationsAction {
+  type: typeof SET_USER_EMPLOYEE_CONVERSATIONS;
+  payload: any[];
+}
+
 interface SetEmployeeClientsAction {
   type: typeof SET_EMPLOYEE_CLIENTS,
   payload: any;
@@ -69,6 +76,11 @@ interface SetUserCustomerInfoAction {
 
 interface SetUserCustomerAppointmentsAction {
   type: typeof SET_USER_CUSTOMER_APPOINTMENTS,
+  payload: any[];
+}
+
+interface SetUserCustomerConversationsAction {
+  type: typeof SET_USER_CUSTOMER_CONVERSATIONS,
   payload: any[];
 }
 
@@ -107,10 +119,12 @@ export type SystemActionTypes =
   ClearUserInfoAction |
   SetUserEmployeeInfoAction |
   SetUserEmployeeAppointmentsAction |
+  SetUserEmployeeConversationsAction |
   SetEmployeeClientsAction |
   SetEmployeeReviewsAction |
   SetUserCustomerInfoAction |
   SetUserCustomerAppointmentsAction |
+  SetUserCustomerConversationsAction |
   SetToDosAction |
   SetEmployeePhoneAction |
   SetEmployeeEmailAction |

@@ -30,7 +30,9 @@ import {
   LOGOUT_USER,
   SET_USER_CUSTOMER_APPOINTMENTS,
   UPDATE_EMPLOYEE_APPOINTMENT_STATUS,
-  UPDATE_CUSTOMER_APPOINTMENT_STATUS
+  UPDATE_CUSTOMER_APPOINTMENT_STATUS,
+  SET_USER_CUSTOMER_CONVERSATIONS,
+  SET_USER_EMPLOYEE_CONVERSATIONS
 } from './types';
 
 // ************** System Reducer ******************
@@ -82,6 +84,18 @@ export function systemReducer(
         }
       }
     }
+    case SET_USER_EMPLOYEE_CONVERSATIONS: {
+      return {
+        ...state,
+        user: {
+          ...state.user,
+          employeeInfo: {
+            ...state.user.employeeInfo,
+            conversations: action.payload
+          }
+        }
+      }
+    }
     case SET_EMPLOYEE_CLIENTS: {
       return {
         ...state,
@@ -120,6 +134,18 @@ export function systemReducer(
           customerInfo: {
             ...state.user.customerInfo,
             appointments: action.payload
+          }
+        }
+      }
+    }
+    case SET_USER_CUSTOMER_CONVERSATIONS: {
+      return {
+        ...state,
+        user: {
+          ...state.user,
+          customerInfo: {
+            ...state.user.customerInfo,
+            conversations: action.payload
           }
         }
       }

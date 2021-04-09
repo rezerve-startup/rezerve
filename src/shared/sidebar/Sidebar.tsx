@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Link, Redirect } from 'react-router-dom';
 import {
   Typography,
@@ -18,6 +18,8 @@ import {
   Menu,
   Button,
   Box,
+  Dialog,
+  DialogContent,
 } from '@material-ui/core';
 import {
   AccountCircle,
@@ -29,11 +31,13 @@ import {
   ExitToApp,
   ArrowDropDown,
   Search,
+  Home,
 } from '@material-ui/icons';
 import { connect } from 'react-redux';
 import { StoreState } from '../store/types';
 import { logoutUser } from '../store/actions';
 import { auth } from '../../config/FirebaseConfig';
+import MessagingHome from '../messaging/MessagingHome';
 
 const sidebarDataWithoutLogout = [
   {
@@ -46,6 +50,12 @@ const sidebarDataWithoutLogout = [
     title: 'Business Search',
     path: '/customer-home',
     icon: <Search />,
+    cName: 'nav-text',
+  },
+  {
+    title: 'Business Home',
+    path: '/business-home',
+    icon: <Home />,
     cName: 'nav-text',
   },
   {
@@ -74,7 +84,7 @@ function mapStateToProps(state: StoreState) {
   })
 }
 
-const Sidebar = (props: any) => {
+const Sidebar = (props: any ) => {
   const classes = useStyles();
 
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
@@ -126,7 +136,7 @@ const Sidebar = (props: any) => {
         open={isMenuOpen}
         onClose={handleMenuClose}
       >
-        {sidebarDataWithoutLogout.slice(3).map((obj, i) => (
+        {sidebarDataWithoutLogout.slice(4).map((obj, i) => (
           <MenuItem button={true} key={i} component={Link} to={obj.path}>
             <ListItemIcon className={classes.listIcon}>{obj.icon}</ListItemIcon>
             <ListItemText className={classes.listText} primary={obj.title} />
@@ -159,7 +169,8 @@ const Sidebar = (props: any) => {
             </ListItem>
             <Divider className={classes.divider} />
             {sidebarDataWithoutLogout.map((obj, i) => {
-                if (!(props.user.customerId === '') || !(obj.title === 'Appointments' || obj.title === 'Business Search')) {
+                if (!(props.user.customerId === '')) {
+                  if (!(obj.title === 'Business Home')) {
                     return (
                         <ListItem button={true} key={i} component={Link} to={obj.path}>
                             <ListItemIcon className={classes.listIcon}>
@@ -168,6 +179,18 @@ const Sidebar = (props: any) => {
                             <ListItemText className={classes.listText} primary={obj.title} />
                         </ListItem>
                     )
+                  }
+                } else if (!(props.user.employeeId === '')) {
+                  if (!(obj.title === 'Appointments' || obj.title === 'Business Search')) {
+                    return (
+                      <ListItem button={true} key={i} component={Link} to={obj.path}>
+                          <ListItemIcon className={classes.listIcon}>
+                          {obj.icon}
+                          </ListItemIcon>
+                          <ListItemText className={classes.listText} primary={obj.title} />
+                      </ListItem>
+                    )
+                  }
                 }
             })}
             <ListItem button={true} onClick={() => logoutUser()}>
@@ -265,6 +288,7 @@ const useStyles = makeStyles((theme) => ({
   },
   appBar: {
     backgroundColor: theme.palette.secondary.dark,
+    height: '7.5vh'
   },
   sidebar: {
     backgroundColor: theme.palette.secondary.dark,
