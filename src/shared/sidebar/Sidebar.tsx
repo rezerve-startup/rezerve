@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Link, Redirect } from 'react-router-dom';
 import {
   Typography,
@@ -18,6 +18,8 @@ import {
   Menu,
   Button,
   Box,
+  Dialog,
+  DialogContent,
 } from '@material-ui/core';
 import {
   AccountCircle,
@@ -34,6 +36,7 @@ import { connect } from 'react-redux';
 import { StoreState } from '../store/types';
 import { logoutUser } from '../store/actions';
 import { auth } from '../../config/FirebaseConfig';
+import MessagingHome from '../messaging/MessagingHome';
 
 const sidebarDataWithoutLogout = [
   {
@@ -74,7 +77,7 @@ function mapStateToProps(state: StoreState) {
   })
 }
 
-const Sidebar = (props: any) => {
+const Sidebar = (props: any ) => {
   const classes = useStyles();
 
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
@@ -265,7 +268,7 @@ const useStyles = makeStyles((theme) => ({
   },
   appBar: {
     backgroundColor: theme.palette.secondary.dark,
-    // height: '8vh'
+    height: '7.5vh'
   },
   sidebar: {
     backgroundColor: theme.palette.secondary.dark,

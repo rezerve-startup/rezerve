@@ -193,7 +193,7 @@ class MessagingHome extends React.Component<any, any> {
                         <Avatar />
                         <Typography className={classes.conversationHeaderText}>{otherUser.firstName}</Typography>
                     </div>
-                    <div>
+                    <div className={classes.selectedConversationClose}>
                         <div onClick={() => this.closeSelectedConversation()}>
                             <Close color="primary" fontSize="large"/>
                         </div>
@@ -284,7 +284,7 @@ class MessagingHome extends React.Component<any, any> {
 
         return (
             <div className={classes.root}>
-                {/* <Sidebar /> */}
+                <Sidebar />
                 <div className={classes.messagingContainer}>
                     {this.state.conversationSelectedOn ? (
                         this.renderSelectedConversation()
@@ -307,7 +307,7 @@ const styles = (theme: Theme) =>
         height: '100%'
     },
     messagingContainer: {
-        height: '100%',
+        height: '92.5vh',
     },
     conversationsContainer: {
         padding: '1rem'
@@ -388,11 +388,17 @@ const styles = (theme: Theme) =>
     conversationHeaderInfo: {
         display: 'flex',
         alignItems: 'center',
+        flex: 8,
+        marginLeft: '1rem'
     },
     conversationHeaderText: {
         color: 'white',
         marginLeft: '2rem',
         fontSize: '1.5rem'
+    },
+    selectedConversationClose: {
+        flex: 0.5,
+        marginRight: '1rem'
     },
     sendMessageContainer: {
         width: '100%',
