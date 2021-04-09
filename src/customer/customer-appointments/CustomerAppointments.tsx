@@ -162,13 +162,15 @@ class CustomerUpcomingAppointments extends React.Component<Props, State> {
   }
 
   sendMessageToEmployee() {
+    const employeeId = this.state.employeeId;
+
     firestore.collection('messages').where('customerId', '==', `${this.props.customerId}`).get()
       .then((querySnapshot) => {
           let employeeIdFound = false;
 
           querySnapshot.forEach((conversationDoc) => {
             const conversationData = conversationDoc.data();
-            if (conversationData.employeeId === this.state.employeeId) {
+            if (conversationData.employeeId === employeeId) {
               employeeIdFound = true;
               let messagesToUpdate = conversationData.messages;
 
@@ -197,14 +199,14 @@ class CustomerUpcomingAppointments extends React.Component<Props, State> {
 
             const documentToAdd = {
               customerId: this.props.customerId,
-              employeeId: this.state.employeeId,
+              employeeId: employeeId,
               lastMessageDatetime: currentDatetime,
               messages: messagesToAdd
             }
 
             firestore.collection('messages').add(documentToAdd)
               .then((docRef) => {
-                firestore.collection('employees').doc(`${this.state.employeeId}`).update({
+                firestore.collection('employees').doc(`${employeeId}`).update({
                   messages: firebase.firestore.FieldValue.arrayUnion(docRef.id)
                 })
                 .then(() => {
