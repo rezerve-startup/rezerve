@@ -24,19 +24,29 @@ import {
   Grow,
   fade,
   withStyles,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
+  TextField,
+  DialogActions,
+  Button,
+  IconButton,
+  Snackbar,
 } from '@material-ui/core';
 import image from '../../../assets/avatar.jpg';
 import { Delete, Check, Add, Search, Message } from '@material-ui/icons';
+import CloseIcon from '@material-ui/icons/Close';
 import { Client } from '../../models/BusinessHome';
 import { SpeedDial, SpeedDialAction, SpeedDialIcon } from '@material-ui/lab';
 import { connect } from 'react-redux';
 import { StoreState } from '../../../shared/store/types';
 import { setEmployeeClients } from '../../../shared/store/actions';
 import { firestore } from '../../../config/FirebaseConfig';
+import firebase from 'firebase';
 
 const fabActions = [
-  { icon: <Message />, name: 'Message' },
-  { icon: <Delete />, name: 'Remove' },
+  { icon: <Message />, name: 'Message' }
 ];
 
 function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
@@ -229,14 +239,17 @@ const useToolbarStyles = makeStyles((theme: Theme) =>
 );
 
 interface EnhancedTableToolbarProps {
-  numSelected: number;
+  selectedClients: string[];
+  employeeId?: string;
 }
 
 const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
   const classes = useToolbarStyles();
-  const { numSelected } = props;
+  const { selectedClients, employeeId } = props;
   const [searching] = React.useState(false);
   const [open, setOpen] = React.useState(false);
+  const [messageDialogOpen, setMessageDialogOpen] = React.useState(false);
+  const [messageToClients, setMessageToClients] = React.useState('');
 
   const handleOpen = () => {
     setOpen(true);
@@ -245,83 +258,160 @@ const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
     setOpen(false);
   };
 
+  const openMessageDialog = () => {
+    setMessageDialogOpen(true)
+  }
+
+  const handleCloseMessageDialog = () => {
+    setMessageDialogOpen(false);
+    setOpen(false);
+    setMessageToClients('');
+  }
+
+  const handleOnChangeClientMessage = (e) => {
+    setMessageToClients(e.target.value)
+  }
+
+  const sendMessageToClients = () => {
+    firestore.collection('messages').where('employeeId', '==', `${props.employeeId}`).get()
+      .then((querySnapshot) => {
+        for (const clientId of props.selectedClients) {
+          let customerIdFound = false;
+
+          querySnapshot.forEach((conversationDoc) => {
+            const conversationData = conversationDoc.data();
+            if (conversationData.customerId === clientId) {
+              customerIdFound = true;
+              let messagesToUpdate = conversationData.messages;
+
+              const messageToAdd = {
+                senderId: props.employeeId,
+                datetime: firebase.firestore.Timestamp.fromDate(new Date(Date.now())),
+                message: messageToClients
+              }
+
+              messagesToUpdate.push(messageToAdd);
+
+              conversationDoc.ref.update({
+                messages: messagesToUpdate
+              });
+            }
+          });
+
+          if (customerIdFound === false) {
+            const currentDatetime = firebase.firestore.Timestamp.fromDate(new Date(Date.now()));
+
+            const messagesToAdd = [{
+              senderId: props.employeeId,
+              datetime: currentDatetime,
+              message: messageToClients
+            }];
+
+            const documentToAdd = {
+              customerId: clientId,
+              employeeId: props.employeeId,
+              lastMessageDatetime: currentDatetime,
+              messages: messagesToAdd
+            }
+
+            firestore.collection('messages').add(documentToAdd)
+              .then((docRef) => {
+                firestore.collection('employees').doc(`${props.employeeId}`).update({
+                  messages: firebase.firestore.FieldValue.arrayUnion(docRef.id)
+                })
+                .then(() => {
+                  firestore.collection('customers').doc(`${clientId}`).update({
+                    messages: firebase.firestore.FieldValue.arrayUnion(docRef.id)
+                  });
+                })
+              });
+          }
+        }
+      })
+      .then(() => {
+        setMessageDialogOpen(false);
+        setOpen(false);
+        setMessageToClients('');
+      });
+  }
+
   return (
-    <Toolbar
-      className={clsx(classes.root, {
-        [classes.highlight]: numSelected > 0,
-      })}
-    >
-      {numSelected > 0 ? (
-        <Typography
-          className={classes.title}
-          color="inherit"
-          variant="subtitle1"
-          component="div"
-        >
-          {numSelected} selected
-        </Typography>
-      ) : (
-        <Typography
-          className={classes.title}
-          color="inherit"
-          variant="h6"
-          component="div"
-        >
-          Clients
-        </Typography>
-      )}
-      <Grow in={searching}>
-        <div className={classes.search}>
-          <div className={classes.searchIcon}>
-            <Search />
-          </div>
-          <InputBase
-            placeholder="Search…"
-            classes={{
-              root: classes.inputRoot,
-              input: classes.inputInput,
-            }}
-            inputProps={{ 'aria-label': 'search' }}
-          />
-        </div>
-      </Grow>
-      <div className={classes.grow} />
-      {numSelected > 0 ? (
-        <SpeedDial
-          ariaLabel="client-speed-dial"
-          className={classes.speedDial}
-          icon={<SpeedDialIcon />}
-          onClose={handleClose}
-          onOpen={handleOpen}
-          open={open}
-          direction="down"
-          FabProps={{ size: 'small' }}
-        >
-          {fabActions.map((action) => (
-            <SpeedDialAction
-              key={action.name}
-              icon={action.icon}
-              tooltipTitle={action.name}
-              tooltipOpen={true}
-              onClick={handleClose}
-            />
-          ))}
-        </SpeedDial>
-      ) : (
-        <Tooltip title="Invite Client">
-          <Fab
-            color="primary"
-            size="small"
-            aria-label="add-client"
-            className={classes.fab}
-            variant="extended"
+    <div>
+      <Toolbar
+        className={clsx(classes.root, {
+          [classes.highlight]: selectedClients.length > 0,
+        })}
+      >
+        {selectedClients.length > 0 ? (
+          <Typography
+            className={classes.title}
+            color="inherit"
+            variant="subtitle1"
+            component="div"
           >
-            <Add style={{ marginRight: '8px' }} />
-            Invite
-          </Fab>
-        </Tooltip>
-      )}
-    </Toolbar>
+            {selectedClients.length} selected
+          </Typography>
+        ) : (
+          <Typography
+            className={classes.title}
+            color="inherit"
+            variant="h6"
+            component="div"
+          >
+            Clients
+          </Typography>
+        )}
+        <Grow in={searching}>
+          <div className={classes.search}>
+            <div className={classes.searchIcon}>
+              <Search />
+            </div>
+            <InputBase
+              placeholder="Search…"
+              classes={{
+                root: classes.inputRoot,
+                input: classes.inputInput,
+              }}
+              inputProps={{ 'aria-label': 'search' }}
+            />
+          </div>
+        </Grow>
+        <div className={classes.grow} />
+        {selectedClients.length > 0 ? (
+          <SpeedDial
+            ariaLabel="client-speed-dial"
+            className={classes.speedDial}
+            icon={<SpeedDialIcon />}
+            onClose={handleClose}
+            onOpen={handleOpen}
+            open={open}
+            direction="down"
+            FabProps={{ size: 'small' }}
+          >
+            <SpeedDialAction
+              key={'Message'}
+              icon={<Message />}
+              tooltipTitle={'Message'}
+              tooltipOpen={true}
+              onClick={() => openMessageDialog()}
+            />
+          </SpeedDial>
+        ) : (
+          <></>
+        )}
+      </Toolbar>
+      <Dialog open={messageDialogOpen} onClose={() => handleCloseMessageDialog()}>
+        <DialogTitle>Message Client(s)</DialogTitle>
+        <DialogContent>
+          <DialogContentText>Please enter the message you would like to send these clients:</DialogContentText>
+          <TextField value={messageToClients} onChange={(e) => handleOnChangeClientMessage(e)} />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => sendMessageToClients()}>Send</Button>
+          <Button onClick={() => handleCloseMessageDialog()}>Cancel</Button>
+        </DialogActions>
+      </Dialog>
+    </div>
   );
 };
 
@@ -489,7 +579,7 @@ const ClientTable = (props: any) => {
   return (
     <div className={classes.root}>
       <Paper className={classes.paper}>
-        <EnhancedTableToolbar numSelected={selected.length} />
+        <EnhancedTableToolbar selectedClients={selected} employeeId={props.employeeId} />
         <TableContainer>
           <Table
             className={classes.table}

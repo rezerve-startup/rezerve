@@ -31,6 +31,7 @@ import {
   ExitToApp,
   ArrowDropDown,
   Search,
+  Home,
 } from '@material-ui/icons';
 import { connect } from 'react-redux';
 import { StoreState } from '../store/types';
@@ -49,6 +50,12 @@ const sidebarDataWithoutLogout = [
     title: 'Business Search',
     path: '/customer-home',
     icon: <Search />,
+    cName: 'nav-text',
+  },
+  {
+    title: 'Business Home',
+    path: '/business-home',
+    icon: <Home />,
     cName: 'nav-text',
   },
   {
@@ -129,7 +136,7 @@ const Sidebar = (props: any ) => {
         open={isMenuOpen}
         onClose={handleMenuClose}
       >
-        {sidebarDataWithoutLogout.slice(3).map((obj, i) => (
+        {sidebarDataWithoutLogout.slice(4).map((obj, i) => (
           <MenuItem button={true} key={i} component={Link} to={obj.path}>
             <ListItemIcon className={classes.listIcon}>{obj.icon}</ListItemIcon>
             <ListItemText className={classes.listText} primary={obj.title} />
@@ -162,7 +169,8 @@ const Sidebar = (props: any ) => {
             </ListItem>
             <Divider className={classes.divider} />
             {sidebarDataWithoutLogout.map((obj, i) => {
-                if (!(props.user.customerId === '') || !(obj.title === 'Appointments' || obj.title === 'Business Search')) {
+                if (!(props.user.customerId === '')) {
+                  if (!(obj.title === 'Business Home')) {
                     return (
                         <ListItem button={true} key={i} component={Link} to={obj.path}>
                             <ListItemIcon className={classes.listIcon}>
@@ -171,6 +179,18 @@ const Sidebar = (props: any ) => {
                             <ListItemText className={classes.listText} primary={obj.title} />
                         </ListItem>
                     )
+                  }
+                } else if (!(props.user.employeeId === '')) {
+                  if (!(obj.title === 'Appointments' || obj.title === 'Business Search')) {
+                    return (
+                      <ListItem button={true} key={i} component={Link} to={obj.path}>
+                          <ListItemIcon className={classes.listIcon}>
+                          {obj.icon}
+                          </ListItemIcon>
+                          <ListItemText className={classes.listText} primary={obj.title} />
+                      </ListItem>
+                    )
+                  }
                 }
             })}
             <ListItem button={true} onClick={() => logoutUser()}>
