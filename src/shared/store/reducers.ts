@@ -32,7 +32,8 @@ import {
   UPDATE_EMPLOYEE_APPOINTMENT_STATUS,
   UPDATE_CUSTOMER_APPOINTMENT_STATUS,
   SET_USER_CUSTOMER_CONVERSATIONS,
-  SET_USER_EMPLOYEE_CONVERSATIONS
+  SET_USER_EMPLOYEE_CONVERSATIONS,
+  AUTH_CHANGING
 } from './types';
 
 // ************** System Reducer ******************
@@ -40,7 +41,8 @@ import {
 const initialSystemState: SystemState = {
   loggedIn: false,
   session: '',
-  user: undefined
+  user: undefined,
+  authChanging: true
 };
 
 export function systemReducer(
@@ -212,6 +214,12 @@ export function systemReducer(
       return {
         ...state,
         user: undefined
+      }
+    }
+    case AUTH_CHANGING: {
+      return {
+        ...state,
+        authChanging: action.payload
       }
     }
     default:

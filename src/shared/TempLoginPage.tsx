@@ -16,6 +16,7 @@ import {
   setBusinessAvailability
 } from '../shared/store/actions';
 import { StoreState } from './store/types';
+import firebase from 'firebase';
 
 function mapStateToProps(state: StoreState) {
   return {
@@ -44,90 +45,18 @@ class TempLoginPage extends React.Component<any, any> {
   }
 
   loginEmployee() {
-    // Other account is 'testcustomer@test.com', 'testcustomer'
-    auth
-      .signInWithEmailAndPassword('testemployee@test.com', 'testemployee')
-      .then((userCredential) => {
-        if (userCredential !== null && userCredential.user) {
-          const user = userCredential.user;
-
-          firestore
-            .collection('users')
-            .doc(`${user.uid}`)
-            .get()
-            .then((userObj) => {
-              const userInfo = userObj.data();
-
-              if (userInfo && userInfo.employeeId !== '') {
-
-                firestore.collection('employees').doc(userInfo.employeeId).get()
-                  .then((employeeObj) => {
-                    let employeeInfo = employeeObj.data();
-
-                    let employeeInfoToAdd = {
-                      availability: employeeInfo?.availability,
-                      isOwner: employeeInfo?.isOwner,
-                      position: employeeInfo?.position,
-                      services: employeeInfo?.services,
-                      todos: employeeInfo?.todos
-                    }
-                    userInfo.employeeInfo = employeeInfoToAdd;
-                  })
-                  .then(() => {
-                    firestore.collection('businesses').where('employees', 'array-contains', `${userInfo.employeeId}`).get()
-                      .then((querySnapshot) => {
-                        querySnapshot.forEach((businessDoc) => {
-                          let businessInfoData = businessDoc.data();
-
-                          let businessAvailability = {
-                            daysOpen: businessInfoData.about.daysOpen,
-                            openingTime: businessInfoData.about.openingTime,
-                            closingTime: businessInfoData.about.closingTime
-                          };
-
-                          this.dispatchSetBusinessAvailability(businessAvailability);
-                        })
-                      })
-                  })
-                  .then(() => {
-                    this.dispatchSetUserEmployeeInfo(userInfo);
-                  })
-              }
-            });
-        }
-      });
+    auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL)
+      .then(() => {
+        auth
+          .signInWithEmailAndPassword('testemployee@test.com', 'testemployee');
+      })
   }
 
   loginCustomer() {
-    auth
-      .signInWithEmailAndPassword('testCustomer@test.com', 'testcustomer')
-      .then((userCredential) => {
-        if (userCredential !== null && userCredential.user) {
-          const user = userCredential.user;
-
-          firestore
-            .collection('users')
-            .doc(`${user.uid}`)
-            .get()
-            .then((userObj) => {
-              const userInfo = userObj.data();
-              
-              if (userInfo && userInfo.customerId !== '') {
-                firestore.collection('customers').doc(userInfo.customerId).get()
-                  .then((customerObj) => {
-                    let customerInfo = customerObj.data();
-
-                    let customerInfoToAdd = {}
-                    userInfo.customerInfo = customerInfoToAdd;
-
-                    this.dispatchSetUserCustomerInfo(userInfo);
-                  })
-              }
-            }
-          );
-        }
-      }
-    );
+    auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL)
+      .then(() => {
+        auth.signInWithEmailAndPassword('testCustomer@test.com', 'testcustomer');
+      });
   }
 
   signInEmployee = () => {

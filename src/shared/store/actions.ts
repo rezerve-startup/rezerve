@@ -29,7 +29,8 @@ import {
   UPDATE_EMPLOYEE_APPOINTMENT_STATUS,
   UPDATE_CUSTOMER_APPOINTMENT_STATUS,
   SET_USER_EMPLOYEE_CONVERSATIONS,
-  SET_USER_CUSTOMER_CONVERSATIONS
+  SET_USER_CUSTOMER_CONVERSATIONS,
+  AUTH_CHANGING
 } from './types';
 
 // ****** SYSTEM ACTIONS ***************
@@ -148,6 +149,13 @@ export function updateCustomerAppointmentStatus(appointment: any): SystemActionT
 export function logoutUser(): SystemActionTypes {
   return {
     type: LOGOUT_USER
+  }
+}
+
+export function setAuthChanging(authChangingValue: boolean): SystemActionTypes {
+  return {
+    type: AUTH_CHANGING,
+    payload: authChangingValue
   }
 }
 

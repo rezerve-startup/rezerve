@@ -17,9 +17,7 @@ import {
   MenuItem,
   Menu,
   Button,
-  Box,
-  Dialog,
-  DialogContent,
+  Box
 } from '@material-ui/core';
 import {
   AccountCircle,
@@ -35,7 +33,6 @@ import {
 } from '@material-ui/icons';
 import { connect } from 'react-redux';
 import { StoreState } from '../store/types';
-import { logoutUser } from '../store/actions';
 import { auth } from '../../config/FirebaseConfig';
 import MessagingHome from '../messaging/MessagingHome';
 
@@ -108,14 +105,8 @@ const Sidebar = (props: any ) => {
     setAnchorEl(null);
   };
 
-  const dispatchLogoutUser = () => {
-    props.logoutUser();
-  }
-
   function logoutUser() {
-    auth.signOut().then(() => {
-      dispatchLogoutUser();
-    })
+    auth.signOut();
   }
 
   if (props.user === undefined) {
@@ -346,6 +337,6 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default connect(mapStateToProps, { logoutUser })(
+export default connect(mapStateToProps, null)(
   Sidebar
 );

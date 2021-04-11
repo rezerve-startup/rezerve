@@ -20,11 +20,13 @@ import LandingLoggedIn from './shared/landing-page/LandingPageLog';
 import SignupPage from './shared/SignUpPage';
 import CustomerSignUp from './customer/customer-signup/CustomerCreationPage';
 
-import BusinessProfile from './business/business-profile/business-profile';
-import { auth, firestore } from './config/FirebaseConfig';
 import { connect } from 'react-redux';
 import { StoreState, SystemState } from './shared/store/types';
-import { updateUser } from './shared/store/actions';
+import { 
+  setUserEmployeeInfo,
+  setUserCustomerInfo, 
+  setBusinessAvailability 
+} from './shared/store/actions';
 import TempLoginPage from './shared/TempLoginPage';
 import SignUpPage from './shared/SignUpPage';
 import CustomerAppointmentHome from './customer/customer-appointments/CustomerAppointmentHome';
@@ -49,9 +51,6 @@ const routes = [
   { path: '/', component: LandingDefault }
 ];
 
-//let currentUser = 'business';
-//let currentPage = 'business-home';
-
 const theme = createMuiTheme({
   palette: {
     primary: {
@@ -66,7 +65,6 @@ const theme = createMuiTheme({
     },
   },
 });
-
 
 function mapStateToProps(state: StoreState) {
   return {
@@ -84,65 +82,9 @@ class App extends React.Component<any, SystemState> {
       loggedIn: props.system.loggedIn,
       session: props.system.session,
       user: props.system.user,
+      authChanging: props.system.authChanging
     };
   }
-
-  dispatchUpdateUser = (newUser) => {
-    this.props.updateUser(newUser);
-  };
-
-  loginEmployee() {
-    // Other account is 'testcustomer@test.com', 'testcustomer'
-    auth
-      .signInWithEmailAndPassword('testemployee@test.com', 'testemployee')
-      .then((userCredential) => {
-        if (userCredential !== null && userCredential.user) {
-          const user = userCredential.user;
-
-          firestore
-            .collection('users')
-            .doc(`${user.uid}`)
-            .get()
-            .then((userObj) => {
-              const userInfo = userObj.data();
-              this.dispatchUpdateUser(userInfo);
-            });
-        }
-      });
-  }
-
-  loginCustomer() {
-    auth
-      .signInWithEmailAndPassword('testCustomer@test.com', 'testcustomer')
-      .then((userCredential) => {
-        if (userCredential !== null && userCredential.user) {
-          const user = userCredential.user;
-
-          firestore
-            .collection('users')
-            .doc(`${user.uid}`)
-            .get()
-            .then((userObj) => {
-              const userInfo = userObj.data();
-              this.dispatchUpdateUser(userInfo);
-            });
-        }
-      });
-  }
-
-  logoutUser() {
-    auth.signOut();
-  }
-
-  switchToEmployee = () => {
-    this.logoutUser();
-    this.loginEmployee();
-  };
-
-  switchToCustomer = () => {
-    this.logoutUser();
-    this.loginCustomer();
-  };
 
   render() {
     const { classes } = this.props;
@@ -181,7 +123,7 @@ const styles = (theme: Theme) =>
     },
   });
 
-export default connect(mapStateToProps, { updateUser })(
+export default connect(mapStateToProps, { setUserCustomerInfo, setUserEmployeeInfo, setBusinessAvailability })(
   withStyles(styles, { withTheme: true })(
     App
   )

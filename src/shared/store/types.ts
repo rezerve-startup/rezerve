@@ -10,6 +10,7 @@ export interface SystemState {
   loggedIn: boolean;
   session: string;
   user: any;
+  authChanging: boolean;
 }
 
 export const UPDATE_SESSION = 'UPDATE_SESSION';
@@ -29,6 +30,7 @@ export const SET_EMPLOYEE_EMAIL = 'SET_EMPLOYEE_EMAIL';
 export const UPDATE_EMPLOYEE_APPOINTMENT_STATUS = 'UPDATE_EMPLOYEE_APPOINTMENT_STATUS';
 export const UPDATE_CUSTOMER_APPOINTMENT_STATUS = 'UPDATE_CUSTOMER_APPOINTMENT_STATUS';
 export const LOGOUT_USER = 'LOGOUT_USER';
+export const AUTH_CHANGING = 'AUTH_CHANGING';
 
 interface UpdateSessionAction {
   type: typeof UPDATE_SESSION;
@@ -113,6 +115,11 @@ interface LogoutUserAction {
   type: typeof LOGOUT_USER
 }
 
+interface AuthChangingAction {
+  type: typeof AUTH_CHANGING;
+  payload: boolean;
+}
+
 export type SystemActionTypes = 
   UpdateSessionAction |
   UpdateUserAction |
@@ -130,7 +137,8 @@ export type SystemActionTypes =
   SetEmployeeEmailAction |
   UpdateEmployeeAppointmentStatusAction |
   UpdateCustomerAppointmentStatusAction |
-  LogoutUserAction;
+  LogoutUserAction |
+  AuthChangingAction;
 
 // ############ Business Types ##########################
 export interface BusinessState {
