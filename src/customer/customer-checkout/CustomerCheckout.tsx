@@ -17,15 +17,14 @@ import {
 // tslint:disable-next-line: no-submodule-imports
 import { makeStyles, useTheme } from '@material-ui/core/styles';
 import { loadStripe } from '@stripe/stripe-js';
-import { Elements, CardElement, useStripe, useElements  } from '@stripe/react-stripe-js';
-
+import { Elements, } from '@stripe/react-stripe-js';
 import CheckoutForm from './CheckoutForm';
 import './CustomerCheckout.css';
 
 const promise = loadStripe('pk_test_TYooMQauvdEDq54NiTphI7jx');
 
 function getSteps() {
-  return ['Review Booking', 'Payment Setup', 'Confirm'];
+  return ['Review Booking', 'Payment Information', 'Confirm Booking'];
 }
 
 function getStepContent(stepIndex: number) {
@@ -39,10 +38,6 @@ function getStepContent(stepIndex: number) {
     default:
       return 'Our apologies, there has been a mishap with the booking process. Please try again later.';
   }
-}
-
-function confirmPayment() {
-  return false;
 }
 
 function StripePaymentSetup() {
@@ -119,6 +114,20 @@ function BookingConfirmation() {
   );
 }
 
+function handleConfirmPaid(){
+  // find way to grab succeded from CheckoutForm.tsx 
+
+  const x = false;
+
+  // if(x === true ){
+  //   return x;
+  // } else if (x === false ){
+  //   return x;
+  // }
+  
+  return false;
+}
+
 function CustomerCheckout() {
   const theme = useTheme();
   // tslint:disable-next-line: no-shadowed-variable
@@ -148,10 +157,6 @@ function CustomerCheckout() {
 
   const handleClose = () => {
     setOpen(false);
-  };
-
-  const handleConfirmPaid = () => {
-    confirmPayment();
   };
 
   // tslint:disable-next-line: prefer-const
@@ -188,15 +193,18 @@ function CustomerCheckout() {
             >
               Back
             </Button>
+
             <Button
               variant="contained"
               color="primary"
+              disabled = {activeStep === steps.length -2 ? handleConfirmPaid() : false }
               onClick={
                 activeStep === steps.length - 1 ? handleClose : handleNext
               }
             >
               {activeStep === steps.length - 1 ? 'Confirm & Book' : 'Next'}
             </Button>
+
           </div>
         </DialogActions>
       </Dialog>
@@ -241,16 +249,17 @@ const useStyles = makeStyles((theme) => ({
   stat: {
     left: '175px',
     fontWeight: 'bold',
-    position: 'absolute',
   },
 
   priceAlign: {
     position: 'relative',
+    marginLeft: '150px'
   },
 
   timeAlign: {
     right: '60px',
     position: 'relative',
+    left: '93px'
   },
 
   closeIcon: {
@@ -317,24 +326,3 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default CustomerCheckout; 
-
-// import React from "react";
-// import { loadStripe } from "@stripe/stripe-js";
-// import { Elements } from "@stripe/react-stripe-js";
-// import CheckoutForm from "./CheckoutForm";
-// import "./CustomerCheckout.css";
-// // Make sure to call loadStripe outside of a component’s render to avoid
-// // recreating the Stripe object on every render.
-// // loadStripe is initialized with a fake API key.
-// // Sign in to see examples pre-filled with your key.
-// const promise = loadStripe("pk_test_TYooMQauvdEDq54NiTphI7jx");
-// export default function CustomerCheckout() {
-//   return (
-//     <div className="App">
-//       <Elements stripe={promise}>
-//         <CheckoutForm />
-//       </Elements>
-//     </div>
-//   );
-// }
-

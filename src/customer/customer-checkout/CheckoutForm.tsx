@@ -6,7 +6,7 @@ import {
   Button,
   CircularProgress,
 } from '@material-ui/core';
-import MuiAlert, { Alert, AlertProps } from '@material-ui/lab';
+import { Alert, } from '@material-ui/lab';
 import { CardElement, useStripe, useElements } from '@stripe/react-stripe-js';
 
 const useStyles = makeStyles((theme: Theme) => ({
@@ -33,7 +33,6 @@ export default function CheckoutForm() {
   const [snackMessage, setSnackMessage] = React.useState<string>('');
   const stripe = useStripe();
   const elements = useElements();
-  const classes = useStyles();
   const [open, setOpen] = React.useState(false);
 
   // Spinner on button
