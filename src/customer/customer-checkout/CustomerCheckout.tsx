@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { createRef } from 'react';
 import {
   Divider,
   Checkbox,
@@ -17,7 +17,7 @@ import {
 // tslint:disable-next-line: no-submodule-imports
 import { makeStyles, useTheme } from '@material-ui/core/styles';
 import { loadStripe } from '@stripe/stripe-js';
-import { Elements, } from '@stripe/react-stripe-js';
+import { Elements } from '@stripe/react-stripe-js';
 import CheckoutForm from './CheckoutForm';
 import './CustomerCheckout.css';
 
@@ -27,12 +27,12 @@ function getSteps() {
   return ['Review Booking', 'Payment Information', 'Confirm Booking'];
 }
 
-function getStepContent(stepIndex: number) {
+function getStepContent(stepIndex: number, setCustomerPaid) {
   switch (stepIndex) {
     case 0:
       return <ConfirmationCard />;
     case 1:
-      return <StripePaymentSetup />;
+      return <StripePaymentSetup paymentSuccess={setCustomerPaid} />;
     case 2:
       return <BookingConfirmation />;
     default:
@@ -40,13 +40,13 @@ function getStepContent(stepIndex: number) {
   }
 }
 
-function StripePaymentSetup() {
+function StripePaymentSetup(props) {
   // tslint:disable-next-line: no-shadowed-variable
   const classes = useStyles();
   return (
     <div className="App">
       <Elements stripe={promise}>
-        <CheckoutForm />
+        <CheckoutForm paymentSuccess={props.paymentSuccess} />
       </Elements>
     </div>
   );
@@ -114,29 +114,15 @@ function BookingConfirmation() {
   );
 }
 
-function handleConfirmPaid(){
-  // find way to grab succeded from CheckoutForm.tsx 
-
-  const x = false;
-
-  // if(x === true ){
-  //   return x;
-  // } else if (x === false ){
-  //   return x;
-  // }
-  
-  return false;
-}
-
 function CustomerCheckout() {
   const theme = useTheme();
   // tslint:disable-next-line: no-shadowed-variable
   const classes = useStyles();
   const fullscreen = useMediaQuery(theme.breakpoints.down('md'));
   const [open, setOpen] = React.useState(false);
-  const [succeeded, setSucceeded] = React.useState<boolean>(false);
   const [activeStep, setActiveStep] = React.useState(0);
   const steps = getSteps();
+  const [customerPaid, setCustomerPaid] = React.useState<boolean>(false);
 
   const handleNext = () => {
     setActiveStep((prevActiveStep) => prevActiveStep + 1);
@@ -181,7 +167,7 @@ function CustomerCheckout() {
             ))}
           </Stepper>
           <Typography component={'span'} className={classes.instructions}>
-            {getStepContent(activeStep)}
+            {getStepContent(activeStep, setCustomerPaid)}
           </Typography>
         </DialogContent>
 
@@ -197,14 +183,13 @@ function CustomerCheckout() {
             <Button
               variant="contained"
               color="primary"
-              disabled = {activeStep === steps.length -2 ? handleConfirmPaid() : false }
+              disabled={activeStep === steps.length - 2 ? !customerPaid : false}
               onClick={
                 activeStep === steps.length - 1 ? handleClose : handleNext
               }
             >
               {activeStep === steps.length - 1 ? 'Confirm & Book' : 'Next'}
             </Button>
-
           </div>
         </DialogActions>
       </Dialog>
@@ -253,13 +238,13 @@ const useStyles = makeStyles((theme) => ({
 
   priceAlign: {
     position: 'relative',
-    marginLeft: '150px'
+    marginLeft: '150px',
   },
 
   timeAlign: {
     right: '60px',
     position: 'relative',
-    left: '93px'
+    left: '93px',
   },
 
   closeIcon: {
@@ -325,4 +310,4 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default CustomerCheckout; 
+export default CustomerCheckout;
