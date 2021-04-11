@@ -1,5 +1,5 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React, { useEffect } from 'react';
+import { Link, Redirect } from 'react-router-dom';
 import {
   AppBar,
   Tabs,
@@ -12,6 +12,7 @@ import {
   Divider,
   Typography,
   Button,
+  CircularProgress,
 } from '@material-ui/core';
 
 import HomeIcon from '@material-ui/icons/Home';
@@ -21,7 +22,16 @@ import PanToolIcon from '@material-ui/icons/PanTool';
 import EmojiPeopleIcon from '@material-ui/icons/EmojiPeople';
 //----
 
+import { 
+  setUserEmployeeInfo,
+  setUserCustomerInfo, 
+  setBusinessAvailability 
+} from '../../shared/store/actions';
 import CustomerBusinessSearch from '../../customer/customer-business-search/CustomerBusinessSearch';
+import { StoreState } from '../store/types';
+import { connect } from 'react-redux';
+import { auth, firestore } from '../../config/FirebaseConfig';
+import firebase from 'firebase';
 
 //import Sidebar from '../shared/sidebar/sidebar';
 
@@ -67,6 +77,12 @@ const useStyles = makeStyles((theme: Theme) =>
       backgroundColor: theme.palette.secondary.dark,
       color: theme.palette.secondary.light,
     },
+    loadingSpinnerContainer: {
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
+      height: '100%'
+    }
   }),
 );
 //--------------------------
@@ -105,13 +121,22 @@ function a11yProps(index: any) {
   };
 }
 
+function mapStateToProps(state: StoreState) {
+  return ({
+    user: state.system.user,
+    authChanging: state.system.authChanging
+  })
+}
+
 //--------------------------
 //Landing Page component
 //--------------------------
-function LandingPageDefault() {
+const LandingPageDefault = (props: any) => {
   const classes = useStyles();
 
   const [tabValue, setTabValue] = React.useState(0);
+  const [redirectToCustomer, setRedirectToCustomer] = React.useState(false);
+  const [redirectToEmployee, setRedirectToEmployee] = React.useState(false);
   const handleTabChange = (
     event: React.ChangeEvent<{}>,
     newTabValue: number,
@@ -119,77 +144,101 @@ function LandingPageDefault() {
     setTabValue(newTabValue);
   };
 
-  return (
-    <div>
-      <AppBar className={classes.container} position="sticky">
-        <Box m={1}>
-          <Grid container alignItems="center" justify="space-between">
-            <Grid item>
-              <Typography
-                className={classes.title}
-                variant="h6"
-                noWrap={true}
-                color="primary"
-                component={Link}
-                to="/"
-              >
-                ReZerve
-              </Typography>
-            </Grid>
-            <Grid>
-              <Button
-                className={classes.buttonLogin}
-                variant="contained"
-                href="/temp-login"
-              >
-                Log in
-              </Button>
-              <Button
-                className={classes.buttonSignup}
-                variant="contained"
-                href="/sign-up-page"
-              >
-                Sign Up
-              </Button>
-            </Grid>
-          </Grid>
-        </Box>
-      </AppBar>
+  if (props.user) {
+    if (props.user.employeeId === '' && redirectToCustomer === false) {
+      setRedirectToCustomer(true);
+    } else if (props.user.customerId === '' && redirectToEmployee === false) {
+      setRedirectToEmployee(true)
+    }
+  }
 
-      <div className={classes.appBar}>
-        <AppBar position="sticky">
-          <Tabs
-            centered
-            value={tabValue}
-            indicatorColor="primary"
-            variant="fullWidth"
-            onChange={handleTabChange}
-            className={classes.navItem}
-          >
-            <Tab label="Hair" icon={<FaceIcon />} {...a11yProps(0)} />
-            <Divider orientation="vertical" flexItem />
-            <Tab label="Nail" icon={<PanToolIcon />} {...a11yProps(2)} />
-            <Divider orientation="vertical" flexItem />
-            <Tab label="Barber" icon={<EmojiPeopleIcon />} {...a11yProps(4)} />
-            <Divider orientation="vertical" flexItem />
-            <Tab label="House Calls" icon={<HomeIcon />} {...a11yProps(6)} />
-          </Tabs>
-        </AppBar>
-      </div>
-      <TabPanel tabValue={tabValue} index={0}>
-        <CustomerBusinessSearch filter="hair" />
-      </TabPanel>
-      <TabPanel tabValue={tabValue} index={2}>
-        <CustomerBusinessSearch filter="nails" />
-      </TabPanel>
-      <TabPanel tabValue={tabValue} index={4}>
-        <CustomerBusinessSearch filter="barber" />
-      </TabPanel>
-      <TabPanel tabValue={tabValue} index={6}>
-        <CustomerBusinessSearch filter="houseCall" />
-      </TabPanel>
-    </div>
+  if (redirectToEmployee) {
+    return <Redirect to={'/business-home'} />
+  }
+
+  if (redirectToCustomer) {
+    return <Redirect to={'/customer-home'} />
+  }
+
+  return (
+      props.authChanging === false ? (
+        <div>
+          <AppBar className={classes.container} position="sticky">
+            <Box m={1}>
+              <Grid container alignItems="center" justify="space-between">
+                <Grid item>
+                  <Typography
+                    className={classes.title}
+                    variant="h6"
+                    noWrap={true}
+                    color="primary"
+                    component={Link}
+                    to="/"
+                  >
+                    ReZerve
+                  </Typography>
+                </Grid>
+                <Grid>
+                  <Button
+                    className={classes.buttonLogin}
+                    variant="contained"
+                    href="/temp-login"
+                  >
+                    Log in
+                  </Button>
+                  <Button
+                    className={classes.buttonSignup}
+                    variant="contained"
+                    href="/sign-up-page"
+                  >
+                    Sign Up
+                  </Button>
+                </Grid>
+              </Grid>
+            </Box>
+          </AppBar>
+
+          <div className={classes.appBar}>
+            <AppBar position="sticky">
+              <Tabs
+                centered
+                value={tabValue}
+                indicatorColor="primary"
+                variant="fullWidth"
+                onChange={handleTabChange}
+                className={classes.navItem}
+              >
+                <Tab label="Hair" icon={<FaceIcon />} {...a11yProps(0)} />
+                <Divider orientation="vertical" flexItem />
+                <Tab label="Nail" icon={<PanToolIcon />} {...a11yProps(2)} />
+                <Divider orientation="vertical" flexItem />
+                <Tab label="Barber" icon={<EmojiPeopleIcon />} {...a11yProps(4)} />
+                <Divider orientation="vertical" flexItem />
+                <Tab label="House Calls" icon={<HomeIcon />} {...a11yProps(6)} />
+              </Tabs>
+            </AppBar>
+          </div>
+          <TabPanel tabValue={tabValue} index={0}>
+            <CustomerBusinessSearch filter="hair" />
+          </TabPanel>
+          <TabPanel tabValue={tabValue} index={2}>
+            <CustomerBusinessSearch filter="nails" />
+          </TabPanel>
+          <TabPanel tabValue={tabValue} index={4}>
+            <CustomerBusinessSearch filter="barber" />
+          </TabPanel>
+          <TabPanel tabValue={tabValue} index={6}>
+            <CustomerBusinessSearch filter="houseCall" />
+          </TabPanel>
+        </div>
+      ) : (
+        <div className={classes.loadingSpinnerContainer}>
+          <CircularProgress />
+        </div>
+      )
   );
 }
 
-export default LandingPageDefault;
+export default connect(mapStateToProps, { setUserCustomerInfo, setUserEmployeeInfo, setBusinessAvailability })(
+  LandingPageDefault
+);
