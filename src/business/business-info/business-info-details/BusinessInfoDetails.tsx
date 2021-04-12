@@ -23,7 +23,7 @@ import cat1 from '../../../assets/business-pictures/cat1.jpg';
 import { connect } from 'react-redux';
 import { StoreState } from '../../../shared/store/types';
 import { setSelectedEmployee, addSelectedEmployeeAppointment } from '../../../shared/store/actions';
-import moment from 'moment';
+import moment, { Moment } from 'moment';
 import { firestore } from '../../../config/FirebaseConfig';
 import firebase from 'firebase';
 
@@ -59,6 +59,7 @@ class BusinessInfoDetails extends React.Component<any, any> {
       selectedService: -1,
       selectedAppointmentSlot: -1,
       selectedDate: '',
+      showFirstAvailable: false
     });
   }
 
@@ -107,12 +108,17 @@ class BusinessInfoDetails extends React.Component<any, any> {
     });
   }
 
-  getBusinessHoursDatetime(timeToConvert: string): Date {
+  getBusinessHoursDatetime(timeToConvert: string, firstAvailableDateToUse: Moment | null): Date {
     const timezoneOffset = (new Date()).getTimezoneOffset();
 
     // Parsing time from string solution adapted from https://stackoverflow.com/questions/141348/how-to-parse-a-time-into-a-date-object-from-user-input-in-javascript
-    let datetime = new Date(Date.parse(this.state.selectedDate));
-    datetime.setMinutes(datetime.getMinutes() + timezoneOffset);
+    let datetime;
+    if (firstAvailableDateToUse) {
+      datetime = firstAvailableDateToUse.toDate();
+    } else {
+      datetime = new Date(Date.parse(this.state.selectedDate));
+      datetime.setMinutes(datetime.getMinutes() + timezoneOffset);
+    }
 
     const timeToSet = timeToConvert.match(/(\d+)(:(\d\d))?\s*(p?)/i);
 
@@ -127,14 +133,17 @@ class BusinessInfoDetails extends React.Component<any, any> {
 
   findAvailableTimes() {
     this.setState({
-      availableAppointmentTimes: []
+      availableAppointmentTimes: [],
+      showFirstAvailable: false,
+      selectedAppointmentSlot: -1,
     });
 
-    const currentDate = new Date().toISOString().slice(0, 10);
+    const currentDate = new Date(Date.now());
+    const currentDateString = currentDate.toISOString().slice(0, 10);
     const parsedDate = Date.parse(this.state.selectedDate);
 
     if (this.props.selectedEmployee !== null && this.state.selectedService !== -1 && 
-      this.state.selectedDate && parsedDate >= Date.parse(currentDate)) {
+      this.state.selectedDate && parsedDate >= Date.parse(currentDateString)) {
       
         const selectedDate = new Date(parsedDate);
         const timezoneOffset = (new Date()).getTimezoneOffset();
@@ -162,9 +171,8 @@ class BusinessInfoDetails extends React.Component<any, any> {
           }
 
           if (employeeWorking) {
-            
-            let openingDateTime = this.getBusinessHoursDatetime(employeeAvailabilityOnDay?.start);
-            let closingDateTime = this.getBusinessHoursDatetime(employeeAvailabilityOnDay?.end);
+            let openingDateTime = this.getBusinessHoursDatetime(employeeAvailabilityOnDay?.start, null);
+            let closingDateTime = this.getBusinessHoursDatetime(employeeAvailabilityOnDay?.end, null);
     
             let closingTimeMoment = moment(closingDateTime.toISOString()).local();
     
@@ -177,45 +185,47 @@ class BusinessInfoDetails extends React.Component<any, any> {
             while (
               (tempMoment.valueOf() < closingDateTime.valueOf())
             ) {
-              let startOfApptSlotMoment = tempMoment.clone();
-              let endOfApptSlotMoment = tempMoment.clone().add(serviceLength * 30, 'minutes');
-    
-              let slotAvailable = true;
-    
-              for (const appt of this.props.selectedEmployee.appointments) {
-                if (appt.status !== 'cancelled') {
-                  let existingApptMomentStart = moment(appt.datetime.toDate());
-                  let existingApptMomentEnd = existingApptMomentStart.clone().add(appt.service.length * 30, 'minutes');
+              if (tempMoment.toDate() > currentDate) {
+                let startOfApptSlotMoment = tempMoment.clone();
+                let endOfApptSlotMoment = tempMoment.clone().add(serviceLength * 30, 'minutes');
       
-                  if (
-                    // Two appointments start at same time
-                    startOfApptSlotMoment.isSame(existingApptMomentStart) ||
-                    // Two appointments end at the same time
-                    endOfApptSlotMoment.isSame(existingApptMomentEnd) ||
-                    // The existing appointment overlaps on the left
-                    (startOfApptSlotMoment.isBefore(existingApptMomentStart) && endOfApptSlotMoment.isAfter(existingApptMomentStart)) ||
-                    // The existing appointment overlaps on the right
-                    (startOfApptSlotMoment.isBefore(existingApptMomentEnd) && endOfApptSlotMoment.isAfter(existingApptMomentEnd)) ||
-                    // The existing appointment overlaps both sides
-                    (existingApptMomentStart.isBefore(startOfApptSlotMoment) && existingApptMomentEnd.isAfter(endOfApptSlotMoment)) ||
-                    //The existing appointment is contained within the time slot
-                    (existingApptMomentStart.isAfter(startOfApptSlotMoment) && existingApptMomentEnd.isBefore(endOfApptSlotMoment))
-                  ) {
-                    slotAvailable = false;
-                    break;
+                let slotAvailable = true;
+      
+                for (const appt of this.props.selectedEmployee.appointments) {
+                  if (appt.status !== 'cancelled') {
+                    let existingApptMomentStart = moment(appt.datetime.toDate());
+                    let existingApptMomentEnd = existingApptMomentStart.clone().add(appt.service.length * 30, 'minutes');
+        
+                    if (
+                      // Two appointments start at same time
+                      startOfApptSlotMoment.isSame(existingApptMomentStart) ||
+                      // Two appointments end at the same time
+                      endOfApptSlotMoment.isSame(existingApptMomentEnd) ||
+                      // The existing appointment overlaps on the left
+                      (startOfApptSlotMoment.isBefore(existingApptMomentStart) && endOfApptSlotMoment.isAfter(existingApptMomentStart)) ||
+                      // The existing appointment overlaps on the right
+                      (startOfApptSlotMoment.isBefore(existingApptMomentEnd) && endOfApptSlotMoment.isAfter(existingApptMomentEnd)) ||
+                      // The existing appointment overlaps both sides
+                      (existingApptMomentStart.isBefore(startOfApptSlotMoment) && existingApptMomentEnd.isAfter(endOfApptSlotMoment)) ||
+                      //The existing appointment is contained within the time slot
+                      (existingApptMomentStart.isAfter(startOfApptSlotMoment) && existingApptMomentEnd.isBefore(endOfApptSlotMoment))
+                    ) {
+                      slotAvailable = false;
+                      break;
+                    }
                   }
                 }
+      
+                // The appointment would end after business close
+                if (endOfApptSlotMoment.isAfter(closingTimeMoment)) {
+                  slotAvailable = false;
+                }
+      
+                if (slotAvailable) {
+                  const availableTime = tempMoment.clone();
+                  availableTimeSlots.push(availableTime); 
+                }
               }
-    
-              // The appointment would end after business close
-              if (endOfApptSlotMoment.isAfter(closingTimeMoment)) {
-                slotAvailable = false;
-              }
-    
-              if (slotAvailable) {
-                const availableTime = tempMoment.clone();
-                availableTimeSlots.push(availableTime); 
-              }    
     
               tempMoment.add(30, 'minutes');
             }
@@ -225,6 +235,126 @@ class BusinessInfoDetails extends React.Component<any, any> {
             });
           }
         }
+    }
+  }
+
+  displayFirstAvailable() {
+    this.setState({
+      availableAppointmentTimes: [],
+      showFirstAvailable: true,
+      selectedAppointmentSlot: -1,
+    });
+
+    let availableTimeSlots: any[] = [];
+
+    const currentDate = new Date(Date.now());
+    const dateMomentToSearch = moment(currentDate);
+    let foundAppointmentSlot = false;
+
+    if (this.props.selectedEmployee !== null && this.state.selectedService !== -1) {
+      
+        while (!foundAppointmentSlot) {
+          let businessOpen = false;
+  
+          for (const day of this.props.businessOpenDates) {
+            if (moment().day(day).day() === dateMomentToSearch.local().day()) {
+              businessOpen = true;
+              break;
+            } else {
+              dateMomentToSearch.add(1, 'day');
+              break;
+            }
+          }
+  
+          if (businessOpen) {
+            let employeeWorking = false;
+            let employeeAvailabilityOnDay;
+  
+            for (const employeeSchedule of this.props.selectedEmployee.availability) {
+              if (moment().day(employeeSchedule.day).day() === dateMomentToSearch.local().day()) {
+                employeeWorking = true;
+                employeeAvailabilityOnDay = employeeSchedule;
+                break;
+              } else {
+                dateMomentToSearch.add(1, 'day');
+                break;
+              }
+            }
+  
+            if (employeeWorking) {              
+              let openingDateTime = this.getBusinessHoursDatetime(employeeAvailabilityOnDay?.start, dateMomentToSearch.local());
+              let closingDateTime = this.getBusinessHoursDatetime(employeeAvailabilityOnDay?.end, dateMomentToSearch.local());
+      
+              let closingTimeMoment = moment(closingDateTime.toISOString()).local();
+      
+              let tempMoment = moment(openingDateTime.toISOString()).local();
+      
+              let serviceLength = this.props.selectedEmployee.services[this.state.selectedService].length;
+      
+              while (
+                (tempMoment.valueOf() < closingDateTime.valueOf())
+              ) {
+                if (tempMoment.toDate() > currentDate) {
+
+                  let startOfApptSlotMoment = tempMoment.clone();
+                  let endOfApptSlotMoment = tempMoment.clone().add(serviceLength * 30, 'minutes');
+        
+                  let slotAvailable = true;
+        
+                  for (const appt of this.props.selectedEmployee.appointments) {
+                    if (appt.status !== 'cancelled') {
+                      let existingApptMomentStart = moment(appt.datetime.toDate());
+                      let existingApptMomentEnd = existingApptMomentStart.clone().add(appt.service.length * 30, 'minutes');
+          
+                      if (
+                        // Two appointments start at same time
+                        startOfApptSlotMoment.isSame(existingApptMomentStart) ||
+                        // Two appointments end at the same time
+                        endOfApptSlotMoment.isSame(existingApptMomentEnd) ||
+                        // The existing appointment overlaps on the left
+                        (startOfApptSlotMoment.isBefore(existingApptMomentStart) && endOfApptSlotMoment.isAfter(existingApptMomentStart)) ||
+                        // The existing appointment overlaps on the right
+                        (startOfApptSlotMoment.isBefore(existingApptMomentEnd) && endOfApptSlotMoment.isAfter(existingApptMomentEnd)) ||
+                        // The existing appointment overlaps both sides
+                        (existingApptMomentStart.isBefore(startOfApptSlotMoment) && existingApptMomentEnd.isAfter(endOfApptSlotMoment)) ||
+                        //The existing appointment is contained within the time slot
+                        (existingApptMomentStart.isAfter(startOfApptSlotMoment) && existingApptMomentEnd.isBefore(endOfApptSlotMoment))
+                      ) {
+                        slotAvailable = false;
+                        break;
+                      }
+                    }
+                  }
+        
+                  // The appointment would end after business close
+                  if (endOfApptSlotMoment.isAfter(closingTimeMoment)) {
+                    slotAvailable = false;
+                  }
+        
+                  if (slotAvailable) {
+                    const availableTime = tempMoment.clone();
+                    availableTimeSlots.push(availableTime.local());
+  
+                    foundAppointmentSlot = true;
+                    break; 
+                  }    
+                }
+      
+                tempMoment.add(30, 'minutes');
+              }
+
+              if (foundAppointmentSlot) {
+                break;
+              } else {
+                dateMomentToSearch.add(1, 'day');
+              }
+            }
+          }
+        }
+
+        this.setState({
+          availableAppointmentTimes: availableTimeSlots
+        });
     }
   }
 
@@ -337,14 +467,6 @@ class BusinessInfoDetails extends React.Component<any, any> {
                     )})
                   }
                 </Grid>
-
-                <div className={classes.firstAvailableSelection}>
-                  <FormControlLabel
-                    value={'First-Available'}
-                    control={<Radio />}
-                    label={'FIRST AVAILABLE'}
-                  />
-                </div>
               </RadioGroup>
 
               {this.props.selectedEmployee && this.props.selectedEmployee.services.map((service, index) => {
@@ -359,6 +481,10 @@ class BusinessInfoDetails extends React.Component<any, any> {
                   </Card>
                 )
               })}
+
+              <div className={classes.firstAvailableTimeButton}>
+                <Button variant="contained" onClick={() => this.displayFirstAvailable()}>Show First Available</Button>
+              </div>
 
               <div className={classes.appointmentSelection}>
                 <div className={classes.setAppointmentDate}>
@@ -383,9 +509,22 @@ class BusinessInfoDetails extends React.Component<any, any> {
               <div className={classes.appointmentTimeSelection}>
                   {this.state.availableAppointmentTimes.map((apptTime, index) => {
                     return (
-                      <div key={index} onClick={() => this.selectAppointmentSlot(index)} 
-                        className={`${this.state.selectedAppointmentSlot === index ? classes.selectedAppointmentSlot : classes.appointmentSlot}`}
-                      >{apptTime.format('h:mm A')}</div>
+                      <div>
+                        {this.state.showFirstAvailable === true ? (
+                          <div key={index} onClick={() => this.selectAppointmentSlot(index)} 
+                            className={`${this.state.selectedAppointmentSlot === index ? classes.selectedFirstAvailableAppointmentSlot : classes.firstAvailableAppointmentSlot}`}
+                          >
+                            {apptTime.format('MM/DD/YYYY h:mm A')}
+                          </div>
+                        ) : (
+                          <div key={index} onClick={() => this.selectAppointmentSlot(index)} 
+                            className={`${this.state.selectedAppointmentSlot === index ? classes.selectedAppointmentSlot : classes.appointmentSlot}`}
+                          >
+                            {apptTime.format('h:mm A')}
+                          </div>
+
+                        )}
+                      </div>
                     )
                   })}
               </div>
@@ -394,6 +533,7 @@ class BusinessInfoDetails extends React.Component<any, any> {
                 <Button variant="contained" 
                   color='primary'
                   className={classes.bookAppointmentButton}
+                  disabled={this.state.selectedAppointmentSlot === -1 ? true : false}
                   onClick={() => this.handleOpenBookDialog()}>BOOK</Button>
               </div>
             </div>
@@ -531,6 +671,19 @@ const styles = (theme: Theme) =>
       backgroundColor: theme.palette.primary.main,
       color: 'white'
     },
+    firstAvailableAppointmentSlot: {
+      border: `1px solid ${theme.palette.primary.main}`,
+      fontWeight: 800,
+      padding: '0.25rem',
+      color: theme.palette.primary.main
+    },
+    selectedFirstAvailableAppointmentSlot: {
+      border: `1px solid ${theme.palette.primary.main}`,
+      fontWeight: 800,
+      padding: '0.25rem',
+      backgroundColor: theme.palette.primary.main,
+      color: 'white'
+    },
     bookAppointment: {
       marginTop: '1.5rem',
       display: 'flex',
@@ -544,6 +697,9 @@ const styles = (theme: Theme) =>
       paddingRight: '2rem',
       color: 'white',
       width: 'auto'
+    },
+    firstAvailableTimeButton: {
+      marginTop: '1rem'
     }
   }
 );
