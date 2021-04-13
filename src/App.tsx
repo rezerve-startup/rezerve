@@ -28,8 +28,6 @@ import { StoreState, SystemState } from './shared/store/types';
 import { updateUser } from './shared/store/actions';
 import TempLoginPage from './shared/TempLoginPage';
 
-import CustomerProfilePage from './customer/profile-page/customer-profile-page';
-
 const routes = [
   /* { path: "/help", component: Help },
   { path: "/messages", component: Messages },
@@ -46,7 +44,6 @@ const routes = [
   { path: '/customer-sign-up', component: CustomerSignUp },
   { path: '/temp-login', component: TempLoginPage },
   { path: '/business-home', component: BusinessProfile },
-  { path: '/profile-page', component: CustomerProfilePage },
 ];
 
 //let currentUser = 'business';
