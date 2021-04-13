@@ -32,6 +32,9 @@ const styles = (theme: Theme) =>
     divider: {
       marginTop: '8px',
     },
+    appBar: {
+      backgroundColor: '#353535'
+    },
   });
 
 interface CustomTab {
@@ -113,6 +116,7 @@ class BusinessHome extends React.Component<Props, State> {
               centered={this.props.isMobile ? false : true}
               variant={this.props.isMobile ? 'scrollable' : 'fullWidth'}
               scrollButtons="on"
+              
             >
               {this.state.tabs.map((tab: CustomTab, i: number) => (
                 <Tab
@@ -120,6 +124,7 @@ class BusinessHome extends React.Component<Props, State> {
                   label={tab.label}
                   icon={tab.icon}
                   {...a11yProps(i)}
+                  
                 />
               ))}
             </Tabs>
