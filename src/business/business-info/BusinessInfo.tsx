@@ -10,6 +10,7 @@ import {
   createStyles,
   Theme,
   Button,
+  List,
 } from '@material-ui/core';
 
 import { firestore } from '../../config/FirebaseConfig';
@@ -139,6 +140,7 @@ class BusinessInfo extends React.Component<any, BusinessInfoState> {
               if (employeeData) {
                 tempEmployee = {
                   id: employee.id,
+                  availability: employeeData.availability,
                   reviews: [],
                   appointments: [],
                   services: employeeData.services,
@@ -233,7 +235,7 @@ class BusinessInfo extends React.Component<any, BusinessInfoState> {
                   navButtonsAlwaysVisible={true} autoPlay={false}
                 >
                   {businessPictures.map((businessPicture, i) => (
-                    <Paper key={i}>
+                    <Paper key={i} elevation={0}>
                       <img
                         className={classes.businessPicture}
                         src={businessPicture.imageUrl}
@@ -298,38 +300,40 @@ class BusinessInfo extends React.Component<any, BusinessInfoState> {
                 </div>
 
                 <div>
-                  {this.state.businessReviewsShown.map((review, i) => {
-                    return (
-                      <div className={classes.businessReview} key={i}>
-                        <div className={classes.reviewAvatar}>
-                          <Avatar />
-                        </div>
-                        <div className={classes.reviewContent}>
-                          <div>
-                            <b>{review.poster}</b>
+                  <List className={classes.reviewsList}>
+                    {this.state.businessReviewsShown.map((review, i) => {
+                      return (
+                        <div className={classes.businessReview} key={i}>
+                          <div className={classes.reviewAvatar}>
+                            <Avatar />
                           </div>
-                          <div>{review.message}</div>
-                        </div>
-                        <div className={classes.reviewRating}>
-                          <div>
-                            {new Date(review.date.toDate()).toLocaleDateString()}
+                          <div className={classes.reviewContent}>
+                            <div>
+                              <b>{review.poster}</b>
+                            </div>
+                            <div>{review.message}</div>
                           </div>
-                          <div>
-                            <Rating
-                              size="small"
-                              value={review.rating}
-                              precision={0.5}
-                              readOnly={true}
-                              classes={{
-                                iconFilled: classes.starRatingFilled,
-                                iconHover: classes.starRatingHover,
-                              }}
-                            />
+                          <div className={classes.reviewRating}>
+                            <div>
+                              {new Date(review.date.toDate()).toLocaleDateString()}
+                            </div>
+                            <div>
+                              <Rating
+                                size="small"
+                                value={review.rating}
+                                precision={0.5}
+                                readOnly={true}
+                                classes={{
+                                  iconFilled: classes.starRatingFilled,
+                                  iconHover: classes.starRatingHover,
+                                }}
+                              />
+                            </div>
                           </div>
                         </div>
-                      </div>
-                    );
-                  })}
+                      );
+                    })}
+                  </List>
                 </div>
               </div>
 
@@ -340,6 +344,7 @@ class BusinessInfo extends React.Component<any, BusinessInfoState> {
               }
             </div>
             <BusinessInfoDetails
+              businessId={this.state.businessKey}
               businessOpeningTime={this.state.businessInfo.about.openingTime}
               businessClosingTime={this.state.businessInfo.about.closingTime}
               businessOpenDates={this.state.businessInfo.about.daysOpen}  
@@ -453,6 +458,10 @@ const styles = (theme: Theme) =>
       paddingLeft: '1rem',
       paddingRight: '1rem',
     },
+    reviewsList: {
+      maxHeight: '10rem',
+      overflow: 'auto'
+    }
   });
 
 export default connect(mapStateToProps, { addEmployeeForBusiness, clearEmployeesForBusiness, setSelectedEmployee })(

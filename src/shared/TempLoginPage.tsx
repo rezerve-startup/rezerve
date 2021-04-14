@@ -8,13 +8,19 @@ import {
 } from '@material-ui/core';
 import React from 'react';
 import { connect } from 'react-redux';
+import { Link, Redirect } from 'react-router-dom';
 import { auth, firestore } from '../config/FirebaseConfig';
-import { updateUser } from '../shared/store/actions';
+import {
+  setUserEmployeeInfo,
+  setUserCustomerInfo, 
+  setBusinessAvailability
+} from '../shared/store/actions';
 import { StoreState } from './store/types';
+import firebase from 'firebase';
 
 function mapStateToProps(state: StoreState) {
   return {
-    system: state.system,
+    user: state.system.user
   };
 }
 class TempLoginPage extends React.Component<any, any> {
@@ -22,51 +28,34 @@ class TempLoginPage extends React.Component<any, any> {
     super(props);
 
     this.state = {
-      user: props.system.user,
+      user: props.user,
     };
   }
 
-  dispatchUpdateUser = (newUser) => {
-    this.props.updateUser(newUser);
-  };
+  dispatchSetUserEmployeeInfo = (userEmployeeInfo) => {
+    this.props.setUserEmployeeInfo(userEmployeeInfo);
+  }
+
+  dispatchSetUserCustomerInfo = (userCustomerInfo) => {
+    this.props.setUserCustomerInfo(userCustomerInfo)
+  }
+
+  dispatchSetBusinessAvailability = (businessAvailability) => {
+    this.props.setBusinessAvailability(businessAvailability);
+  }
 
   loginEmployee() {
-    // Other account is 'testcustomer@test.com', 'testcustomer'
-    auth
-      .signInWithEmailAndPassword('testemployee@test.com', 'testemployee')
-      .then((userCredential) => {
-        if (userCredential !== null && userCredential.user) {
-          const user = userCredential.user;
-
-          firestore
-            .collection('users')
-            .doc(`${user.uid}`)
-            .get()
-            .then((userObj) => {
-              const userInfo = userObj.data();
-              console.log(userInfo);
-              this.dispatchUpdateUser(userInfo);
-            });
-        }
-      });
+    auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL)
+      .then(() => {
+        auth
+          .signInWithEmailAndPassword('testemployee@test.com', 'testemployee');
+      })
   }
 
   loginCustomer() {
-    auth
-      .signInWithEmailAndPassword('testCustomer@test.com', 'testcustomer')
-      .then((userCredential) => {
-        if (userCredential !== null && userCredential.user) {
-          const user = userCredential.user;
-
-          firestore
-            .collection('users')
-            .doc(`${user.uid}`)
-            .get()
-            .then((userObj) => {
-              const userInfo = userObj.data();
-              this.dispatchUpdateUser(userInfo);
-            });
-        }
+    auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL)
+      .then(() => {
+        auth.signInWithEmailAndPassword('testCustomer@test.com', 'testcustomer');
       });
   }
 
@@ -81,6 +70,18 @@ class TempLoginPage extends React.Component<any, any> {
   render() {
     const { classes } = this.props;
 
+    if (this.props.user) {
+      if (this.props.user.employeeId === '') {
+        return (
+          <Redirect to={'/customer-home'} />
+        )
+      } else if (this.props.user.customerId === '') {
+        return (
+          <Redirect to={'/business-home'} />
+        )
+      }
+    }
+
     return (
       <Container className={classes.root} maxWidth={false}>
         <Grid container alignItems="center" direction="column">
@@ -90,7 +91,6 @@ class TempLoginPage extends React.Component<any, any> {
               variant="contained"
               className={classes.button}
               onClick={this.signInCustomer}
-              href="/landing-page-loggedIn"
             >
               Customer
             </Button>
@@ -101,7 +101,6 @@ class TempLoginPage extends React.Component<any, any> {
               variant="contained"
               className={classes.button}
               onClick={this.signInEmployee}
-              href="/business-home"
             >
               Business
             </Button>
@@ -134,6 +133,6 @@ const styles = (theme: Theme) =>
     },
   });
 
-export default connect(mapStateToProps, { updateUser })(
+export default connect(mapStateToProps, { setUserEmployeeInfo, setUserCustomerInfo, setBusinessAvailability })(
   withStyles(styles, { withTheme: true })(TempLoginPage),
 );

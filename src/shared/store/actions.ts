@@ -13,6 +13,24 @@ import {
   ADD_EMPLOYEE_FOR_BUSINESS,
   CLEAR_EMPLOYEES_FOR_BUSINESS,
   SET_SELECTED_EMPLOYEE,
+  SET_TO_DOS,
+  SET_EMPLOYEE_PHONE,
+  SET_EMPLOYEE_EMAIL,
+  CLEAR_USER_INFO,
+  SET_USER_EMPLOYEE_INFO,
+  SET_USER_CUSTOMER_INFO,
+  SET_BUSINESS_AVAILABILITY,
+  ADD_SELECTED_EMPLOYEE_APPOINTMENT,
+  SET_USER_EMPLOYEE_APPOINTMENTS,
+  SET_EMPLOYEE_CLIENTS,
+  SET_EMPLOYEE_REVIEWS,
+  LOGOUT_USER,
+  SET_USER_CUSTOMER_APPOINTMENTS,
+  UPDATE_EMPLOYEE_APPOINTMENT_STATUS,
+  UPDATE_CUSTOMER_APPOINTMENT_STATUS,
+  SET_USER_EMPLOYEE_CONVERSATIONS,
+  SET_USER_CUSTOMER_CONVERSATIONS,
+  AUTH_CHANGING
 } from './types';
 
 // ****** SYSTEM ACTIONS ***************
@@ -31,6 +49,116 @@ export function updateUser(newUser: SystemState): SystemActionTypes {
   };
 }
 
+export function clearUserInfo(): SystemActionTypes {
+  return {
+    type: CLEAR_USER_INFO
+  }
+}
+
+export function setUserEmployeeInfo(userEmployeeInfo: any): SystemActionTypes {
+  return {
+    type: SET_USER_EMPLOYEE_INFO,
+    payload: userEmployeeInfo
+  }
+}
+
+export function setUserEmployeeAppointments(employeeAppointments: any[]): SystemActionTypes {
+  return {
+    type: SET_USER_EMPLOYEE_APPOINTMENTS,
+    payload: employeeAppointments
+  }
+}
+
+export function setUserEmployeeConversations(employeeConversations: any[]): SystemActionTypes {
+  return {
+    type: SET_USER_EMPLOYEE_CONVERSATIONS,
+    payload: employeeConversations
+  }
+}
+
+export function setEmployeeClients(employeeClients: any): SystemActionTypes {
+  return {
+    type: SET_EMPLOYEE_CLIENTS,
+    payload: employeeClients
+  }
+}
+
+export function setEmployeeReviews(employeeReviews: any[]): SystemActionTypes {
+  return {
+    type: SET_EMPLOYEE_REVIEWS,
+    payload: employeeReviews
+  }
+}
+
+export function setUserCustomerInfo(userCustomerInfo: any): SystemActionTypes {
+  return {
+    type: SET_USER_CUSTOMER_INFO,
+    payload: userCustomerInfo
+  }
+}
+
+export function setUserCustomerAppointments(customerAppointments: any[]): SystemActionTypes {
+  return {
+    type: SET_USER_CUSTOMER_APPOINTMENTS,
+    payload: customerAppointments
+  }
+}
+
+export function setUserCustomerConversations(customerConversations: any[]): SystemActionTypes {
+  return {
+    type: SET_USER_CUSTOMER_CONVERSATIONS,
+    payload: customerConversations
+  }
+}
+
+export function setToDos(todos: any[]): SystemActionTypes {
+  return {
+    type: SET_TO_DOS,
+    payload: todos
+  }
+}
+
+export function setEmployeePhone(phone: string): SystemActionTypes {
+  return {
+    type: SET_EMPLOYEE_PHONE,
+    payload: phone
+  }
+}
+
+export function setEmployeeEmail(email: string): SystemActionTypes {
+  return {
+    type: SET_EMPLOYEE_EMAIL,
+    payload: email
+  }
+}
+
+export function updateEmployeeAppointmentStatus(appointment: any): SystemActionTypes {
+  return {
+    type: UPDATE_EMPLOYEE_APPOINTMENT_STATUS,
+    payload: appointment
+  }
+}
+
+export function updateCustomerAppointmentStatus(appointment: any): SystemActionTypes {
+  return {
+    type: UPDATE_CUSTOMER_APPOINTMENT_STATUS,
+    payload: appointment
+  }
+}
+
+export function logoutUser(): SystemActionTypes {
+  return {
+    type: LOGOUT_USER
+  }
+}
+
+export function setAuthChanging(authChangingValue: boolean): SystemActionTypes {
+  return {
+    type: AUTH_CHANGING,
+    payload: authChangingValue
+  }
+}
+
 // ****** BUSINESS ACTIONS **************
 
 export function updateBusinessName(
@@ -42,25 +170,14 @@ export function updateBusinessName(
   };
 }
 
+export function setBusinessAvailability(businessAvailability: any): BusinessActionTypes {
+  return {
+    type: SET_BUSINESS_AVAILABILITY,
+    payload: businessAvailability
+  }
+}
+
 // ***** CUSTOMER ACTIONS *************
-
-export function updateCustomerPastAppointments(
-  customerPastAppointment: any,
-): CustomerActionTypes {
-  return {
-    type: UPDATE_CUSTOMER_PAST_APPOINTMENTS,
-    payload: customerPastAppointment,
-  };
-}
-
-export function updateCustomerUpcomingAppointments(
-  customerUpcomingAppointment: any,
-): CustomerActionTypes {
-  return {
-    type: UPDATE_CUSTOMER_UPCOMING_APPOINTMENTS,
-    payload: customerUpcomingAppointment,
-  };
-}
 
 export function addBusinessFound(businessFound: any): CustomerActionTypes {
   return {
@@ -92,5 +209,12 @@ export function setSelectedEmployee(selectedEmployee): CustomerActionTypes {
   return {
     type: SET_SELECTED_EMPLOYEE,
     payload: selectedEmployee
+  }
+}
+
+export function addSelectedEmployeeAppointment(appointmentToAdd): CustomerActionTypes {
+  return {
+    type: ADD_SELECTED_EMPLOYEE_APPOINTMENT,
+    payload: appointmentToAdd
   }
 }

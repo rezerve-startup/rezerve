@@ -16,6 +16,10 @@ import {
   Theme,
   Divider,
 } from '@material-ui/core';
+import { connect } from 'react-redux';
+import { StoreState } from '../../../shared/store/types';
+import { setToDos } from '../../../shared/store/actions';
+import { firestore } from '../../../config/FirebaseConfig';
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -34,53 +38,40 @@ const styles = (theme: Theme) =>
     },
   });
 
-type State = {
-  todoItems: TodoItem[];
-};
+function mapStateToProps(state: StoreState) {
+  let employeeTodos = state.system.user.employeeInfo.todos;
+
+  let todosToAdd: any[] = [];
+
+  if (employeeTodos) {
+    for (const todo of employeeTodos) {
+      todosToAdd.push(todo);
+    }
+  }
+
+  return {
+    employeeId: state.system.user.employeeId,
+    employeeTodos: todosToAdd
+  }
+}
 
 interface Props extends WithStyles<typeof styles> {}
 
 interface TodoItem {
-  id: number;
   title: string;
   description: string;
   completed: boolean;
 }
 
-class TodoList extends React.Component<Props, State> {
-  constructor(props: Props) {
+class TodoList extends React.Component<any, any> {
+  constructor(props: any) {
     super(props);
 
-    this.state = {
-      todoItems: [
-        {
-          id: 1,
-          title: 'Todo Item 1',
-          description: 'Do this item',
-          completed: false,
-        },
-        {
-          id: 2,
-          title: 'Todo Item 2',
-          description: 'Do this item',
-          completed: false,
-        },
-        {
-          id: 3,
-          title: 'Todo Item 3',
-          description: 'Do this item',
-          completed: false,
-        },
-        {
-          id: 4,
-          title: 'Todo Item 4',
-          description: 'Do this item',
-          completed: true,
-        },
-      ],
-    };
-
     this.handleToggle = this.handleToggle.bind(this);
+  }
+
+  dispatchSetToDos(todos: any[]) {
+    this.props.setToDos(todos);
   }
 
   render() {
@@ -91,20 +82,20 @@ class TodoList extends React.Component<Props, State> {
           <Typography variant="h5">TO-DO</Typography>
           <Divider />
           <List className={classes.todoList}>
-            {this.state.todoItems.map((item: TodoItem) => {
-              const labelId = `checkbox-list-secondary-label-${item.id}`;
+            {this.props.employeeTodos.map((item: TodoItem, index: number) => {
+              const labelId = `checkbox-list-secondary-label-${index}`;
               return (
-                <ListItem key={item.id}>
+                <ListItem key={index}>
                   <ListItemAvatar>
-                    <Avatar className={classes.listAvatar}>{item.id}</Avatar>
+                    <Avatar className={classes.listAvatar}>{index + 1}</Avatar>
                   </ListItemAvatar>
                   <ListItemText id={labelId} primary={item.title} />
                   <ListItemSecondaryAction>
                     <Checkbox
                       edge="end"
                       // tslint:disable-next-line: jsx-no-lambda
-                      onChange={() => this.handleToggle(item)}
-                      checked={item.completed}
+                      onChange={() => this.handleToggle(index, item)}
+                      value={item.completed}
                       inputProps={{ 'aria-labelledby': labelId }}
                     />
                   </ListItemSecondaryAction>
@@ -117,27 +108,25 @@ class TodoList extends React.Component<Props, State> {
     );
   }
 
-  handleToggle(item: TodoItem) {
+  handleToggle(id: number, item: TodoItem) {
     // tslint:disable-next-line: no-console
-    console.log(item);
-    this.updateItem(item.id, { completed: !item.completed });
+    this.updateItem(id, { completed: !item.completed });
   }
 
-  updateItem(id: number, itemAttr: { completed: boolean }) {
-    const idx = this.state.todoItems.findIndex((x) => x.id === id);
-    if (idx === -1) {
-      // tslint:disable-next-line: no-console
-      console.log('N/A');
-    } else {
-      this.setState({
-        todoItems: [
-          ...this.state.todoItems.slice(0, idx),
-          { ...this.state.todoItems[idx], ...itemAttr },
-          ...this.state.todoItems.slice(idx + 1),
-        ],
-      });
-    }
+  updateItem(index: number, itemAttr: { completed: boolean }) {
+    let todosUpdate = this.props.employeeTodos;
+    todosUpdate[index].completed =itemAttr.completed;
+
+    // Need to update ToDo completion in Firebase
+    this.dispatchSetToDos(todosUpdate);
+
+    firestore.collection('employees').doc(`${this.props.employeeId}`).update({
+      todos: todosUpdate
+    });
   }
 }
 
-export default withStyles(styles, { withTheme: true })(TodoList);
+export default connect(mapStateToProps, { setToDos })(
+  withStyles(styles, { withTheme: true })(TodoList)
+);
+

@@ -8,10 +8,14 @@ import {
   Avatar,
   Tab,
   Tabs,
+  Button,
+  List,
 } from '@material-ui/core';
 
 import { firestore } from '../../../config/FirebaseConfig';
 import { connect } from 'react-redux';
+import { Review } from '../../../models/Review.interface';
+import { User } from '../../../models/User.interface';
 
 type BusinessPerformanceState = {
   loading: boolean;
@@ -22,7 +26,8 @@ type BusinessPerformanceState = {
     profileViews: number;
     rating: number;
   };
-  businessReviews: any[];
+  businessReviewsStored: any[];
+  businessReviewsShown: any[];
   business: any;
 };
 
@@ -43,7 +48,8 @@ class BusinessPerformance extends React.Component<
         profileViews: 0,
         rating: 0,
       },
-      businessReviews: [],
+      businessReviewsStored: [],
+      businessReviewsShown: [],
       business: undefined,
     };
   }
@@ -71,6 +77,8 @@ class BusinessPerformance extends React.Component<
       })
       // Get business reviews
       .then(() => {
+        let numberReviewsShown = 0;
+
         this.state.business.reviews.forEach((reviewId: any) => {
           let tempBusinessReview;
 
@@ -79,7 +87,7 @@ class BusinessPerformance extends React.Component<
             .doc(`${reviewId}`)
             .get()
             .then((review) => {
-              tempBusinessReview = review.data();
+              tempBusinessReview = review.data() as Review;
             })
             .then(() => {
               firestore
@@ -88,16 +96,21 @@ class BusinessPerformance extends React.Component<
                 .get()
                 .then((querySnapshot) => {
                   querySnapshot.forEach((doc) => {
-                    tempBusinessReview.poster = doc.data().firstName;
+                    tempBusinessReview.poster = (doc.data() as User).firstName;
                   });
                 })
                 .then(() => {
-                  this.setState({
-                    businessReviews: [
-                      ...this.state.businessReviews,
-                      tempBusinessReview,
-                    ],
-                  });
+                  if (numberReviewsShown < 3) {
+                    this.setState({
+                      businessReviewsShown: [...this.state.businessReviewsShown, tempBusinessReview]
+                    });
+
+                    numberReviewsShown += 1;
+                  } else {
+                    this.setState({
+                      businessReviewsStored: [...this.state.businessReviewsStored, tempBusinessReview]
+                    });
+                  }
                 });
             });
         });
@@ -110,12 +123,35 @@ class BusinessPerformance extends React.Component<
     });
   };
 
+  showMoreReviews() {
+    let tempReviewsStored = this.state.businessReviewsStored.slice();
+    let tempReviewsShown = this.state.businessReviewsShown.slice();
+
+    let valuesChanged = false;
+
+    for (let i = 0; i < 3; i++) {
+      if (tempReviewsStored[i]) {
+        tempReviewsShown.push(tempReviewsStored[i]);
+        tempReviewsStored.splice(i, 1);
+
+        valuesChanged = true;
+      }
+    }
+
+    if (valuesChanged) {
+      this.setState({
+        businessReviewsShown: tempReviewsShown,
+        businessReviewsStored: tempReviewsStored
+      });
+    }  
+  }
+
   render() {
     const { classes } = this.props;
 
     return (
       <div className={classes.businessInfoPage}>
-        {this.state.loading === false ? (
+        {this.state.loading === false && this.state.business ? (
           <div className={classes.businessOverview}>
             <div className={classes.selectedPeriodTabs}>
               <Tabs
@@ -166,43 +202,50 @@ class BusinessPerformance extends React.Component<
               }}
             />
 
-            <div>
-              <div className={classes.sectionTitle}>
-                <div>Reviews</div>
+            <div className={classes.reviewsContainer}>
+              <div>
+                <List className={classes.reviewsList}>
+                  {this.state.businessReviewsShown.map((review, i) => {
+                    return (
+                      <div className={classes.businessReview} key={i}>
+                        <div className={classes.reviewAvatar}>
+                          <Avatar />
+                        </div>
+                        <div className={classes.reviewContent}>
+                          <div>
+                            <b>{review.poster}</b>
+                          </div>
+                          <div>{review.message}</div>
+                        </div>
+                        <div className={classes.reviewRating}>
+                          <div>
+                            {new Date(review.date.toDate()).toLocaleDateString()}
+                          </div>
+                          <div>
+                            <Rating
+                              size="small"
+                              value={review.rating}
+                              precision={0.5}
+                              readOnly={true}
+                              classes={{
+                                iconFilled: classes.starRatingFilled,
+                                iconHover: classes.starRatingHover,
+                              }}
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </List>
               </div>
-              {this.state.businessReviews.map((review, i) => {
-                return (
-                  <div className={classes.businessReview} key={i}>
-                    <div className={classes.reviewAvatar}>
-                      <Avatar />
-                    </div>
-                    <div className={classes.reviewContent}>
-                      <div>
-                        <b>{review.poster}</b>
-                      </div>
-                      <div>{review.message}</div>
-                    </div>
-                    <div className={classes.reviewRating}>
-                      <div>
-                        {new Date(review.date.toDate()).toLocaleDateString()}
-                      </div>
-                      <div>
-                        <Rating
-                          size="small"
-                          value={review.rating}
-                          precision={0.5}
-                          readOnly={true}
-                          classes={{
-                            iconFilled: classes.starRatingFilled,
-                            iconHover: classes.starRatingHover,
-                          }}
-                        />
-                      </div>
-                    </div>
-                  </div>
-                );
-              })}
             </div>
+
+            {this.state.businessReviewsStored.length > 0 && 
+              <div>
+                <Button variant="contained" onClick={() => this.showMoreReviews()}>Show More</Button>
+              </div>
+            }
           </div>
         ) : (
           <div className={classes.loadingContainer}>
@@ -271,6 +314,10 @@ const styles = (theme: Theme) =>
       display: 'flex',
       justifyContent: 'center',
     },
+    reviewsList: {
+      maxHeight: '10rem',
+      overflow: 'auto'
+    }
   });
 
 export default connect(
