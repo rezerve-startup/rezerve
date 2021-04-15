@@ -17,7 +17,13 @@ import {
   MenuItem,
   Menu,
   Button,
-  Box
+  Box,
+  useTheme,
+  useMediaQuery,
+  Dialog,
+  DialogContent,
+  DialogActions,
+  TextField
 } from '@material-ui/core';
 import {
   AccountCircle,
@@ -30,6 +36,7 @@ import {
   ArrowDropDown,
   Search,
   Home,
+  Close,
 } from '@material-ui/icons';
 import { connect } from 'react-redux';
 import { StoreState } from '../store/types';
@@ -82,13 +89,24 @@ function mapStateToProps(state: StoreState) {
 }
 
 const Sidebar = (props: any ) => {
+  const state = {
+    userName: 'John Barber',
+    emailAddress: 'jbarb@email.com',
+    phoneNumber: '419-555-5555',
+    address: '123 Sesame St.'
+  };
+
   const classes = useStyles();
+  const theme = useTheme();
+  const fullscreen = useMediaQuery(theme.breakpoints.down('xl'));
 
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [mobileSidebar, setMobileSidebar] = React.useState({
     isSidebarOpen: false,
   });
 
+  const [open, setProfileOpen] = React.useState(false);
+  const [editInfo, setEditInfo] = React.useState(true);
   const isMenuOpen = Boolean(anchorEl);
 
   const handleMobileSidebar = (value: boolean) => (
@@ -103,6 +121,18 @@ const Sidebar = (props: any ) => {
 
   const handleMenuClose = () => {
     setAnchorEl(null);
+  };
+
+  const openOnClick = () => {
+    setProfileOpen(true);
+  };
+
+  const handleClose = () => {
+    setProfileOpen(false);
+  };
+
+  const handleDialog = () =>{
+    setEditInfo(!editInfo);
   };
 
   function logoutUser() {
@@ -133,6 +163,10 @@ const Sidebar = (props: any ) => {
             <ListItemText className={classes.listText} primary={obj.title} />
           </MenuItem>
         ))}
+        <MenuItem onClick={openOnClick}>
+          <ListItemIcon className={classes.listIcon}>{<AccountCircle/>}</ListItemIcon>
+          <ListItemText className={classes.listText} primary="Edit Profile"/>
+        </MenuItem>
         <ListItem button={true} onClick={() => logoutUser()}>
           <ListItemIcon className={classes.listIcon}>{<ExitToApp />}</ListItemIcon>
           <ListItemText className={classes.listText} primary={'Logout'} />
@@ -268,6 +302,93 @@ const Sidebar = (props: any ) => {
         </AppBar>
         {renderDropdownMenuDesktop}
         {renderMobileSidebar}
+
+        <Dialog
+          open={open}
+          fullScreen={fullscreen}
+          className={classes.dialog}
+        >
+          <DialogContent className={classes.profilePage}>
+          <DialogActions className={classes.close}>
+              <Close onClick={handleClose} fontSize="large"/>
+          </DialogActions>
+
+          <Avatar src="../../assets/avatar.jpg" className={classes.image} />
+             
+          {editInfo ? (
+            <div>
+              <Typography variant="h5">
+                  {state.userName}   
+              </Typography>
+
+              <Divider className={classes.Divider}/>
+
+              <Typography> 
+                <span className={classes.label}>Account Details</span>
+
+                <Typography className={classes.label} variant="subtitle2">Email Address: {state.emailAddress} </Typography>
+                
+                <Typography className={classes.label} variant="subtitle2">Phone Number: {state.phoneNumber} </Typography>
+
+                <Typography className={classes.label} variant="subtitle2">Address: {state.address} </Typography>
+
+              </Typography>
+            </div>
+          ) : (
+          // Edit/Update Description
+          <>
+            <form autoComplete="off" style={{ padding: 10 }}>
+              <TextField
+                  label="Name"
+                  id="edit-name"
+                  defaultValue={state.userName}
+                  InputLabelProps={{className : classes.dataInput}} 
+                  InputProps={{ className: classes.dataInput}}
+              />
+            </form>
+
+            <Divider className={classes.Divider}/>
+            <Typography> 
+              <span className={classes.label}>Account Details</span>
+            </Typography>
+                    
+            <form autoComplete="off" style={{ padding: 10 }}>
+              <TextField
+                className={classes.label}
+                label="Email Address"
+                id="edit-email-address"
+                defaultValue={state.emailAddress}
+                InputLabelProps={{className : classes.dataInput}} 
+                InputProps={{ className: classes.dataInput}}
+              />
+            </form>
+            <form autoComplete="off" style={{ padding: 10 }}>
+              <TextField
+                className={classes.label}
+                label="Phone Number"
+                id="edit-phone-number"
+                defaultValue={state.phoneNumber}
+                InputLabelProps={{className : classes.dataInput}} 
+                InputProps={{ className: classes.dataInput}}
+              />
+            </form>
+            <form autoComplete="off" style={{ padding: 10 }}>
+              <TextField
+                className={classes.label}
+                label="Address"
+                id="edit-address"
+                defaultValue={state.address}
+                InputLabelProps={{className : classes.dataInput}} 
+                InputProps={{ className: classes.dataInput}}
+              />
+            </form>
+          </>
+          )}
+          <Typography variant="caption" className={classes.edit} onClick={handleDialog}>
+            {editInfo ? ("EDIT") : ("SAVE CHANGES")}
+          </Typography>
+        </DialogContent>
+      </Dialog>
       </div>
     );
   }
@@ -334,6 +455,51 @@ const useStyles = makeStyles((theme) => ({
     [theme.breakpoints.up('md')]: {
       display: 'none',
     },
+  },
+  close: {
+    // Theme Color, or use css color in quote
+    fontSize: '30pt'
+  },
+
+  image: {
+    // Theme Color, or use css color in quote,
+    height: '100px',
+    width: '100px',
+    margin: 'auto',
+  },
+
+  dialog: {
+    height: '100vh',
+    width: '100vw',
+    color: 'black',
+    textAlign: 'center',
+    alignItems: 'center',
+    position: 'fixed',
+  },
+
+  profilePage: {
+    background: '#353535',
+    color: 'white'
+  },
+
+  edit: {
+    color: '#ff4a4b'
+  },
+
+  Divider: {
+    background: '#353535',
+    height: '50px'
+  },
+
+  label: {
+    textAlign: 'left',
+    display: 'flex',
+    width: '300px'
+  },
+  dataInput: {
+    textAlign: 'left',
+    display: 'flex',
+    color: 'white'
   },
 }));
 
