@@ -1,9 +1,7 @@
 import firebase from 'firebase';
 
-//AIzaSyCWPWJ59aphpRf_EkMZfT9JGEWXm69rexg
-//apiKey: process.env.REACT_APP_FIREBASE_API_KEY
 const firebaseConfig = {
-  apiKey: 'AIzaSyCWPWJ59aphpRf_EkMZfT9JGEWXm69rexg',
+  apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
   authDomain: 'rezerve-develop.firebaseapp.com',
   databaseURL: 'https://rezerve-develop.firebaseio.com/',
   projectId: 'rezerve-develop',

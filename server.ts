@@ -1,37 +1,35 @@
 // tslint:disable-next-line: no-var-requires
-const express = require("express");
+const express = require('express');
 const app = express();
 // This is a sample test API key. Sign in to see examples pre-filled with your key.
 // tslint:disable-next-line: no-var-requires
-const stripe = require("stripe")("sk_test_4eC39HqLyjWDarjtT1zdp7dc");
-
+const stripe = require('stripe')('sk_test_4eC39HqLyjWDarjtT1zdp7dc');
 
 var cors = require('cors');
 
-app.use(express.static("."));
+app.use(express.static('.'));
 app.use(express.json());
 app.use(cors());
 
-const calculateOrderAmount = items => {
+const calculateOrderAmount = (items) => {
   // Replace this constant with a calculation of the order's amount
   // Calculate the order total on the server to prevent
   // people from directly manipulating the amount on the client
   return 1400;
 };
 
-app.post("/create-payment-intent", async (req, res) => {
+app.post('/create-payment-intent', async (req, res) => {
   const { items } = req.body;
   // Create a PaymentIntent with the order amount and currency
   const paymentIntent = await stripe.paymentIntents.create({
     amount: calculateOrderAmount(items),
-    currency: "usd"
+    currency: 'usd',
   });
 
   res.send({
-    clientSecret: paymentIntent.client_secret
+    clientSecret: paymentIntent.client_secret,
   });
 });
 
 // tslint:disable-next-line: no-console
 app.listen(4242, () => console.log('Node server listening on port 4242!'));
-
