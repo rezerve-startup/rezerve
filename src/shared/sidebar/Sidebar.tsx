@@ -17,7 +17,13 @@ import {
   MenuItem,
   Menu,
   Button,
-  Box
+  Box,
+  useTheme,
+  useMediaQuery,
+  Dialog,
+  DialogContent,
+  DialogActions,
+  TextField
 } from '@material-ui/core';
 import {
   AccountCircle,
@@ -30,10 +36,12 @@ import {
   ArrowDropDown,
   Search,
   Home,
+  Close,
 } from '@material-ui/icons';
 import { connect } from 'react-redux';
 import { StoreState } from '../store/types';
-import { auth } from '../../config/FirebaseConfig';
+import { setEmployeePhone, setEmployeeEmail } from '../store/actions';
+import { auth, firestore } from '../../config/FirebaseConfig';
 import MessagingHome from '../messaging/MessagingHome';
 
 const sidebarDataWithoutLogout = [
@@ -83,12 +91,20 @@ function mapStateToProps(state: StoreState) {
 
 const Sidebar = (props: any ) => {
   const classes = useStyles();
+  const theme = useTheme();
+  const fullscreen = useMediaQuery(theme.breakpoints.down('xl'));
 
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [mobileSidebar, setMobileSidebar] = React.useState({
     isSidebarOpen: false,
   });
 
+  const [userName, setUserName] = React.useState(`${props.user.firstName} ${props.user.lastName}`);
+  const [emailAddress, setEmailAddress] = React.useState(props.user.email);
+  const [phoneNumber, setPhoneNumber] = React.useState(props.user.phone);
+
+  const [open, setProfileOpen] = React.useState(false);
+  const [editInfo, setEditInfo] = React.useState(true);
   const isMenuOpen = Boolean(anchorEl);
 
   const handleMobileSidebar = (value: boolean) => (
@@ -104,6 +120,54 @@ const Sidebar = (props: any ) => {
   const handleMenuClose = () => {
     setAnchorEl(null);
   };
+
+  const openOnClick = () => {
+    setProfileOpen(true);
+  };
+
+  const handleClose = () => {
+    setProfileOpen(false);
+    handleMenuClose()
+  };
+
+  const dispatchSetEmployeePhone = (phoneNumber: string) => {
+    props.setEmployeePhone(phoneNumber);
+  }
+
+  const dispatchSetEmployeeEmail = (email: string) => {
+    props.setEmployeeEmail(email);
+  }
+
+  const handleDialog = () =>{
+    if (!editInfo) {
+        const phoneRegex = /[0-9]{3}-[0-9]{3}-[0-9]{4}/;
+        const emailRegex = /.+@.+/;
+
+        if (phoneNumber.match(phoneRegex) && emailAddress.match(emailRegex)) {
+            dispatchSetEmployeePhone(phoneNumber);
+            dispatchSetEmployeeEmail(emailAddress);
+
+            firestore.collection('users').doc(`${auth.currentUser?.uid}`).update({
+                phone: phoneNumber,
+                email: emailAddress
+            }).then(() => {
+                dispatchSetEmployeePhone(phoneNumber);
+                dispatchSetEmployeeEmail(emailAddress);
+                setEditInfo(!editInfo);
+            })
+        }
+    } else {
+        setEditInfo(!editInfo);
+    }
+  };
+
+  const handleEmailChange = (e) => {
+      setEmailAddress(e.target.value);
+  }
+
+  const handlePhoneChange = (e) => {
+      setPhoneNumber(e.target.value);
+  }
 
   function logoutUser() {
     auth.signOut();
@@ -133,6 +197,10 @@ const Sidebar = (props: any ) => {
             <ListItemText className={classes.listText} primary={obj.title} />
           </MenuItem>
         ))}
+        <MenuItem onClick={openOnClick}>
+          <ListItemIcon className={classes.listIcon}>{<AccountCircle/>}</ListItemIcon>
+          <ListItemText className={classes.listText} primary="Edit Profile"/>
+        </MenuItem>
         <ListItem button={true} onClick={() => logoutUser()}>
           <ListItemIcon className={classes.listIcon}>{<ExitToApp />}</ListItemIcon>
           <ListItemText className={classes.listText} primary={'Logout'} />
@@ -184,6 +252,10 @@ const Sidebar = (props: any ) => {
                   }
                 }
             })}
+            <MenuItem onClick={openOnClick}>
+                <ListItemIcon className={classes.listIcon}>{<AccountCircle/>}</ListItemIcon>
+                <ListItemText className={classes.listText} primary="Edit Profile"/>
+            </MenuItem>
             <ListItem button={true} onClick={() => logoutUser()}>
               <ListItemIcon className={classes.listIcon}>{<ExitToApp />}</ListItemIcon>
               <ListItemText className={classes.listText} primary={'Logout'} />
@@ -268,6 +340,77 @@ const Sidebar = (props: any ) => {
         </AppBar>
         {renderDropdownMenuDesktop}
         {renderMobileSidebar}
+
+        <Dialog
+          open={open}
+          fullScreen={fullscreen}
+          className={classes.dialog}
+        >
+          <DialogContent className={classes.profilePage}>
+          <DialogActions className={classes.close}>
+              <Close onClick={handleClose} fontSize="large"/>
+          </DialogActions>
+
+          <Avatar src="../../assets/avatar.jpg" className={classes.image} />
+             
+          {editInfo ? (
+            <div>
+              <Typography variant="h5">
+                  {userName}   
+              </Typography>
+
+              <Divider className={classes.Divider}/>
+
+              <Typography> 
+                <span className={classes.label}>Account Details</span>
+
+                <Typography className={classes.label} variant="subtitle2">Email Address: {emailAddress} </Typography>
+                
+                <Typography className={classes.label} variant="subtitle2">Phone Number: {phoneNumber} </Typography>
+
+              </Typography>
+            </div>
+          ) : (
+          // Edit/Update Description
+          <>
+            <Typography variant="h5">
+                {userName}   
+            </Typography>
+
+            <Divider className={classes.Divider}/>
+            <Typography> 
+              <span className={classes.label}>Account Details</span>
+            </Typography>
+                    
+            <form autoComplete="off" style={{ padding: 10 }}>
+              <TextField
+                className={classes.label}
+                label="Email Address"
+                id="edit-email-address"
+                value={emailAddress}
+                onChange={(e) => handleEmailChange(e)}
+                InputLabelProps={{className : classes.dataInput}} 
+                InputProps={{ className: classes.dataInput}}
+              />
+            </form>
+            <form autoComplete="off" style={{ padding: 10 }}>
+              <TextField
+                className={classes.label}
+                label="Phone Number"
+                id="edit-phone-number"
+                value={phoneNumber}
+                onChange={(e) => handlePhoneChange(e)}
+                InputLabelProps={{className : classes.dataInput}} 
+                InputProps={{ className: classes.dataInput}}
+              />
+            </form>
+          </>
+          )}
+          <Typography variant="caption" className={classes.edit} onClick={handleDialog}>
+            {editInfo ? (<a>EDIT</a>) : (<a>SAVE CHANGES</a>)}
+          </Typography>
+        </DialogContent>
+      </Dialog>
       </div>
     );
   }
@@ -335,8 +478,54 @@ const useStyles = makeStyles((theme) => ({
       display: 'none',
     },
   },
+  close: {
+    // Theme Color, or use css color in quote
+    fontSize: '30pt'
+  },
+
+  image: {
+    // Theme Color, or use css color in quote,
+    height: '100px',
+    width: '100px',
+    margin: 'auto',
+  },
+
+  dialog: {
+    height: '100vh',
+    width: '100vw',
+    color: 'black',
+    textAlign: 'center',
+    alignItems: 'center',
+    position: 'fixed',
+  },
+
+  profilePage: {
+    background: '#353535',
+    color: 'white'
+  },
+
+  edit: {
+    color: '#ff4a4b',
+    cursor: 'pointer'
+  },
+
+  Divider: {
+    background: '#353535',
+    height: '50px'
+  },
+
+  label: {
+    textAlign: 'left',
+    display: 'flex',
+    width: '300px'
+  },
+  dataInput: {
+    textAlign: 'left',
+    display: 'flex',
+    color: 'white'
+  },
 }));
 
-export default connect(mapStateToProps, null)(
+export default connect(mapStateToProps, { setEmployeePhone, setEmployeeEmail })(
   Sidebar
 );

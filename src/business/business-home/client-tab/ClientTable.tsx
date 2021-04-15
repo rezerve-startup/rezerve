@@ -34,7 +34,6 @@ import {
   IconButton,
   Snackbar,
 } from '@material-ui/core';
-import image from '../../../assets/avatar.jpg';
 import { Delete, Check, Add, Search, Message } from '@material-ui/icons';
 import CloseIcon from '@material-ui/icons/Close';
 import { Client } from '../../models/BusinessHome';
@@ -44,6 +43,8 @@ import { StoreState } from '../../../shared/store/types';
 import { setEmployeeClients } from '../../../shared/store/actions';
 import { firestore } from '../../../config/FirebaseConfig';
 import firebase from 'firebase';
+
+const image = require('../../../assets/avatar.jpg');
 
 const fabActions = [
   { icon: <Message />, name: 'Message' }

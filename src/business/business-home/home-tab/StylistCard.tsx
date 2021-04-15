@@ -11,11 +11,12 @@ import {
   createStyles,
 } from '@material-ui/core';
 import { Rating } from '@material-ui/lab';
-import image from '../../../assets/avatar.jpg';
 import { connect } from 'react-redux';
 import { StoreState } from '../../../shared/store/types';
 import { setEmployeeReviews } from '../../../shared/store/actions';
 import { firestore } from '../../../config/FirebaseConfig';
+
+const image = require('../../../assets/avatar.jpg');
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
