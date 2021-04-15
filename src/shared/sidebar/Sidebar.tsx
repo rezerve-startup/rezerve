@@ -40,7 +40,8 @@ import {
 } from '@material-ui/icons';
 import { connect } from 'react-redux';
 import { StoreState } from '../store/types';
-import { auth } from '../../config/FirebaseConfig';
+import { setEmployeePhone, setEmployeeEmail } from '../store/actions';
+import { auth, firestore } from '../../config/FirebaseConfig';
 import MessagingHome from '../messaging/MessagingHome';
 
 const sidebarDataWithoutLogout = [
@@ -89,13 +90,6 @@ function mapStateToProps(state: StoreState) {
 }
 
 const Sidebar = (props: any ) => {
-  const state = {
-    userName: 'John Barber',
-    emailAddress: 'jbarb@email.com',
-    phoneNumber: '419-555-5555',
-    address: '123 Sesame St.'
-  };
-
   const classes = useStyles();
   const theme = useTheme();
   const fullscreen = useMediaQuery(theme.breakpoints.down('xl'));
@@ -104,6 +98,10 @@ const Sidebar = (props: any ) => {
   const [mobileSidebar, setMobileSidebar] = React.useState({
     isSidebarOpen: false,
   });
+
+  const [userName, setUserName] = React.useState(`${props.user.firstName} ${props.user.lastName}`);
+  const [emailAddress, setEmailAddress] = React.useState(props.user.email);
+  const [phoneNumber, setPhoneNumber] = React.useState(props.user.phone);
 
   const [open, setProfileOpen] = React.useState(false);
   const [editInfo, setEditInfo] = React.useState(true);
@@ -129,11 +127,47 @@ const Sidebar = (props: any ) => {
 
   const handleClose = () => {
     setProfileOpen(false);
+    handleMenuClose()
   };
 
+  const dispatchSetEmployeePhone = (phoneNumber: string) => {
+    props.setEmployeePhone(phoneNumber);
+  }
+
+  const dispatchSetEmployeeEmail = (email: string) => {
+    props.setEmployeeEmail(email);
+  }
+
   const handleDialog = () =>{
-    setEditInfo(!editInfo);
+    if (!editInfo) {
+        const phoneRegex = /[0-9]{3}-[0-9]{3}-[0-9]{4}/;
+        const emailRegex = /.+@.+/;
+
+        if (phoneNumber.match(phoneRegex) && emailAddress.match(emailRegex)) {
+            dispatchSetEmployeePhone(phoneNumber);
+            dispatchSetEmployeeEmail(emailAddress);
+
+            firestore.collection('users').doc(`${auth.currentUser?.uid}`).update({
+                phone: phoneNumber,
+                email: emailAddress
+            }).then(() => {
+                dispatchSetEmployeePhone(phoneNumber);
+                dispatchSetEmployeeEmail(emailAddress);
+                setEditInfo(!editInfo);
+            })
+        }
+    } else {
+        setEditInfo(!editInfo);
+    }
   };
+
+  const handleEmailChange = (e) => {
+      setEmailAddress(e.target.value);
+  }
+
+  const handlePhoneChange = (e) => {
+      setPhoneNumber(e.target.value);
+  }
 
   function logoutUser() {
     auth.signOut();
@@ -218,6 +252,10 @@ const Sidebar = (props: any ) => {
                   }
                 }
             })}
+            <MenuItem onClick={openOnClick}>
+                <ListItemIcon className={classes.listIcon}>{<AccountCircle/>}</ListItemIcon>
+                <ListItemText className={classes.listText} primary="Edit Profile"/>
+            </MenuItem>
             <ListItem button={true} onClick={() => logoutUser()}>
               <ListItemIcon className={classes.listIcon}>{<ExitToApp />}</ListItemIcon>
               <ListItemText className={classes.listText} primary={'Logout'} />
@@ -318,7 +356,7 @@ const Sidebar = (props: any ) => {
           {editInfo ? (
             <div>
               <Typography variant="h5">
-                  {state.userName}   
+                  {userName}   
               </Typography>
 
               <Divider className={classes.Divider}/>
@@ -326,26 +364,18 @@ const Sidebar = (props: any ) => {
               <Typography> 
                 <span className={classes.label}>Account Details</span>
 
-                <Typography className={classes.label} variant="subtitle2">Email Address: {state.emailAddress} </Typography>
+                <Typography className={classes.label} variant="subtitle2">Email Address: {emailAddress} </Typography>
                 
-                <Typography className={classes.label} variant="subtitle2">Phone Number: {state.phoneNumber} </Typography>
-
-                <Typography className={classes.label} variant="subtitle2">Address: {state.address} </Typography>
+                <Typography className={classes.label} variant="subtitle2">Phone Number: {phoneNumber} </Typography>
 
               </Typography>
             </div>
           ) : (
           // Edit/Update Description
           <>
-            <form autoComplete="off" style={{ padding: 10 }}>
-              <TextField
-                  label="Name"
-                  id="edit-name"
-                  defaultValue={state.userName}
-                  InputLabelProps={{className : classes.dataInput}} 
-                  InputProps={{ className: classes.dataInput}}
-              />
-            </form>
+            <Typography variant="h5">
+                {userName}   
+            </Typography>
 
             <Divider className={classes.Divider}/>
             <Typography> 
@@ -357,7 +387,8 @@ const Sidebar = (props: any ) => {
                 className={classes.label}
                 label="Email Address"
                 id="edit-email-address"
-                defaultValue={state.emailAddress}
+                value={emailAddress}
+                onChange={(e) => handleEmailChange(e)}
                 InputLabelProps={{className : classes.dataInput}} 
                 InputProps={{ className: classes.dataInput}}
               />
@@ -367,17 +398,8 @@ const Sidebar = (props: any ) => {
                 className={classes.label}
                 label="Phone Number"
                 id="edit-phone-number"
-                defaultValue={state.phoneNumber}
-                InputLabelProps={{className : classes.dataInput}} 
-                InputProps={{ className: classes.dataInput}}
-              />
-            </form>
-            <form autoComplete="off" style={{ padding: 10 }}>
-              <TextField
-                className={classes.label}
-                label="Address"
-                id="edit-address"
-                defaultValue={state.address}
+                value={phoneNumber}
+                onChange={(e) => handlePhoneChange(e)}
                 InputLabelProps={{className : classes.dataInput}} 
                 InputProps={{ className: classes.dataInput}}
               />
@@ -385,7 +407,7 @@ const Sidebar = (props: any ) => {
           </>
           )}
           <Typography variant="caption" className={classes.edit} onClick={handleDialog}>
-            {editInfo ? ("EDIT") : ("SAVE CHANGES")}
+            {editInfo ? (<a>EDIT</a>) : (<a>SAVE CHANGES</a>)}
           </Typography>
         </DialogContent>
       </Dialog>
@@ -483,7 +505,8 @@ const useStyles = makeStyles((theme) => ({
   },
 
   edit: {
-    color: '#ff4a4b'
+    color: '#ff4a4b',
+    cursor: 'pointer'
   },
 
   Divider: {
@@ -503,6 +526,6 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default connect(mapStateToProps, null)(
+export default connect(mapStateToProps, { setEmployeePhone, setEmployeeEmail })(
   Sidebar
 );
