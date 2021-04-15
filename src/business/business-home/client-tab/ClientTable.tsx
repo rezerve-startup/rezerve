@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import clsx from 'clsx';
 import {
   Toolbar,
@@ -23,32 +23,31 @@ import {
   InputBase,
   Grow,
   fade,
+  withStyles,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
+  TextField,
+  DialogActions,
+  Button,
+  IconButton,
+  Snackbar,
 } from '@material-ui/core';
-import image from '../../../assets/avatar.jpg';
 import { Delete, Check, Add, Search, Message } from '@material-ui/icons';
+import CloseIcon from '@material-ui/icons/Close';
 import { Client } from '../../models/BusinessHome';
 import { SpeedDial, SpeedDialAction, SpeedDialIcon } from '@material-ui/lab';
+import { connect } from 'react-redux';
+import { StoreState } from '../../../shared/store/types';
+import { setEmployeeClients } from '../../../shared/store/actions';
+import { firestore } from '../../../config/FirebaseConfig';
+import firebase from 'firebase';
 
-function createData(name: string, numVisits: number, picture: string): Client {
-  return { name, numVisits, picture };
-}
-
-const rows = [
-  createData('Sample Client-1', 10, ''),
-  createData('Sample Client-2', 20, ''),
-  createData('Sample Client-3', 30, ''),
-  createData('Sample Client-4', 40, ''),
-  createData('Sample Client-5', 50, ''),
-  createData('Sample Client-6', 60, ''),
-  createData('Sample Client-7', 70, ''),
-  createData('Sample Client-8', 80, ''),
-  createData('Sample Client-9', 90, ''),
-  createData('Sample Client-10', 100, ''),
-];
+const image = require('../../../assets/avatar.jpg');
 
 const fabActions = [
-  { icon: <Message />, name: 'Message' },
-  { icon: <Delete />, name: 'Remove' },
+  { icon: <Message />, name: 'Message' }
 ];
 
 function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
@@ -67,8 +66,8 @@ function getComparator<Key extends keyof any>(
   order: Order,
   orderBy: Key,
 ): (
-  a: { [key in Key]: number | string },
-  b: { [key in Key]: number | string },
+  a: any,
+  b: any,
 ) => number {
   return order === 'desc'
     ? (a, b) => descendingComparator(a, b, orderBy)
@@ -241,14 +240,17 @@ const useToolbarStyles = makeStyles((theme: Theme) =>
 );
 
 interface EnhancedTableToolbarProps {
-  numSelected: number;
+  selectedClients: string[];
+  employeeId?: string;
 }
 
 const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
   const classes = useToolbarStyles();
-  const { numSelected } = props;
+  const { selectedClients, employeeId } = props;
   const [searching] = React.useState(false);
   const [open, setOpen] = React.useState(false);
+  const [messageDialogOpen, setMessageDialogOpen] = React.useState(false);
+  const [messageToClients, setMessageToClients] = React.useState('');
 
   const handleOpen = () => {
     setOpen(true);
@@ -257,83 +259,160 @@ const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
     setOpen(false);
   };
 
+  const openMessageDialog = () => {
+    setMessageDialogOpen(true)
+  }
+
+  const handleCloseMessageDialog = () => {
+    setMessageDialogOpen(false);
+    setOpen(false);
+    setMessageToClients('');
+  }
+
+  const handleOnChangeClientMessage = (e) => {
+    setMessageToClients(e.target.value)
+  }
+
+  const sendMessageToClients = () => {
+    firestore.collection('messages').where('employeeId', '==', `${props.employeeId}`).get()
+      .then((querySnapshot) => {
+        for (const clientId of props.selectedClients) {
+          let customerIdFound = false;
+
+          querySnapshot.forEach((conversationDoc) => {
+            const conversationData = conversationDoc.data();
+            if (conversationData.customerId === clientId) {
+              customerIdFound = true;
+              let messagesToUpdate = conversationData.messages;
+
+              const messageToAdd = {
+                senderId: props.employeeId,
+                datetime: firebase.firestore.Timestamp.fromDate(new Date(Date.now())),
+                message: messageToClients
+              }
+
+              messagesToUpdate.push(messageToAdd);
+
+              conversationDoc.ref.update({
+                messages: messagesToUpdate
+              });
+            }
+          });
+
+          if (customerIdFound === false) {
+            const currentDatetime = firebase.firestore.Timestamp.fromDate(new Date(Date.now()));
+
+            const messagesToAdd = [{
+              senderId: props.employeeId,
+              datetime: currentDatetime,
+              message: messageToClients
+            }];
+
+            const documentToAdd = {
+              customerId: clientId,
+              employeeId: props.employeeId,
+              lastMessageDatetime: currentDatetime,
+              messages: messagesToAdd
+            }
+
+            firestore.collection('messages').add(documentToAdd)
+              .then((docRef) => {
+                firestore.collection('employees').doc(`${props.employeeId}`).update({
+                  messages: firebase.firestore.FieldValue.arrayUnion(docRef.id)
+                })
+                .then(() => {
+                  firestore.collection('customers').doc(`${clientId}`).update({
+                    messages: firebase.firestore.FieldValue.arrayUnion(docRef.id)
+                  });
+                })
+              });
+          }
+        }
+      })
+      .then(() => {
+        setMessageDialogOpen(false);
+        setOpen(false);
+        setMessageToClients('');
+      });
+  }
+
   return (
-    <Toolbar
-      className={clsx(classes.root, {
-        [classes.highlight]: numSelected > 0,
-      })}
-    >
-      {numSelected > 0 ? (
-        <Typography
-          className={classes.title}
-          color="inherit"
-          variant="subtitle1"
-          component="div"
-        >
-          {numSelected} selected
-        </Typography>
-      ) : (
-        <Typography
-          className={classes.title}
-          color="inherit"
-          variant="h6"
-          component="div"
-        >
-          Clients
-        </Typography>
-      )}
-      <Grow in={searching}>
-        <div className={classes.search}>
-          <div className={classes.searchIcon}>
-            <Search />
-          </div>
-          <InputBase
-            placeholder="Search…"
-            classes={{
-              root: classes.inputRoot,
-              input: classes.inputInput,
-            }}
-            inputProps={{ 'aria-label': 'search' }}
-          />
-        </div>
-      </Grow>
-      <div className={classes.grow} />
-      {numSelected > 0 ? (
-        <SpeedDial
-          ariaLabel="client-speed-dial"
-          className={classes.speedDial}
-          icon={<SpeedDialIcon />}
-          onClose={handleClose}
-          onOpen={handleOpen}
-          open={open}
-          direction="down"
-          FabProps={{ size: 'small' }}
-        >
-          {fabActions.map((action) => (
-            <SpeedDialAction
-              key={action.name}
-              icon={action.icon}
-              tooltipTitle={action.name}
-              tooltipOpen={true}
-              onClick={handleClose}
-            />
-          ))}
-        </SpeedDial>
-      ) : (
-        <Tooltip title="Invite Client">
-          <Fab
-            color="primary"
-            size="small"
-            aria-label="add-client"
-            className={classes.fab}
-            variant="extended"
+    <div>
+      <Toolbar
+        className={clsx(classes.root, {
+          [classes.highlight]: selectedClients.length > 0,
+        })}
+      >
+        {selectedClients.length > 0 ? (
+          <Typography
+            className={classes.title}
+            color="inherit"
+            variant="subtitle1"
+            component="div"
           >
-            <Add style={{ marginRight: '8px' }} />
-            Invite
-          </Fab>
-        </Tooltip>
-      )}
-    </Toolbar>
+            {selectedClients.length} selected
+          </Typography>
+        ) : (
+          <Typography
+            className={classes.title}
+            color="inherit"
+            variant="h6"
+            component="div"
+          >
+            Clients
+          </Typography>
+        )}
+        <Grow in={searching}>
+          <div className={classes.search}>
+            <div className={classes.searchIcon}>
+              <Search />
+            </div>
+            <InputBase
+              placeholder="Search…"
+              classes={{
+                root: classes.inputRoot,
+                input: classes.inputInput,
+              }}
+              inputProps={{ 'aria-label': 'search' }}
+            />
+          </div>
+        </Grow>
+        <div className={classes.grow} />
+        {selectedClients.length > 0 ? (
+          <SpeedDial
+            ariaLabel="client-speed-dial"
+            className={classes.speedDial}
+            icon={<SpeedDialIcon />}
+            onClose={handleClose}
+            onOpen={handleOpen}
+            open={open}
+            direction="down"
+            FabProps={{ size: 'small' }}
+          >
+            <SpeedDialAction
+              key={'Message'}
+              icon={<Message />}
+              tooltipTitle={'Message'}
+              tooltipOpen={true}
+              onClick={() => openMessageDialog()}
+            />
+          </SpeedDial>
+        ) : (
+          <></>
+        )}
+      </Toolbar>
+      <Dialog open={messageDialogOpen} onClose={() => handleCloseMessageDialog()}>
+        <DialogTitle>Message Client(s)</DialogTitle>
+        <DialogContent>
+          <DialogContentText>Please enter the message you would like to send these clients:</DialogContentText>
+          <TextField value={messageToClients} onChange={(e) => handleOnChangeClientMessage(e)} />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => sendMessageToClients()}>Send</Button>
+          <Button onClick={() => handleCloseMessageDialog()}>Cancel</Button>
+        </DialogActions>
+      </Dialog>
+    </div>
   );
 };
 
@@ -366,13 +445,83 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 );
 
-export default function ClientTable() {
+function mapStateToProps(state: StoreState) {
+  const employeeClients = state.system.user.employeeInfo.clients;
+
+  let clientsToAdd: any = [];
+
+  if (employeeClients) {
+    for (const [key, val] of Object.entries(employeeClients)) {
+      let clientValue: any = val;
+      
+      const client = {
+        customerId: key,
+        firstName: clientValue.firstName,
+        lastName: clientValue.lastName,
+        numVisits: clientValue.numVisits
+      };
+  
+      clientsToAdd.push(client);
+    }
+  }
+
+
+  return ({
+    employeeClients: clientsToAdd,
+    employeeId: state.system.user.employeeId
+  });
+}
+
+const ClientTable = (props: any) => {
   const classes = useStyles();
   const [order, setOrder] = React.useState<Order>('asc');
   const [orderBy, setOrderBy] = React.useState<keyof Client>('numVisits');
   const [selected, setSelected] = React.useState<string[]>([]);
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
+
+  useEffect(function() {
+    firestore.collection('appointments').where('employeeId', '==', `${props.employeeId}`).get()
+      .then((querySnapshot) => {
+        let employeeClients = {};
+
+        querySnapshot.forEach((apptDoc) => {
+          const apptData = apptDoc.data();
+
+          firestore.collection('users').where('customerId', '==', `${apptData.customerId}`).get()
+            .then((querySnapshot) => {
+              querySnapshot.forEach((userDoc) => {
+                const userData = userDoc.data();
+                let numVisits = 0;
+
+                if (apptData.datetime.toDate() < Date.now()) {
+                  if (employeeClients[`${apptData.customerId}`]) {
+                    if (apptData.status === 'accepted') {
+                      let numVisits = employeeClients[`${apptData.customerId}`] + 1;
+
+                      employeeClients[`${apptData.customerId}`].numVisits += 1;
+                    }
+                  } else {
+                    numVisits = 1;
+
+                    employeeClients[`${apptData.customerId}`] = {
+                      firstName: userData.firstName,
+                      lastName: userData.lastName,
+                      numVisits: numVisits
+                    }
+                  }
+                }
+
+                dispatchSetEmployeeClients(employeeClients);
+              });
+            })
+        });
+      })
+  }, []);
+
+  const dispatchSetEmployeeClients = (employeeClients: any) => {
+    props.setEmployeeClients(employeeClients);
+  }
 
   const handleRequestSort = (
     event: React.MouseEvent<unknown>,
@@ -385,19 +534,19 @@ export default function ClientTable() {
 
   const handleSelectAllClick = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.checked) {
-      const newSelecteds = rows.map((n) => n.name);
+      const newSelecteds = props.employeeClients.map((client) => client.customerId);
       setSelected(newSelecteds);
       return;
     }
     setSelected([]);
   };
 
-  const handleClick = (event: React.MouseEvent<unknown>, name: string) => {
-    const selectedIndex = selected.indexOf(name);
+  const handleClick = (event: React.MouseEvent<unknown>, customerId: string) => {
+    const selectedIndex = selected.indexOf(customerId);
     let newSelected: string[] = [];
 
     if (selectedIndex === -1) {
-      newSelected = newSelected.concat(selected, name);
+      newSelected = newSelected.concat(selected, customerId);
     } else if (selectedIndex === 0) {
       newSelected = newSelected.concat(selected.slice(1));
     } else if (selectedIndex === selected.length - 1) {
@@ -423,15 +572,15 @@ export default function ClientTable() {
     setPage(0);
   };
 
-  const isSelected = (name: string) => selected.indexOf(name) !== -1;
+  const isSelected = (customerId: string) => selected.indexOf(customerId) !== -1;
 
   const emptyRows =
-    rowsPerPage - Math.min(rowsPerPage, rows.length - page * rowsPerPage);
+    rowsPerPage - Math.min(rowsPerPage, props.employeeClients.length - page * rowsPerPage);
 
   return (
     <div className={classes.root}>
       <Paper className={classes.paper}>
-        <EnhancedTableToolbar numSelected={selected.length} />
+        <EnhancedTableToolbar selectedClients={selected} employeeId={props.employeeId} />
         <TableContainer>
           <Table
             className={classes.table}
@@ -445,22 +594,22 @@ export default function ClientTable() {
               orderBy={orderBy}
               onSelectAllClick={handleSelectAllClick}
               onRequestSort={handleRequestSort}
-              rowCount={rows.length}
+              rowCount={props.employeeClients.length}
             />
             <TableBody>
-              {stableSort(rows, getComparator(order, orderBy)).map(
-                (row, index) => {
-                  const isItemSelected = isSelected(row.name);
+              {stableSort(props.employeeClients, getComparator(order, orderBy)).map(
+                (client, index) => {
+                  const isItemSelected = isSelected(client.customerId);
                   const labelId = `enhanced-table-checkbox-${index}`;
 
                   return (
                     <TableRow
                       hover
-                      onClick={(event) => handleClick(event, row.name)}
+                      onClick={(event) => handleClick(event, client.customerId)}
                       role="checkbox"
                       aria-checked={isItemSelected}
                       tabIndex={-1}
-                      key={row.name}
+                      key={client.customerId}
                       selected={isItemSelected}
                     >
                       <TableCell padding="checkbox">
@@ -474,15 +623,6 @@ export default function ClientTable() {
                             </Avatar>
                           }
                         />
-                        {/* <Avatar
-                          className={
-                            isItemSelected
-                              ? classes.checkedAvatar
-                              : classes.uncheckedAvatar
-                          }
-                          classes={{ img: classes.avatarImage }}
-                          src={image}
-                        /> */}
                       </TableCell>
                       <TableCell
                         component="th"
@@ -490,9 +630,9 @@ export default function ClientTable() {
                         scope="row"
                         padding="none"
                       >
-                        {row.name}
+                        {client.firstName}
                       </TableCell>
-                      <TableCell align="right">{row.numVisits}</TableCell>
+                      <TableCell align="right">{client.numVisits}</TableCell>
                     </TableRow>
                   );
                 },
@@ -508,7 +648,7 @@ export default function ClientTable() {
         <TablePagination
           rowsPerPageOptions={[5, 10, 25]}
           component="div"
-          count={rows.length}
+          count={props.employeeClients.length}
           rowsPerPage={rowsPerPage}
           page={page}
           onChangePage={handleChangePage}
@@ -518,3 +658,7 @@ export default function ClientTable() {
     </div>
   );
 }
+
+export default connect(mapStateToProps, { setEmployeeClients })(
+  ClientTable
+);

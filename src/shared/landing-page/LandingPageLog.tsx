@@ -19,7 +19,7 @@ import EmojiPeopleIcon from '@material-ui/icons/EmojiPeople';
 //----
 
 import CustomerBusinessSearch from '../../customer/customer-business-search/CustomerBusinessSearch';
-import Sidebar from '../sidebar/sidebar';
+import Sidebar from '../sidebar/Sidebar';
 
 //--------------------------
 //CSS
@@ -30,6 +30,7 @@ const useStyles = makeStyles((theme: Theme) =>
       backgroundColor: theme.palette.secondary.dark,
       color: theme.palette.secondary.light,
     },
+   
 
     navItem: {
       backgroundColor: 'white',
@@ -92,7 +93,7 @@ function TabPanel(props: TabPanelProps) {
     >
       {tabValue === index && (
         <Box p={3}>
-          <Typography>{children}</Typography>
+          <Typography component={'div'}>{children}</Typography>
         </Box>
       )}
     </div>

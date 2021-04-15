@@ -9,11 +9,13 @@ import {
   withStyles,
   createStyles,
   Theme,
+  Button,
+  List,
 } from '@material-ui/core';
 
 import { firestore } from '../../config/FirebaseConfig';
 import { connect } from 'react-redux';
-import { updateBusinessName } from '../../shared/store/actions';
+import { addEmployeeForBusiness, clearEmployeesForBusiness, setSelectedEmployee } from '../../shared/store/actions';
 import { StoreState } from '../../shared/store/types';
 import BusinessInfoDetails from './business-info-details/BusinessInfoDetails';
 import cat1 from '../../assets/business-pictures/cat1.jpg';
@@ -24,12 +26,15 @@ import { LoadScript } from '@react-google-maps/api';
 import { Business } from '../../models/Business.interface';
 import { Review } from '../../models/Review.interface';
 import { User } from '../../models/User.interface';
+import { Employee } from '../../models/Employee.interface';
 
 type BusinessInfoState = {
   businessKey: string;
   businessInfo: Business;
   businessName: string;
-  businessReviews: Review[];
+  businessReviewsShown: Review[];
+  businessReviewsStored: Review[];
+  businessEmployees: any[]
 };
 
 function mapStateToProps(state: StoreState) {
@@ -38,6 +43,8 @@ function mapStateToProps(state: StoreState) {
   };
 }
 
+const mapsLibraries: any[] = ['places'];
+
 class BusinessInfo extends React.Component<any, BusinessInfoState> {
   constructor(props: any) {
     super(props);
@@ -45,19 +52,32 @@ class BusinessInfo extends React.Component<any, BusinessInfoState> {
       businessKey: this.props.selectedBusinessKey,
       businessInfo: this.props.selectedBusinessInfo,
       businessName: props.business.businessName,
-      businessReviews: [],
+      businessReviewsShown: [],
+      businessReviewsStored: [],
+      businessEmployees: []
     };
   }
 
-  dispatchUpdateBusinessName = () => {
-    this.props.updateBusinessName('Hello World!');
-  };
+  dispatchAddEmployeeForBusiness = (employee) => {
+    this.props.addEmployeeForBusiness(employee);
+  }
+
+  dispatchClearEmployeesForBusiness = () => {
+    this.props.clearEmployeesForBusiness();
+  }
+
+  dispatchSetSelectedEmployee = (selectedEmployee) => {
+    this.props.setSelectedEmployee(selectedEmployee);
+  }
 
   componentDidMount() {
     this.getBusinessInfoData();
   }
 
   getBusinessInfoData() {
+    this.dispatchClearEmployeesForBusiness();
+    this.dispatchSetSelectedEmployee(null);
+
     const businessData = firestore
       .collection('businesses')
       .doc(`${this.state.businessKey}`);
@@ -66,6 +86,8 @@ class BusinessInfo extends React.Component<any, BusinessInfoState> {
       .get()
       // Get business reviews
       .then(() => {
+        let numberReviewsShown = 0;
+
         this.state.businessInfo.reviews.forEach((reviewId: any) => {
           let tempBusinessReview;
 
@@ -87,16 +109,111 @@ class BusinessInfo extends React.Component<any, BusinessInfoState> {
                   });
                 })
                 .then(() => {
-                  this.setState({
-                    businessReviews: [
-                      ...this.state.businessReviews,
-                      tempBusinessReview,
-                    ],
-                  });
+                  if (numberReviewsShown < 3) {
+                    this.setState({
+                      businessReviewsShown: [...this.state.businessReviewsShown, tempBusinessReview]
+                    });
+
+                    numberReviewsShown += 1;
+                  } else {
+                    this.setState({
+                      businessReviewsStored: [...this.state.businessReviewsStored, tempBusinessReview]
+                    });
+                  }
                 });
             });
         });
+      })
+      // Get employees
+      .then(() => {
+        let employeeAppointments = [];
+        let employeeReviews = [];
+
+        this.state.businessInfo.employees.forEach((employeeId, index) => {
+          let tempEmployee: Employee;
+
+          firestore.collection('employees').doc(`${employeeId}`).get()
+            .then((employee) => {
+              const employeeData = employee.data();
+
+              
+              if (employeeData) {
+                tempEmployee = {
+                  id: employee.id,
+                  availability: employeeData.availability,
+                  reviews: [],
+                  appointments: [],
+                  services: employeeData.services,
+                  todos: employeeData.todos,
+                  isOwner: employeeData.isOwner,
+                  position: employeeData.position,
+                  clients: employeeData.clients
+                };
+              }
+            })
+            .then(() => {
+              firestore.collection('appointments').where('employeeId', '==', `${employeeId}`).get()
+                .then((querySnapshot) => {
+                  querySnapshot.forEach((doc) => {
+                    const appointmentData = doc.data();
+
+                    if (appointmentData) {
+                      tempEmployee.appointments.push(appointmentData);
+                    }
+                  })
+                })
+            })
+            .then(() => {
+              firestore.collection('reviews').where('employeeId', '==', `${employeeId}`).get()
+                .then((querySnapshot) => {
+                  querySnapshot.forEach((doc) => {
+                    const reviewInfo = doc.data();
+
+                    if (reviewInfo) {
+                      tempEmployee.reviews.push(reviewInfo);
+                    }
+                  })
+                })
+            })
+            .then(() => {
+              firestore.collection('users').where('employeeId', '==', `${employeeId}`).get()
+                .then((querySnapshot) => {
+                  querySnapshot.forEach((doc) => {
+                    const userData = doc.data();
+    
+                    if (userData) {
+                      tempEmployee.firstName = userData.firstName;
+                    }
+
+                    this.dispatchAddEmployeeForBusiness(tempEmployee);
+                  })
+                });
+            })
+        })
+      })
+  }
+
+  showMoreReviews() {
+    let tempReviewsStored = this.state.businessReviewsStored.slice();
+    let tempReviewsShown = this.state.businessReviewsShown.slice();
+
+    let valuesChanged = false;
+
+    for (let i = 0; i < 3; i++) {
+      if (tempReviewsStored[i]) {
+        tempReviewsShown.push(tempReviewsStored[i]);
+        tempReviewsStored.splice(i, 1);
+
+        valuesChanged = true;
+      }
+    }
+
+    if (valuesChanged) {
+      this.setState({
+        businessReviewsShown: tempReviewsShown,
+        businessReviewsStored: tempReviewsStored
       });
+    }  
   }
 
   render() {
@@ -111,110 +228,133 @@ class BusinessInfo extends React.Component<any, BusinessInfoState> {
     return (
       <div className={classes.businessInfoPage}>
         {this.state.businessInfo !== undefined ? (
-          <div className={classes.businessOverview}>
-            <div className={classes.carouselContainer}>
-              <Carousel navButtonsAlwaysVisible={true}>
-                {businessPictures.map((businessPicture, i) => (
-                  <Paper key={i}>
-                    <img
-                      className={classes.businessPicture}
-                      src={businessPicture.imageUrl}
-                      alt=""
-                    />
-                  </Paper>
-                ))}
-              </Carousel>
-            </div>
-
-            <div className={classes.businessInformation}>
-              {/* The value that is being updated dynamically via state changes */}
-              <h5>{this.state.businessInfo.name}</h5>
-              <h6>
-                {this.state.businessInfo.about.address},{' '}
-                {this.state.businessInfo.about.city},{' '}
-                {this.state.businessInfo.about.state}{' '}
-                {this.state.businessInfo.about.zipcode}
-              </h6>
-              <div className={classes.distanceContainer}>
-                <LocationOn />
-                <p className={classes.distanceToBusiness}>0.02 Mi</p>
-              </div>
-              <div className={classes.mapContainerStyle}>
-                <LoadScript
-                  googleMapsApiKey={`${process.env.REACT_APP_GOOGLE_MAPS_API_KEY}`}
-                  libraries={['places']}
+          <div>
+            <div className={classes.businessOverview}>
+              <div className={classes.carouselContainer}>
+                <Carousel 
+                  navButtonsAlwaysVisible={true} autoPlay={false}
                 >
-                  <MapsContainer
-                    businessLocation={this.state.businessInfo.about.location}
-                  ></MapsContainer>
-                </LoadScript>
-              </div>
-            </div>
-
-            <div className={classes.aboutBusiness}>
-              <h6>
-                <b>ABOUT US</b>
-              </h6>
-              <div className={classes.aboutContent}>
-                {this.state.businessInfo.description}
-              </div>
-            </div>
-
-            <div className={classes.reviewsContainer}>
-              <div className={classes.overallReview}>
-                <h6>
-                  <b>REVIEWS</b>
-                </h6>
-                <Rating
-                  size="medium"
-                  value={this.state.businessInfo.performance.rating}
-                  precision={0.5}
-                  readOnly={true}
-                />
+                  {businessPictures.map((businessPicture, i) => (
+                    <Paper key={i} elevation={0}>
+                      <img
+                        className={classes.businessPicture}
+                        src={businessPicture.imageUrl}
+                        alt=""
+                      />
+                    </Paper>
+                  ))}
+                </Carousel>
               </div>
 
-              <div>
-                {this.state.businessReviews.map((review, i) => {
-                  return (
-                    <div className={classes.businessReview} key={i}>
-                      <div className={classes.reviewAvatar}>
-                        <Avatar />
-                      </div>
-                      <div className={classes.reviewContent}>
-                        <div>
-                          <b>{review.poster}</b>
-                        </div>
-                        <div>{review.message}</div>
-                      </div>
-                      <div className={classes.reviewRating}>
-                        <div>
-                          {new Date(review.date.toDate()).toLocaleDateString()}
-                        </div>
-                        <div>
-                          <Rating
-                            size="small"
-                            value={review.rating}
-                            precision={0.5}
-                            readOnly={true}
-                            classes={{
-                              iconFilled: classes.starRatingFilled,
-                              iconHover: classes.starRatingHover,
-                            }}
-                          />
-                        </div>
-                      </div>
-                    </div>
-                  );
-                })}
+              <div className={classes.businessInformation}>
+                {/* The value that is being updated dynamically via state changes */}
+                <div className={classes.businessInfoName}>{this.state.businessInfo.name}</div>
+                <div className={classes.businessInfoAddress}>
+                  <div className={classes.businessInfoAddressFirstLine}>
+                    {this.state.businessInfo.about.address} 
+                  </div>
+                  <div className={classes.businessInfoAddressSecondLine}>
+                    {this.state.businessInfo.about.city},{' '}
+                    {this.state.businessInfo.about.state}{' '}
+                    {this.state.businessInfo.about.zipcode}
+                  </div>
+                </div>
+                <div className={classes.distanceContainer}>
+                  <div>
+                    <LocationOn />
+                  </div>
+                  <div className={classes.distanceToBusiness}>0.02 Mi</div>
+                </div>
+                <div className={classes.mapContainerStyle}>
+                  <LoadScript
+                    googleMapsApiKey={`${process.env.REACT_APP_GOOGLE_MAPS_API_KEY}`}
+                    libraries={mapsLibraries}
+                  >
+                    <MapsContainer
+                      businessLocation={this.state.businessInfo.about.location}
+                    ></MapsContainer>
+                  </LoadScript>
+                </div>
               </div>
+
+              <div className={classes.aboutBusiness}>
+                <div className={classes.aboutBusinessTitle}>
+                  <b>ABOUT US</b>
+                </div>
+                <div className={classes.aboutContent}>
+                  {this.state.businessInfo.description}
+                </div>
+              </div>
+
+              <div className={classes.reviewsContainer}>
+                <div className={classes.overallReview}>
+                  <div>
+                    <b>REVIEWS</b>
+                  </div>
+                  <Rating
+                    size="medium"
+                    value={this.state.businessInfo.performance.rating}
+                    precision={0.5}
+                    readOnly={true}
+                  />
+                </div>
+
+                <div>
+                  <List className={classes.reviewsList}>
+                    {this.state.businessReviewsShown.map((review, i) => {
+                      return (
+                        <div className={classes.businessReview} key={i}>
+                          <div className={classes.reviewAvatar}>
+                            <Avatar />
+                          </div>
+                          <div className={classes.reviewContent}>
+                            <div>
+                              <b>{review.poster}</b>
+                            </div>
+                            <div>{review.message}</div>
+                          </div>
+                          <div className={classes.reviewRating}>
+                            <div>
+                              {new Date(review.date.toDate()).toLocaleDateString()}
+                            </div>
+                            <div>
+                              <Rating
+                                size="small"
+                                value={review.rating}
+                                precision={0.5}
+                                readOnly={true}
+                                classes={{
+                                  iconFilled: classes.starRatingFilled,
+                                  iconHover: classes.starRatingHover,
+                                }}
+                              />
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </List>
+                </div>
+              </div>
+
+              {this.state.businessReviewsStored.length > 0 && 
+                <div>
+                  <Button variant="contained" onClick={() => this.showMoreReviews()}>Show More</Button>
+                </div>
+              }
             </div>
+            <BusinessInfoDetails
+              businessId={this.state.businessKey}
+              businessOpeningTime={this.state.businessInfo.about.openingTime}
+              businessClosingTime={this.state.businessInfo.about.closingTime}
+              businessOpenDates={this.state.businessInfo.about.daysOpen}  
+            />
           </div>
         ) : (
           <div className={classes.loadingContainer}>
             <CircularProgress size={75} />
           </div>
         )}
-        <BusinessInfoDetails props={this.state.businessInfo} />
       </div>
     );
   }
@@ -239,16 +379,24 @@ const styles = (theme: Theme) =>
       width: '100%',
     },
     carouselContainer: {
-      marginBottom: '1rem',
+      marginBottom: '0.5rem',
     },
     businessInformation: {
       color: 'black',
       justifyContent: 'center',
     },
+    businessInfoName: {
+      fontSize: '2rem',
+      marginBottom: '0.25rem'
+    },
+    businessInfoAddress: {
+      marginBottom: '0.25rem'
+    },
     distanceContainer: {
       display: 'flex',
       justifyContent: 'center',
       color: 'red',
+      alignItems: 'center',
     },
     distanceToBusiness: {
       marginLeft: '0.25rem',
@@ -260,6 +408,9 @@ const styles = (theme: Theme) =>
       border: 'darkgray solid 1',
       marginBottom: '1rem',
     },
+    aboutBusinessTitle: {
+      marginBottom: '0.25rem'
+    },
     aboutContent: {
       textAlign: 'start',
     },
@@ -267,7 +418,7 @@ const styles = (theme: Theme) =>
       color: 'black',
     },
     overallReview: {
-      marginBottom: '0.5rem',
+      marginBottom: '1rem',
     },
     businessReview: {
       display: 'flex',
@@ -307,8 +458,12 @@ const styles = (theme: Theme) =>
       paddingLeft: '1rem',
       paddingRight: '1rem',
     },
+    reviewsList: {
+      maxHeight: '10rem',
+      overflow: 'auto'
+    }
   });
 
-export default connect(mapStateToProps, { updateBusinessName })(
-  withStyles(styles, { withTheme: true })(BusinessInfo),
+export default connect(mapStateToProps, { addEmployeeForBusiness, clearEmployeesForBusiness, setSelectedEmployee })(
+  withStyles(styles, { withTheme: true })(BusinessInfo)
 );

@@ -28,10 +28,7 @@ import { connect } from 'react-redux';
 import { LoadScript, StandaloneSearchBox } from '@react-google-maps/api';
 import BusinessInfo from '../../business/business-info/BusinessInfo';
 import { StoreState } from '../../shared/store/types';
-import {
-  addBusinessFound,
-  clearBusinessesFound,
-} from '../../shared/store/actions';
+import { addBusinessFound, clearBusinessesFound, setSelectedEmployee, clearEmployeesForBusiness } from '../../shared/store/actions';
 import { Business } from '../../models/Business.interface';
 
 type CustomerBusinessSearchState = {
@@ -45,6 +42,7 @@ type CustomerBusinessSearchState = {
 };
 
 let searchBox: any;
+const mapsLibraries: any[] = ['places'];
 
 function mapStateToProps(state: StoreState) {
   return {
@@ -63,7 +61,7 @@ class CustomerBusinessSearch extends React.Component<
       searchBoxRef: null,
       businessSelectedIndicator: false,
       selectedBusiness: null,
-      locationSearchValue: '',
+      locationSearchValue: ''
     };
   }
 
@@ -73,6 +71,14 @@ class CustomerBusinessSearch extends React.Component<
 
   dispatchAddFoundBusiness(businessFound: any): void {
     this.props.addBusinessFound(businessFound);
+  }
+
+  dispatchSetSelectedEmployee(employee: any): void {
+    this.props.setSelectedEmployee(employee);
+  }
+
+  dispatchClearEmployeesForBusiness(): void {
+    this.props.clearEmployeesForBusiness();
   }
 
   // Reference https://stackoverflow.com/questions/46630507/how-to-run-a-geo-nearby-query-with-firestore
@@ -144,6 +150,9 @@ class CustomerBusinessSearch extends React.Component<
       businessSelectedIndicator: false,
       selectedBusiness: null,
     });
+
+    this.dispatchClearEmployeesForBusiness();
+    this.dispatchSetSelectedEmployee(null);
   }
 
   handleSearchChange(searchChangeEvent): void {
@@ -161,7 +170,7 @@ class CustomerBusinessSearch extends React.Component<
               <div className={classes.searchBoxContainer}>
                 <LoadScript
                   googleMapsApiKey={`${process.env.REACT_APP_GOOGLE_MAPS_API_KEY}`}
-                  libraries={['places']}
+                  libraries={mapsLibraries}
                 >
                   <StandaloneSearchBox
                     onLoad={this.onLoad}
@@ -205,9 +214,9 @@ class CustomerBusinessSearch extends React.Component<
                         //onChange={handleChange}
                         IconComponent={ExpandMoreIcon}
                       >
-                        <option value={1}>SortBy: Near me</option>
-                        <option value={2}>SortBy: Ratings</option>
-                        <option value={3}>SortBy: Name </option>
+                        <option value={1}>Sort By: Near me</option>
+                        <option value={2}>Sort By: Ratings</option>
+                        <option value={3}>Sort By: Name </option>
                       </Select>
                     </FormControl>
                   </Grid>
@@ -231,9 +240,9 @@ class CustomerBusinessSearch extends React.Component<
                         <div className={classes.previewBottomInfo}>
                           <div className={classes.previewBottomDistance}>
                             <LocationOn />
-                            0.2
+                            0.2 mi
                           </div>
-                          <div>
+                          <div className={classes.previewBottomRating}>
                             <Rating
                               size="small"
                               value={business.businessInfo.performance.rating}
@@ -360,10 +369,14 @@ const styles = (theme: Theme) =>
       justifyContent: 'space-between',
     },
     previewBottomDistance: {
+      display: 'flex',
       alignItems: 'center',
       textAlign: 'center',
       color: theme.palette.primary.main,
       fontSize: '16px',
+    },
+    previewBottomRating: {
+      marginRight: '1rem',
     },
     starRatingFilled: {
       color: theme.palette.primary.main,
@@ -378,7 +391,6 @@ const styles = (theme: Theme) =>
     },
   });
 
-export default connect(mapStateToProps, {
-  addBusinessFound,
-  clearBusinessesFound,
-})(withStyles(styles, { withTheme: true })(CustomerBusinessSearch));
+export default connect(mapStateToProps, { addBusinessFound, clearBusinessesFound, setSelectedEmployee, clearEmployeesForBusiness })(
+  withStyles(styles, { withTheme: true })(CustomerBusinessSearch)
+);

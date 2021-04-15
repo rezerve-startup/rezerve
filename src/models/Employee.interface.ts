@@ -3,9 +3,14 @@ import { Customer } from './Customer.interface';
 import { Review } from './Review.interface';
 
 export interface Employee {
-  appointments: Appointment[];
-  clients: Customer[];
-  isOwner: boolean;
-  reviews: Review[];
-  todos: any[];
+    appointments: any[];
+    availability: any[];
+    clients: Customer[];
+    isOwner: boolean;
+    reviews: any[];
+    todos: any[];
+    services: any[];
+    firstName?: string;
+    id: string;
+    position: string;
 }
