@@ -32,10 +32,11 @@ import SignUpPage from './shared/SignUpPage';
 import CustomerAppointmentHome from './customer/customer-appointments/CustomerAppointmentHome';
 import MessagingHome from './shared/messaging/MessagingHome';
 
+import CustomerCheckout from './customer/customer-checkout/CustomerCheckout';
+
 const routes = [
   /* { path: "/help", component: Help },
   { path: "/messages", component: Messages },
-  { path: "/payment", component: PaymentInfo },
   { path: "/settings", component: Settings }, */
   { path: '/appointments', component: CustomerAppointmentHome },
   { path: '/business-info', component: BusinessInfo },
@@ -48,6 +49,7 @@ const routes = [
   { path: '/customer-sign-up', component: CustomerSignUp },
   { path: '/temp-login', component: TempLoginPage },
   { path: '/business-home', component: BusinessHome },
+  { path: '/payment', component: CustomerCheckout },
   { path: '/', component: LandingDefault }
 ];
 
