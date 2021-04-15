@@ -1,5 +1,4 @@
-import React from 'react';
-// import * as FaIcons from 'react-icons/fa'
+import React, { createRef } from 'react';
 import {
   Divider,
   Checkbox,
@@ -7,63 +6,54 @@ import {
   Dialog,
   DialogContent,
   Button,
-  DialogTitle,
   DialogActions,
   Typography,
-  Fab,
   useMediaQuery,
   Stepper,
   Step,
   StepLabel,
+  // tslint:disable-next-line: no-submodule-imports
 } from '@material-ui/core/';
+// tslint:disable-next-line: no-submodule-imports
 import { makeStyles, useTheme } from '@material-ui/core/styles';
-import classes from '*.module.css';
-import './customer-checkout.css';
-import { Close } from '@material-ui/icons';
+import { loadStripe } from '@stripe/stripe-js';
+import { Elements } from '@stripe/react-stripe-js';
+import CheckoutForm from './CheckoutForm';
+import './CustomerCheckout.css';
+
+const promise = loadStripe('pk_test_TYooMQauvdEDq54NiTphI7jx');
 
 function getSteps() {
-  return ['Review Booking', 'Payment Setup', 'Confirm'];
+  return ['Review Booking', 'Payment Information', 'Confirm Booking'];
 }
 
-function getStepContent(stepIndex: number) {
+function getStepContent(stepIndex: number, setCustomerPaid) {
   switch (stepIndex) {
     case 0:
       return <ConfirmationCard />;
     case 1:
-      return <StripePaymentSetup />;
+      return <StripePaymentSetup paymentSuccess={setCustomerPaid} />;
     case 2:
       return <BookingConfirmation />;
     default:
       return 'Our apologies, there has been a mishap with the booking process. Please try again later.';
   }
 }
-function StripePaymentSetup() {
-  const classes = useStyles();
-  return (
-    <div className={classes.itemCard}>
-      <Divider className={classes.divider0} />
-      <h1>
-        <strong>Stripe Payment Setup</strong>
-      </h1>
-      <Divider className={classes.divider0} />
-    </div>
-  );
-}
 
-function PaymentInfo() {
+function StripePaymentSetup(props) {
+  // tslint:disable-next-line: no-shadowed-variable
   const classes = useStyles();
   return (
-    <div className={classes.itemCard}>
-      <Divider className={classes.divider0} />
-      <h1>
-        <strong>Payment Info</strong>
-      </h1>
-      <Divider className={classes.divider0} />
+    <div className="App">
+      <Elements stripe={promise}>
+        <CheckoutForm paymentSuccess={props.paymentSuccess} />
+      </Elements>
     </div>
   );
 }
 
 function ConfirmationCard() {
+  // tslint:disable-next-line: no-shadowed-variable
   const classes = useStyles();
 
   return (
@@ -103,12 +93,11 @@ function ConfirmationCard() {
 }
 
 function BookingConfirmation() {
+  // tslint:disable-next-line: no-shadowed-variable
   const classes = useStyles();
   return (
     <div>
       <ConfirmationCard />
-      <PaymentInfo />
-
       <div className={classes.itemPlus1}>
         <span>
           <h3>
@@ -127,11 +116,13 @@ function BookingConfirmation() {
 
 function CustomerCheckout() {
   const theme = useTheme();
+  // tslint:disable-next-line: no-shadowed-variable
   const classes = useStyles();
   const fullscreen = useMediaQuery(theme.breakpoints.down('md'));
   const [open, setOpen] = React.useState(false);
   const [activeStep, setActiveStep] = React.useState(0);
   const steps = getSteps();
+  const [customerPaid, setCustomerPaid] = React.useState<boolean>(false);
 
   const handleNext = () => {
     setActiveStep((prevActiveStep) => prevActiveStep + 1);
@@ -144,6 +135,7 @@ function CustomerCheckout() {
   const handleReset = () => {
     setActiveStep(0);
   };
+
   const openOnClick = () => {
     setOpen(true);
     handleReset();
@@ -153,7 +145,8 @@ function CustomerCheckout() {
     setOpen(false);
   };
 
-  var backFunction = () => handleBack;
+  // tslint:disable-next-line: prefer-const
+  const backFunction = () => handleBack;
 
   return (
     <div>
@@ -166,29 +159,31 @@ function CustomerCheckout() {
         className={classes.receiptPage}
       >
         <DialogContent>
-          <Stepper activeStep={activeStep} alternativeLabel>
+          <Stepper activeStep={activeStep} alternativeLabel={true}>
             {steps.map((label) => (
               <Step key={label}>
                 <StepLabel>{label}</StepLabel>
               </Step>
             ))}
           </Stepper>
-          <Typography className={classes.instructions}>
-            {getStepContent(activeStep)}
+          <Typography component={'span'} className={classes.instructions}>
+            {getStepContent(activeStep, setCustomerPaid)}
           </Typography>
         </DialogContent>
 
         <DialogActions>
           <div>
             <Button
-              onClick={activeStep == 0 ? handleClose : handleBack}
+              onClick={activeStep === 0 ? handleClose : handleBack}
               className={classes.backButton}
             >
               Back
             </Button>
+
             <Button
               variant="contained"
               color="primary"
+              disabled={activeStep === steps.length - 2 ? !customerPaid : false}
               onClick={
                 activeStep === steps.length - 1 ? handleClose : handleNext
               }
@@ -239,16 +234,17 @@ const useStyles = makeStyles((theme) => ({
   stat: {
     left: '175px',
     fontWeight: 'bold',
-    position: 'absolute',
   },
 
   priceAlign: {
     position: 'relative',
+    marginLeft: '150px',
   },
 
   timeAlign: {
     right: '60px',
     position: 'relative',
+    left: '93px',
   },
 
   closeIcon: {
