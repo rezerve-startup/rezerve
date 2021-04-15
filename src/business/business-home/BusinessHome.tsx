@@ -33,6 +33,9 @@ const styles = (theme: Theme) =>
     divider: {
       marginTop: '8px',
     },
+    appBar: {
+      backgroundColor: '#353535'
+    },
   });
 
 interface CustomTab {

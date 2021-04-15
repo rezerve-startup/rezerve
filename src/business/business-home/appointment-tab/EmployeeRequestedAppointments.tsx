@@ -22,13 +22,14 @@ import { Description } from '@material-ui/icons/';
 import DeleteIcon from '@material-ui/icons/Delete';
 // tslint:disable-next-line: no-submodule-imports
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-import image from '../../../assets/avatar.jpg';
 import { connect } from 'react-redux';
 import { StoreState } from '../../../shared/store/types';
 import moment from 'moment';
 
 import { updateEmployeeAppointmentStatus, setUserEmployeeAppointments } from '../../../shared/store/actions';
 import { firestore } from '../../../config/FirebaseConfig';
+
+const image = require('../../../assets/avatar.jpg');
 
 const styles = (theme: Theme) =>
   createStyles({

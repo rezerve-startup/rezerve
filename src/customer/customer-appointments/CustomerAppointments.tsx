@@ -21,7 +21,6 @@ import {
 import DeleteIcon from '@material-ui/icons/Delete';
 // tslint:disable-next-line: no-submodule-imports
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-import image from '../../assets/avatar.jpg';
 import { connect } from 'react-redux';
 import { StoreState } from '../../shared/store/types';
 import moment from 'moment';
@@ -30,6 +29,8 @@ import { updateCustomerAppointmentStatus, setUserCustomerAppointments } from '..
 import { firestore } from '../../config/FirebaseConfig';
 import { Message } from '@material-ui/icons';
 import firebase from 'firebase';
+
+const image = require('../../assets/avatar.jpg');
 
 function mapStateToProps(state: StoreState) {
   let allAppointments: any[] = [];
