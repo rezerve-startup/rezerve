@@ -31,7 +31,6 @@ import { Employee } from '../../models/Employee.interface';
 type BusinessInfoState = {
   businessKey: string;
   businessInfo: Business;
-  businessName: string;
   businessReviewsShown: Review[];
   businessReviewsStored: Review[];
   businessEmployees: any[]
@@ -51,7 +50,6 @@ class BusinessInfo extends React.Component<any, BusinessInfoState> {
     this.state = {
       businessKey: this.props.selectedBusinessKey,
       businessInfo: this.props.selectedBusinessInfo,
-      businessName: props.business.businessName,
       businessReviewsShown: [],
       businessReviewsStored: [],
       businessEmployees: []
@@ -348,6 +346,7 @@ class BusinessInfo extends React.Component<any, BusinessInfoState> {
               businessOpeningTime={this.state.businessInfo.about.openingTime}
               businessClosingTime={this.state.businessInfo.about.closingTime}
               businessOpenDates={this.state.businessInfo.about.daysOpen}  
+              businessName={this.state.businessInfo.name}
             />
           </div>
         ) : (

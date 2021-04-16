@@ -30,7 +30,8 @@ import {
   UPDATE_CUSTOMER_APPOINTMENT_STATUS,
   SET_USER_EMPLOYEE_CONVERSATIONS,
   SET_USER_CUSTOMER_CONVERSATIONS,
-  AUTH_CHANGING
+  AUTH_CHANGING,
+  SET_BOOK_DIALOG_STATUS
 } from './types';
 
 // ****** SYSTEM ACTIONS ***************
@@ -156,6 +157,13 @@ export function setAuthChanging(authChangingValue: boolean): SystemActionTypes {
   return {
     type: AUTH_CHANGING,
     payload: authChangingValue
+  }
+}
+
+export function setBookDialogStatus(bookDialogStatus: boolean): SystemActionTypes {
+  return {
+    type: SET_BOOK_DIALOG_STATUS,
+    payload: bookDialogStatus
   }
 }
 

@@ -11,29 +11,31 @@ import {
   TextField,
   Button,
   Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogContentText,
-  DialogActions,
   Snackbar,
-  IconButton
+  IconButton,
+  useMediaQuery,
+  useTheme
 } from '@material-ui/core';
 import CloseIcon from '@material-ui/icons/Close';
 import cat1 from '../../../assets/business-pictures/cat1.jpg';
 import { connect } from 'react-redux';
 import { StoreState } from '../../../shared/store/types';
-import { setSelectedEmployee, addSelectedEmployeeAppointment } from '../../../shared/store/actions';
+import { setSelectedEmployee, addSelectedEmployeeAppointment, setBookDialogStatus } from '../../../shared/store/actions';
 import moment, { Moment } from 'moment';
 import { firestore } from '../../../config/FirebaseConfig';
 import firebase from 'firebase';
+import CustomerCheckout from '../../../customer/customer-checkout/CustomerCheckout';
 
 function mapStateToProps(state: StoreState) {
   return {
     user: state.system.user,
     businessEmployees: state.customer.employeesForBusiness,
-    selectedEmployee: state.customer.selectedEmployee
+    selectedEmployee: state.customer.selectedEmployee,
+    bookDialogStatus: state.system.bookDialogStatus
   };
 }
+
+// const fullscreen = useMediaQuery(useTheme().breakpoints.down('md'));
 
 class BusinessInfoDetails extends React.Component<any, any> {
 
@@ -47,7 +49,7 @@ class BusinessInfoDetails extends React.Component<any, any> {
       selectedDate: '',
       selectedAppointmentSlot: -1,
       bookingMessageOpen: false,
-      bookingMessage: ''
+      bookingMessage: '',
     };
   }
   
@@ -69,6 +71,10 @@ class BusinessInfoDetails extends React.Component<any, any> {
 
   dispatchAddAppointment = (appointmentToAdd) => {
     this.props.addSelectedEmployeeAppointment(appointmentToAdd);
+  }
+
+  dispatchSetBookDialogStatus = (bookDialogStatus) => {
+    this.props.setBookDialogStatus(bookDialogStatus);
   }
 
   handleSelectEmployee(e): void {
@@ -256,12 +262,17 @@ class BusinessInfoDetails extends React.Component<any, any> {
         while (!foundAppointmentSlot) {
           let businessOpen = false;
   
-          for (const day of this.props.businessOpenDates) {
-            if (moment().day(day).day() === dateMomentToSearch.local().day()) {
+          let currDayOfWeekSelected = dateMomentToSearch.local().format('dddd');
+          if (this.props.businessOpenDates.some((day) => day === currDayOfWeekSelected)) {
+            businessOpen = true;
+          }
+
+          while (!this.props.businessOpenDates.some((day) => day === currDayOfWeekSelected)) {
+            dateMomentToSearch.add(1, 'day');
+            currDayOfWeekSelected = dateMomentToSearch.local().format('dddd');
+
+            if (this.props.businessOpenDates.some((day) => day === currDayOfWeekSelected)) {
               businessOpen = true;
-              break;
-            } else {
-              dateMomentToSearch.add(1, 'day');
               break;
             }
           }
@@ -271,12 +282,9 @@ class BusinessInfoDetails extends React.Component<any, any> {
             let employeeAvailabilityOnDay;
   
             for (const employeeSchedule of this.props.selectedEmployee.availability) {
-              if (moment().day(employeeSchedule.day).day() === dateMomentToSearch.local().day()) {
+              if (dateMomentToSearch.local().format('dddd') === employeeSchedule.day) {
                 employeeWorking = true;
                 employeeAvailabilityOnDay = employeeSchedule;
-                break;
-              } else {
-                dateMomentToSearch.add(1, 'day');
                 break;
               }
             }
@@ -358,7 +366,7 @@ class BusinessInfoDetails extends React.Component<any, any> {
     }
   }
 
-  bookAppointment() {
+  bookAppointment = () => {
     firestore.collection('appointments').add({
       businessId: this.props.businessId,
       customerId: this.props.user.customerId,
@@ -406,15 +414,11 @@ class BusinessInfoDetails extends React.Component<any, any> {
   }
 
   handleOpenBookDialog() {
-    this.setState({
-      bookDialogOpen: true
-    });
+    this.dispatchSetBookDialogStatus(true);
   }
 
   handleCloseBookDialog() {
-    this.setState({
-      bookDialogOpen: false
-    });
+    this.dispatchSetBookDialogStatus(false);
   }
 
   handleCloseBookingMessage() {
@@ -509,7 +513,7 @@ class BusinessInfoDetails extends React.Component<any, any> {
               <div className={classes.appointmentTimeSelection}>
                   {this.state.availableAppointmentTimes.map((apptTime, index) => {
                     return (
-                      <div>
+                      <div key={index}>
                         {this.state.showFirstAvailable === true ? (
                           <div key={index} onClick={() => this.selectAppointmentSlot(index)} 
                             className={`${this.state.selectedAppointmentSlot === index ? classes.selectedFirstAvailableAppointmentSlot : classes.firstAvailableAppointmentSlot}`}
@@ -537,19 +541,20 @@ class BusinessInfoDetails extends React.Component<any, any> {
                   onClick={() => this.handleOpenBookDialog()}>BOOK</Button>
               </div>
             </div>
-
           }
         </div>
 
-        <Dialog open={this.state.bookDialogOpen} onClose={() => this.handleCloseBookDialog()}>
-          <DialogTitle>Book Appointment?</DialogTitle>
-          <DialogContent>
-            <DialogContentText>Are you sure you want to book this appointment?</DialogContentText>
-          </DialogContent>
-          <DialogActions>
-            <Button onClick={() => this.bookAppointment()}>Yes</Button>
-            <Button onClick={() => this.handleCloseBookDialog()}>No</Button>
-          </DialogActions>
+        <Dialog 
+          open={this.props.bookDialogStatus}
+          onClose={() => this.handleCloseBookDialog()}
+        >
+          <CustomerCheckout 
+            bookAppointment={this.bookAppointment} 
+            employeeName={this.props.selectedEmployee?.firstName} 
+            service={this.props.selectedEmployee?.services[this.state.selectedService]}
+            businessName={this.props.businessName}
+            appointmentDateTime={this.state.availableAppointmentTimes[this.state.selectedAppointmentSlot]}
+          />
         </Dialog>
 
         <Snackbar
@@ -700,10 +705,19 @@ const styles = (theme: Theme) =>
     },
     firstAvailableTimeButton: {
       marginTop: '1rem'
+    },
+    receiptPage: {
+      background: 'white',
+      height: '100vh',
+      width: '100vw',
+      color: 'black',
+      textAlign: 'center',
+      alignItems: 'center',
+      position: 'fixed',
     }
   }
 );
 
-export default connect(mapStateToProps, { setSelectedEmployee, addSelectedEmployeeAppointment })(
+export default connect(mapStateToProps, { setSelectedEmployee, addSelectedEmployeeAppointment, setBookDialogStatus })(
   withStyles(styles, { withTheme: true })(BusinessInfoDetails)
 );

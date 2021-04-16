@@ -39,7 +39,6 @@ const routes = [
   { path: "/messages", component: Messages },
   { path: "/settings", component: Settings }, */
   { path: '/appointments', component: CustomerAppointmentHome },
-  { path: '/business-info', component: BusinessInfo },
   { path: '/business-sign-up', component: BusinessSignUp },
   { path: '/business-account-info', component: BusinessAccountInfo },
   { path: '/business-personal-info', component: BusinessPersonalInfo },
@@ -49,7 +48,6 @@ const routes = [
   { path: '/customer-sign-up', component: CustomerSignUp },
   { path: '/temp-login', component: TempLoginPage },
   { path: '/business-home', component: BusinessHome },
-  { path: '/payment', component: CustomerCheckout },
   { path: '/', component: LandingDefault }
 ];
 
@@ -84,7 +82,8 @@ class App extends React.Component<any, SystemState> {
       loggedIn: props.system.loggedIn,
       session: props.system.session,
       user: props.system.user,
-      authChanging: props.system.authChanging
+      authChanging: props.system.authChanging,
+      bookDialogStatus: props.system.bookDialogStatus
     };
   }
 
@@ -105,7 +104,6 @@ class App extends React.Component<any, SystemState> {
               <Route path={'/temp-login'} exact={true} component={TempLoginPage}/>
               <Route path={'/appointments'} exact={true} component={CustomerAppointmentHome}/>
               <Route path={'/customer-home'} exact={true} component={LandingLoggedIn}/>
-              <Route path={'/business-info'} exact={true} component={BusinessInfo}/>
               <Route path={'/business-home'} exact={true} component={BusinessHome}/>
               <Route path={'/messages'} exact={true} component={MessagingHome}/>
               <Route path={'**'} exact><Redirect to={'/'}></Redirect></Route>
