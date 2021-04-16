@@ -20,6 +20,9 @@ import EmojiPeopleIcon from '@material-ui/icons/EmojiPeople';
 
 import CustomerBusinessSearch from '../../customer/customer-business-search/CustomerBusinessSearch';
 import Sidebar from '../sidebar/Sidebar';
+import { Redirect } from 'react-router';
+import { StoreState } from '../store/types';
+import { connect } from 'react-redux';
 
 //--------------------------
 //CSS
@@ -107,10 +110,16 @@ function a11yProps(index: any) {
   };
 }
 
+function mapStateToProps(state: StoreState) {
+  return {
+    user: state.system.user
+  };
+}
+
 //--------------------------
 //Landing Page component
 //--------------------------
-function LandingPageLoggedIn() {
+const LandingPageLoggedIn = (props: any) => {
   const classes = useStyles();
 
   const [tabValue, setTabValue] = React.useState(0);
@@ -120,6 +129,10 @@ function LandingPageLoggedIn() {
   ) => {
     setTabValue(newTabValue);
   };
+
+  if (props.user === undefined) {
+    return <Redirect to={'/'} />
+  }
 
   return (
     <div>
@@ -161,4 +174,6 @@ function LandingPageLoggedIn() {
   );
 }
 
-export default LandingPageLoggedIn;
+export default connect(mapStateToProps, null)(
+  LandingPageLoggedIn
+);

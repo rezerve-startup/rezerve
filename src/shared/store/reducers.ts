@@ -33,7 +33,8 @@ import {
   UPDATE_CUSTOMER_APPOINTMENT_STATUS,
   SET_USER_CUSTOMER_CONVERSATIONS,
   SET_USER_EMPLOYEE_CONVERSATIONS,
-  AUTH_CHANGING
+  AUTH_CHANGING,
+  SET_BOOK_DIALOG_STATUS
 } from './types';
 
 // ************** System Reducer ******************
@@ -42,7 +43,8 @@ const initialSystemState: SystemState = {
   loggedIn: false,
   session: '',
   user: undefined,
-  authChanging: true
+  authChanging: true,
+  bookDialogStatus: false
 };
 
 export function systemReducer(
@@ -220,6 +222,12 @@ export function systemReducer(
       return {
         ...state,
         authChanging: action.payload
+      }
+    }
+    case SET_BOOK_DIALOG_STATUS: {
+      return {
+        ...state,
+        bookDialogStatus: action.payload
       }
     }
     default:
