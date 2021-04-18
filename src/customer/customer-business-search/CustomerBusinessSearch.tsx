@@ -22,7 +22,6 @@ import {
 import LocationOnIcon from '@material-ui/icons/LocationOn';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 
-import cat1 from '../../assets/business-pictures/cat1.jpg';
 import { firestore } from '../../config/FirebaseConfig';
 import { connect } from 'react-redux';
 import { LoadScript, StandaloneSearchBox } from '@react-google-maps/api';
@@ -30,6 +29,8 @@ import BusinessInfo from '../../business/business-info/BusinessInfo';
 import { StoreState } from '../../shared/store/types';
 import { addBusinessFound, clearBusinessesFound, setSelectedEmployee, clearEmployeesForBusiness } from '../../shared/store/actions';
 import { Business } from '../../models/Business.interface';
+
+const cat1 = require('../../assets/business-pictures/cat1.jpg');
 
 type CustomerBusinessSearchState = {
   searchBoxRef: any;
