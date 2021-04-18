@@ -30,7 +30,7 @@ import { StoreState } from '../../shared/store/types';
 import { addBusinessFound, clearBusinessesFound, setSelectedEmployee, clearEmployeesForBusiness } from '../../shared/store/actions';
 import { Business } from '../../models/Business.interface';
 
-const cat1 = require('../../assets/business-pictures/cat1.jpg');
+import cat1 from '../../assets/cat1.jpg';
 
 type CustomerBusinessSearchState = {
   searchBoxRef: any;

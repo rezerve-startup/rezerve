@@ -459,14 +459,16 @@ class BusinessInfoDetails extends React.Component<any, any> {
                           src={cat1}
                           alt=''
                         />
-                        <FormControlLabel
-                          value={employee.id}
-                          control={
-                            <Radio />
-                          }
-                          label={employee.firstName}
-                        />
-                        <div className={classes.employeePosition}><i>{employee.position}</i></div>
+                        <div>
+                          <FormControlLabel
+                            value={employee.id}
+                            control={
+                              <Radio />
+                            }
+                            label={employee.firstName}
+                          />
+                          <div className={classes.employeePosition}><i>{employee.position}</i></div>
+                        </div>
                       </Grid>
                     )})
                   }
