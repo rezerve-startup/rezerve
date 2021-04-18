@@ -32,4 +32,4 @@ app.post('/create-payment-intent', async (req, res) => {
 });
 
 // tslint:disable-next-line: no-console
-app.listen(4242, () => console.log('Node server listening on port 4242!'));
+app.listen(process.env.PORT || 5000, () => console.log(`Node server listening on port ${process.env.PORT || 5000}!`));
