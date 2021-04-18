@@ -59,35 +59,23 @@ const ConfirmationCard = (props: any) => {
 
   return (
     <div className={classes.itemCard}>
-      <div className={classes.items}>
-        <h2>
-          <strong>{props.businessName}</strong>
-        </h2>
+      <div className={classes.confirmationBusinessName}>
+        <div>{props.businessName}</div>
       </div>
 
-      <div className={classes.items}>
-        <h2>
-          <strong>{props.employeeName}</strong>
-        </h2>
+      <div className={classes.confirmationEmployeeName}>
+        <div>{props.employeeName}</div>
       </div>
 
-      <div className={classes.items}>
-        <h3>
-          <strong>{'Tests'}</strong>
-        </h3>
-        <div className={classes.priceAlign}>
-          <h3 className={classes.stat}>${props.service.price}</h3>
-        </div>
+      <div className={classes.confirmationServicePrice}>
+        <div>{props.service.name}</div>
+        <div>${props.service.price}</div>
       </div>
 
       <Divider className={classes.divider0} />
-      <div className={classes.items}>
-        <h3>
-          <strong>{props.appointmentDateTime.format('ddd MM/DD/YYYY')}</strong>
-        </h3>
-        <div className={classes.timeAlign}>
-          <h3 className={classes.stat}>{props.appointmentDateTime.format('h:mm A')}</h3>
-        </div>
+      <div className={classes.confirmationAppointmentDate}>
+        <div>{props.appointmentDateTime.format('ddd MM/DD/YYYY')}</div>
+        <div>{props.appointmentDateTime.format('h:mm A')}</div>
       </div>
     </div>
   );
@@ -100,12 +88,8 @@ const BookingConfirmation = (props: any) => {
     <div>
       <ConfirmationCard businessName={props.businessName} appointmentDateTime={props.appointmentDateTime} employeeName={props.employeeName} service={props.service} />
       <div className={classes.itemPlus1}>
-        <span>
-          <h3>
-            <strong>Receive Text Reminders/Updates</strong>
-            <Checkbox className={classes.checkbox} />
-          </h3>
-        </span>
+        <div>Receive Text Reminders/Updates</div>
+        <Checkbox className={classes.checkbox} />
       </div>
 
       <div className={classes.phoneField}>
@@ -129,6 +113,7 @@ const CustomerCheckout = (props: any) => {
   };
 
   const handleBack = () => {
+    setCustomerPaid(false)
     setActiveStep((prevActiveStep) => prevActiveStep - 1);
   };
 
@@ -217,20 +202,39 @@ const useStyles = makeStyles((theme) => ({
     padding: '5px',
   },
 
-  stat: {
-    left: '175px',
+  confirmationBusinessName: {
     fontWeight: 'bold',
+    paddingLeft: '0.25rem',
+    paddingRight: '0.25rem'
+  },
+
+  confirmationEmployeeName: {
+    fontWeight: 'bold',
+    paddingLeft: '0.25rem',
+    paddingRight: '0.25rem'
+  },
+
+  confirmationServicePrice: {
+    fontWeight: 'bold',
+    paddingLeft: '0.25rem',
+    paddingRight: '0.25rem',
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center'
+  },
+
+  confirmationAppointmentDate: {
+    fontWeight: 'bold',
+    paddingLeft: '0.25rem',
+    paddingRight: '0.25rem',
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center'
   },
 
   priceAlign: {
     position: 'relative',
     marginLeft: '150px',
-  },
-
-  timeAlign: {
-    right: '60px',
-    position: 'relative',
-    left: '93px',
   },
 
   closeIcon: {
@@ -258,23 +262,22 @@ const useStyles = makeStyles((theme) => ({
 
   itemPlus1: {
     display: 'flex',
-    paddingTop: '40px',
-    paddingLeft: '40px',
-    paddingBottom: '10px',
+    justifyContent: 'center',
+    alignItems: 'center',
+    fontWeight: 'bold',
+    marginTop: '1rem'
   },
 
   checkbox: {
     fontWeight: 'bold',
-    position: 'relative',
   },
 
   phoneField: {
     display: 'flex',
-    paddingTop: '10px',
-    paddingLeft: '40px',
-    paddingBottom: '20px',
+    justifyContent: 'center',
+    alignItems: 'center',
     WebkitAppearance: 'none',
-    margin: '0',
+    marginBottom: '1rem'
   },
 
   button: {

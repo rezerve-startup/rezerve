@@ -227,6 +227,29 @@ class CustomerUpcomingAppointments extends React.Component<Props, State> {
       });
   }
 
+  cancelAppointment(appt: any) {
+    this.setState({
+      cancelAppointmentStatusDialogOpen: true,
+      selectedAppointment: appt,
+      selectedAction: 'cancelled'
+    });
+  }
+
+  updateAppointmentStatus() {
+    let appointmentToUpdate = this.state.selectedAppointment;
+    appointmentToUpdate.status = this.state.selectedAction;
+
+    firestore.collection('appointments').doc(`${appointmentToUpdate.appointmentId}`).update({
+      status: appointmentToUpdate.status
+    }).then(() => {
+      this.dispatchUpdateCustomerAppointmentStatus(appointmentToUpdate);
+
+      this.setState({
+        cancelAppointmentStatusDialogOpen: false,
+      });
+    });
+  }
+
   openMessageDialog(employeeId) {
     this.setState({
       messageDialogOpen: true,
@@ -497,39 +520,16 @@ class CustomerUpcomingAppointments extends React.Component<Props, State> {
         <Dialog open={this.state.messageDialogOpen} onClose={() => this.closeMessageDialog()}>
           <DialogTitle>Message Employee</DialogTitle>
           <DialogContent>
-          <DialogContentText>Please enter the message you would like to send these clients:</DialogContentText>
-          <TextField value={this.state.messageToEmployee} onChange={(e) => this.handleOnChangeEmployeeMessage(e)} />
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => this.sendMessageToEmployee()}>Send</Button>
-          <Button onClick={() => this.closeMessageDialog()}>Cancel</Button>
-        </DialogActions>
+            <DialogContentText>Please enter the message you would like to send these clients:</DialogContentText>
+            <TextField value={this.state.messageToEmployee} onChange={(e) => this.handleOnChangeEmployeeMessage(e)} />
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={() => this.sendMessageToEmployee()}>Send</Button>
+            <Button onClick={() => this.closeMessageDialog()}>Cancel</Button>
+          </DialogActions>
         </Dialog>
       </div>
     );
-  }
-
-  cancelAppointment(appt: any) {
-    this.setState({
-      cancelAppointmentStatusDialogOpen: true,
-      selectedAppointment: appt,
-      selectedAction: 'cancelled'
-    });
-  }
-
-  updateAppointmentStatus() {
-    let appointmentToUpdate = this.state.selectedAppointment;
-    appointmentToUpdate.status = this.state.selectedAction;
-
-    firestore.collection('appointments').doc(`${appointmentToUpdate.appointmentId}`).update({
-      status: appointmentToUpdate.status
-    }).then(() => {
-      this.dispatchUpdateCustomerAppointmentStatus(appointmentToUpdate);
-
-      this.setState({
-        cancelAppointmentStatusDialogOpen: false,
-      });
-    });
   }
 }
 
