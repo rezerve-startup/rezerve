@@ -119,7 +119,8 @@ const styles = (theme: Theme) =>
   createStyles({
     root: {
       flex: 1,
-      height: '100vh'
+      height: '100vh',
+      width: '100vw'
     },
   });
 

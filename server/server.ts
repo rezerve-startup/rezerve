@@ -3,7 +3,7 @@ const express = require('express');
 const app = express();
 // This is a sample test API key. Sign in to see examples pre-filled with your key.
 // tslint:disable-next-line: no-var-requires
-const stripe = require('stripe')('sk_test_4eC39HqLyjWDarjtT1zdp7dc');
+const stripe = require('stripe')(`${process.env.STRIPE_API_KEY}`);
 
 var cors = require('cors');
 
@@ -20,6 +20,7 @@ const calculateOrderAmount = (items) => {
 
 app.post('/create-payment-intent', async (req, res) => {
   const { items } = req.body;
+
   // Create a PaymentIntent with the order amount and currency
   const paymentIntent = await stripe.paymentIntents.create({
     amount: calculateOrderAmount(items),
@@ -32,4 +33,4 @@ app.post('/create-payment-intent', async (req, res) => {
 });
 
 // tslint:disable-next-line: no-console
-app.listen(4242, () => console.log('Node server listening on port 4242!'));
+app.listen(process.env.PORT || 5000, () => console.log(`Node server listening on port ${process.env.PORT || 5000}!`));

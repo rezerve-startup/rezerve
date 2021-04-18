@@ -43,8 +43,9 @@ import { StoreState } from '../../../shared/store/types';
 import { setEmployeeClients } from '../../../shared/store/actions';
 import { firestore } from '../../../config/FirebaseConfig';
 import firebase from 'firebase';
+import image from '../../../assets/avatar.jpg';
 
-const image = require('../../../assets/avatar.jpg');
+// const image = require('../../../assets/avatar.jpg');
 
 const fabActions = [
   { icon: <Message />, name: 'Message' }

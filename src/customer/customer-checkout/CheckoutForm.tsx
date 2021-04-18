@@ -57,7 +57,7 @@ export default function CheckoutForm(props) {
   useEffect(() => {
     // Create PaymentIntent as soon as the page loads
     window
-      .fetch('https://rezerve-startup-api.herokuapp.com:4242/create-payment-intent', {
+      .fetch('https://rezerve-startup-api.herokuapp.com/create-payment-intent', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
