@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import {
   Grid,
   Card,
@@ -11,9 +11,12 @@ import {
   createStyles,
 } from '@material-ui/core';
 import { Rating } from '@material-ui/lab';
-import image from '../../../assets/avatar.jpg';
 import { connect } from 'react-redux';
 import { StoreState } from '../../../shared/store/types';
+import { setEmployeeReviews } from '../../../shared/store/actions';
+import { firestore } from '../../../config/FirebaseConfig';
+
+const image = require('../../../assets/avatar.jpg');
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -34,11 +37,20 @@ const useStyles = makeStyles((theme: Theme) =>
 );
 
 function mapStateToProps(state: StoreState) {
+  let employeeReviews = state.system.user.employeeInfo.reviews;
+  let reviewsToAdd: any[] = [];
+
+  if (employeeReviews) {
+    for (const review of employeeReviews) {
+      reviewsToAdd.push(review);
+    }
+  }
+
   return {
     employeeName: state.system.user.firstName,
     employeeId: state.system.user.employeeId,
     employeePosition: state.system.user.employeeInfo.position,
-    employeeReviews: state.system.user.employeeInfo.reviews
+    employeeReviews: reviewsToAdd
   };
 };
 
@@ -57,7 +69,8 @@ type Props = {
   employeeName?: string;
   employeeId?: string;
   employeePosition?: string;
-  employeeReviews?: any
+  employeeReviews?: any;
+  setEmployeeReviews?: any;
 };
 
 const StylistCard = (props: Props) => {
@@ -65,6 +78,23 @@ const StylistCard = (props: Props) => {
   const classes = useStyles();
 
   let avgEmployeeReview = computeAvgReviewRating(props.employeeReviews);
+
+  useEffect(function() {
+    firestore.collection('reviews').where('employeeId', '==', `${props.employeeId}`).get()
+      .then((querySnapshot) => {
+        let employeeReviews: any[] = [];
+
+        querySnapshot.forEach((reviewDoc) => {
+          employeeReviews.push(reviewDoc.data());
+        });
+
+        dispatchSetEmployeeReviews(employeeReviews);
+      })
+  }, []);
+
+  const dispatchSetEmployeeReviews = (employeeReviews: any[]) => {
+    props.setEmployeeReviews(employeeReviews);
+  }
 
   return (
     <Card className={classes.card} elevation={0}>
@@ -103,4 +133,4 @@ const StyledRating = withStyles((theme) => ({
   },
 }))(Rating);
 
-export default connect(mapStateToProps, null)(StylistCard);
+export default connect(mapStateToProps, { setEmployeeReviews })(StylistCard);

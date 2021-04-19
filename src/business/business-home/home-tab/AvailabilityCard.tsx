@@ -17,6 +17,9 @@ import {
   CardContent,
   Divider,
 } from '@material-ui/core';
+import { StoreState } from '../../../shared/store/types';
+import { connect } from 'react-redux';
+import { firestore } from '../../../config/FirebaseConfig';
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -24,101 +27,122 @@ const styles = (theme: Theme) =>
       flexGrow: 1,
     },
     card: {
-      padding: theme.spacing(1),
-      height: '400px',
+      // padding: theme.spacing(1),
+      // height: '27rem',
     },
     openHours: {
-      padding: theme.spacing(1),
       textAlign: 'center',
       backgroundColor: theme.palette.background.paper,
       insert: true,
     },
     dayOfWeek: {
-      marginRight: '100px',
-      fontSize: '14px',
+      // padding: theme.spacing(1),
+      display: 'flex',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      fontSize: '1rem',
     },
+    dayText: {
+      textAlign: 'left',
+      justifyContent: 'left',
+      marginRight: '0.5rem'
+    },
+    hourlyAvailability: {
+      display: 'flex',
+      alignItems: 'center'
+    }
   });
 
 type State = {
-  businessSchedule: BusinessSchedule[];
+  employeeSchedule: any;
   editInfo: boolean;
 };
 
-interface BusinessSchedule {
-  day: string;
-  start: string;
-  end: string;
+function mapStateToProps(state: StoreState) {
+  return({
+    employeeId: state.system.user?.employeeId,
+    employeeSchedule: state.system.user.employeeInfo?.availability,
+    businessSchedule: state.business.businessAvailability
+  })
 }
 
-interface Props extends WithStyles<typeof styles> {}
+interface Props extends WithStyles<typeof styles> {
+  employeeSchedule?: any[];
+  employeeId?: any;
+  businessSchedule?: any;
+}
 
 class AvailablityCard extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
 
     this.state = {
-      businessSchedule: [
-        { day: 'Monday', start: '09:00', end: '17:00' },
-        { day: 'Tuesday', start: '09:00', end: '17:00' },
-        { day: 'Wednesday', start: '09:00', end: '17:00' },
-        { day: 'Thursday', start: '09:00', end: '17:00' },
-        { day: 'Friday', start: '09:00', end: '17:00' },
-        { day: 'Saturday', start: '09:00', end: '17:00' },
-        { day: 'Sunday', start: '09:00', end: '17:00' },
-      ],
+      employeeSchedule: props.employeeSchedule,
       editInfo: true,
     };
 
     this.handleEdit = this.handleEdit.bind(this);
   }
 
+  handleStartTimeChange(index, e) {
+    let employeeScheduleToUpdate = this.state.employeeSchedule;
+    employeeScheduleToUpdate[index].start = e.target.value;
+
+    this.setState({
+      employeeSchedule: employeeScheduleToUpdate
+    });
+  }
+
+  handleCloseTimeChange(index, e) {
+    let employeeScheduleToUpdate = this.state.employeeSchedule;
+    employeeScheduleToUpdate[index].end = e.target.value;
+
+    this.setState({
+      employeeSchedule: employeeScheduleToUpdate
+    });
+  }
+
+  updateEmployeeSchedule(businessSchedule: any[]) {
+    firestore.collection('employees').doc(`${this.props.employeeId}`).update({
+      availability: businessSchedule
+    })
+  }
+
   render() {
     const { classes } = this.props;
     const { editInfo } = this.state;
+
     return (
       <Card className={classes.card} elevation={0}>
         <CardContent>
           <Typography variant="h5">Availability</Typography>
           <Divider />
-          <List>
-            {this.state.businessSchedule.map((item: BusinessSchedule) => (
-              <ListItem key={item.day}>
-                <ListItemText
-                  primary={item.day}
-                  classes={{ primary: classes.dayOfWeek }}
-                />
-                <ListItemSecondaryAction>
-                  <Grid container={true} justify="flex-start" spacing={1}>
-                    <Grid item={true} xs={true}>
-                      <form noValidate={true}>
-                        <TextField
-                          id="time"
-                          type="Time"
-                          disabled={editInfo}
-                          defaultValue={item.start}
-                          style={{ width: 104 }}
-                        />
-                      </form>
-                    </Grid>
-                    <Typography style={{ margin: 'auto' }}>-</Typography>
-                    <Grid item={true} xs={true}>
-                      <form noValidate={true}>
-                        <TextField
-                          id="time"
-                          type="Time"
-                          disabled={editInfo}
-                          defaultValue={item.end}
-                          style={{ width: 104 }}
-                        />
-                      </form>
-                    </Grid>
-                  </Grid>
-                </ListItemSecondaryAction>
-              </ListItem>
+            {this.state.employeeSchedule && this.state.employeeSchedule.map((item, index) => (
+              <div key={item.day} className={classes.dayOfWeek}>
+                <Typography className={classes.dayText}>{item.day}</Typography>
+                <div className={classes.hourlyAvailability}>
+                  <TextField
+                    id="time"
+                    type="Time"
+                    onChange={(e) => this.handleStartTimeChange(index, e)}
+                    disabled={editInfo}
+                    defaultValue={item.start}
+                  />
+                  <Typography style={{ marginRight: '0.25rem' }}>-</Typography>
+                  <TextField
+                    id="time"
+                    type="Time"
+                    onChange={(e) => this.handleCloseTimeChange(index, e)}
+                    disabled={editInfo}
+                    defaultValue={item.end}
+                    style={{ width: 104 }}
+                    size='small'
+                  />
+                </div>
+              </div>
             ))}
-          </List>
         </CardContent>
-        <CardActions style={{ justifyContent: 'center' }}>
+        <CardActions style={{ justifyContent: 'center'}}>
           {this.state.editInfo ? (
             <Button
               size="small"
@@ -126,7 +150,7 @@ class AvailablityCard extends React.Component<Props, State> {
               // tslint:disable-next-line: jsx-no-lambda
               onClick={() => this.handleEdit('editClicked')}
             >
-              edit
+              Edit
             </Button>
           ) : (
             <Button
@@ -153,8 +177,34 @@ class AvailablityCard extends React.Component<Props, State> {
   }
 
   update() {
-    this.setState({ editInfo: !this.state.editInfo });
+    if (!this.state.editInfo) {
+      let validTimes = true;
+  
+      for (let businessDay of this.state.employeeSchedule) {
+        if (businessDay.end < businessDay.start) {
+          validTimes = false;
+          break;
+        }
+
+        if (businessDay.end > this.props.businessSchedule.closingTime || businessDay.start < this.props.businessSchedule.openingTime) {
+          validTimes = false;
+          break;
+        }
+      }
+  
+      if (validTimes) {
+        this.setState({ editInfo: !this.state.editInfo });
+
+        this.updateEmployeeSchedule(this.state.employeeSchedule);
+      }
+    } else {
+      this.setState({ editInfo: !this.state.editInfo });
+    }
+
+
   }
 }
 
-export default withStyles(styles, { withTheme: true })(AvailablityCard);
+export default connect(mapStateToProps, null)(
+  withStyles(styles, { withTheme: true })(AvailablityCard)
+);

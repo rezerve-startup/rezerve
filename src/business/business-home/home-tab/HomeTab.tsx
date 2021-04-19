@@ -10,13 +10,16 @@ import {
   Typography,
 } from '@material-ui/core';
 
+import { setUserEmployeeAppointments } from '../../../shared/store/actions';
+
 import StylistCard from './StylistCard';
 import AvailabilityCard from './AvailabilityCard';
 import ContactCard from './ContactCard';
 import TodoList from './TodoList';
 import { connect } from 'react-redux';
 import { StoreState } from '../../../shared/store/types';
-import moment from 'moment';
+import { firestore } from '../../../config/FirebaseConfig';
+import { Redirect } from 'react-router';
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -36,28 +39,71 @@ interface Props extends WithStyles<typeof styles> {
   theme: Theme;
   isMobile: boolean;
   upcomingAppts?: any[];
+  employeeId?: string;
+  setUserEmployeeAppointments?: any
 }
 type State = {};
 
 function mapStateToProps(state: StoreState) {
-  let allAppointments = state.system.user.employeeInfo.appointments;
+  let allAppointments = state.system.user.employeeInfo?.appointments;
 
   let upcomingAppts: any[] = [];
 
   let dateNow = Date.now();
 
-  allAppointments.forEach((appt) => {
-    if (appt.datetime.toDate() > dateNow) {
-      upcomingAppts.push(appt);
-    }
-  })
+  if (allAppointments) {
+    allAppointments.forEach((appt) => {
+      if (appt.datetime.toDate().valueOf() > dateNow) {
+        upcomingAppts.push(appt);
+      }
+    })
+  }
 
   return {
-    upcomingAppts: upcomingAppts
+    upcomingAppts: upcomingAppts,
+    employeeId: state.system.user.employeeId
   }
 }
 
 class HomeTab extends React.Component<Props, State> {
+  
+  componentDidMount() {
+    this.getEmployeeAppointments();
+  }
+
+  dispatchSetUserEmployeeAppointments(employeeAppts) {
+    this.props.setUserEmployeeAppointments(employeeAppts);
+  }
+
+  getEmployeeAppointments() {
+    firestore.collection('appointments').where('employeeId', '==', `${this.props.employeeId}`).get()
+      .then((querySnapshot) => {
+        let employeeAppts: any[] = [];
+
+        querySnapshot.forEach((apptDoc) => {
+          const apptData = apptDoc.data();
+
+          apptData.appointmentId = apptDoc.id;
+
+          firestore.collection('users').where('customerId', '==', `${apptData.customerId}`).get()
+            .then((querySnapshot) => {
+              querySnapshot.forEach((userDoc) => {
+                const userData = userDoc.data();
+
+                apptData.client = {
+                  firstName: userData.firstName,
+                  lastName: userData.lastName
+                }
+
+                employeeAppts.push(apptData);
+
+                this.dispatchSetUserEmployeeAppointments(employeeAppts);
+              });
+            })
+        });
+      })
+  }
+
   render() {
     const { classes, isMobile } = this.props;
     const carouselComponents = [AvailabilityCard, ContactCard];
@@ -119,6 +165,6 @@ class HomeTab extends React.Component<Props, State> {
   }
 }
 
-export default connect(mapStateToProps, null)(
+export default connect(mapStateToProps, { setUserEmployeeAppointments })(
   withStyles(styles, { withTheme: true, isMobile: false })(HomeTab)
 );

@@ -37,7 +37,6 @@ import firebase from 'firebase';
 type BusinessInfoState = {
   businessKey: string;
   businessInfo: Business;
-  businessName: string;
   businessReviewsShown: Review[];
   businessReviewsStored: Review[];
   businessEmployees: any[];
@@ -60,7 +59,6 @@ class BusinessInfo extends React.Component<any, BusinessInfoState> {
     this.state = {
       businessKey: this.props.selectedBusinessKey,
       businessInfo: this.props.selectedBusinessInfo,
-      businessName: props.business.businessName,
       businessReviewsShown: [],
       businessReviewsStored: [],
       businessEmployees: [],
@@ -165,6 +163,7 @@ class BusinessInfo extends React.Component<any, BusinessInfoState> {
               if (employeeData) {
                 tempEmployee = {
                   id: employee.id,
+                  availability: employeeData.availability,
                   reviews: [],
                   appointments: [],
                   services: employeeData.services,
@@ -329,7 +328,7 @@ class BusinessInfo extends React.Component<any, BusinessInfoState> {
                   navButtonsAlwaysVisible={true} autoPlay={false}
                 >
                   {businessPictures.map((businessPicture, i) => (
-                    <Paper key={i}>
+                    <Paper key={i} elevation={0}>
                       <img
                         className={classes.businessPicture}
                         src={businessPicture.imageUrl}
@@ -511,6 +510,7 @@ class BusinessInfo extends React.Component<any, BusinessInfoState> {
               businessOpeningTime={this.state.businessInfo.about.openingTime}
               businessClosingTime={this.state.businessInfo.about.closingTime}
               businessOpenDates={this.state.businessInfo.about.daysOpen}  
+              businessName={this.state.businessInfo.name}
             />
           </div>
         ) : (
