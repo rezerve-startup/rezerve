@@ -41,6 +41,7 @@ class BusinessInfoDetails extends React.Component<any, any> {
 
   constructor(props) {
     super(props);
+    console.log(props);
     this.state = {
       businessEmployees: this.props.businessEmployees,
       availableAppointmentTimes: [],
@@ -367,9 +368,11 @@ class BusinessInfoDetails extends React.Component<any, any> {
   }
 
   bookAppointment = () => {
+    const customerIdToAdd = this.props.user ? this.props.user.customerId : 'Guest';
+
     firestore.collection('appointments').add({
       businessId: this.props.businessId,
-      customerId: this.props.user.customerId,
+      customerId: customerIdToAdd,
       datetime: new Date(this.state.availableAppointmentTimes[this.state.selectedAppointmentSlot]),
       employeeId: this.props.selectedEmployee.id,
       service: this.props.selectedEmployee.services[this.state.selectedService],
@@ -378,24 +381,30 @@ class BusinessInfoDetails extends React.Component<any, any> {
       firestore.collection('employees').doc(`${this.props.selectedEmployee.id}`).update({
         appointments: firebase.firestore.FieldValue.arrayUnion(docRef.id)
       }).then(() => {
-        firestore.collection('customers').doc(`${this.props.user.customerId}`).update({
-          appointments: firebase.firestore.FieldValue.arrayUnion(docRef.id)
-        })
-        .then(() => {
-          let appointmentToAdd = {
-            businessId: this.props.businessId,
-            customerId: this.props.user.customerId,
-            datetime: firebase.firestore.Timestamp.fromDate(new Date(this.state.availableAppointmentTimes[this.state.selectedAppointmentSlot])),
-            employeeId: this.props.selectedEmployee.id,
-            service: this.props.selectedEmployee.services[this.state.selectedService],
-            status: 'requested'
-          }
-          this.dispatchAddAppointment(appointmentToAdd);
-
+        if (this.props.user !== undefined) {
+          firestore.collection('customers').doc(`${this.props.user.customerId}`).update({
+            appointments: firebase.firestore.FieldValue.arrayUnion(docRef.id)
+          })
+          .then(() => {
+            let appointmentToAdd = {
+              businessId: this.props.businessId,
+              customerId: this.props.user.customerId,
+              datetime: firebase.firestore.Timestamp.fromDate(new Date(this.state.availableAppointmentTimes[this.state.selectedAppointmentSlot])),
+              employeeId: this.props.selectedEmployee.id,
+              service: this.props.selectedEmployee.services[this.state.selectedService],
+              status: 'requested'
+            }
+            this.dispatchAddAppointment(appointmentToAdd);
+  
+            this.resetBookings();
+            this.handleCloseBookDialog();
+            this.showSuccessfulBooking();
+          })
+        } else {
           this.resetBookings();
           this.handleCloseBookDialog();
           this.showSuccessfulBooking();
-        })
+        }
       });
     }).catch((error) => {
       console.log(error);

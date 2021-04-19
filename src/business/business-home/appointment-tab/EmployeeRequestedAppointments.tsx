@@ -48,6 +48,7 @@ const styles = (theme: Theme) =>
     small: {
       width: theme.spacing(3),
       height: theme.spacing(3),
+      marginRight: '0.5rem'
     },
     secondaryHeading: {
       fontSize: theme.typography.pxToRem(15),
@@ -167,8 +168,6 @@ function mapStateToProps(state: StoreState) {
     upcomingAppointments.sort((appt1, appt2) => appt1.datetime.toDate() - appt2.datetime.toDate());
     cancelledAppointments.sort((appt1, appt2) => appt1.datetime.toDate() - appt2.datetime.toDate());
     pastAppointments.sort((appt1, appt2) => appt1.datetime.toDate() - appt2.datetime.toDate());
-
-    console.log(requestedAppointments);
   }
 
   return ({
@@ -259,21 +258,33 @@ class EmployeeRequestedAppointments extends React.Component<Props, State> {
 
           apptData.appointmentId = apptDoc.id;
 
-          firestore.collection('users').where('customerId', '==', `${apptData.customerId}`).get()
-            .then((querySnapshot) => {
-              querySnapshot.forEach((userDoc) => {
-                const userData = userDoc.data();
+          if (apptData.customerId === 'Guest') {  
+            apptData.client = {
+              firstName: 'Guest',
+              lastName: ''
+            };
 
-                apptData.client = {
-                  firstName: userData.firstName,
-                  lastName: userData.lastName
-                }
+            employeeAppts.push(apptData);
 
-                employeeAppts.push(apptData);
+            this.dispatchSetUserEmployeeAppointments(employeeAppts);
+          } else {
+            firestore.collection('users').where('customerId', '==', `${apptData.customerId}`).get()
+              .then((querySnapshot) => {
+                querySnapshot.forEach((userDoc) => {
+                  const userData = userDoc.data();
+  
+                  apptData.client = {
+                    firstName: userData.firstName,
+                    lastName: userData.lastName
+                  }
+  
+                  employeeAppts.push(apptData);
+  
+                  this.dispatchSetUserEmployeeAppointments(employeeAppts);
+                });
+              })
+          }
 
-                this.dispatchSetUserEmployeeAppointments(employeeAppts);
-              });
-            })
         });
       })
   }
@@ -333,7 +344,7 @@ class EmployeeRequestedAppointments extends React.Component<Props, State> {
                 <div className={classes.accordionDetails}>
                   <div className={classes.employeeAvatarContainer}>
                     <Avatar src={image} className={classes.small} />
-                    <Typography>{appt.employee.firstName}</Typography>
+                    <Typography>{appt.client.firstName}</Typography>
                   </div>
                   <div className={classes.appointmentServiceContainer}>
                     <Typography>{appt.service.name}</Typography>
@@ -351,17 +362,19 @@ class EmployeeRequestedAppointments extends React.Component<Props, State> {
                     >
                       Cancel
                     </Button>
-                    <Button
-                      size="small"
-                      color="secondary"
-                      variant="contained"
-                      className={classes.button}
-                      startIcon={<Message />}
-                      // tslint:disable-next-line: jsx-no-lambda
-                      onClick={() => this.openMessageDialog(appt.customerId)}
-                    >
-                      Message
-                    </Button>
+                    {appt.customerId !== 'Guest' &&
+                      <Button
+                        size="small"
+                        color="secondary"
+                        variant="contained"
+                        className={classes.button}
+                        startIcon={<Message />}
+                        // tslint:disable-next-line: jsx-no-lambda
+                        onClick={() => this.openMessageDialog(appt.customerId)}
+                      >
+                        Message
+                      </Button>
+                    }
                   </div>
                 </div>
               </AccordionDetails>
@@ -470,17 +483,19 @@ class EmployeeRequestedAppointments extends React.Component<Props, State> {
                     <Typography>${appt.service.price}</Typography>
                   </div>
                   <div className={classes.appointmentActionContainer}>
-                    <Button
-                      size="small"
-                      color="secondary"
-                      variant="contained"
-                      className={classes.button}
-                      startIcon={<Message />}
-                      // tslint:disable-next-line: jsx-no-lambda
-                      onClick={() => this.openMessageDialog(appt.customerId)}
-                    >
-                      Message
-                    </Button>
+                    {appt.customerId !== 'Guest' &&
+                      <Button
+                        size="small"
+                        color="secondary"
+                        variant="contained"
+                        className={classes.button}
+                        startIcon={<Message />}
+                        // tslint:disable-next-line: jsx-no-lambda
+                        onClick={() => this.openMessageDialog(appt.customerId)}
+                      >
+                        Message
+                      </Button>
+                    }
                   </div>
                 </div>
               </AccordionDetails>
@@ -524,17 +539,19 @@ class EmployeeRequestedAppointments extends React.Component<Props, State> {
                     <Typography>${appt.service.price}</Typography>
                   </div>
                   <div className={classes.appointmentActionContainer}>
-                    <Button
-                      size="small"
-                      color="secondary"
-                      variant="contained"
-                      className={classes.button}
-                      startIcon={<Message />}
-                      // tslint:disable-next-line: jsx-no-lambda
-                      onClick={() => this.openMessageDialog(appt.customerId)}
-                    >
-                      Message
-                    </Button>
+                    {appt.customerId !== 'Guest' &&
+                      <Button
+                        size="small"
+                        color="secondary"
+                        variant="contained"
+                        className={classes.button}
+                        startIcon={<Message />}
+                        // tslint:disable-next-line: jsx-no-lambda
+                        onClick={() => this.openMessageDialog(appt.customerId)}
+                      >
+                        Message
+                      </Button>
+                    }
                   </div>
                 </div>
               </AccordionDetails>
