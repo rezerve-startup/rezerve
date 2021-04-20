@@ -145,7 +145,8 @@ class BusinessInfo extends React.Component<any, BusinessInfoState> {
                   todos: employeeData.todos,
                   isOwner: employeeData.isOwner,
                   position: employeeData.position,
-                  clients: employeeData.clients
+                  clients: employeeData.clients,
+                  businessId: employeeData.businessId,
                 };
               }
             })

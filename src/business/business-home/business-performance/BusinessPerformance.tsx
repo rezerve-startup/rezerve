@@ -11,13 +11,15 @@ import {
   Button,
   List,
 } from '@material-ui/core';
-
+import firebase from 'firebase';
 import { firestore } from '../../../config/FirebaseConfig';
 import { connect } from 'react-redux';
 import { Review } from '../../../models/Review.interface';
 import { User } from '../../../models/User.interface';
+import { StoreState } from '../../../shared/store/types';
 
 type BusinessPerformanceState = {
+  businessId: string;
   loading: boolean;
   tabSelected: number;
   businessPerformance: {
@@ -25,11 +27,19 @@ type BusinessPerformanceState = {
     bookingPercentage: number;
     profileViews: number;
     rating: number;
+    ratingCount: number;
   };
   businessReviewsStored: any[];
   businessReviewsShown: any[];
   business: any;
 };
+
+function mapStateToProps(state: StoreState) {
+  return {
+    business: state.business,
+    businessId: state.system.user.employeeInfo.businessId,
+  };
+}
 
 //interface Props extends WithStyles<typeof styles> {}
 
@@ -40,6 +50,7 @@ class BusinessPerformance extends React.Component<
   constructor(props: any) {
     super(props);
     this.state = {
+      businessId: this.props.businessId,
       tabSelected: 0,
       loading: false,
       businessPerformance: {
@@ -47,6 +58,7 @@ class BusinessPerformance extends React.Component<
         bookingPercentage: 0,
         profileViews: 0,
         rating: 0,
+        ratingCount: 0,
       },
       businessReviewsStored: [],
       businessReviewsShown: [],
@@ -59,11 +71,9 @@ class BusinessPerformance extends React.Component<
   }
 
   getBusinessPerformanceData() {
-    const businessData = firestore
+    firestore
       .collection('businesses')
-      .doc('98amGMWjvPkULXgBerJq');
-
-    businessData
+      .doc(this.state.businessId)
       .get()
       // Get business info data
       .then((val) => {
@@ -71,14 +81,12 @@ class BusinessPerformance extends React.Component<
         if (businessInfo !== undefined) {
           this.setState({
             business: businessInfo,
-            businessPerformance: businessInfo.performance,
+            businessPerformance: this.getPerformance(businessInfo.performance),
           });
         }
       })
       // Get business reviews
       .then(() => {
-        let numberReviewsShown = 0;
-
         this.state.business.reviews.forEach((reviewId: any) => {
           let tempBusinessReview;
 
@@ -88,39 +96,112 @@ class BusinessPerformance extends React.Component<
             .get()
             .then((review) => {
               tempBusinessReview = review.data() as Review;
-            })
-            .then(() => {
-              firestore
-                .collection('users')
-                .where('customerId', '==', `${tempBusinessReview.customerId}`)
-                .get()
-                .then((querySnapshot) => {
-                  querySnapshot.forEach((doc) => {
-                    tempBusinessReview.poster = (doc.data() as User).firstName;
-                  });
-                })
-                .then(() => {
-                  if (numberReviewsShown < 3) {
-                    this.setState({
-                      businessReviewsShown: [...this.state.businessReviewsShown, tempBusinessReview]
-                    });
-
-                    numberReviewsShown += 1;
-                  } else {
-                    this.setState({
-                      businessReviewsStored: [...this.state.businessReviewsStored, tempBusinessReview]
-                    });
-                  }
-                });
+              const timeCheck = this.getTimeCheck(this.state.tabSelected);
+              if (tempBusinessReview.date > timeCheck) {
+                this.getUserForRating(tempBusinessReview);
+                this.getRating(tempBusinessReview);
+              }
             });
         });
       });
   }
 
+  getPerformance(performance: any[]): any {
+    const today = new Date();
+    const now = firebase.firestore.Timestamp.fromDate(today);
+    const abandonedCarts: any[] = [];
+    const completedCarts: any[] = [];
+    const profileViews: any[] = [];
+    const timeCheck = this.getTimeCheck(this.state.tabSelected);
+
+    performance.forEach((data: any) => {
+      if (data.date < now && data.date > timeCheck) {
+        if (data.type === 'AbandonedCart') {
+          abandonedCarts.push(data);
+        } else if (data.type === 'CompletedCart') {
+          completedCarts.push(data);
+        } else if (data.type === 'ProfileView') {
+          profileViews.push(data);
+        }
+      }
+    });
+
+    const result = this.state.businessPerformance;
+    result.abandonedCarts = abandonedCarts.length;
+    result.bookingPercentage = completedCarts.length / (completedCarts.length + abandonedCarts.length);
+    result.profileViews = profileViews.length;
+
+    return result;
+  }
+
+  getUserForRating(review: Review): void {
+    let numberReviewsShown;
+
+    firestore
+      .collection('users')
+      .where('customerId', '==', `${review.customerId}`)
+      .get()
+      .then((querySnapshot) => {
+        querySnapshot.forEach((doc) => {
+          review.poster = (doc.data() as User).firstName;
+        });
+      })
+      .then(() => {
+        if (numberReviewsShown < 3) {
+          this.setState({
+            businessReviewsShown: [...this.state.businessReviewsShown, review]
+          });
+
+          numberReviewsShown += 1;
+        } else {
+          this.setState({
+            businessReviewsStored: [...this.state.businessReviewsStored, review]
+          });
+        }
+      });
+  }
+
+  getRating(review: Review): void {
+    const performance = this.state.businessPerformance;
+    const average = performance.rating * performance.ratingCount;
+    performance.ratingCount++;
+    performance.rating = (average + review.rating) / performance.ratingCount;
+    this.setState({
+      businessPerformance: performance
+    });
+  }
+
+  getTimeCheck(tabSelected: number): firebase.firestore.Timestamp {
+    const date = new Date();
+
+    if (tabSelected === 0) {
+      date.setDate(date.getDate() - 1);
+    } else if (tabSelected === 1) {
+      date.setDate(date.getDate() - 7);
+    } else if (tabSelected === 2) {
+      date.setDate(date.getDate() - 30);
+    } else if (tabSelected === 3) {
+      date.setDate(date.getDate() - 365);
+    }
+
+    return firebase.firestore.Timestamp.fromDate(date);
+  } 
+
   handleChange = (_event: any, newTabSelected: number) => {
     this.setState({
       tabSelected: newTabSelected,
+      businessPerformance: {
+        abandonedCarts: 0,
+        bookingPercentage: 0,
+        profileViews: 0,
+        rating: 0,
+        ratingCount: 0,
+      },
+      businessReviewsStored: [],
+      businessReviewsShown: [],
     });
+
+    this.getBusinessPerformanceData();
   };
 
   showMoreReviews() {
@@ -189,7 +270,7 @@ class BusinessPerformance extends React.Component<
             <div className={classes.sectionTitle}>
               <div>Reviews & Rating</div>
             </div>
-            <h2>{this.state.businessPerformance.rating}</h2>
+            <h2>{this.state.businessPerformance.rating.toFixed(2)}</h2>
             <p>Rating</p>
             <Rating
               size="medium"
@@ -320,7 +401,6 @@ const styles = (theme: Theme) =>
     }
   });
 
-export default connect(
-  null,
-  null,
-)(withStyles(styles, { withTheme: true })(BusinessPerformance));
+  export default connect(mapStateToProps, {})(
+    withStyles(styles, { withTheme: true })(BusinessPerformance)
+  );

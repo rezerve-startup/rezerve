@@ -56,7 +56,8 @@ auth.onAuthStateChanged((user) => {
                 isOwner: employeeInfo?.isOwner,
                 position: employeeInfo?.position,
                 services: employeeInfo?.services,
-                todos: employeeInfo?.todos
+                todos: employeeInfo?.todos,
+                businessId: employeeInfo?.businessId,
               }
               userInfo.employeeInfo = employeeInfoToAdd;
             })

@@ -13,4 +13,5 @@ export interface Employee {
     firstName?: string;
     id: string;
     position: string;
+    businessId: string;
 }

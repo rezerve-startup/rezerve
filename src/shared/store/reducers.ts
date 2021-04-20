@@ -34,7 +34,8 @@ import {
   SET_USER_CUSTOMER_CONVERSATIONS,
   SET_USER_EMPLOYEE_CONVERSATIONS,
   AUTH_CHANGING,
-  SET_BOOK_DIALOG_STATUS
+  SET_BOOK_DIALOG_STATUS,
+  UPDATE_BUSINESS_ID
 } from './types';
 
 // ************** System Reducer ******************
@@ -238,6 +239,7 @@ export function systemReducer(
 // ********** Business Reducer ****************
 
 const initialBusinessState: BusinessState = {
+  businessId: '',
   businessName: '',
   businessAvailability: {
     daysOpen: [],
@@ -251,6 +253,12 @@ export function businessReducer(
   action: BusinessActionTypes,
 ): BusinessState {
   switch (action.type) {
+    case UPDATE_BUSINESS_ID: {
+      return {
+        ...state,
+        businessId: action.payload,
+      }
+    }
     case UPDATE_BUSINESS_NAME: {
       return {
         ...state,

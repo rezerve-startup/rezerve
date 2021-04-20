@@ -150,6 +150,7 @@ export type SystemActionTypes =
 
 // ############ Business Types ##########################
 export interface BusinessState {
+  businessId: string;
   businessName: string;
   businessAvailability: {
     daysOpen: any[];
@@ -158,11 +159,17 @@ export interface BusinessState {
   }
 }
 
+export const UPDATE_BUSINESS_ID = 'UPDATE_BUSINESS_ID';
 export const UPDATE_BUSINESS_NAME = 'UPDATE_BUSINESS_NAME';
 export const SET_BUSINESS_AVAILABILITY = 'SET_BUSINESS_AVAILABILITY';
 
 interface UpdateBusinessNameAction {
   type: typeof UPDATE_BUSINESS_NAME;
+  payload: string;
+}
+
+interface UpdateBusinessIdAction {
+  type: typeof UPDATE_BUSINESS_ID;
   payload: string;
 }
 
@@ -172,7 +179,7 @@ interface SetBusinessAvailabilityAction {
 }
 
 export type BusinessActionTypes = UpdateBusinessNameAction |
-  SetBusinessAvailabilityAction;
+  SetBusinessAvailabilityAction | UpdateBusinessIdAction;
 
 // ############ Customer Types ##########################
 export interface CustomerState {
