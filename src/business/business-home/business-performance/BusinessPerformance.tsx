@@ -28,6 +28,7 @@ type BusinessPerformanceState = {
     profileViews: number;
     rating: number;
     ratingCount: number;
+    totalRevenue: number;
   };
   businessReviewsStored: any[];
   businessReviewsShown: any[];
@@ -59,6 +60,7 @@ class BusinessPerformance extends React.Component<
         profileViews: 0,
         rating: 0,
         ratingCount: 0,
+        totalRevenue: 0,
       },
       businessReviewsStored: [],
       businessReviewsShown: [],
@@ -81,7 +83,7 @@ class BusinessPerformance extends React.Component<
         if (businessInfo !== undefined) {
           this.setState({
             business: businessInfo,
-            businessPerformance: this.getPerformance(businessInfo.performance),
+            businessPerformance: this.getPerformance(businessInfo),
           });
         }
       })
@@ -106,7 +108,7 @@ class BusinessPerformance extends React.Component<
       });
   }
 
-  getPerformance(performance: any[]): any {
+  getPerformance(info: any): any {
     const today = new Date();
     const now = firebase.firestore.Timestamp.fromDate(today);
     const abandonedCarts: any[] = [];
@@ -114,7 +116,7 @@ class BusinessPerformance extends React.Component<
     const profileViews: any[] = [];
     const timeCheck = this.getTimeCheck(this.state.tabSelected);
 
-    performance.forEach((data: any) => {
+    info.performance.forEach((data: any) => {
       if (data.date < now && data.date > timeCheck) {
         if (data.type === 'AbandonedCart') {
           abandonedCarts.push(data);
@@ -132,6 +134,26 @@ class BusinessPerformance extends React.Component<
       0 :
       completedCarts.length / (completedCarts.length + abandonedCarts.length);
     result.profileViews = profileViews.length;
+
+    info.employees.forEach(employeeId => {
+      firestore.collection('employees')
+        .doc(employeeId)
+        .get()
+        .then(value => {
+          const employee = value.data();
+          employee?.appointments?.forEach(appointmentId => {
+            firestore.collection('appointments')
+              .doc(appointmentId)
+              .get()
+              .then(value => {
+                const appointment = value.data();
+                if (appointment?.status !== 'cancelled' && appointment?.datetime < now && appointment?.datetime > timeCheck) {
+                  result.totalRevenue += appointment?.service.price;
+                }
+              });
+          });
+        })
+    });
 
     return result;
   }
@@ -198,6 +220,7 @@ class BusinessPerformance extends React.Component<
         profileViews: 0,
         rating: 0,
         ratingCount: 0,
+        totalRevenue: 0,
       },
       businessReviewsStored: [],
       businessReviewsShown: [],
@@ -267,6 +290,16 @@ class BusinessPerformance extends React.Component<
                   <div>{this.state.businessPerformance.bookingPercentage}%</div>
                 </div>
               </div>
+            </div>
+
+            
+
+            <div className={classes.sectionTitle}>
+              Profits
+            </div>
+            <div className={classes.businessPerformanceItem}>
+              Total Revenue
+              <div>${this.state.businessPerformance.totalRevenue}</div>
             </div>
 
             <div className={classes.sectionTitle}>
