@@ -46,6 +46,7 @@ let searchBox: any;
 const mapsLibraries: any[] = ['places'];
 
 function mapStateToProps(state: StoreState) {
+
   return {
     foundBusinesses: state.customer.foundBusinesses,
   };

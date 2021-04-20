@@ -41,7 +41,6 @@ class BusinessInfoDetails extends React.Component<any, any> {
 
   constructor(props) {
     super(props);
-    console.log(props);
     this.state = {
       businessEmployees: this.props.businessEmployees,
       availableAppointmentTimes: [],
