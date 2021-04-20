@@ -128,7 +128,9 @@ class BusinessPerformance extends React.Component<
 
     const result = this.state.businessPerformance;
     result.abandonedCarts = abandonedCarts.length;
-    result.bookingPercentage = completedCarts.length / (completedCarts.length + abandonedCarts.length);
+    result.bookingPercentage = (completedCarts.length + abandonedCarts.length) === 0 ?
+      0 :
+      completedCarts.length / (completedCarts.length + abandonedCarts.length);
     result.profileViews = profileViews.length;
 
     return result;

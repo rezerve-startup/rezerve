@@ -27,6 +27,7 @@ import { Business } from '../../models/Business.interface';
 import { Review } from '../../models/Review.interface';
 import { User } from '../../models/User.interface';
 import { Employee } from '../../models/Employee.interface';
+import firebase from 'firebase';
 
 type BusinessInfoState = {
   businessKey: string;
@@ -70,6 +71,25 @@ class BusinessInfo extends React.Component<any, BusinessInfoState> {
 
   componentDidMount() {
     this.getBusinessInfoData();
+    this.addProfileView();
+  }
+
+  addProfileView() {
+    const businessData = firestore
+      .collection('businesses')
+      .doc(`${this.state.businessKey}`);
+    let performanceArray: any[] = [];
+    businessData.get().then((value) => {
+      performanceArray = value.data()?.performance;
+      performanceArray.push({
+        type: 'ProfileView',
+        date: firebase.firestore.Timestamp.fromDate(new Date())
+      });
+    }).then(() => {
+        businessData.update({
+          performance: performanceArray
+        })
+      })
   }
 
   getBusinessInfoData() {
