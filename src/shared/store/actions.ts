@@ -31,7 +31,8 @@ import {
   SET_USER_EMPLOYEE_CONVERSATIONS,
   SET_USER_CUSTOMER_CONVERSATIONS,
   AUTH_CHANGING,
-  SET_BOOK_DIALOG_STATUS
+  SET_BOOK_DIALOG_STATUS,
+  SET_EMPLOYEE_SERVICES
 } from './types';
 
 // ****** SYSTEM ACTIONS ***************
@@ -88,6 +89,13 @@ export function setEmployeeReviews(employeeReviews: any[]): SystemActionTypes {
   return {
     type: SET_EMPLOYEE_REVIEWS,
     payload: employeeReviews
+  }
+}
+
+export function setEmployeeServices(employeeServices: any[]): SystemActionTypes {
+  return {
+    type: SET_EMPLOYEE_SERVICES,
+    payload: employeeServices
   }
 }
 
