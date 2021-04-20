@@ -144,7 +144,6 @@ class BusinessInfo extends React.Component<any, BusinessInfoState> {
             .get()
             .then((review) => {
               tempBusinessReview = review.data() as Review;
-              console.log(tempBusinessReview);
             })
             .then(() => {
               firestore
@@ -267,7 +266,6 @@ class BusinessInfo extends React.Component<any, BusinessInfoState> {
   }
 
   handleAddReviewOpen() {
-    console.log(this.props.customerId);
     if (this.props.customerId === undefined) {
       this.setState({
         notLoggedInMessageOpen: true
