@@ -23,6 +23,8 @@ import CustomerSignUp from './customer/customer-signup/CustomerSignUp';
 
 import AppointmentsPage from './customer/customer-appointments/AppointmentPage';
 import BusinessProfile from './business/business-profile/business-profile';
+import LoginDialog from './shared/login/loginDefault';
+
 import { auth, firestore } from './config/FirebaseConfig';
 import { connect } from 'react-redux';
 import { StoreState, SystemState } from './shared/store/types';
@@ -45,6 +47,7 @@ const routes = [
   { path: '/customer-sign-up', component: CustomerSignUp },
   { path: '/temp-login', component: TempLoginPage },
   { path: '/business-home', component: BusinessHome },
+  { path: '/login-page', component: LoginDialog },
 ];
 
 //let currentUser = 'business';
@@ -77,6 +80,7 @@ function mapStateToProps(state: StoreState) {
 class App extends React.Component<any, SystemState> {
   constructor(props: any) {
     super(props);
+    auth.signOut();
     this.state = {
       loggedIn: props.system.loggedIn,
       session: props.system.session,
@@ -84,69 +88,24 @@ class App extends React.Component<any, SystemState> {
     };
   }
 
-  componentDidMount(): void {
-    this.loginEmployee();
-  }
-
-  dispatchUpdateUser = (newUser) => {
-    this.props.updateUser(newUser);
-  };
-
-  loginEmployee() {
-    // Other account is 'testcustomer@test.com', 'testcustomer'
-    auth
-      .signInWithEmailAndPassword('testemployee@test.com', 'testemployee')
-      .then((userCredential) => {
-        if (userCredential !== null && userCredential.user) {
-          const user = userCredential.user;
-
-          firestore
-            .collection('users')
-            .doc(`${user.uid}`)
-            .get()
-            .then((userObj) => {
-              const userInfo = userObj.data();
-              this.dispatchUpdateUser(userInfo);
-            });
-        }
-      });
-  }
-
-  loginCustomer() {
-    auth
-      .signInWithEmailAndPassword('testCustomer@test.com', 'testcustomer')
-      .then((userCredential) => {
-        if (userCredential !== null && userCredential.user) {
-          const user = userCredential.user;
-
-          firestore
-            .collection('users')
-            .doc(`${user.uid}`)
-            .get()
-            .then((userObj) => {
-              const userInfo = userObj.data();
-              this.dispatchUpdateUser(userInfo);
-            });
-        }
-      });
-  }
-
-  logoutUser() {
-    auth.signOut();
-  }
-
-  switchToEmployee = () => {
-    this.logoutUser();
-    this.loginEmployee();
-  };
-
-  switchToCustomer = () => {
-    this.logoutUser();
-    this.loginCustomer();
-  };
-
   render() {
     const { classes } = this.props;
+
+    const page = () => {
+      if(this.props.system.user)
+      {
+        if(this.props.system.user.customerId !== '')
+        {
+          return (<LandingLoggedIn />);
+        }
+        if(this.props.system.user.employeeId !== '')
+        {
+          return (<BusinessHome />);
+        }
+      }
+      else 
+        return (<LandingDefault />);
+    }
 
     return (
       <div className={classes.root}>
@@ -161,28 +120,9 @@ class App extends React.Component<any, SystemState> {
                   component={route.component}
                 />
               ))}
-            </Switch>
-            <div>
-            {(this.props.system.user) ? (
-              this.props.system.user.customerId !== '' ? (
-                <div>
-                  {/*<div>{this.props.system.user.firstName}</div>
-              <Button variant="contained" onClick={this.switchToEmployee}>Switch to Employee</Button>
-                <AppointmentsPage />
-              <BusinessInfo /> */}
-                  <LandingLoggedIn />
-                </div>
-              ) : (
-                <div>
-                  {/*<div>{this.props.system.user.firstName}</div>
-              <Button variant="contained" onClick={this.switchToCustomer}>Switch to Customer</Button>*/}
-                  <LandingDefault />
-                </div>
-              )
-            ) : (
-              <div> </div>
-            )}
-          </div>
+            
+            <div> {page()}</div>
+          </Switch>
           </Router>
         </ThemeProvider>
       </div>

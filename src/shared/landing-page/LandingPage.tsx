@@ -11,7 +11,6 @@ import {
   Grid,
   Divider,
   Typography,
-  Button,
 } from '@material-ui/core';
 import SignUpPage from '../sign-up/SignUpPage'
 import HomeIcon from '@material-ui/icons/Home';
@@ -22,6 +21,7 @@ import EmojiPeopleIcon from '@material-ui/icons/EmojiPeople';
 //----
 
 import CustomerBusinessSearch from '../../customer/customer-business-search/CustomerBusinessSearch';
+import LoginDefault from '../login/loginDefault';
 
 //import Sidebar from '../shared/sidebar/sidebar';
 
@@ -33,21 +33,6 @@ const useStyles = makeStyles((theme: Theme) =>
     container: {
       backgroundColor: theme.palette.secondary.dark,
       color: theme.palette.secondary.light,
-    },
-    buttonLogin: {
-      borderRadius: '30px',
-      marginRight: '5px',
-      backgroundColor: theme.palette.secondary.dark,
-      color: theme.palette.secondary.light,
-      border: '1px solid white',
-      '&:hover': {
-        backgroundColor: theme.palette.secondary.dark,
-        color: theme.palette.secondary.light,
-      },
-    },
-    buttonSignup: {
-      borderRadius: '30px',
-      marginRight: '5px',
     },
     navItem: {
       backgroundColor: 'white',
@@ -137,14 +122,8 @@ function LandingPageDefault() {
               </Typography>
             </Grid>
             <Grid>
-              <Button
-                className={classes.buttonLogin}
-                variant="contained"
-                href="/temp-login"
-              >
-                Log in
-              </Button>
-              <SignUpPage />
+                <LoginDefault />
+                <SignUpPage />
             </Grid>
           </Grid>
         </Box>
