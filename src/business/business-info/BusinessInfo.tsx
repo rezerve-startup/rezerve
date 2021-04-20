@@ -86,10 +86,10 @@ class BusinessInfo extends React.Component<any, BusinessInfoState> {
         date: firebase.firestore.Timestamp.fromDate(new Date())
       });
     }).then(() => {
-        businessData.update({
-          performance: performanceArray
-        })
+      businessData.update({
+        performance: performanceArray
       })
+    });
   }
 
   getBusinessInfoData() {
