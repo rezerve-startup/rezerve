@@ -13,8 +13,8 @@ import {
 import ArrowForwardIcon from '@material-ui/icons/ArrowForward';
 import { Close } from '@material-ui/icons';
 
-import CustomerSignUp from '../../customer/customer-signup/CustomerSignUp'
 import BusinessSignUp from '../../business/business-signup/BusinessSignUp';
+import CustomerSignUp from '../../customer/customer-signup/CustomerSignup';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({

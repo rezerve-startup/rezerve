@@ -19,7 +19,6 @@ import LandingDefault from './shared/landing-page/LandingPage';
 import LandingLoggedIn from './shared/landing-page/LandingPageLog';
 
 import SignUpPage from './shared/sign-up/SignUpPage';
-import CustomerSignUp from './customer/customer-signup/CustomerSignUp';
 import LoginDialog from './shared/login/loginDefault';
 
 import { auth, firestore } from './config/FirebaseConfig';
@@ -33,8 +32,8 @@ import {
 import TempLoginPage from './shared/TempLoginPage';
 import CustomerAppointmentHome from './customer/customer-appointments/CustomerAppointmentHome';
 import MessagingHome from './shared/messaging/MessagingHome';
+import CustomerSignUp from './customer/customer-signup/CustomerSignup';
 
-import CustomerCheckout from './customer/customer-checkout/CustomerCheckout';
 
 const routes = [
   /* { path: "/help", component: Help },
@@ -50,8 +49,8 @@ const routes = [
   { path: '/customer-sign-up', component: CustomerSignUp },
   { path: '/temp-login', component: TempLoginPage },
   { path: '/business-home', component: BusinessHome },
-  { path: '/', component: LandingDefault },
   { path: '/login-page', component: LoginDialog },
+  { path: '/', component: LandingDefault },
 ];
 
 const theme = createMuiTheme({
@@ -81,7 +80,6 @@ function mapStateToProps(state: StoreState) {
 class App extends React.Component<any, SystemState> {
   constructor(props: any) {
     super(props);
-    auth.signOut();
     this.state = {
       loggedIn: props.system.loggedIn,
       session: props.system.session,
