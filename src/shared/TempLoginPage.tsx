@@ -44,6 +44,10 @@ class TempLoginPage extends React.Component<any, any> {
     this.props.setBusinessAvailability(businessAvailability);
   }
 
+  dispatchSetBusinessId = (businessId) => {
+    this.props.setBusinessId(businessId);
+  }
+
   loginEmployee() {
     auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL)
       .then(() => {

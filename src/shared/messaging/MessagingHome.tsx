@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { Redirect } from 'react-router';
 import { StoreState } from '../store/types';
 import { setUserEmployeeConversations, setUserCustomerConversations } from '../store/actions';
-import Sidebar from '../sidebar/sidebar';
+import Sidebar from '../sidebar/Sidebar';
 import { firestore } from '../../config/FirebaseConfig';
 import { ArrowUpward, Close } from '@material-ui/icons';
 import firebase from 'firebase';
