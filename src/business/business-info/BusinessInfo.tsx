@@ -45,6 +45,7 @@ type BusinessInfoState = {
   businessEmployees: any[];
   businessTotalScore: number;
   isAddReviewOpen: boolean;
+  isAddReviewDisabled: boolean;
   addReview: Review;
   notLoggedInMessageOpen: boolean;
 };
@@ -77,6 +78,7 @@ class BusinessInfo extends React.Component<any, BusinessInfoState> {
       businessTotalScore: 0,
       businessEmployees: [],
       isAddReviewOpen: false,
+      isAddReviewDisabled: true,
       addReview: {
         businessId: this.props.selectedBusinessKey,
         customerId: this.props.customerId,
@@ -111,6 +113,29 @@ class BusinessInfo extends React.Component<any, BusinessInfoState> {
   componentDidMount() {
     this.getBusinessInfoData();
     this.addProfileView();
+    this.checkCustomer();
+  }
+
+  checkCustomer() {
+    firestore.collection('customers')
+      .doc(this.state.addReview.customerId)
+      .get()
+      .then((value) => {
+        const appointments = value.data()?.appointments;
+        appointments.forEach(id => {
+          firestore.collection('appointments')
+            .doc(id)
+            .get()
+            .then(value => {
+              const appointment = value.data();
+              if (appointment?.status === 'completed') {
+                this.setState({
+                  isAddReviewDisabled: false
+                });
+              }
+            });
+        });
+      });
   }
 
   addProfileView() {
@@ -305,22 +330,24 @@ class BusinessInfo extends React.Component<any, BusinessInfoState> {
 
   handleAddReviewSave() {
     const review = this.state.addReview;
+    let overallRating = this.state.businessInfo.overallRating;
     review.date = firebase.firestore.Timestamp.fromDate(new Date());
     let businessReviewIds: string[];
-
-    let currentBusinessInfo = this.state.businessInfo;
 
     const businessRef = firestore.collection('businesses').doc(`${this.state.businessKey}`);
 
     businessRef.get().then((value) => {
       businessReviewIds = value.data()?.reviews;
     }).then(() => {
+      const average = overallRating * businessReviewIds.length;
+      overallRating = (average + review.rating) / (businessReviewIds.length + 1);
 
       firestore.collection('reviews').add(review).then((value) => {
         businessReviewIds.push(value.id);
   
         businessRef.update({
           reviews: businessReviewIds,
+          overallRating: overallRating,
         }).then(() => {
   
           if (review.employeeId !== '') {
@@ -334,7 +361,7 @@ class BusinessInfo extends React.Component<any, BusinessInfoState> {
                 employeeReviewIds.push(value.id);
                 employeeRef.update({
                   reviews: businessReviewIds,
-                })
+                });
               });
             });
           }
@@ -517,7 +544,12 @@ class BusinessInfo extends React.Component<any, BusinessInfoState> {
                   <Button variant="contained" onClick={() => this.showMoreReviews()}>Show More</Button>
                 </div>
               } 
-              <Button variant="contained" color="primary" onClick={() => this.handleAddReviewOpen()} className={classes.addReview}>Add Review</Button>
+              <Button disabled={this.state.isAddReviewDisabled} variant="contained" color="primary" onClick={() => this.handleAddReviewOpen()} className={classes.addReview}>Add Review</Button>
+              {this.state.isAddReviewDisabled &&
+                <div className={classes.addReviewDisabled}>
+                  * You must have a completed appointment with this business!
+                </div>
+              }
 
               <Dialog open={this.state.isAddReviewOpen} onClose={() => this.handleAddReviewClose()} aria-labelledby="form-dialog-title">
                 <DialogTitle id="form-dialog-title">Add Review</DialogTitle>
@@ -737,6 +769,10 @@ const styles = (theme: Theme) =>
     },
     dialogContentText: {
       marginTop: '1rem',
+    },
+    addReviewDisabled: {
+      fontSize: '0.75rem',
+      color: 'red',
     }
   });
 
