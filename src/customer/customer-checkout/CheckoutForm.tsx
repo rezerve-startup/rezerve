@@ -62,7 +62,7 @@ export default function CheckoutForm(props) {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ items: [{ id: 'xl-tshirt' }] }),
+        body: JSON.stringify({ items: [{ price: 'xl-tshirt' }] }),
       })
       .then((res) => {
         return res.json();
