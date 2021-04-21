@@ -32,7 +32,10 @@ import {
   SET_USER_CUSTOMER_CONVERSATIONS,
   AUTH_CHANGING,
   SET_BOOK_DIALOG_STATUS,
-  SET_EMPLOYEE_SERVICES
+  SET_EMPLOYEE_SERVICES,
+  SignUpActionTypes,
+  CREATE_NEW_BUSINESS,
+  CREATE_NEW_CUSTOMER
 } from './types';
 
 // ****** SYSTEM ACTIONS ***************
@@ -232,5 +235,22 @@ export function addSelectedEmployeeAppointment(appointmentToAdd): CustomerAction
   return {
     type: ADD_SELECTED_EMPLOYEE_APPOINTMENT,
     payload: appointmentToAdd
+  }
+}
+/* SIGN UP ACTIONS */
+export function createNewCustomer(newCustomerId: string, newCustomer: any): SignUpActionTypes {
+  return {
+    type: CREATE_NEW_CUSTOMER,
+    payload: {
+      id: newCustomerId,
+      data: newCustomer 
+    }
+  }
+}
+
+export function createNewBusiness(newBusiness: any): SignUpActionTypes {
+  return {
+    type: CREATE_NEW_BUSINESS,
+    payload: newBusiness
   }
 }

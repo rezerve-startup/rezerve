@@ -35,7 +35,11 @@ import {
   SET_USER_EMPLOYEE_CONVERSATIONS,
   AUTH_CHANGING,
   SET_BOOK_DIALOG_STATUS,
-  SET_EMPLOYEE_SERVICES
+  SET_EMPLOYEE_SERVICES,
+  CREATE_NEW_CUSTOMER,
+  CREATE_NEW_BUSINESS,
+  SignUpActionTypes,
+  SignUpState
 } from './types';
 
 // ************** System Reducer ******************
@@ -343,5 +347,31 @@ export function customerReducer(
     }
     default:
       return state;
+  }
+}
+
+const initialSignUpState: SignUpState = {
+  newUser: {}
+}
+
+export function signUpReducer(
+  state = initialSignUpState,
+  action: SignUpActionTypes,
+): SignUpState {
+  switch (action.type) {
+    case CREATE_NEW_BUSINESS: {
+      return {
+        ...state,
+        newUser: action.payload,
+      };
+    }
+    case CREATE_NEW_CUSTOMER: {
+      return {
+        ...state,
+        newUser: action.payload,
+      };
+    }
+    default:
+      return state
   }
 }

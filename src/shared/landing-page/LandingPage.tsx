@@ -14,7 +14,7 @@ import {
   Button,
   CircularProgress,
 } from '@material-ui/core';
-
+import SignUpPage from '../sign-up/SignUpPage'
 import HomeIcon from '@material-ui/icons/Home';
 //Extra
 import FaceIcon from '@material-ui/icons/Face';
@@ -32,6 +32,7 @@ import { StoreState } from '../store/types';
 import { connect } from 'react-redux';
 import { auth, firestore } from '../../config/FirebaseConfig';
 import firebase from 'firebase';
+import LoginDefault from '../login/loginDefault';
 
 //import Sidebar from '../shared/sidebar/sidebar';
 
@@ -43,21 +44,6 @@ const useStyles = makeStyles((theme: Theme) =>
     container: {
       backgroundColor: theme.palette.secondary.dark,
       color: theme.palette.secondary.light,
-    },
-    buttonLogin: {
-      borderRadius: '30px',
-      marginRight: '5px',
-      backgroundColor: theme.palette.secondary.dark,
-      color: theme.palette.secondary.light,
-      border: '1px solid white',
-      '&:hover': {
-        backgroundColor: theme.palette.secondary.dark,
-        color: theme.palette.secondary.light,
-      },
-    },
-    buttonSignup: {
-      borderRadius: '30px',
-      marginRight: '5px',
     },
     navItem: {
       backgroundColor: 'white',
@@ -179,20 +165,14 @@ const LandingPageDefault = (props: any) => {
                   </Typography>
                 </Grid>
                 <Grid>
-                  <Button
-                    className={classes.buttonLogin}
-                    variant="contained"
-                    href="/temp-login"
-                  >
-                    Log in
-                  </Button>
-                  <Button
-                    className={classes.buttonSignup}
-                    variant="contained"
-                    href="/sign-up-page"
-                  >
-                    Sign Up
-                  </Button>
+                  <Grid container>
+                    <Grid item>
+                      <LoginDefault />
+                    </Grid>
+                    <Grid item>
+                      <SignUpPage />
+                    </Grid>
+                  </Grid>
                 </Grid>
               </Grid>
             </Box>

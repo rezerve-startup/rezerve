@@ -1,6 +1,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Switch, Route, withRouter, Redirect } from 'react-router-dom';
 import {
+  colors,
   createMuiTheme,
   createStyles,
   Theme,
@@ -10,16 +11,17 @@ import {
 
 import BusinessInfo from './business/business-info/BusinessInfo';
 import BusinessHome from './business/business-home/BusinessHome';
-import BusinessAccountInfo from './business/business-signup/BusinAccInfo';
-import BusinessSignUp from './business/business-signup/BusinSignUp';
+import BusinessAccountInfo from './business/business-signup/BusinessInfoForm';
+import BusinessSignUp from './business/business-signup/BusinessSignUp';
 import BusinessPersonalInfo from './business/business-signup/BusinPersInfoPage';
 
 import LandingDefault from './shared/landing-page/LandingPage';
 import LandingLoggedIn from './shared/landing-page/LandingPageLog';
 
-import SignupPage from './shared/SignUpPage';
-import CustomerSignUp from './customer/customer-signup/CustomerCreationPage';
+import SignUpPage from './shared/sign-up/SignUpPage';
+import LoginDialog from './shared/login/loginDefault';
 
+import { auth, firestore } from './config/FirebaseConfig';
 import { connect } from 'react-redux';
 import { StoreState, SystemState } from './shared/store/types';
 import { 
@@ -28,11 +30,10 @@ import {
   setBusinessAvailability 
 } from './shared/store/actions';
 import TempLoginPage from './shared/TempLoginPage';
-import SignUpPage from './shared/SignUpPage';
 import CustomerAppointmentHome from './customer/customer-appointments/CustomerAppointmentHome';
 import MessagingHome from './shared/messaging/MessagingHome';
+import CustomerSignUp from './customer/customer-signup/CustomerSignup';
 
-import CustomerCheckout from './customer/customer-checkout/CustomerCheckout';
 
 const routes = [
   /* { path: "/help", component: Help },
@@ -44,11 +45,12 @@ const routes = [
   { path: '/business-personal-info', component: BusinessPersonalInfo },
   { path: '/landing-page-default', component: LandingDefault },
   { path: '/landing-page-loggedIn', component: LandingLoggedIn },
-  { path: '/sign-up-page', component: SignupPage },
+  { path: '/sign-up-page', component: SignUpPage },
   { path: '/customer-sign-up', component: CustomerSignUp },
   { path: '/temp-login', component: TempLoginPage },
   { path: '/business-home', component: BusinessHome },
-  { path: '/', component: LandingDefault }
+  { path: '/login-page', component: LoginDialog },
+  { path: '/', component: LandingDefault },
 ];
 
 const theme = createMuiTheme({
@@ -89,7 +91,23 @@ class App extends React.Component<any, SystemState> {
 
   render() {
     const { classes } = this.props;
-
+/*
+    const page = () => {
+      if(this.props.system.user)
+      {
+        if(this.props.system.user.customerId !== '')
+        {
+          return (<LandingLoggedIn />);
+        }
+        if(this.props.system.user.employeeId !== '')
+        {
+          return (<BusinessHome />);
+        }
+      }
+      else 
+        return (<LandingDefault />);
+    }
+*/
     return (
       <div className={classes.root}>
         <ThemeProvider theme={theme}>
