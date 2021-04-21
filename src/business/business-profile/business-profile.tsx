@@ -18,7 +18,7 @@ import { connect } from 'react-redux';
 import { firestore } from '../../config/FirebaseConfig';
 import { StoreState } from '../../shared/store/types';
 import AppointmentPanel from '../business-home/appointment-tab/AppointmentHome';
-import Sidebar from '../../shared/sidebar/Sidebar';
+import Sidebar from '../../shared/sidebar/sidebar';
 
 const styles = (_theme: Theme) =>
   createStyles({
