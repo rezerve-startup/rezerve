@@ -23,7 +23,7 @@ import { firestore } from '../../config/FirebaseConfig';
 import { StoreState } from '../../shared/store/types';
 import AppointmentHome from './appointment-tab/AppointmentHome';
 import { Redirect } from 'react-router';
-import Sidebar from '../../shared/sidebar/sidebar';
+import Sidebar from '../../shared/sidebar/Sidebar';
 
 const styles = (theme: Theme) =>
   createStyles({
