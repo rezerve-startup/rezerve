@@ -20,6 +20,7 @@ import { connect } from 'react-redux';
 import { StoreState } from '../../../shared/store/types';
 import { firestore } from '../../../config/FirebaseConfig';
 import { Redirect } from 'react-router';
+import EmployeeServicesCard from './EmployeeServicesCard';
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -153,6 +154,9 @@ class HomeTab extends React.Component<Props, State> {
                       </Typography>
                     </Paper>
                 ):(<></>)}
+              </Grid>
+              <Grid item={true} xs={true}>
+                <EmployeeServicesCard />
               </Grid>
               <Grid item={true} xs={true}>
                 <TodoList />

@@ -641,9 +641,6 @@ class EmployeeRequestedAppointments extends React.Component<Props, State> {
       .then((querySnapshot) => {
           let customerIdFound = false;
 
-          console.log(this.props.employeeId);
-          console.log(querySnapshot);
-
           querySnapshot.forEach((conversationDoc) => {
             const conversationData = conversationDoc.data();
             if (conversationData.customerId === customerId) {

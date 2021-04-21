@@ -34,7 +34,7 @@ auth.onAuthStateChanged((user) => {
       .get()
       .then((userObj) => {
         const userInfo = userObj.data();
-        
+        console.log(userInfo);
         if (userInfo && userInfo.customerId !== '') {
           firestore.collection('customers').doc(userInfo.customerId).get()
             .then((customerObj) => {
