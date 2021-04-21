@@ -22,6 +22,8 @@ export const SET_USER_EMPLOYEE_APPOINTMENTS = 'SET_USER_EMPLOYEE_APPOINTMENTS';
 export const SET_USER_EMPLOYEE_CONVERSATIONS = 'SET_USER_EMPLOYEE_CONVERSATIONS';
 export const SET_EMPLOYEE_CLIENTS = 'SET_EMPLOYEE_CLIENTS';
 export const SET_EMPLOYEE_REVIEWS = 'SET_EMPLOYEE_REVIEWS';
+export const SET_EMPLOYEE_SERVICES = 'SET_EMPLOYEE_SERVICES';
+
 export const SET_USER_CUSTOMER_INFO = 'SET_USER_CUSTOMER_INFO';
 export const SET_USER_CUSTOMER_APPOINTMENTS = 'SET_USER_CUSTOMER_APPOINTMENTS';
 export const SET_USER_CUSTOMER_CONVERSATIONS = 'SET_USER_CUSTOMER_CONVERSATIONS';
@@ -71,6 +73,11 @@ interface SetEmployeeClientsAction {
 interface SetEmployeeReviewsAction {
   type: typeof SET_EMPLOYEE_REVIEWS,
   payload: any[];
+}
+
+interface SetEmployeeServicesAction {
+  type: typeof SET_EMPLOYEE_SERVICES,
+  payload: any[]
 }
 
 interface SetUserCustomerInfoAction {
@@ -136,6 +143,7 @@ export type SystemActionTypes =
   SetUserEmployeeConversationsAction |
   SetEmployeeClientsAction |
   SetEmployeeReviewsAction |
+  SetEmployeeServicesAction |
   SetUserCustomerInfoAction |
   SetUserCustomerAppointmentsAction |
   SetUserCustomerConversationsAction |

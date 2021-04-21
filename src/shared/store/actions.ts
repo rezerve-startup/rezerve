@@ -32,6 +32,7 @@ import {
   SET_USER_CUSTOMER_CONVERSATIONS,
   AUTH_CHANGING,
   SET_BOOK_DIALOG_STATUS,
+  SET_EMPLOYEE_SERVICES,
   SignUpActionTypes,
   CREATE_NEW_BUSINESS,
   CREATE_NEW_CUSTOMER
@@ -91,6 +92,13 @@ export function setEmployeeReviews(employeeReviews: any[]): SystemActionTypes {
   return {
     type: SET_EMPLOYEE_REVIEWS,
     payload: employeeReviews
+  }
+}
+
+export function setEmployeeServices(employeeServices: any[]): SystemActionTypes {
+  return {
+    type: SET_EMPLOYEE_SERVICES,
+    payload: employeeServices
   }
 }
 

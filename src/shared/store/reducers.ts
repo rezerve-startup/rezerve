@@ -35,6 +35,7 @@ import {
   SET_USER_EMPLOYEE_CONVERSATIONS,
   AUTH_CHANGING,
   SET_BOOK_DIALOG_STATUS,
+  SET_EMPLOYEE_SERVICES,
   CREATE_NEW_CUSTOMER,
   CREATE_NEW_BUSINESS,
   SignUpActionTypes,
@@ -124,6 +125,18 @@ export function systemReducer(
           employeeInfo: {
             ...state.user.employeeInfo,
             reviews: action.payload
+          }
+        }
+      }
+    }
+    case SET_EMPLOYEE_SERVICES: {
+      return {
+        ...state,
+        user: {
+          ...state.user,
+          employeeInfo: {
+            ...state.user.employeeInfo,
+            services: action.payload
           }
         }
       }
