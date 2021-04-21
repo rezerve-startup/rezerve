@@ -8,20 +8,17 @@ import {
   Grid,
   CardContent,
   Typography,
-  InputAdornment,
   IconButton,
   WithStyles,
   Select,
-  NativeSelect,
   FormControl,
   InputLabel,
   MenuItem,
-  Button
 } from '@material-ui/core';
-import { Visibility, VisibilityOff, Close} from '@material-ui/icons';
-import { AsYouType, parsePhoneNumber } from 'libphonenumber-js';
+import { Close} from '@material-ui/icons';
+import { parsePhoneNumber } from 'libphonenumber-js';
 import { states } from './StateArray';
-import { DropzoneDialogBase, DropzoneAreaBase, FileObject } from 'material-ui-dropzone'
+import { FileObject } from 'material-ui-dropzone'
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -83,7 +80,8 @@ const DecoratedBusinessInfoForm = withStyles(styles, { withTheme: true })(
     }
 
     componentDidMount() {
-      this.validateForm();
+      const valid = this.validateForm();
+      this.props.updateValue('name', this.props.name, valid)
     }
 
     validateEmail(email: string): boolean {
@@ -256,6 +254,7 @@ const DecoratedBusinessInfoForm = withStyles(styles, { withTheme: true })(
                     onChange={this.handleChange}
                     required={true}
                     variant="outlined"
+                    inputProps={{ maxLength: 5 }}
                   />
                 </Grid>
                 <Grid item={true} xs={12}>
@@ -270,7 +269,7 @@ const DecoratedBusinessInfoForm = withStyles(styles, { withTheme: true })(
                     variant="outlined"
                   />
                 </Grid>
-                <Grid item={true} xs={12}>
+                {/* <Grid item={true} xs={12}>
                   <Button variant="contained" color="primary" onClick={this.openDialog}>
                     Add Image
                   </Button>
@@ -291,7 +290,7 @@ const DecoratedBusinessInfoForm = withStyles(styles, { withTheme: true })(
                     showPreviews={true}
                     showFileNamesInPreview={true}
                   />
-                </Grid>
+                </Grid> */}
               </Grid>
             </CardContent>
           </Card>

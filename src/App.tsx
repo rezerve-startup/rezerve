@@ -85,7 +85,7 @@ class App extends React.Component<any, SystemState> {
   }
 
   componentDidMount(): void {
-    this.loginEmployee();
+    // this.loginEmployee();
   }
 
   dispatchUpdateUser = (newUser) => {
@@ -180,7 +180,7 @@ class App extends React.Component<any, SystemState> {
                 </div>
               )
             ) : (
-              <div> </div>
+              <LandingDefault />
             )}
           </div>
           </Router>
