@@ -13,12 +13,13 @@ import {
   Typography,
   TextField,
   CardContent,
-  CardActions
+  CardActions,
+  Snackbar
 } from '@material-ui/core';
 import ArrowForwardIcon from '@material-ui/icons/ArrowForward';
 import { Close } from '@material-ui/icons';
 import { Email, Visibility, VisibilityOff } from '@material-ui/icons';
-
+import MuiAlert, { AlertProps } from '@material-ui/lab/Alert';
 import { connect } from 'react-redux';
 import { auth, firestore } from '../../config/FirebaseConfig';
 import {
@@ -30,11 +31,16 @@ import { StoreState } from '../../shared/store/types';
 import Reset from './reset';
 import { Redirect } from 'react-router';
 import firebase from 'firebase';
+import SignUpPage from '../sign-up/SignUpPage';
 
+function Alert(props: AlertProps) {
+  return <MuiAlert elevation={6} variant="filled" {...props} />;
+}
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {
+      backgroundColor: theme.palette.secondary.dark,
       minHeight: '100vh',
       flex: '1'
     },
@@ -50,8 +56,22 @@ const useStyles = makeStyles((theme: Theme) =>
         },
     },
     card: {
-        padding: '4px',
-        overflow: 'auto',
+      [theme.breakpoints.down('md')]:{
+        width: '80vw'
+      },
+      [theme.breakpoints.up('md')]:{
+        width: '70vw'
+      },
+      [theme.breakpoints.up('lg')]:{
+        width: '50vw'
+      },
+      backgroundColor: theme.palette.secondary.dark,
+      padding: '4px',
+      overflow: 'auto',
+        
+    },
+    formStyle: {
+      backgroundColor: 'white'
     },
     title: {
         fontWeight: 'bold',
@@ -80,11 +100,14 @@ function LoginDefault(props) {
   const [values, setValues] = useState({
     email: '',
     password: '',
+    message: '',
     showPassword: false,
     loading: false,
     enable: true,
     retrieved: true,
     count: 0,
+    error: false,
+    state: false
   });
 
   const handleChange = (field) => (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -115,16 +138,35 @@ function LoginDefault(props) {
           .signInWithEmailAndPassword( values.email, values.password)
           .then((userCredential) => {
             if (userCredential !== null && userCredential.user) {
-              setValues({ ...values, retrieved: true, count: 0});
+              setValues({ ...values, retrieved: true, count: 0, 
+                message: 'Login Successful ', 
+                error: false , state: true
+              });
             }
           })
           .catch(() => {
-            setValues({ ...values, retrieved: false, count: (values.count + 1)});
+            setValues({ ...values, retrieved: false, count: (values.count + 1),
+              message: 'The Email or Password entered is invalid. Please try again.', 
+              error: true , state: true
+            });
           });
         })
     setValues({ ...values, loading: true, enable: false});
       event.preventDefault();
   }
+
+  const handleSnackBarClose = (event?: React.SyntheticEvent, reason?: string) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+    if(values.error === false)
+    {
+      setOpen(false);
+    }
+    else{
+      setValues({ ...values, state: false });
+    }
+  };
 
   return (
     <div>
@@ -133,13 +175,20 @@ function LoginDefault(props) {
       </Button>
       <Dialog open={open} fullScreen={true} disableBackdropClick={true}>
         <Container className={classes.root} maxWidth={false}>
-          <IconButton color="primary" onClick={handleClose}>
-            <Close />
-          </IconButton>
+          <Grid container alignItems="center" justify="space-between">
+            <Grid item>
+              <IconButton color="primary" onClick={handleClose}>
+                <Close />
+              </IconButton>
+            </Grid>
+            <Grid hidden={values.retrieved} >
+              <SignUpPage />
+            </Grid>
+          </Grid>
           <Grid container alignItems="center" direction="column" spacing={5}>
             <Grid item>
                 <Card className={classes.card} elevation={0}>
-                    <form onSubmit={handleSubmit} autoComplete="off">
+                    <form onSubmit={handleSubmit} className={classes.formStyle} autoComplete="off">
                         <CardContent>
                             <Typography
                                 className={classes.title}
@@ -157,9 +206,9 @@ function LoginDefault(props) {
                                 align="center"
                                 hidden={values.retrieved}
                             >
-                                User account not found
+                                The Email or Password entered is invalid.
                             </Typography>
-                            <Grid container={true} spacing={1}>
+                            <Grid container={true} spacing={1} style={{ marginTop: '24px' }}>
                                 <Grid item={true} xs={12}>
                                     <TextField
                                         name="email"
@@ -219,12 +268,17 @@ function LoginDefault(props) {
                 <Typography
                   //className={classes.signUpText}
                   variant="body2"
-                  color="textSecondary"
+                  color="secondary"
                   align="center"
                   hidden={values.count < 3}
                   > 
                     <Reset/>
                 </Typography>
+                <Snackbar open={values.state} autoHideDuration={6000} onClose={handleSnackBarClose}>
+                  <Alert onClose={handleSnackBarClose} severity={values.error ? "error" : "success"}>
+                    {values.message}
+                  </Alert>
+                </Snackbar>
             </Grid>
           </Grid>
         </Container>

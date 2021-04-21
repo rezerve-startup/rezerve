@@ -422,7 +422,7 @@ const useStyles = makeStyles((theme) => ({
   },
   appBar: {
     backgroundColor: theme.palette.secondary.dark,
-    height: '7.5vh'
+    height: '10hv'
   },
   sidebar: {
     backgroundColor: theme.palette.secondary.dark,

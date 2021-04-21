@@ -24,17 +24,32 @@ import { connect } from 'react-redux';
 import { auth, firestore } from '../../config/FirebaseConfig';
 import { updateUser } from '../../shared/store/actions';
 import { StoreState } from '../../shared/store/types';
+import SignUpPage from '../sign-up/SignUpPage';
 
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {
+      backgroundColor: theme.palette.secondary.dark,
       minHeight: '100vh',
       flex: '1'
     },
     card: {
-        padding: '4px',
-        overflow: 'auto',
+      [theme.breakpoints.down('md')]:{
+        width: '80vw'
+      },
+      [theme.breakpoints.up('md')]:{
+        width: '70vw'
+      },
+      [theme.breakpoints.up('lg')]:{
+        width: '50vw'
+      },
+      backgroundColor: theme.palette.secondary.dark,
+      padding: '4px',
+      overflow: 'auto',
+    },
+    formStyle: {
+      backgroundColor: 'white'
     },
     title: {
         fontWeight: 'bold',
@@ -89,7 +104,6 @@ function Reset(){
     else{
       setValues({ ...values, state: false });
     }
-    auth.signOut();
   };
 
   const handleInstructionSubmit = (event) => {
@@ -114,13 +128,20 @@ function Reset(){
       </Button>
       <Dialog open={open} fullScreen={true} disableBackdropClick={true}>
         <Container className={classes.root} maxWidth={false}>
-          <IconButton color="primary" onClick={handleClose}>
-            <Close />
-          </IconButton>
+          <Grid container alignItems="center" justify="space-between">
+            <Grid item>
+              <IconButton color="primary" onClick={handleClose}>
+                <Close />
+              </IconButton>
+            </Grid>
+            <Grid hidden={!values.error}>
+              <SignUpPage />
+            </Grid>
+          </Grid>
           <Grid container alignItems="center" direction="column" spacing={5}>
             <Grid item>
                 <Card className={classes.card} elevation={0}>
-                    <form onSubmit={handleInstructionSubmit} autoComplete="off">
+                    <form onSubmit={handleInstructionSubmit} className={classes.formStyle} autoComplete="off">
                         <CardContent>
                             <Typography
                                 className={classes.title}
