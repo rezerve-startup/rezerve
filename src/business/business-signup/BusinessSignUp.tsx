@@ -101,6 +101,8 @@ class BusinessSignUp extends React.Component<any, State> {
       loggedIn: props.system.loggedIn,
       session: props.system.session,
       user: props.system.user,
+      authChanging: props.system.authChanging,
+      bookDialogStatus: props.system.bookDialogStatus
     };
 
     this.signInUser = this.signInUser.bind(this);
@@ -335,14 +337,13 @@ class BusinessSignUp extends React.Component<any, State> {
 
     return (
       <div className={classes.root}>
-        <Typography variant="h5" component="h5" className={classes.title}>
-          Sign Up
-        </Typography>
         <Button
           variant="contained"
+          color="primary"
           endIcon={<ArrowForward />}
           onClick={this.openDialog}
           className={classes.businessButton}
+          fullWidth={true}
         >
           Business
         </Button>

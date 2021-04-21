@@ -10,8 +10,12 @@ import {
 } from '@material-ui/core';
 import { CalendarToday, Description } from '@material-ui/icons';
 import SwipeableViews from 'react-swipeable-views';
-import EmployeeCalendarAppointments from './EmployeeCalendarAppointments';
-import EmployeeRequestedAppointments from './EmployeeRequestedAppointments';
+import CustomerCalendarAppointments from './CustomerCalendarAppointments';
+import CustomerUpcomingAppointments from './CustomerAppointments';
+import Sidebar from '../../shared/sidebar/Sidebar';
+import { StoreState } from '../../shared/store/types';
+import { Redirect } from 'react-router';
+import { connect } from 'react-redux';
 
 const useStyles = makeStyles({
   root: {
@@ -19,7 +23,13 @@ const useStyles = makeStyles({
   },
 });
 
-export default function AppointmentHome() {
+function mapStateToProps(state: StoreState) {
+  return({
+    user: state.system.user
+  })
+}
+
+const CustomerAppointmentHome = (props: any) => {
   const classes = useStyles();
   const theme = useTheme();
   const [value, setValue] = React.useState(0);
@@ -38,8 +48,13 @@ export default function AppointmentHome() {
     { label: '', icon: <CalendarToday /> },
   ];
 
+  if (props.user === undefined) {
+    return <Redirect to={'/'} />
+  }
+
   return (
     <div className={classes.root}>
+      <Sidebar />
       <Box m={1}>
         <AppBar position="relative" color="default">
           <Tabs
@@ -67,10 +82,10 @@ export default function AppointmentHome() {
           enableMouseEvents={true}
         >
           <TabPanel value={value} index={0}>
-            <EmployeeRequestedAppointments />
+            <CustomerUpcomingAppointments />
           </TabPanel>
           <TabPanel value={value} index={1}>
-            <EmployeeCalendarAppointments />
+            <CustomerCalendarAppointments />
           </TabPanel>
         </SwipeableViews>
       </Box>
@@ -106,3 +121,7 @@ function a11yProps(index: number) {
     'aria-controls': `appointment-tabpanel-${index}`,
   };
 }
+
+export default connect(mapStateToProps, null)(
+  CustomerAppointmentHome
+);

@@ -4,6 +4,7 @@ import { Review } from './Review.interface';
 
 export interface Employee {
     appointments: any[];
+    availability: any[];
     clients: Customer[];
     isOwner: boolean;
     reviews: any[];
@@ -12,4 +13,5 @@ export interface Employee {
     firstName?: string;
     id: string;
     position: string;
+    businessId: string;
 }
