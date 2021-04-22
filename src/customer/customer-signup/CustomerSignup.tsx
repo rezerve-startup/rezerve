@@ -30,6 +30,7 @@ import { auth, firestore } from '../../config/FirebaseConfig';
 import { Image, ArrowBack, ArrowForward, Close } from '@material-ui/icons';
 import { Alert } from '@material-ui/lab';
 import UserInfoForm from '../../shared/sign-up/UserInfoForm';
+import firebase from 'firebase';
 
 type State = {
   open: boolean;
@@ -168,14 +169,18 @@ class CustomerSignUp extends React.Component<any, State> {
 
   createNewCustomer = () => {
     this.setState({ ...this.state, loading: true });
+    let emailToUse = this.state.email;
+    let passwordToUse = this.state.password;
 
     auth
-      .createUserWithEmailAndPassword(this.state.email, this.state.password)
+      .createUserWithEmailAndPassword(emailToUse, passwordToUse)
       .then((res) => {
         const customerData = {
           appointments: [],
           reviews: [],
         };
+
+        console.log(res);
 
         firestore
           .collection('customers')
@@ -201,15 +206,19 @@ class CustomerSignUp extends React.Component<any, State> {
                 console.log(e);
               })
               .finally(() => {
-                this.setState({
-                  ...this.state,
-                  loading: false,
-                  snackbar: {
-                    open: true,
-                    message: 'Successfully created your account',
-                    type: "success",
-                  },
-                });
+                // this.setState({
+                //   ...this.state,
+                //   loading: false,
+                //   snackbar: {
+                //     open: true,
+                //     message: 'Successfully created your account',
+                //     type: "success",
+                //   },
+                // });
+
+                auth.signOut().then(() => {
+                  auth.signInWithEmailAndPassword(emailToUse, passwordToUse);
+                })
               });
           })
           .catch((e) => {

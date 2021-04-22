@@ -27,6 +27,8 @@ export const firestore = firebase.firestore();
 auth.onAuthStateChanged((user) => {
   store.dispatch(setAuthChanging(true));
 
+  console.log(user);
+
   if (user) {
     firestore
       .collection('users')
@@ -83,7 +85,10 @@ auth.onAuthStateChanged((user) => {
             })
           }
         }
-      );
+      )
+      .catch((err) => {
+        console.log(err);
+      })
   } else {
     store.dispatch(logoutUser());
     store.dispatch(setAuthChanging(false))

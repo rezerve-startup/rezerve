@@ -215,8 +215,11 @@ class BusinessSignUp extends React.Component<any, State> {
     let employeeId: string | undefined = '';
     const errors = this.state.errors;
 
+    const emailToUse = this.state.email;
+    const passwordToUse = this.state.password;
+
     await auth
-      .createUserWithEmailAndPassword(this.state.email, this.state.password)
+      .createUserWithEmailAndPassword(emailToUse, passwordToUse)
       .then((res) => {
         const employeeData = {
           businessId: '',
@@ -298,19 +301,102 @@ class BusinessSignUp extends React.Component<any, State> {
   }
 
   async createNewBusiness() {
+    let emailToUse = this.state.email;
+    let passwordToUse = this.state.password;
+
     let employeeId: any = ''
     if (this.state.creatingUserAccount) {
-      employeeId = 'TEMP_EMPLOYEE'
-      /* await this.createNewUser().then((res) => {
+      console.log('here');
+
+      auth
+      .createUserWithEmailAndPassword(emailToUse, passwordToUse)
+      .then((res) => {
         const uid = res
         console.log('res', res, this.state.employeeId)
+
+        const employeeData = {
+          businessId: '',
+          position: 'Stylist',
+          isOwner: true,
+          todos: [],
+          clients: [],
+          appointments: [],
+        };
+
         firestore
-          .collection('users')
-          .doc(`${uid}`)
-          .get()
-          .then((snapshot) => {
-            const userObj = snapshot.data()
-            employeeId = userObj?.employeeId
+          .collection('employees')
+          .add(employeeData)
+          .then((docRef) => {
+            const employeeId = docRef.id;
+            const newUser = {
+              employeeId: docRef.id,
+              email: this.state.email,
+              firstName: this.state.firstName,
+              lastName: this.state.lastName,
+              phone: this.state.phone,
+              customerId: '',
+            };
+
+            firestore
+              .collection('users')
+              .doc(res.user?.uid)
+              .set(newUser)
+              .then(() => {
+                console.log(`Created new user with id: ${res.user?.uid}`);
+
+                firestore
+                  .collection('users')
+                  .doc(`${uid}`)
+                  .get()
+                  .then((snapshot) => {
+                    const userObj = snapshot.data()
+
+                    const businessData = {
+                      name: this.state.name,
+                      numWorkers: 1,
+                      description: this.state.description,
+                      about: {
+                        address: this.state.address,
+                        city: this.state.city,
+                        state: this.state.state,
+                        zipcode: this.state.zipcode,
+                        daysOpen: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'],
+                        closingTime: '17:00',
+                        openingTime: '8:00',
+                      },
+                      employees: [`${employeeId}`],
+                    };
+        
+                    firestore
+                      .collection('businesses')
+                      .add(businessData)
+                      .then((docRef) => {
+                        console.log('business', docRef.id)
+                        console.log('employee', employeeId);
+                        firestore
+                          .collection('employees')
+                          .doc(employeeId)
+                          .update({
+                            businessId: docRef.id,
+                          }).then(() => {
+                            this.setState({ ...this.state, open: false });
+                            auth.signOut().then(() => {
+                              auth.signInWithEmailAndPassword(emailToUse, passwordToUse);
+                            })
+
+                          })
+                        .catch((e) => {
+                          console.log(e);
+                        });
+                    })
+                    .catch((e) => {
+                      console.log(e);
+                    });
+                })
+              })
+              .catch((e) => {
+                console.log(e);
+              });
           })
           .catch((e) => {
             console.log(e)
@@ -318,47 +404,51 @@ class BusinessSignUp extends React.Component<any, State> {
       })
       .catch((e) => {
         console.log(e)
-      }) */
+      })
     } else {
       employeeId = this.state.user?.uid
-    }
-    
-    const businessData = {
-      name: this.state.name,
-      numWorkers: 1,
-      description: this.state.description,
-      about: {
-        address: this.state.address,
-        city: this.state.city,
-        state: this.state.state,
-        zipcode: this.state.zipcode,
-        daysOpen: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'],
-        closingTime: '17:00',
-        openingTime: '8:00',
-      },
-      employees: [`${employeeId}`],
-    };
 
-    firestore
-      .collection('businesses')
-      .add(businessData)
-      .then((docRef) => {
-        firestore
-          .collection('employees')
-          .doc(employeeId)
-          .update({
-            businessId: docRef.id,
-          })
-          .then(() => {
-            this.setState({ ...this.state, open: false })
-          })
-          .catch((e) => {
-            console.log(e);
-          });
-      })
-      .catch((e) => {
-        console.log(e);
-      });
+      const businessData = {
+        name: this.state.name,
+        numWorkers: 1,
+        description: this.state.description,
+        about: {
+          address: this.state.address,
+          city: this.state.city,
+          state: this.state.state,
+          zipcode: this.state.zipcode,
+          daysOpen: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'],
+          closingTime: '17:00',
+          openingTime: '8:00',
+        },
+        employees: [`${employeeId}`],
+      };
+  
+      firestore
+        .collection('businesses')
+        .add(businessData)
+        .then((docRef) => {
+          firestore
+            .collection('employees')
+            .doc(employeeId)
+            .update({
+              businessId: docRef.id,
+            })
+            .then(() => {
+              this.setState({ ...this.state, open: false })
+
+              auth.signOut().then(() => {
+                auth.signInWithEmailAndPassword(emailToUse, passwordToUse);
+              })
+            })
+            .catch((e) => {
+              console.log(e);
+            });
+        })
+        .catch((e) => {
+          console.log(e);
+        });
+    }
   }
 
   render() {

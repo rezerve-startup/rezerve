@@ -89,7 +89,7 @@ class BusinessPerformance extends React.Component<
       })
       // Get business reviews
       .then(() => {
-        this.state.business.reviews.forEach((reviewId: any) => {
+        this.state.business.reviews?.forEach((reviewId: any) => {
           let tempBusinessReview;
 
           firestore
@@ -116,17 +116,19 @@ class BusinessPerformance extends React.Component<
     const profileViews: any[] = [];
     const timeCheck = this.getTimeCheck(this.state.tabSelected);
 
-    info.performance.forEach((data: any) => {
-      if (data.date < now && data.date > timeCheck) {
-        if (data.type === 'AbandonedCart') {
-          abandonedCarts.push(data);
-        } else if (data.type === 'CompletedCart') {
-          completedCarts.push(data);
-        } else if (data.type === 'ProfileView') {
-          profileViews.push(data);
+    if (info.performance) {
+      info.performance.forEach((data: any) => {
+        if (data.date < now && data.date > timeCheck) {
+          if (data.type === 'AbandonedCart') {
+            abandonedCarts.push(data);
+          } else if (data.type === 'CompletedCart') {
+            completedCarts.push(data);
+          } else if (data.type === 'ProfileView') {
+            profileViews.push(data);
+          }
         }
-      }
-    });
+      });
+    }
 
     const result = this.state.businessPerformance;
     result.abandonedCarts = abandonedCarts.length;
