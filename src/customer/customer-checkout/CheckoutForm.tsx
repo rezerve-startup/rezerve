@@ -54,6 +54,7 @@ export default function CheckoutForm(props) {
     );
   };
 
+  const price: number = props.service.price;
   useEffect(() => {
     // Create PaymentIntent as soon as the page loads
     window
@@ -62,7 +63,7 @@ export default function CheckoutForm(props) {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ items: [{ price: 'xl-tshirt' }] }),
+        body: JSON.stringify(price),
       })
       .then((res) => {
         return res.json();

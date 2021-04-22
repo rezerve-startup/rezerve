@@ -33,7 +33,7 @@ function getStepContent(stepIndex: number, setCustomerPaid, businessName, appoin
     case 0:
       return <ConfirmationCard businessName={businessName} appointmentDateTime={appointmentDateTime} employeeName={employeeName} service={service} />;
     case 1:
-      return <StripePaymentSetup paymentSuccess={setCustomerPaid} />;
+      return <StripePaymentSetup paymentSuccess={setCustomerPaid} price={service} />;
     case 2:
       return <BookingConfirmation businessName={businessName} appointmentDateTime={appointmentDateTime} employeeName={employeeName} service={service} />;
     default:
@@ -47,7 +47,7 @@ function StripePaymentSetup(props) {
   return (
     <div className="App">
       <Elements stripe={promise}>
-        <CheckoutForm paymentSuccess={props.paymentSuccess} price={props.service.price}/>
+        <CheckoutForm paymentSuccess={props.paymentSuccess} price={props.service}/>
       </Elements>
     </div>
   );
