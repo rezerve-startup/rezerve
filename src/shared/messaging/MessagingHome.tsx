@@ -1,5 +1,5 @@
 import { Avatar, Button, createStyles, Paper, TextField, Theme, Typography, withStyles } from '@material-ui/core';
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { connect } from 'react-redux';
 import { Redirect } from 'react-router';
 import { StoreState } from '../store/types';
@@ -49,6 +49,12 @@ function mapStateToProps(state: StoreState) {
     })
 }
 
+const ScrollToBottom = () => {
+    const elementRef: any = useRef();
+    useEffect(() => ((elementRef.current as any).scrollIntoView()));
+    return <div ref={elementRef} />;
+}
+
 class MessagingHome extends React.Component<any, any> {
     constructor(props) {
         super(props);
@@ -61,7 +67,9 @@ class MessagingHome extends React.Component<any, any> {
     }
 
     componentDidMount() {
-        this.getConversations();
+        if (this.props.user !== undefined) {
+            this.getConversations();
+        }
     }
 
     dispatchSetUserEmployeeConversations(employeeConversations: any[]) {
@@ -117,6 +125,7 @@ class MessagingHome extends React.Component<any, any> {
                                         firstName: userData.firstName,
                                         lastName: userData.lastName
                                     }
+
                                     conversationData.conversationId = conversationDoc.id;
 
                                     conversations.push(conversationData);
@@ -145,7 +154,7 @@ class MessagingHome extends React.Component<any, any> {
                 return (
                     <div>
                         {this.props.employeeConversations?.map((convo, index) => (
-                            <Paper key={index} onClick={() => this.selectConversation(convo)}>
+                            <Paper key={index} onClick={() => this.selectConversation(convo)} className={classes.outerConvoContainer}>
                                 <div className={classes.convoContainer}>
                                     <Avatar className={classes.convoAvatar} />
                                     <div>
@@ -220,6 +229,7 @@ class MessagingHome extends React.Component<any, any> {
                             )
                         }
                     })}
+                    <ScrollToBottom />
                 </div>
 
                 <div className={classes.sendMessageContainer}>
@@ -325,6 +335,9 @@ const styles = (theme: Theme) =>
         display: 'flex',
         alignItems: 'center'
     },
+    outerConvoContainer: {
+        marginTop: '1rem'
+    },
     convoAvatar: {
         marginRight: '1.5rem'
     },
@@ -376,6 +389,7 @@ const styles = (theme: Theme) =>
     messagesDisplay: {
         width: '100%',
         flex: 5,
+        overflow: 'auto'
     },
     conversationHeader: {
         width: '100%',
