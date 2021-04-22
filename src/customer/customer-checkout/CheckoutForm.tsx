@@ -54,16 +54,23 @@ export default function CheckoutForm(props) {
     );
   };
 
-  const price: number = props.service.price;
+  const sentPrice: number = props.price;
   useEffect(() => {
     // Create PaymentIntent as soon as the page loads
+    // Local testing
+    // http://localhost:4242/create-payment-intent
+
+    // Live site
+    // https://rezerve-startup-api.herokuapp.com/create-payment-intent
     window
       .fetch('https://rezerve-startup-api.herokuapp.com/create-payment-intent', {
+        // Use one of the links above for local/live
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(price),
+
+        body: JSON.stringify({ servicePrice: sentPrice }),
       })
       .then((res) => {
         return res.json();
