@@ -135,6 +135,7 @@ class BusinessPerformance extends React.Component<
     result.bookingPercentage = (completedCarts.length + abandonedCarts.length) === 0 ?
       0 :
       completedCarts.length / (completedCarts.length + abandonedCarts.length);
+    result.bookingPercentage *= 100;
     result.profileViews = profileViews.length;
 
     info.employees.forEach(employeeId => {
@@ -289,7 +290,7 @@ class BusinessPerformance extends React.Component<
                 </div>
                 <div className={classes.businessPerformanceItem}>
                   <div>Booking Percentage</div>
-                  <div>{this.state.businessPerformance.bookingPercentage}%</div>
+                  <div>{this.state.businessPerformance.bookingPercentage.toFixed(2)}%</div>
                 </div>
               </div>
             </div>
