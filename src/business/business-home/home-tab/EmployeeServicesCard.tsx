@@ -121,7 +121,7 @@ class EmployeeServicesCard extends React.Component<any, any> {
 
         if (this.state.selectedService.price !== '') {
             employeeServicesToUpdate[this.state.selectedServiceIndex].name = this.state.selectedService.name;
-            employeeServicesToUpdate[this.state.selectedServiceIndex].price = parseFloat(this.state.selectedService.price).toFixed(2);
+            employeeServicesToUpdate[this.state.selectedServiceIndex].price = parseFloat(parseFloat(this.state.selectedService.price).toFixed(2));
             employeeServicesToUpdate[this.state.selectedServiceIndex].length = this.state.selectedService.length;
         
             firestore.collection('employees').doc(`${this.props.employeeId}`).update({
@@ -139,7 +139,7 @@ class EmployeeServicesCard extends React.Component<any, any> {
         if (this.state.employeeServiceToAdd.price !== '') {
             const newServiceToAdd = {
                 name: this.state.employeeServiceToAdd.name,
-                price: parseFloat(this.state.employeeServiceToAdd.price).toFixed(2),
+                price: parseFloat(parseFloat(this.state.employeeServiceToAdd.price).toFixed(2)),
                 length: this.state.employeeServiceToAdd.length
             }
 
