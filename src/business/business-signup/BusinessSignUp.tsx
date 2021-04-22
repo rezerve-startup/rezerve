@@ -50,6 +50,7 @@ interface ComponentState {
     message: string;
     type: 'error' | 'success' | undefined;
   };
+  employeeId: string;
   email: string;
   firstName: string;
   lastName: string;
@@ -86,6 +87,7 @@ class BusinessSignUp extends React.Component<any, State> {
         message: '',
         type: undefined,
       },
+      employeeId: '',
       email: '',
       firstName: '',
       lastName: '',
@@ -208,12 +210,12 @@ class BusinessSignUp extends React.Component<any, State> {
     this.setState({ ...this.state, open: false, creatingUserAccount: false });
   };
 
-  createNewUser() {
+  async createNewUser() {
     this.setState({ ...this.state, loading: true });
     let employeeId: string | undefined = '';
     const errors = this.state.errors;
 
-    auth
+    await auth
       .createUserWithEmailAndPassword(this.state.email, this.state.password)
       .then((res) => {
         const employeeData = {
@@ -253,6 +255,12 @@ class BusinessSignUp extends React.Component<any, State> {
           .catch((e) => {
             console.log(e);
           });
+        /* console.log("Returning first function", res.user?.uid) */
+        /* const ret = new Promise((resolve, reject) => {
+          setTimeout(() => {
+            resolve(res.user?.uid)
+          }, 3000)
+        })  */
       })
       .catch((err) => {
         switch (err.code) {
@@ -287,15 +295,34 @@ class BusinessSignUp extends React.Component<any, State> {
           },
         });
       });
-
-    return employeeId;
   }
 
-  createNewBusiness() {
-    const employeeId = this.state.creatingUserAccount
-      ? this.createNewUser()
-      : this.state.user.uid;
-
+  async createNewBusiness() {
+    let employeeId: any = ''
+    if (this.state.creatingUserAccount) {
+      employeeId = 'TEMP_EMPLOYEE'
+      /* await this.createNewUser().then((res) => {
+        const uid = res
+        console.log('res', res, this.state.employeeId)
+        firestore
+          .collection('users')
+          .doc(`${uid}`)
+          .get()
+          .then((snapshot) => {
+            const userObj = snapshot.data()
+            employeeId = userObj?.employeeId
+          })
+          .catch((e) => {
+            console.log(e)
+          })
+      })
+      .catch((e) => {
+        console.log(e)
+      }) */
+    } else {
+      employeeId = this.state.user?.uid
+    }
+    
     const businessData = {
       name: this.state.name,
       numWorkers: 1,
@@ -321,6 +348,9 @@ class BusinessSignUp extends React.Component<any, State> {
           .doc(employeeId)
           .update({
             businessId: docRef.id,
+          })
+          .then(() => {
+            this.setState({ ...this.state, open: false })
           })
           .catch((e) => {
             console.log(e);
@@ -501,13 +531,14 @@ const styles = (theme: Theme) =>
     },
     businessButton: {
       backgroundColor: theme.palette.secondary.dark,
-      color: theme.palette.primary.light,
-      borderRadius: '0',
+      color: 'white',
+      borderRadius: '30px',
+      height: '50px',
       boxShadow: 'none',
-      borderBottom: '1px solid white',
+      marginTop: '10px',
       '&:hover': {
         backgroundColor: theme.palette.secondary.dark,
-        color: theme.palette.primary.dark,
+        color: theme.palette.primary.light,
         boxShadow: 'none',
       },
       paddingTop: theme.spacing(2),
