@@ -62,11 +62,11 @@ class CustomerSignUp extends React.Component<any, State> {
       open: false,
       loading: false,
       validForm: false,
-      email: 'testuser@gmail.com',
-      firstName: 'Test',
-      lastName: 'User',
-      phone: '501-888-8888',
-      password: 'password',
+      email: '',
+      firstName: '',
+      lastName: '',
+      phone: '',
+      password: '',
       customerId: '',
       isEmployee: false,
       businesses: [],
@@ -192,9 +192,10 @@ class CustomerSignUp extends React.Component<any, State> {
 
             firestore
               .collection('users')
-              .add(newUser)
+              .doc(res.user?.uid)
+              .set(newUser)
               .then(() => {
-                console.log(`Created new user with id: ${docRef.id}`);
+                console.log(`Created new user with id: ${res.user?.uid}`);
               })
               .catch((e) => {
                 console.log(e);

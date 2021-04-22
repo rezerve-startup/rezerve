@@ -14,10 +14,9 @@ import {
   TextField,
   Tooltip,
 } from '@material-ui/core';
-import { Email, Visibility, VisibilityOff } from '@material-ui/icons';
+import { Visibility, VisibilityOff } from '@material-ui/icons';
 import React from 'react';
 import { connect } from 'react-redux';
-import { auth, firestore } from '../../config/FirebaseConfig';
 import { updateUser } from '../../shared/store/actions';
 import { StoreState } from '../../shared/store/types';
 
@@ -48,7 +47,7 @@ class BusinessRegisterLogin extends React.Component<any, State> {
 
     this.state = {
       loading: false,
-      validForm: false,
+      validForm: true,
       email: '',
       password: '',
       showPassword: false,
@@ -101,34 +100,8 @@ class BusinessRegisterLogin extends React.Component<any, State> {
     this.setState({ ...this.state, errors, [name]: value });
   };
 
-  dispatchUpdateUser = (newUser) => {
-    this.props.updateUser(newUser);
-  };
-
-  signInUser = () => {
-    auth
-      .signInWithEmailAndPassword(this.state.email, this.state.password)
-      .then((userCreds) => {
-        if (userCreds !== null && userCreds.user) {
-          const user = userCreds.user;
-
-          firestore
-            .collection('users')
-            .doc(`${user.uid}`)
-            .get()
-            .then((userObj) => {
-              const userInfo = userObj.data();
-              this.dispatchUpdateUser(userInfo);
-            });
-        }
-      })
-      .catch((e) => {
-        console.log(e)
-      })
-  };
-
   handleSignIn = () => {
-    this.signInUser();
+    this.props.handleSignIn(this.state.email, this.state.password);
   };
 
   toggleShowPassword = () => {
@@ -222,10 +195,10 @@ class BusinessRegisterLogin extends React.Component<any, State> {
                     className={classes.button}
                     color="primary"
                     variant="contained"
-                    type="submit"
                     fullWidth={true}
                     loading={this.state.loading}
                     disabled={!this.state.validForm}
+                    onClick={this.handleSignIn}
                   >
                     Log In
                   </AdornedButton>

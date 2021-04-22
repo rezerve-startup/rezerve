@@ -8,18 +8,17 @@ import {
   Grid,
   CardContent,
   Typography,
-  InputAdornment,
   IconButton,
   WithStyles,
   Select,
-  NativeSelect,
   FormControl,
   InputLabel,
   MenuItem,
 } from '@material-ui/core';
-import { Visibility, VisibilityOff } from '@material-ui/icons';
-import { AsYouType, parsePhoneNumber } from 'libphonenumber-js';
+import { Close} from '@material-ui/icons';
+import { parsePhoneNumber } from 'libphonenumber-js';
 import { states } from './StateArray';
+import { FileObject } from 'material-ui-dropzone'
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -28,6 +27,7 @@ const styles = (theme: Theme) =>
     },
     card: {
       padding: '4px',
+      height: '150vh',
       overflow: 'auto',
     },
     title: {
@@ -52,6 +52,8 @@ interface NonStyleProps {
 
 interface RootState {
   errors: Errors;
+  imageDialog: boolean;
+  coverImageFiles: FileObject[];
   snackbar: {
     open: boolean;
     message: string;
@@ -67,6 +69,8 @@ const DecoratedBusinessInfoForm = withStyles(styles, { withTheme: true })(
       super(props);
       this.state = {
         errors: {},
+        imageDialog: false,
+        coverImageFiles: [],
         snackbar: {
           open: false,
           message: '',
@@ -76,7 +80,8 @@ const DecoratedBusinessInfoForm = withStyles(styles, { withTheme: true })(
     }
 
     componentDidMount() {
-      this.validateForm();
+      const valid = this.validateForm();
+      this.props.updateValue('name', this.props.name, valid)
     }
 
     validateEmail(email: string): boolean {
@@ -141,6 +146,18 @@ const DecoratedBusinessInfoForm = withStyles(styles, { withTheme: true })(
         this.props.updateValue(name, value as string, valid);
       }
     };
+
+    openDialog = () => {
+      this.setState({ ...this.state, imageDialog: true })
+    }
+
+    closeDialog = () => {
+      this.setState({ ...this.state, imageDialog: false })
+    }
+
+    handleImageUpload = (file: FileObject[]) => {
+      console.log(file)
+    }
 
     render() {
       const { classes } = this.props;
@@ -237,6 +254,7 @@ const DecoratedBusinessInfoForm = withStyles(styles, { withTheme: true })(
                     onChange={this.handleChange}
                     required={true}
                     variant="outlined"
+                    inputProps={{ maxLength: 5 }}
                   />
                 </Grid>
                 <Grid item={true} xs={12}>
@@ -251,9 +269,28 @@ const DecoratedBusinessInfoForm = withStyles(styles, { withTheme: true })(
                     variant="outlined"
                   />
                 </Grid>
-                <Grid item={true} xs={12}>
-                  Link to Photo
-                </Grid>
+                {/* <Grid item={true} xs={12}>
+                  <Button variant="contained" color="primary" onClick={this.openDialog}>
+                    Add Image
+                  </Button>
+
+                  <DropzoneDialogBase
+                    dialogTitle={dialogTitle({
+                      toggleDialog: this.closeDialog
+                    })}
+                    acceptedFiles={['image/*']}
+                    fileObjects={this.state.coverImageFiles}
+                    cancelButtonText={"cancel"}
+                    submitButtonText={"submit"}
+                    maxFileSize={5000000}
+                    open={this.state.imageDialog}
+                    onAdd={this.handleImageUpload}
+                    onClose={this.closeDialog}
+                    //onSave={this.handleImageUpload}
+                    showPreviews={true}
+                    showFileNamesInPreview={true}
+                  />
+                </Grid> */}
               </Grid>
             </CardContent>
           </Card>
@@ -261,6 +298,17 @@ const DecoratedBusinessInfoForm = withStyles(styles, { withTheme: true })(
       );
     }
   },
+);
+
+const dialogTitle = (props: { toggleDialog: () => void; }) => (
+  <>
+    <span>Upload file</span>
+    <IconButton
+      style={{right: '12px', top: '8px', position: 'absolute'}}
+      onClick={props.toggleDialog}>
+      <Close />
+    </IconButton>
+  </>
 );
 
 export default DecoratedBusinessInfoForm;
