@@ -220,6 +220,9 @@ class EmployeeServicesCard extends React.Component<any, any> {
                         </div>
                     </div>
                 <Divider />
+                    {this.props.employeeServices.length === 0 && (
+                        <Typography className={classes.noEmployeeServices}>No Existing Services</Typography>
+                    )}
                     {this.props.employeeServices.map((employeeService: any, index: number) => {
                         return (
                             <div className={classes.employeeServiceContainer}>
@@ -383,6 +386,9 @@ const styles = (theme: Theme) =>
     },
     addServiceButtonContainer: {
         padding: '0.25rem'
+    },
+    noEmployeeServices: {
+        fontStyle: 'italic'
     }
   });
 
