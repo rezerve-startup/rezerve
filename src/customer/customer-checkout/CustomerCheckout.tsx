@@ -22,7 +22,7 @@ import CheckoutForm from './CheckoutForm';
 import './CustomerCheckout.css';
 import moment, { Moment } from 'moment';
 
-const promise = loadStripe(`${process.env.REACT_APP_STRIPE_KEY}`);
+const promise = loadStripe(`pk_test_TYooMQauvdEDq54NiTphI7jx`);
 
 function getSteps() {
   return ['Review Booking', 'Payment Information', 'Confirm Booking'];
