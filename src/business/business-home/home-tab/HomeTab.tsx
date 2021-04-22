@@ -55,7 +55,9 @@ function mapStateToProps(state: StoreState) {
   if (allAppointments) {
     allAppointments.forEach((appt) => {
       if (appt.datetime.toDate().valueOf() > dateNow) {
-        upcomingAppts.push(appt);
+        if (appt.status !== 'cancelled') {
+          upcomingAppts.push(appt);
+        }
       }
     })
   }
@@ -158,9 +160,9 @@ class HomeTab extends React.Component<Props, State> {
               <Grid item={true} xs={true}>
                 <EmployeeServicesCard />
               </Grid>
-              <Grid item={true} xs={true}>
+              {/* <Grid item={true} xs={true}>
                 <TodoList />
-              </Grid>
+              </Grid> */}
             </Grid>
           </Grid>
         </Grid>

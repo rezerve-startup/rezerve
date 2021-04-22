@@ -162,9 +162,7 @@ class CustomerUpcomingAppointments extends React.Component<Props, State> {
       });
   }
 
-  sendMessageToEmployee() {
-    const employeeId = this.state.employeeId;
-
+  sendMessageToEmployee(messageToSend: string, employeeId: string) {
     firestore.collection('messages').where('customerId', '==', `${this.props.customerId}`).get()
       .then((querySnapshot) => {
           let employeeIdFound = false;
@@ -178,7 +176,7 @@ class CustomerUpcomingAppointments extends React.Component<Props, State> {
               const messageToAdd = {
                 senderId: this.props.customerId,
                 datetime: firebase.firestore.Timestamp.fromDate(new Date(Date.now())),
-                message: this.state.messageToEmployee
+                message: messageToSend
               }
 
               messagesToUpdate.push(messageToAdd);
@@ -195,7 +193,7 @@ class CustomerUpcomingAppointments extends React.Component<Props, State> {
             const messagesToAdd = [{
               senderId: this.props.customerId,
               datetime: currentDatetime,
-              message: this.state.messageToEmployee
+              message: messageToSend
             }];
 
             const documentToAdd = {
@@ -243,6 +241,10 @@ class CustomerUpcomingAppointments extends React.Component<Props, State> {
       status: appointmentToUpdate.status
     }).then(() => {
       this.dispatchUpdateCustomerAppointmentStatus(appointmentToUpdate);
+
+      if (appointmentToUpdate.status === 'cancelled') {
+        this.sendMessageToEmployee(`Appointment on ${appointmentToUpdate.formattedDate} from ${appointmentToUpdate.startTime} - ${appointmentToUpdate.endTime} has been cancelled.`, appointmentToUpdate.employeeId);
+      }
 
       this.setState({
         cancelAppointmentStatusDialogOpen: false,
@@ -524,7 +526,7 @@ class CustomerUpcomingAppointments extends React.Component<Props, State> {
             <TextField value={this.state.messageToEmployee} onChange={(e) => this.handleOnChangeEmployeeMessage(e)} />
           </DialogContent>
           <DialogActions>
-            <Button onClick={() => this.sendMessageToEmployee()}>Send</Button>
+            <Button onClick={() => this.sendMessageToEmployee(this.state.messageToEmployee, this.state.employeeId)}>Send</Button>
             <Button onClick={() => this.closeMessageDialog()}>Cancel</Button>
           </DialogActions>
         </Dialog>

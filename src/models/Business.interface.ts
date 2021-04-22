@@ -18,11 +18,12 @@ export interface Business {
     employees: any[];
     name: string;
     numWorkers: number;
-    performance: {
-        abandonedCarts: number;
-        bookingPercentage: number;
-        profileViews: number;
-        rating: number;
-    };
+    performance: Performance[];
+    overallRating: number;
     reviews: Review[];
+}
+
+export interface Performance {
+    date: firebase.firestore.Timestamp;
+    type: string;
 }
