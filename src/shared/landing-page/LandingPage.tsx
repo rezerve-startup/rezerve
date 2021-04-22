@@ -44,6 +44,7 @@ const useStyles = makeStyles((theme: Theme) =>
     container: {
       backgroundColor: theme.palette.secondary.dark,
       color: theme.palette.secondary.light,
+      height: '10hv'
     },
     navItem: {
       backgroundColor: 'white',

@@ -9,6 +9,9 @@ import {
   Dialog,
   Fab,
   IconButton,
+  Typography,
+  Card,
+  CardContent,
 } from '@material-ui/core';
 import ArrowForwardIcon from '@material-ui/icons/ArrowForward';
 import { Close } from '@material-ui/icons';
@@ -19,7 +22,6 @@ import CustomerSignUp from '../../customer/customer-signup/CustomerSignup';
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {
-      backgroundColor: theme.palette.secondary.dark,
       minHeight: '100vh',
       color: theme.palette.secondary.light,
       paddingTop: 15,
@@ -27,9 +29,8 @@ const useStyles = makeStyles((theme: Theme) =>
     button: {
       backgroundColor: theme.palette.secondary.dark,
       color: theme.palette.primary.light,
-      borderRadius: '0',
+      borderRadius: '30px',
       boxShadow: 'none',
-      borderBottom: '1px solid white',
       '&:hover': {
         backgroundColor: theme.palette.secondary.dark,
         color: theme.palette.primary.dark,
@@ -39,7 +40,25 @@ const useStyles = makeStyles((theme: Theme) =>
     signUpButton: {
       borderRadius: '30px',
       marginRight: '5px'
-    }
+    },
+    card: {
+      [theme.breakpoints.down('md')]:{
+        width: '80vw'
+      },
+      [theme.breakpoints.up('md')]:{
+        width: '70vw'
+      },
+      [theme.breakpoints.up('lg')]:{
+        width: '50vw'
+      },
+      padding: '4px',
+      overflow: 'auto',
+      borderRadius: '30px',
+      border: '1px solid black',
+    },
+    title: {
+      fontWeight: 'bold',
+    },
   }),
 );
 
@@ -67,10 +86,26 @@ function SignUpPage() {
           </IconButton>
           <Grid container alignItems="center" direction="column" spacing={5}>
             <Grid item>
-              <CustomerSignUp />
-            </Grid>
-            <Grid item>
-              <BusinessSignUp />
+              <Card className={classes.card} elevation={0}>
+                <CardContent>
+                  <Typography 
+                  variant="h4" 
+                  component="h4" 
+                  align="center"
+                  className={classes.title
+                  }>
+                    Sign Up
+                  </Typography>
+                  <Grid container={true} spacing={1} style={{ marginTop: '24px' }} direction="column">
+                    <Grid item>
+                      <CustomerSignUp />
+                    </Grid>
+                    <Grid item>
+                      <BusinessSignUp />
+                    </Grid>
+                  </Grid>
+                </CardContent>
+              </Card>
             </Grid>
           </Grid>
         </Container>

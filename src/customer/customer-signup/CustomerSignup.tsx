@@ -250,16 +250,15 @@ class CustomerSignUp extends React.Component<any, State> {
 
     return (
       <div className={classes.root}>
-        <Typography variant="h5" component="h5" className={classes.title}>
-          Sign Up
-        </Typography>
         <Button
           variant="contained"
+          color="primary"
           endIcon={<ArrowForward />}
           onClick={this.openDialog}
           className={classes.customerButton}
+          fullWidth={true}
         >
-          Customer
+          User
         </Button>
         <Dialog
           open={this.state.open}
@@ -380,6 +379,17 @@ const styles = (theme: Theme) =>
     },
     customerButton: {
       backgroundColor: theme.palette.secondary.dark,
+      color: 'white',
+      borderRadius: '30px',
+      height: '50px',
+      boxShadow: 'none',
+      marginTop: '10px',
+      '&:hover': {
+        backgroundColor: theme.palette.secondary.dark,
+        color: theme.palette.primary.light,
+        boxShadow: 'none',
+      }
+      /*backgroundColor: theme.palette.secondary.dark,
       color: theme.palette.primary.light,
       borderRadius: '0',
       boxShadow: 'none',
@@ -390,6 +400,7 @@ const styles = (theme: Theme) =>
         boxShadow: 'none',
       },
       paddingTop: theme.spacing(2),
+      */
     },
     businessSection: {
       paddingTop: theme.spacing(4),

@@ -236,14 +236,13 @@ class BusinessSignUp extends React.Component<any, State> {
 
     return (
       <div className={classes.root}>
-        <Typography variant="h5" component="h5" className={classes.title}>
-          Sign Up
-        </Typography>
         <Button
           variant="contained"
+          color="primary"
           endIcon={<ArrowForward />}
           onClick={this.openDialog}
           className={classes.businessButton}
+          fullWidth={true}
         >
           Business
         </Button>
@@ -330,13 +329,25 @@ const styles = (theme: Theme) => createStyles({
   },
   card: {
     padding: '4px',
-    overflow: 'auto'
+    overflow: 'auto',
   },
   title: {
     textAlign: 'center',
     fontSize: 24
   },
   businessButton: {
+    backgroundColor: theme.palette.secondary.dark,
+      color: 'white',
+      borderRadius: '30px',
+      boxShadow: 'none',
+      height: '50px',
+      marginTop: '10px',
+      '&:hover': {
+        backgroundColor: theme.palette.secondary.dark,
+        color: theme.palette.primary.light,
+        boxShadow: 'none',
+      }
+    /*
     backgroundColor: theme.palette.secondary.dark,
     color: theme.palette.primary.light,
     borderRadius: '0',
@@ -347,7 +358,7 @@ const styles = (theme: Theme) => createStyles({
       color: theme.palette.primary.dark,
       boxShadow: 'none',
     },
-    paddingTop: theme.spacing(2),
+    paddingTop: theme.spacing(2),*/
   },
 });
 
