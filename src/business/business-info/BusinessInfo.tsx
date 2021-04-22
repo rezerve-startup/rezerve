@@ -117,25 +117,27 @@ class BusinessInfo extends React.Component<any, BusinessInfoState> {
   }
 
   checkCustomer() {
-    firestore.collection('customers')
-      .doc(this.state.addReview.customerId)
-      .get()
-      .then((value) => {
-        const appointments = value.data()?.appointments;
-        appointments.forEach(id => {
-          firestore.collection('appointments')
-            .doc(id)
-            .get()
-            .then(value => {
-              const appointment = value.data();
-              if (appointment?.status === 'completed') {
-                this.setState({
-                  isAddReviewDisabled: false
-                });
-              }
-            });
+    if (this.props.customerId !== undefined) {
+      firestore.collection('customers')
+        .doc(this.state.addReview.customerId)
+        .get()
+        .then((value) => {
+          const appointments = value.data()?.appointments;
+          appointments.forEach(id => {
+            firestore.collection('appointments')
+              .doc(id)
+              .get()
+              .then(value => {
+                const appointment = value.data();
+                if (appointment?.status === 'completed') {
+                  this.setState({
+                    isAddReviewDisabled: false
+                  });
+                }
+              });
+          });
         });
-      });
+    }
   }
 
   addProfileView() {
@@ -547,7 +549,7 @@ class BusinessInfo extends React.Component<any, BusinessInfoState> {
               <Button disabled={this.state.isAddReviewDisabled} variant="contained" color="primary" onClick={() => this.handleAddReviewOpen()} className={classes.addReview}>Add Review</Button>
               {this.state.isAddReviewDisabled &&
                 <div className={classes.addReviewDisabled}>
-                  * You must have a completed appointment with this business!
+                  { this.props.customerId === undefined ? '* You must be logged in to leave a review' : '* You must have a completed appointment with this business!'}
                 </div>
               }
 
