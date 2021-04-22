@@ -623,6 +623,8 @@ class EmployeeRequestedAppointments extends React.Component<Props, State> {
 
       if (appointmentToUpdate.status === 'cancelled') {
         this.sendMessageToCustomer(`We're sorry, but your appointment on ${appointmentToUpdate.formattedDate} from ${appointmentToUpdate.startTime} - ${appointmentToUpdate.endTime} has been cancelled.`, appointmentToUpdate.customerId);
+      } else if (appointmentToUpdate.status === 'accepted') {
+        this.sendMessageToCustomer(`Your appointment on ${appointmentToUpdate.formattedDate} from ${appointmentToUpdate.startTime} - ${appointmentToUpdate.endTime} has been accepted.`, appointmentToUpdate.customerId);
       }
 
       this.setState({
