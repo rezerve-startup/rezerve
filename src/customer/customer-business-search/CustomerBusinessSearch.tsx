@@ -247,7 +247,7 @@ class CustomerBusinessSearch extends React.Component<
                           <div className={classes.previewBottomRating}>
                             <Rating
                               size="small"
-                              value={business.businessInfo.performance.rating}
+                              value={business.businessInfo.overallRating}
                               precision={0.5}
                               readOnly={true}
                               classes={{
