@@ -22,7 +22,7 @@ import {
   ListSubheader,
   Fab,
   Dialog,
-  Snackbar
+  Snackbar,
 } from '@material-ui/core';
 import { createNewCustomer } from '../../shared/store/actions';
 import { connect } from 'react-redux';
@@ -31,6 +31,13 @@ import { Image, ArrowBack, ArrowForward, Close } from '@material-ui/icons';
 import { Alert } from '@material-ui/lab';
 import UserInfoForm from '../../shared/sign-up/UserInfoForm';
 import firebase from 'firebase';
+
+interface Business {
+  id: string;
+  name: string;
+  location: string;
+  image: string;
+}
 
 type State = {
   open: boolean;
@@ -43,12 +50,12 @@ type State = {
   validForm: boolean;
   customerId: string;
   isEmployee: boolean;
-  businesses: any[];
-  selectedBusiness: {} | undefined;
+  businesses: Business[];
+  selectedBusiness: Business | undefined;
   snackbar: {
     open: boolean;
     message: string;
-    type: "error" | "success" | "info" | "warning" | undefined;
+    type: 'error' | 'success' | 'info' | 'warning' | undefined;
   };
 };
 
@@ -86,13 +93,12 @@ class CustomerSignUp extends React.Component<any, State> {
     firestore.collection('businesses').onSnapshot((snapshot) => {
       snapshot.docs.forEach((doc) => {
         const business = doc.data();
-        for (let index = 0; index < 10; index++) {
-          businesses.push({
-            name: business.name,
-            location: `${business.about.city}, ${business.about.state}`,
-            image: business.coverImage,
-          });
-        }
+        businesses.push({
+          id: doc.id,
+          name: business.name,
+          location: `${business.about.city}, ${business.about.state}`,
+          image: business.coverImage,
+        });
       });
     });
 
@@ -150,7 +156,7 @@ class CustomerSignUp extends React.Component<any, State> {
   openSnackbar = (event: React.MouseEvent<HTMLButtonElement>) => {
     this.setState({
       ...this.state,
-      snackbar: { open: true, message: 'Testing 1 2 3', type: "success" },
+      snackbar: { open: true, message: 'Testing 1 2 3', type: 'success' },
     });
   };
 
@@ -169,37 +175,77 @@ class CustomerSignUp extends React.Component<any, State> {
 
   createNewCustomer = () => {
     this.setState({ ...this.state, loading: true });
-    let emailToUse = this.state.email;
-    let passwordToUse = this.state.password;
+    const emailToUse = this.state.email;
+    const passwordToUse = this.state.password;
 
     auth
       .createUserWithEmailAndPassword(emailToUse, passwordToUse)
       .then((res) => {
-        const customerData = {
-          appointments: [],
-          reviews: [],
-        };
-
-        console.log(res);
+        const collection = this.state.isEmployee ? 'employees' : 'customers';
+        const newDocData = this.state.isEmployee
+          ? {
+              position: 'Stylist',
+              isOwner: false,
+              todos: [],
+              clients: [],
+              appointments: [],
+              availability: [
+                { day: 'Monday', start: '08:00', end: '17:00' },
+                { day: 'Tuesday', start: '08:00', end: '17:00' },
+                { day: 'Wednesday', start: '08:00', end: '17:00' },
+                { day: 'Thursday', start: '08:00', end: '17:00' },
+                { day: 'Friday', start: '08:00', end: '17:00' },
+              ]
+            }
+          : {
+              appointments: [],
+              reviews: [],
+            };
 
         firestore
-          .collection('customers')
-          .add(customerData)
+          .collection(collection)
+          .add(newDocData)
           .then((docRef) => {
             const newUser = {
-              customerId: docRef.id,
               email: this.state.email,
               firstName: this.state.firstName,
               lastName: this.state.lastName,
               phone: this.state.phone,
               employeeId: '',
+              customerId: '',
             };
+
+            if (this.state.isEmployee) {
+              newUser.employeeId = docRef.id;
+            } else {
+              newUser.customerId = docRef.id;
+            }
 
             firestore
               .collection('users')
               .doc(res.user?.uid)
               .set(newUser)
               .then(() => {
+                if (this.state.isEmployee) {
+                  const businessRef = firestore
+                    .collection('businesses')
+                    .doc(this.state.selectedBusiness?.id);
+
+                  firestore.runTransaction((transaction) => {
+                    return transaction.get(businessRef).then((businessDocRef) => {
+                      const employeeReqs: any[] = businessDocRef.data()?.employeeRequests
+                      
+                      employeeReqs.push(`${docRef.id}`)
+                      transaction.update(businessRef, { employeeRequests: employeeReqs })
+                    })
+                  })
+                  .then(() => {
+                    console.log("Added employee to business request queue")
+                  })
+                  .catch((e) => {
+                    console.log(e)
+                  })
+                }
                 console.log(`Created new user with id: ${res.user?.uid}`);
               })
               .catch((e) => {
@@ -218,7 +264,7 @@ class CustomerSignUp extends React.Component<any, State> {
 
                 auth.signOut().then(() => {
                   auth.signInWithEmailAndPassword(emailToUse, passwordToUse);
-                })
+                });
               });
           })
           .catch((e) => {
@@ -226,7 +272,7 @@ class CustomerSignUp extends React.Component<any, State> {
           });
       })
       .catch((err) => {
-        let message = ''
+        let message = '';
         switch (err.code) {
           case 'auth/email-already-in-use':
             message = 'This email is already in use.';
@@ -248,7 +294,7 @@ class CustomerSignUp extends React.Component<any, State> {
           snackbar: {
             open: true,
             message,
-            type: 'error'
+            type: 'error',
           },
         });
       });
@@ -360,8 +406,13 @@ class CustomerSignUp extends React.Component<any, State> {
               </React.Fragment>
             }
           >
-            <Alert onClose={this.handleCloseSnackbar} severity={snackbar.type} variant="filled" elevation={6}>
-              { snackbar.message }
+            <Alert
+              onClose={this.handleCloseSnackbar}
+              severity={snackbar.type}
+              variant="filled"
+              elevation={6}
+            >
+              {snackbar.message}
             </Alert>
           </Snackbar>
         </Dialog>
@@ -398,7 +449,7 @@ const styles = (theme: Theme) =>
         backgroundColor: theme.palette.secondary.dark,
         color: theme.palette.primary.light,
         boxShadow: 'none',
-      }
+      },
       /*backgroundColor: theme.palette.secondary.dark,
       color: theme.palette.primary.light,
       borderRadius: '0',
