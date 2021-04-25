@@ -37,6 +37,7 @@ import {
   Search,
   Home,
   Close,
+  Business
 } from '@material-ui/icons';
 import { connect } from 'react-redux';
 import { StoreState } from '../store/types';
@@ -58,9 +59,15 @@ const sidebarDataWithoutLogout = [
     cName: 'nav-text',
   },
   {
+    title: 'Employee Home',
+    path: '/employee-home',
+    icon: <Home />,
+    cName: 'nav-text'
+  },
+  {
     title: 'Business Home',
     path: '/business-home',
-    icon: <Home />,
+    icon: <Business />,
     cName: 'nav-text',
   },
   {
@@ -229,7 +236,7 @@ const Sidebar = (props: any ) => {
             <Divider className={classes.divider} />
             {sidebarDataWithoutLogout.map((obj, i) => {
                 if (!(props.user.customerId === '')) {
-                  if (!(obj.title === 'Business Home')) {
+                  if (!(obj.title === 'Business Home' || obj.title === 'Employee Home')) {
                     return (
                         <ListItem button={true} key={i} component={Link} to={obj.path}>
                             <ListItemIcon className={classes.listIcon}>

@@ -14,23 +14,24 @@ import {
   MobileStepper,
 } from '@material-ui/core';
 import { connect } from 'react-redux';
-import { auth, firestore } from '../../config/FirebaseConfig';
+import { auth, firestore, unsubscribe } from '../../config/FirebaseConfig';
 import {
   ArrowBack,
   ArrowForward,
   KeyboardArrowLeft,
   KeyboardArrowRight,
 } from '@material-ui/icons';
-import { updateUser } from '../../shared/store/actions';
+import Geocode from 'react-geocode';
+import firebase from 'firebase';
+import { updateUser, createNewBusiness } from '../../shared/store/actions';
 import { StoreState, SystemState } from '../../shared/store/types';
 import BusinessRegisterLogin from './BusinessRegisterLogin';
 import UserInfoForm from '../../shared/sign-up/UserInfoForm';
 import BusinessInfoFrom from './BusinessInfoForm';
 
-interface Errors {
-  email: string;
-  password: string;
-}
+Geocode.setApiKey(process.env.REACT_APP_GOOGLE_MAPS_API_KEY);
+Geocode.setLanguage('en');
+Geocode.setLocationType('ROOFTOP');
 
 function mapStateToProps(state: StoreState) {
   return {
@@ -44,12 +45,6 @@ interface ComponentState {
   activeStep: number;
   validForm: boolean;
   creatingUserAccount: boolean;
-  errors: Errors;
-  snackbar: {
-    open: boolean;
-    message: string;
-    type: 'error' | 'success' | undefined;
-  };
   employeeId: string;
   email: string;
   firstName: string;
@@ -69,6 +64,7 @@ type State = ComponentState & SystemState;
 
 class BusinessSignUp extends React.Component<any, State> {
   _isMounted = false;
+  unsubscribe: any = undefined;
 
   constructor(props: any) {
     super(props);
@@ -78,15 +74,6 @@ class BusinessSignUp extends React.Component<any, State> {
       activeStep: 0,
       validForm: false,
       creatingUserAccount: false,
-      errors: {
-        email: '',
-        password: '',
-      },
-      snackbar: {
-        open: false,
-        message: '',
-        type: undefined,
-      },
       employeeId: '',
       email: '',
       firstName: '',
@@ -104,17 +91,17 @@ class BusinessSignUp extends React.Component<any, State> {
       session: props.system.session,
       user: props.system.user,
       authChanging: props.system.authChanging,
-      bookDialogStatus: props.system.bookDialogStatus
+      bookDialogStatus: props.system.bookDialogStatus,
     };
 
     this.signInUser = this.signInUser.bind(this);
     this.dispatchUpdateUser = this.dispatchUpdateUser.bind(this);
+    this.createNewBusiness = this.createNewBusiness.bind(this);
   }
 
   componentDidMount() {
     this._isMounted = true;
-
-    auth.onAuthStateChanged((user) => {
+    this.unsubscribe = auth.onAuthStateChanged((user) => {
       if (user) {
         if (this._isMounted) {
           firestore
@@ -130,18 +117,26 @@ class BusinessSignUp extends React.Component<any, State> {
                 email: userObj?.email,
                 firstName: userObj?.firstName,
                 lastName: userObj?.lastName,
-                phone: userObj?.phone
+                phone: userObj?.phone,
               });
             });
         }
       } else {
-        this.setState({ ...this.state, loggedIn: false, activeStep: 0 });
+        if (this._isMounted) {
+          this.setState({
+            ...this.state,
+            loggedIn: false,
+            activeStep: 0,
+          });
+        }
       }
     });
   }
 
   componentWillUnmount() {
-    this._isMounted = false
+    this._isMounted = false;
+    unsubscribe();
+    this.unsubscribe();
   }
 
   dispatchUpdateUser(newUser) {
@@ -157,13 +152,23 @@ class BusinessSignUp extends React.Component<any, State> {
 
           firestore
             .collection('users')
-            .doc(`${user.uid}`)
+            .doc(user.uid)
             .get()
-            .then((userObj) => {
-              const userInfo = userObj.data();
-              this.dispatchUpdateUser(userInfo);
-              // this.setState({ ...this.state, activeStep: 1, loggedIn: true })
+            .then((snapshot) => {
+              const userObj = snapshot.data();
+              this.setState({
+                ...this.state,
+                loggedIn: true,
+                activeStep: 0,
+                email: userObj?.email,
+                firstName: userObj?.firstName,
+                lastName: userObj?.lastName,
+                phone: userObj?.phone,
+                password,
+              });
             });
+        } else {
+          this.setState({ ...this.state, loggedIn: false, activeStep: 0 });
         }
       })
       .catch((e) => {
@@ -196,12 +201,11 @@ class BusinessSignUp extends React.Component<any, State> {
   };
 
   handleSignUp = () => {
-    console.log('Signing up...');
     this.setState({ ...this.state, creatingUserAccount: true });
-    // this.openDialog()
   };
 
   openDialog = () => {
+    unsubscribe();
     this.setState({ ...this.state, open: true });
   };
 
@@ -210,181 +214,101 @@ class BusinessSignUp extends React.Component<any, State> {
     this.setState({ ...this.state, open: false, creatingUserAccount: false });
   };
 
-  async createNewUser() {
-    this.setState({ ...this.state, loading: true });
-    let employeeId: string | undefined = '';
-    const errors = this.state.errors;
-
-    const emailToUse = this.state.email;
-    const passwordToUse = this.state.password;
-
-    await auth
-      .createUserWithEmailAndPassword(emailToUse, passwordToUse)
-      .then((res) => {
-        const employeeData = {
-          businessId: '',
-          position: 'Stylist',
-          isOwner: true,
-          todos: [],
-          clients: [],
-          appointments: [],
-        };
-
-        firestore
-          .collection('employees')
-          .add(employeeData)
-          .then((docRef) => {
-            employeeId = docRef.id;
-            const newUser = {
-              employeeId: docRef.id,
-              email: this.state.email,
-              firstName: this.state.firstName,
-              lastName: this.state.lastName,
-              phone: this.state.phone,
-              customerId: '',
-            };
-
-            firestore
-              .collection('users')
-              .doc(res.user?.uid)
-              .set(newUser)
-              .then(() => {
-                console.log(`Created new user with id: ${res.user?.uid}`);
-              })
-              .catch((e) => {
-                console.log(e);
-              });
-          })
-          .catch((e) => {
-            console.log(e);
-          });
-        /* console.log("Returning first function", res.user?.uid) */
-        /* const ret = new Promise((resolve, reject) => {
-          setTimeout(() => {
-            resolve(res.user?.uid)
-          }, 3000)
-        })  */
-      })
-      .catch((err) => {
-        switch (err.code) {
-          case 'auth/email-already-in-use':
-            errors.email = 'This email is already in use.';
-            break;
-          case 'auth/invalid-email':
-            errors.email = 'This email is invalid.';
-            break;
-          case 'auth/weak-password':
-            errors.password = 'This password is too weak.';
-            break;
-          default:
-            break;
-        }
-
-        this.setState({
-          ...this.state,
-          validForm: false,
-          errors,
-          activeStep: 0,
-        });
-      })
-      .finally(() => {
-        this.setState({
-          ...this.state,
-          loading: false,
-          snackbar: {
-            open: true,
-            message: 'Successfully created your account',
-            type: 'success',
-          },
-        });
-      });
-  }
-
   async createNewBusiness() {
-    let emailToUse = this.state.email;
-    let passwordToUse = this.state.password;
+    const email = this.state.email;
+    const password = this.state.password;
 
-    let employeeId: any = ''
-    if (this.state.creatingUserAccount) {
-      console.log('here');
-
-      auth
-      .createUserWithEmailAndPassword(emailToUse, passwordToUse)
+    const address = `${this.state.address}, ${this.state.city}, ${this.state.state}, ${this.state.zipcode}`;
+    await Geocode.fromAddress(address)
       .then((res) => {
-        const uid = res
-        console.log('res', res, this.state.employeeId)
+        const { lat, lng } = res.results[0].geometry.location;
+        const loc = new firebase.firestore.GeoPoint(lat, lng);
+        if (this.state.creatingUserAccount) {
+          auth
+            .createUserWithEmailAndPassword(email, password)
+            .then((userCreds) => {
+              return userCreds.user?.uid;
+            })
+            .then((userUID) => {
+              const newEmployeeData = {
+                businessId: '',
+                position: 'Stylist',
+                isOwner: true,
+                todos: [],
+                clients: [],
+                appointments: [],
+                availability: [
+                  { day: 'Monday', start: '08:00', end: '17:00' },
+                  { day: 'Tuesday', start: '08:00', end: '17:00' },
+                  { day: 'Wednesday', start: '08:00', end: '17:00' },
+                  { day: 'Thursday', start: '08:00', end: '17:00' },
+                  { day: 'Friday', start: '08:00', end: '17:00' },
+                ],
+              };
+              const empRef = firestore.collection('employees').doc();
+              const userRef = firestore.collection('users').doc(`${userUID}`);
 
-        const employeeData = {
-          businessId: '',
-          position: 'Stylist',
-          isOwner: true,
-          todos: [],
-          clients: [],
-          appointments: [],
-        };
-
-        firestore
-          .collection('employees')
-          .add(employeeData)
-          .then((docRef) => {
-            const employeeId = docRef.id;
-            const newUser = {
-              employeeId: docRef.id,
-              email: this.state.email,
-              firstName: this.state.firstName,
-              lastName: this.state.lastName,
-              phone: this.state.phone,
-              customerId: '',
-            };
-
-            firestore
-              .collection('users')
-              .doc(res.user?.uid)
-              .set(newUser)
-              .then(() => {
-                console.log(`Created new user with id: ${res.user?.uid}`);
-
-                firestore
-                  .collection('users')
-                  .doc(`${uid}`)
-                  .get()
-                  .then((snapshot) => {
-                    const userObj = snapshot.data()
-
-                    const businessData = {
-                      name: this.state.name,
-                      numWorkers: 1,
-                      description: this.state.description,
-                      about: {
-                        address: this.state.address,
-                        city: this.state.city,
-                        state: this.state.state,
-                        zipcode: this.state.zipcode,
-                        daysOpen: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'],
-                        closingTime: '17:00',
-                        openingTime: '8:00',
-                      },
-                      employees: [`${employeeId}`],
+              firestore
+                .runTransaction((transaction) => {
+                  return transaction.get(empRef).then((empDocRef) => {
+                    const newUserData = {
+                      employeeId: empDocRef.id,
+                      email: this.state.email,
+                      firstName: this.state.firstName,
+                      lastName: this.state.lastName,
+                      phone: this.state.phone,
+                      customerId: '',
                     };
-        
-                    firestore
-                      .collection('businesses')
-                      .add(businessData)
-                      .then((docRef) => {
-                        console.log('business', docRef.id)
-                        console.log('employee', employeeId);
-                        firestore
-                          .collection('employees')
-                          .doc(employeeId)
-                          .update({
-                            businessId: docRef.id,
-                          }).then(() => {
-                            this.setState({ ...this.state, open: false });
-                            auth.signOut().then(() => {
-                              auth.signInWithEmailAndPassword(emailToUse, passwordToUse);
-                            })
 
-                          })
+                    transaction.set(empRef, newEmployeeData);
+                    transaction.set(userRef, newUserData);
+                    return empDocRef.id;
+                  });
+                })
+                .then((employeeId) => {
+                  const newBusinessData = {
+                    name: this.state.name,
+                    numWorkers: 1,
+                    description: this.state.description,
+                    about: {
+                      address: this.state.address,
+                      city: this.state.city,
+                      state: this.state.state,
+                      zipcode: this.state.zipcode,
+                      daysOpen: [
+                        'Monday',
+                        'Tuesday',
+                        'Wednesday',
+                        'Thursday',
+                        'Friday',
+                      ],
+                      closingTime: '17:00',
+                      openingTime: '8:00',
+                      location: loc,
+                    },
+                    employees: [`${employeeId}`],
+                    employeeRequests: [],
+                    reviews: [],
+                    overallRating: 0
+                  };
+
+                  firestore
+                    .collection('businesses')
+                    .add(newBusinessData)
+                    .then((docRef) => {
+                      firestore
+                        .collection('employees')
+                        .doc(employeeId)
+                        .update({
+                          businessId: docRef.id,
+                        })
+                        .then(() => {
+                          this.setState({ ...this.state, open: false });
+
+                          auth.signOut().then(() => {
+                            auth.signInWithEmailAndPassword(email, password);
+                          });
+                        })
                         .catch((e) => {
                           console.log(e);
                         });
@@ -393,67 +317,149 @@ class BusinessSignUp extends React.Component<any, State> {
                       console.log(e);
                     });
                 })
-              })
-              .catch((e) => {
-                console.log(e);
-              });
-          })
-          .catch((e) => {
-            console.log(e)
-          })
-      })
-      .catch((e) => {
-        console.log(e)
-      })
-    } else {
-      employeeId = this.state.user?.uid
-
-      const businessData = {
-        name: this.state.name,
-        numWorkers: 1,
-        description: this.state.description,
-        about: {
-          address: this.state.address,
-          city: this.state.city,
-          state: this.state.state,
-          zipcode: this.state.zipcode,
-          daysOpen: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'],
-          closingTime: '17:00',
-          openingTime: '8:00',
-        },
-        employees: [`${employeeId}`],
-      };
-  
-      firestore
-        .collection('businesses')
-        .add(businessData)
-        .then((docRef) => {
-          firestore
-            .collection('employees')
-            .doc(employeeId)
-            .update({
-              businessId: docRef.id,
-            })
-            .then(() => {
-              this.setState({ ...this.state, open: false })
-
-              auth.signOut().then(() => {
-                auth.signInWithEmailAndPassword(emailToUse, passwordToUse);
-              })
+                .catch((e) => {
+                  console.log(e);
+                });
             })
             .catch((e) => {
               console.log(e);
             });
-        })
-        .catch((e) => {
-          console.log(e);
-        });
-    }
+        } else {
+          auth
+            .signInWithEmailAndPassword(email, password)
+            .then((userCreds) => {
+              console.log(`Signed in user ${userCreds.user?.uid}`);
+              return userCreds.user?.uid;
+            })
+            .then((userUID) => {
+              const userDocRef = firestore.collection('users').doc(userUID);
+              const employeeRef = firestore.collection('employees').doc();
+
+              firestore
+                .runTransaction((transaction) => {
+                  return transaction.get(userDocRef).then((userDoc) => {
+                    if (!userDoc.exists) {
+                      throw new Error('User does not exist.');
+                    } else {
+                      const employeeId = userDoc.data()?.employeeId;
+                      if (employeeId) {
+                        console.log(
+                          `Fetched employee id from existing user: ${employeeId}`,
+                        );
+                        return employeeId;
+                      } else {
+                        return transaction
+                          .get(employeeRef)
+                          .then((employeeDoc) => {
+                            const newEmployeeData = {
+                              businessId: '',
+                              position: 'Stylist',
+                              isOwner: true,
+                              todos: [],
+                              clients: [],
+                              appointments: [],
+                              availability: [
+                                { day: 'Monday', start: '08:00', end: '17:00' },
+                                {
+                                  day: 'Tuesday',
+                                  start: '08:00',
+                                  end: '17:00',
+                                },
+                                {
+                                  day: 'Wednesday',
+                                  start: '08:00',
+                                  end: '17:00',
+                                },
+                                {
+                                  day: 'Thursday',
+                                  start: '08:00',
+                                  end: '17:00',
+                                },
+                                { day: 'Friday', start: '08:00', end: '17:00' },
+                              ],
+                            };
+                            transaction.set(employeeRef, newEmployeeData);
+                            console.log(
+                              `Created new employee for user: ${employeeRef.id}`,
+                            );
+                            return employeeRef.id;
+                          });
+                      }
+                    }
+                  });
+                })
+                .then((employeeId) => {
+                  const newBusinessData = {
+                    name: this.state.name,
+                    numWorkers: 1,
+                    description: this.state.description,
+                    about: {
+                      address: this.state.address,
+                      city: this.state.city,
+                      state: this.state.state,
+                      zipcode: this.state.zipcode,
+                      daysOpen: [
+                        'Monday',
+                        'Tuesday',
+                        'Wednesday',
+                        'Thursday',
+                        'Friday',
+                      ],
+                      closingTime: '17:00',
+                      openingTime: '8:00',
+                      location: loc,
+                    },
+                    employees: [`${employeeId}`],
+                    employeeRequests: [],
+                    reviews: [],
+                    overallRating: 0
+                  };
+
+                  firestore
+                    .collection('businesses')
+                    .add(newBusinessData)
+                    .then((docRef) => {
+                      console.log(
+                        `Created new business document: ${docRef.id}`,
+                      );
+                      firestore
+                        .collection('employees')
+                        .doc(employeeId)
+                        .update({
+                          businessId: docRef.id,
+                        })
+                        .then(() => {
+                          this.setState({ ...this.state, open: false });
+
+                          auth.signOut().then(() => {
+                            auth.signInWithEmailAndPassword(email, password);
+                          });
+                        })
+                        .catch((e) => {
+                          console.log(e);
+                        });
+                    })
+                    .catch((e) => {
+                      console.log(e);
+                    });
+                })
+                .catch((e) => {
+                  console.log(e);
+                });
+            })
+            .catch((e) => {
+              console.log(e);
+            });
+        }
+      })
+      .catch((e) => {
+        console.log(e);
+      });
   }
 
   render() {
     const { classes } = this.props;
-    const { errors, snackbar, loggedIn, creatingUserAccount } = this.state;
+    const { loggedIn, creatingUserAccount } = this.state;
 
     return (
       <div className={classes.root}>

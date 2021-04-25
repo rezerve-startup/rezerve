@@ -14,8 +14,8 @@ import BusinessCard from './BusinessCard';
 import BBusinessCard from  './business-card'
 import AvailabilityCard from './AvailabilityCard'
 import PreferencesCard from './PreferencesCard';
-import ContactCard from '../business-home/home-tab/ContactCard';
-import TodoList from '../business-home/home-tab/TodoList';
+import ContactCard from '../employee-home/home-tab/ContactCard';
+import TodoList from '../employee-home/home-tab/TodoList';
 
 const styles = (theme: Theme) =>
   createStyles({

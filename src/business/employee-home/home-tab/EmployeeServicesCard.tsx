@@ -225,7 +225,7 @@ class EmployeeServicesCard extends React.Component<any, any> {
                     )}
                     {this.props.employeeServices.map((employeeService: any, index: number) => {
                         return (
-                            <div className={classes.employeeServiceContainer}>
+                            <div className={classes.employeeServiceContainer} key={index}>
                                 <div className={classes.serviceNameContainer}>
                                     <Typography>Name:</Typography>
                                     <Typography>{employeeService.name}</Typography>

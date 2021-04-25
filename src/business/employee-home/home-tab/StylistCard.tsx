@@ -112,13 +112,13 @@ const StylistCard = (props: Props) => {
             />
           </CardContent>
         </Grid>
-        <Grid item={true}>
+        {/* <Grid item={true}>
           <CardMedia
             className={classes.userImage}
-            image={image}
+            // image={image}
             title="Employee Image"
           />
-        </Grid>
+        </Grid> */}
       </Grid>
     </Card>
   );

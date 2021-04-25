@@ -15,10 +15,10 @@ import {
   InputLabel,
   MenuItem,
 } from '@material-ui/core';
-import { Close} from '@material-ui/icons';
+import { Close } from '@material-ui/icons';
 import { parsePhoneNumber } from 'libphonenumber-js';
 import { states } from './StateArray';
-import { FileObject } from 'material-ui-dropzone'
+import { FileObject } from 'material-ui-dropzone';
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -36,6 +36,7 @@ const styles = (theme: Theme) =>
     },
   });
 
+// tslint:disable-next-line: no-empty-interface
 interface Errors {}
 
 interface NonStyleProps {
@@ -81,7 +82,7 @@ const DecoratedBusinessInfoForm = withStyles(styles, { withTheme: true })(
 
     componentDidMount() {
       const valid = this.validateForm();
-      this.props.updateValue('name', this.props.name, valid)
+      this.props.updateValue('name', this.props.name, valid);
     }
 
     validateEmail(email: string): boolean {
@@ -148,16 +149,16 @@ const DecoratedBusinessInfoForm = withStyles(styles, { withTheme: true })(
     };
 
     openDialog = () => {
-      this.setState({ ...this.state, imageDialog: true })
-    }
+      this.setState({ ...this.state, imageDialog: true });
+    };
 
     closeDialog = () => {
-      this.setState({ ...this.state, imageDialog: false })
-    }
+      this.setState({ ...this.state, imageDialog: false });
+    };
 
     handleImageUpload = (file: FileObject[]) => {
-      console.log(file)
-    }
+      console.log(file);
+    };
 
     render() {
       const { classes } = this.props;
@@ -208,7 +209,7 @@ const DecoratedBusinessInfoForm = withStyles(styles, { withTheme: true })(
                     variant="outlined"
                   />
                 </Grid>
-                <Grid item={true} xs={6}>
+                <Grid item={true} xs={12}>
                   <TextField
                     name="city"
                     label="City"
@@ -219,7 +220,7 @@ const DecoratedBusinessInfoForm = withStyles(styles, { withTheme: true })(
                     variant="outlined"
                   />
                 </Grid>
-                <Grid item={true} xs={3}>
+                <Grid item={true} xs={6}>
                   <FormControl variant="outlined">
                     <InputLabel>State</InputLabel>
                     <Select
@@ -233,10 +234,11 @@ const DecoratedBusinessInfoForm = withStyles(styles, { withTheme: true })(
                         name: 'state',
                       }}
                       displayEmpty={true}
+                      // tslint:disable-next-line: jsx-no-lambda
                       renderValue={(value) => `${value}`}
                       variant="outlined"
                     >
-                      <MenuItem value='' />
+                      <MenuItem value="" />
                       {states.map((state, index) => (
                         <MenuItem key={index} value={state.value}>
                           {state.label}
@@ -245,7 +247,7 @@ const DecoratedBusinessInfoForm = withStyles(styles, { withTheme: true })(
                     </Select>
                   </FormControl>
                 </Grid>
-                <Grid item={true} xs={3}>
+                <Grid item={true} xs={6}>
                   <TextField
                     name="zipcode"
                     label="Zip"
@@ -300,12 +302,13 @@ const DecoratedBusinessInfoForm = withStyles(styles, { withTheme: true })(
   },
 );
 
-const dialogTitle = (props: { toggleDialog: () => void; }) => (
+const dialogTitle = (props: { toggleDialog: () => void }) => (
   <>
     <span>Upload file</span>
     <IconButton
-      style={{right: '12px', top: '8px', position: 'absolute'}}
-      onClick={props.toggleDialog}>
+      style={{ right: '12px', top: '8px', position: 'absolute' }}
+      onClick={props.toggleDialog}
+    >
       <Close />
     </IconButton>
   </>
