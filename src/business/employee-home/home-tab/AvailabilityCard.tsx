@@ -16,7 +16,10 @@ import {
   Theme,
   CardContent,
   Divider,
+  Snackbar,
+  IconButton,
 } from '@material-ui/core';
+import CloseIcon from '@material-ui/icons/Close';
 import { StoreState } from '../../../shared/store/types';
 import { connect } from 'react-redux';
 import { firestore } from '../../../config/FirebaseConfig';
@@ -56,6 +59,7 @@ const styles = (theme: Theme) =>
 type State = {
   employeeSchedule: any;
   editInfo: boolean;
+  displayInvalidTimes: boolean;
 };
 
 function mapStateToProps(state: StoreState) {
@@ -79,6 +83,7 @@ class AvailablityCard extends React.Component<Props, State> {
     this.state = {
       employeeSchedule: props.employeeSchedule,
       editInfo: true,
+      displayInvalidTimes: false
     };
 
     this.handleEdit = this.handleEdit.bind(this);
@@ -108,62 +113,87 @@ class AvailablityCard extends React.Component<Props, State> {
     })
   }
 
+  handleCloseDisplayInvalidTimes() {
+    this.setState({
+      displayInvalidTimes: false
+    });
+  }
+
   render() {
     const { classes } = this.props;
     const { editInfo } = this.state;
 
     return (
-      <Card className={classes.card} elevation={0}>
-        <CardContent>
-          <Typography variant="h5">Availability</Typography>
-          <Divider />
-            {this.state.employeeSchedule && this.state.employeeSchedule.map((item, index) => (
-              <div key={item.day} className={classes.dayOfWeek}>
-                <Typography className={classes.dayText}>{item.day}</Typography>
-                <div className={classes.hourlyAvailability}>
-                  <TextField
-                    id="time"
-                    type="Time"
-                    onChange={(e) => this.handleStartTimeChange(index, e)}
-                    disabled={editInfo}
-                    defaultValue={item.start}
-                  />
-                  <Typography style={{ marginRight: '0.25rem' }}>-</Typography>
-                  <TextField
-                    id="time"
-                    type="Time"
-                    onChange={(e) => this.handleCloseTimeChange(index, e)}
-                    disabled={editInfo}
-                    defaultValue={item.end}
-                    style={{ width: 104 }}
-                    size='small'
-                  />
+      <div>
+        <Card className={classes.card} elevation={0}>
+          <CardContent>
+            <Typography variant="h5">Availability</Typography>
+            <Divider />
+              {this.state.employeeSchedule && this.state.employeeSchedule.map((item, index) => (
+                <div key={item.day} className={classes.dayOfWeek}>
+                  <Typography className={classes.dayText}>{item.day}</Typography>
+                  <div className={classes.hourlyAvailability}>
+                    <TextField
+                      id="time"
+                      type="Time"
+                      onChange={(e) => this.handleStartTimeChange(index, e)}
+                      disabled={editInfo}
+                      defaultValue={item.start}
+                    />
+                    <Typography style={{ marginRight: '0.25rem' }}>-</Typography>
+                    <TextField
+                      id="time"
+                      type="Time"
+                      onChange={(e) => this.handleCloseTimeChange(index, e)}
+                      disabled={editInfo}
+                      defaultValue={item.end}
+                      style={{ width: 104 }}
+                      size='small'
+                    />
+                  </div>
                 </div>
-              </div>
-            ))}
-        </CardContent>
-        <CardActions style={{ justifyContent: 'center'}}>
-          {this.state.editInfo ? (
-            <Button
-              size="small"
-              color="secondary"
-              // tslint:disable-next-line: jsx-no-lambda
-              onClick={() => this.handleEdit('editClicked')}
-            >
-              Edit
-            </Button>
-          ) : (
-            <Button
-              size="small"
-              color="secondary"
-              // tslint:disable-next-line: jsx-no-lambda
-              onClick={() => this.handleEdit('editClicked')}
-            >
-              Save Changes
-            </Button>
-          )}
-        </CardActions>
-      </Card>
+              ))}
+          </CardContent>
+          <CardActions style={{ justifyContent: 'center'}}>
+            {this.state.editInfo ? (
+              <Button
+                size="small"
+                color="secondary"
+                // tslint:disable-next-line: jsx-no-lambda
+                onClick={() => this.handleEdit('editClicked')}
+              >
+                Edit
+              </Button>
+            ) : (
+              <Button
+                size="small"
+                color="secondary"
+                // tslint:disable-next-line: jsx-no-lambda
+                onClick={() => this.handleEdit('editClicked')}
+              >
+                Save Changes
+              </Button>
+            )}
+          </CardActions>
+        </Card>
+        <Snackbar
+          anchorOrigin={{
+            vertical: 'top',
+            horizontal: 'right',
+          }}
+          open={this.state.displayInvalidTimes}
+          autoHideDuration={6000}
+          onClose={() => this.handleCloseDisplayInvalidTimes()}
+          message={'Times selected are outside the business hours'}
+          action={
+            <React.Fragment>
+              <IconButton size="small" aria-label="close" color="inherit" onClick={() => this.handleCloseDisplayInvalidTimes()}>
+                <CloseIcon fontSize="small" />
+              </IconButton>
+            </React.Fragment>
+          }
+        />
+      </div>
     );
   }
 
@@ -196,6 +226,10 @@ class AvailablityCard extends React.Component<Props, State> {
         this.setState({ editInfo: !this.state.editInfo });
 
         this.updateEmployeeSchedule(this.state.employeeSchedule);
+      } else {
+        this.setState({
+          displayInvalidTimes: true
+        });
       }
     } else {
       this.setState({ editInfo: !this.state.editInfo });

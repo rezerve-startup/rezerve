@@ -27,8 +27,6 @@ export const firestore = firebase.firestore();
 export const unsubscribe = auth.onAuthStateChanged((user) => {
   store.dispatch(setAuthChanging(true));
 
-  console.log("Running state change in the firebase config");
-
   if (user) {
     firestore
       .collection('users')
@@ -36,7 +34,6 @@ export const unsubscribe = auth.onAuthStateChanged((user) => {
       .get()
       .then((userObj) => {
         const userInfo = userObj.data();
-        console.log(userInfo);
         if (userInfo && userInfo.customerId !== '') {
           firestore.collection('customers').doc(userInfo.customerId).get()
             .then((customerObj) => {

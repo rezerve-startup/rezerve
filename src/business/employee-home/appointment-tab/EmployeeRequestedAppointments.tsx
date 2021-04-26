@@ -26,12 +26,11 @@ import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import { connect } from 'react-redux';
 import { StoreState } from '../../../shared/store/types';
 import moment from 'moment';
+import image from '../../../assets/avatar.jpg';
 
 import { updateEmployeeAppointmentStatus, setUserEmployeeAppointments } from '../../../shared/store/actions';
 import { firestore } from '../../../config/FirebaseConfig';
 import firebase from 'firebase';
-
-const image = require('../../../assets/avatar.jpg');
 
 const styles = (theme: Theme) =>
   createStyles({
