@@ -217,8 +217,18 @@ class BusinessSignUp extends React.Component<any, State> {
   async createNewBusiness() {
     const email = this.state.email;
     const password = this.state.password;
+    const firstName = this.state.firstName;
+    const lastName = this.state.lastName;
+    const phone = this.state.phone;
+    const businessName = this.state.name;
+    const businessDescription = this.state.description;
+    const businessAddress = this.state.address;
+    const businessCity = this.state.city;
+    const businessState = this.state.state;
+    const businessZipcode = this.state.zipcode;
 
     const address = `${this.state.address}, ${this.state.city}, ${this.state.state}, ${this.state.zipcode}`;
+
     await Geocode.fromAddress(address)
       .then((res) => {
         const { lat, lng } = res.results[0].geometry.location;
@@ -253,10 +263,10 @@ class BusinessSignUp extends React.Component<any, State> {
                   return transaction.get(empRef).then((empDocRef) => {
                     const newUserData = {
                       employeeId: empDocRef.id,
-                      email: this.state.email,
-                      firstName: this.state.firstName,
-                      lastName: this.state.lastName,
-                      phone: this.state.phone,
+                      email: email,
+                      firstName: firstName,
+                      lastName: lastName,
+                      phone: phone,
                       customerId: '',
                     };
 
@@ -267,14 +277,14 @@ class BusinessSignUp extends React.Component<any, State> {
                 })
                 .then((employeeId) => {
                   const newBusinessData = {
-                    name: this.state.name,
+                    name: businessName,
                     numWorkers: 1,
-                    description: this.state.description,
+                    description: businessDescription,
                     about: {
-                      address: this.state.address,
-                      city: this.state.city,
-                      state: this.state.state,
-                      zipcode: this.state.zipcode,
+                      address: businessAddress,
+                      city: businessCity,
+                      state: businessState,
+                      zipcode: businessZipcode,
                       daysOpen: [
                         'Monday',
                         'Tuesday',
@@ -396,14 +406,14 @@ class BusinessSignUp extends React.Component<any, State> {
                 })
                 .then((employeeId) => {
                   const newBusinessData = {
-                    name: this.state.name,
+                    name: businessName,
                     numWorkers: 1,
-                    description: this.state.description,
+                    description: businessDescription,
                     about: {
-                      address: this.state.address,
-                      city: this.state.city,
-                      state: this.state.state,
-                      zipcode: this.state.zipcode,
+                      address: businessAddress,
+                      city: businessCity,
+                      state: businessState,
+                      zipcode: businessZipcode,
                       daysOpen: [
                         'Monday',
                         'Tuesday',
