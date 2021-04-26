@@ -24,8 +24,10 @@ firebase.initializeApp(firebaseConfig);
 export const auth = firebase.auth();
 export const firestore = firebase.firestore();
 
-auth.onAuthStateChanged((user) => {
+export const unsubscribe = auth.onAuthStateChanged((user) => {
   store.dispatch(setAuthChanging(true));
+
+  console.log("Running state change in the firebase config");
 
   if (user) {
     firestore
@@ -83,7 +85,10 @@ auth.onAuthStateChanged((user) => {
             })
           }
         }
-      );
+      )
+      .catch((err) => {
+        console.log(err);
+      })
   } else {
     store.dispatch(logoutUser());
     store.dispatch(setAuthChanging(false))
