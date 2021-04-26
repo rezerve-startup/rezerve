@@ -48,11 +48,11 @@ export const states = [{
   },
   {
     label: 'Georgia',
-    value: 'GA}',
+    value: 'GA',
   },
   {
     label: 'Guam',
-    value: 'GU}',
+    value: 'GU',
   },
   {
     label: 'Hawaii',

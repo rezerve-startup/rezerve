@@ -460,12 +460,12 @@ class BusinessInfo extends React.Component<any, BusinessInfoState> {
                     {this.state.businessInfo.about.zipcode}
                   </div>
                 </div>
-                <div className={classes.distanceContainer}>
+                {/* <div className={classes.distanceContainer}>
                   <div>
                     <LocationOn />
                   </div>
                   <div className={classes.distanceToBusiness}>0.02 Mi</div>
-                </div>
+                </div> */}
                 <div className={classes.mapContainerStyle}>
                   <LoadScript
                     googleMapsApiKey={`${process.env.REACT_APP_GOOGLE_MAPS_API_KEY}`}
