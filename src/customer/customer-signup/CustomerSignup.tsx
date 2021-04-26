@@ -24,7 +24,7 @@ import {
   Dialog,
   Snackbar,
 } from '@material-ui/core';
-import { createNewCustomer } from '../../shared/store/actions';
+import { createNewCustomer, updateUser, setAuthChanging, logoutUser } from '../../shared/store/actions';
 import { connect } from 'react-redux';
 import { auth, firestore } from '../../config/FirebaseConfig';
 import { Image, ArrowBack, ArrowForward, Close } from '@material-ui/icons';
@@ -85,6 +85,8 @@ class CustomerSignUp extends React.Component<any, State> {
         type: undefined,
       },
     };
+
+    this.dispatchUpdateUser = this.dispatchUpdateUser.bind(this);
   }
 
   componentDidMount() {
@@ -172,6 +174,10 @@ class CustomerSignUp extends React.Component<any, State> {
   dispatchCreateCustomer = (newCustomerId: string) => (newCustomer: any) => {
     this.props.createNewCustomer(newCustomerId, newCustomer);
   };
+
+  dispatchUpdateUser(newUser) {
+    this.props.updateUser(newUser);
+  }
 
   createNewCustomer = () => {
     this.setState({ ...this.state, loading: true });
@@ -263,7 +269,14 @@ class CustomerSignUp extends React.Component<any, State> {
                 // });
 
                 auth.signOut().then(() => {
-                  auth.signInWithEmailAndPassword(emailToUse, passwordToUse);
+                  auth.signInWithEmailAndPassword(emailToUse, passwordToUse).then((userCreds) => {
+                    if (userCreds !== null && userCreds.user) {
+                      const user = userCreds.user;
+                      this.dispatchUpdateUser(user)
+                    }
+                    this.props.handleSignUpClose()
+                    this.setState({ ...this.state, loading: false, open: false })
+                  });
                 });
               });
           })
@@ -616,6 +629,6 @@ const BusinessSearchComponent = withStyles(styles, { withTheme: true })(
   },
 );
 
-export default connect(mapStateToProps, { createNewCustomer })(
+export default connect(mapStateToProps, { createNewCustomer, updateUser, setAuthChanging, logoutUser })(
   withStyles(styles, { withTheme: true })(CustomerSignUp),
 );

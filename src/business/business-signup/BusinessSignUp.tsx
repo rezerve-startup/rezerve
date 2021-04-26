@@ -23,7 +23,7 @@ import {
 } from '@material-ui/icons';
 import Geocode from 'react-geocode';
 import firebase from 'firebase';
-import { updateUser, createNewBusiness } from '../../shared/store/actions';
+import { updateUser, createNewBusiness, setAuthChanging, logoutUser } from '../../shared/store/actions';
 import { StoreState, SystemState } from '../../shared/store/types';
 import BusinessRegisterLogin from './BusinessRegisterLogin';
 import UserInfoForm from '../../shared/sign-up/UserInfoForm';
@@ -64,7 +64,7 @@ type State = ComponentState & SystemState;
 
 class BusinessSignUp extends React.Component<any, State> {
   _isMounted = false;
-  unsubscribe: any = undefined;
+  unsubscribe2: any = undefined;
 
   constructor(props: any) {
     super(props);
@@ -101,7 +101,7 @@ class BusinessSignUp extends React.Component<any, State> {
 
   componentDidMount() {
     this._isMounted = true;
-    this.unsubscribe = auth.onAuthStateChanged((user) => {
+    this.unsubscribe2 = auth.onAuthStateChanged((user) => {
       if (user) {
         if (this._isMounted) {
           firestore
@@ -136,7 +136,7 @@ class BusinessSignUp extends React.Component<any, State> {
   componentWillUnmount() {
     this._isMounted = false;
     unsubscribe();
-    this.unsubscribe();
+    this.unsubscribe2();
   }
 
   dispatchUpdateUser(newUser) {
@@ -289,6 +289,7 @@ class BusinessSignUp extends React.Component<any, State> {
                     employees: [`${employeeId}`],
                     employeeRequests: [],
                     reviews: [],
+                    perfomance: [],
                     overallRating: 0
                   };
 
@@ -303,10 +304,16 @@ class BusinessSignUp extends React.Component<any, State> {
                           businessId: docRef.id,
                         })
                         .then(() => {
-                          this.setState({ ...this.state, open: false });
-
                           auth.signOut().then(() => {
-                            auth.signInWithEmailAndPassword(email, password);
+                            auth.signInWithEmailAndPassword(email, password).then(
+                              (userCreds) => {
+                                if (userCreds !== null && userCreds.user) {
+                                  const user = userCreds.user;
+                                  this.dispatchUpdateUser(user)
+                                }
+                                this.props.handleSignUpClose()
+                                this.setState({ ...this.state, open: false });
+                            });
                           });
                         })
                         .catch((e) => {
@@ -412,6 +419,7 @@ class BusinessSignUp extends React.Component<any, State> {
                     employees: [`${employeeId}`],
                     employeeRequests: [],
                     reviews: [],
+                    perfomance: [],
                     overallRating: 0
                   };
 
@@ -429,10 +437,17 @@ class BusinessSignUp extends React.Component<any, State> {
                           businessId: docRef.id,
                         })
                         .then(() => {
-                          this.setState({ ...this.state, open: false });
-
                           auth.signOut().then(() => {
-                            auth.signInWithEmailAndPassword(email, password);
+                            auth.signInWithEmailAndPassword(email, password).then(
+                              (userCreds) => {
+                                if (userCreds !== null && userCreds.user) {
+                                  const user = userCreds.user;
+                                  console.log("Signed in user...", user)
+                                  this.dispatchUpdateUser(user)
+                                }
+                                this.props.handleSignUpClose()
+                                this.setState({ ...this.state, open: false });
+                            });
                           });
                         })
                         .catch((e) => {
@@ -454,7 +469,7 @@ class BusinessSignUp extends React.Component<any, State> {
       })
       .catch((e) => {
         console.log(e);
-      });
+      })
   }
 
   render() {
@@ -668,6 +683,6 @@ const AdornedButton = (props) => {
   );
 };
 
-export default connect(mapStateToProps, { updateUser })(
+export default connect(mapStateToProps, { updateUser, setAuthChanging, logoutUser })(
   withStyles(styles, { withTheme: true })(BusinessSignUp),
 );
