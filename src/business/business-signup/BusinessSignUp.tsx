@@ -23,7 +23,7 @@ import {
 } from '@material-ui/icons';
 import Geocode from 'react-geocode';
 import firebase from 'firebase';
-import { updateUser, createNewBusiness } from '../../shared/store/actions';
+import { updateUser, createNewBusiness, setAuthChanging, logoutUser } from '../../shared/store/actions';
 import { StoreState, SystemState } from '../../shared/store/types';
 import BusinessRegisterLogin from './BusinessRegisterLogin';
 import UserInfoForm from '../../shared/sign-up/UserInfoForm';
@@ -64,7 +64,7 @@ type State = ComponentState & SystemState;
 
 class BusinessSignUp extends React.Component<any, State> {
   _isMounted = false;
-  unsubscribe: any = undefined;
+  unsubscribe2: any = undefined;
 
   constructor(props: any) {
     super(props);
@@ -101,7 +101,7 @@ class BusinessSignUp extends React.Component<any, State> {
 
   componentDidMount() {
     this._isMounted = true;
-    this.unsubscribe = auth.onAuthStateChanged((user) => {
+    this.unsubscribe2 = auth.onAuthStateChanged((user) => {
       if (user) {
         if (this._isMounted) {
           firestore
@@ -136,7 +136,7 @@ class BusinessSignUp extends React.Component<any, State> {
   componentWillUnmount() {
     this._isMounted = false;
     unsubscribe();
-    this.unsubscribe();
+    this.unsubscribe2();
   }
 
   dispatchUpdateUser(newUser) {
@@ -217,8 +217,18 @@ class BusinessSignUp extends React.Component<any, State> {
   async createNewBusiness() {
     const email = this.state.email;
     const password = this.state.password;
+    const firstName = this.state.firstName;
+    const lastName = this.state.lastName;
+    const phone = this.state.phone;
+    const businessName = this.state.name;
+    const businessDescription = this.state.description;
+    const businessAddress = this.state.address;
+    const businessCity = this.state.city;
+    const businessState = this.state.state;
+    const businessZipcode = this.state.zipcode;
 
     const address = `${this.state.address}, ${this.state.city}, ${this.state.state}, ${this.state.zipcode}`;
+
     await Geocode.fromAddress(address)
       .then((res) => {
         const { lat, lng } = res.results[0].geometry.location;
@@ -253,10 +263,10 @@ class BusinessSignUp extends React.Component<any, State> {
                   return transaction.get(empRef).then((empDocRef) => {
                     const newUserData = {
                       employeeId: empDocRef.id,
-                      email: this.state.email,
-                      firstName: this.state.firstName,
-                      lastName: this.state.lastName,
-                      phone: this.state.phone,
+                      email: email,
+                      firstName: firstName,
+                      lastName: lastName,
+                      phone: phone,
                       customerId: '',
                     };
 
@@ -267,14 +277,14 @@ class BusinessSignUp extends React.Component<any, State> {
                 })
                 .then((employeeId) => {
                   const newBusinessData = {
-                    name: this.state.name,
+                    name: businessName,
                     numWorkers: 1,
-                    description: this.state.description,
+                    description: businessDescription,
                     about: {
-                      address: this.state.address,
-                      city: this.state.city,
-                      state: this.state.state,
-                      zipcode: this.state.zipcode,
+                      address: businessAddress,
+                      city: businessCity,
+                      state: businessState,
+                      zipcode: businessZipcode,
                       daysOpen: [
                         'Monday',
                         'Tuesday',
@@ -289,6 +299,7 @@ class BusinessSignUp extends React.Component<any, State> {
                     employees: [`${employeeId}`],
                     employeeRequests: [],
                     reviews: [],
+                    perfomance: [],
                     overallRating: 0
                   };
 
@@ -303,10 +314,16 @@ class BusinessSignUp extends React.Component<any, State> {
                           businessId: docRef.id,
                         })
                         .then(() => {
-                          this.setState({ ...this.state, open: false });
-
                           auth.signOut().then(() => {
-                            auth.signInWithEmailAndPassword(email, password);
+                            auth.signInWithEmailAndPassword(email, password).then(
+                              (userCreds) => {
+                                if (userCreds !== null && userCreds.user) {
+                                  const user = userCreds.user;
+                                  this.dispatchUpdateUser(user)
+                                }
+                                this.props.handleSignUpClose()
+                                this.setState({ ...this.state, open: false });
+                            });
                           });
                         })
                         .catch((e) => {
@@ -389,14 +406,14 @@ class BusinessSignUp extends React.Component<any, State> {
                 })
                 .then((employeeId) => {
                   const newBusinessData = {
-                    name: this.state.name,
+                    name: businessName,
                     numWorkers: 1,
-                    description: this.state.description,
+                    description: businessDescription,
                     about: {
-                      address: this.state.address,
-                      city: this.state.city,
-                      state: this.state.state,
-                      zipcode: this.state.zipcode,
+                      address: businessAddress,
+                      city: businessCity,
+                      state: businessState,
+                      zipcode: businessZipcode,
                       daysOpen: [
                         'Monday',
                         'Tuesday',
@@ -411,6 +428,7 @@ class BusinessSignUp extends React.Component<any, State> {
                     employees: [`${employeeId}`],
                     employeeRequests: [],
                     reviews: [],
+                    perfomance: [],
                     overallRating: 0
                   };
 
@@ -428,10 +446,17 @@ class BusinessSignUp extends React.Component<any, State> {
                           businessId: docRef.id,
                         })
                         .then(() => {
-                          this.setState({ ...this.state, open: false });
-
                           auth.signOut().then(() => {
-                            auth.signInWithEmailAndPassword(email, password);
+                            auth.signInWithEmailAndPassword(email, password).then(
+                              (userCreds) => {
+                                if (userCreds !== null && userCreds.user) {
+                                  const user = userCreds.user;
+                                  console.log("Signed in user...", user)
+                                  this.dispatchUpdateUser(user)
+                                }
+                                this.props.handleSignUpClose()
+                                this.setState({ ...this.state, open: false });
+                            });
                           });
                         })
                         .catch((e) => {
@@ -453,7 +478,7 @@ class BusinessSignUp extends React.Component<any, State> {
       })
       .catch((e) => {
         console.log(e);
-      });
+      })
   }
 
   render() {
@@ -667,6 +692,6 @@ const AdornedButton = (props) => {
   );
 };
 
-export default connect(mapStateToProps, { updateUser })(
+export default connect(mapStateToProps, { updateUser, setAuthChanging, logoutUser })(
   withStyles(styles, { withTheme: true })(BusinessSignUp),
 );

@@ -483,7 +483,7 @@ class BusinessInfoDetails extends React.Component<any, any> {
                 </Grid>
               </RadioGroup>
 
-              {this.props.selectedEmployee && this.props.selectedEmployee.services.map((service, index) => {
+              {this.props.selectedEmployee && this.props.selectedEmployee.services && this.props.selectedEmployee.services.length > 0 && this.props.selectedEmployee.services.map((service, index) => {
                 return (
                   <Card className={this.state.selectedService === index ? classes.selectedServiceCard : classes.serviceCard} 
                     variant="outlined" key={index} onClick={() => this.selectService(index)}>
@@ -554,18 +554,20 @@ class BusinessInfoDetails extends React.Component<any, any> {
           }
         </div>
 
-        <Dialog 
-          open={this.props.bookDialogStatus}
-          onClose={() => this.handleCloseBookDialog()}
-        >
-          <CustomerCheckout 
-            bookAppointment={this.bookAppointment} 
-            employeeName={this.props.selectedEmployee?.firstName} 
-            service={this.props.selectedEmployee?.services[this.state.selectedService]}
-            businessName={this.props.businessName}
-            appointmentDateTime={this.state.availableAppointmentTimes[this.state.selectedAppointmentSlot]}
-          />
-        </Dialog>
+        {this.props.selectedEmployee?.services !== undefined && (
+          <Dialog 
+            open={this.props.bookDialogStatus}
+            onClose={() => this.handleCloseBookDialog()}
+          >
+            <CustomerCheckout 
+              bookAppointment={this.bookAppointment} 
+              employeeName={this.props.selectedEmployee?.firstName} 
+              service={this.props.selectedEmployee?.services[this.state.selectedService]}
+              businessName={this.props.businessName}
+              appointmentDateTime={this.state.availableAppointmentTimes[this.state.selectedAppointmentSlot]}
+            />
+          </Dialog>
+        )}
 
         <Snackbar
           anchorOrigin={{

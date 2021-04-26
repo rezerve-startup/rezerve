@@ -199,7 +199,7 @@ class CustomerBusinessSearch extends React.Component<
               </div>
               <Box m={1} className={classes.box}>
                 <Grid container alignItems="center" justify="space-between">
-                  <Grid item>
+                  {/* <Grid item>
                     <div>
                       Location&nbsp;
                       <LocationOnIcon
@@ -221,7 +221,7 @@ class CustomerBusinessSearch extends React.Component<
                         <option value={3}>Sort By: Name </option>
                       </Select>
                     </FormControl>
-                  </Grid>
+                  </Grid> */}
                 </Grid>
               </Box>
               <div></div>
@@ -240,10 +240,10 @@ class CustomerBusinessSearch extends React.Component<
                           {business.businessInfo.name}
                         </div>
                         <div className={classes.previewBottomInfo}>
-                          <div className={classes.previewBottomDistance}>
+                          {/* <div className={classes.previewBottomDistance}>
                             <LocationOn />
                             0.2 mi
-                          </div>
+                          </div> */}
                           <div className={classes.previewBottomRating}>
                             <Rating
                               size="small"
