@@ -98,10 +98,10 @@ function SignUpPage() {
                   </Typography>
                   <Grid container={true} spacing={1} style={{ marginTop: '24px' }} direction="column">
                     <Grid item>
-                      <CustomerSignUp />
+                      <CustomerSignUp handleSignUpClose={handleClose} />
                     </Grid>
                     <Grid item>
-                      <BusinessSignUp />
+                      <BusinessSignUp handleSignUpClose={handleClose} />
                     </Grid>
                   </Grid>
                 </CardContent>
