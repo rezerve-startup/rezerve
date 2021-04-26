@@ -328,7 +328,6 @@ class BusinessSignUp extends React.Component<any, State> {
           auth
             .signInWithEmailAndPassword(email, password)
             .then((userCreds) => {
-              console.log(`Signed in user ${userCreds.user?.uid}`);
               return userCreds.user?.uid;
             })
             .then((userUID) => {

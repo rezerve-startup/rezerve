@@ -35,7 +35,6 @@ export default function EmployeeTab(props: any) {
       .doc(businessId)
       .get()
       .then((docRef) => {
-        console.log(docRef.data())
         const employeeIds: string[] = docRef.data()?.employees
         const employeeReqIds: string[] = docRef.data()?.employeeRequests
 
