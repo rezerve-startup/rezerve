@@ -22,7 +22,8 @@ import CheckoutForm from './CheckoutForm';
 import './CustomerCheckout.css';
 import moment, { Moment } from 'moment';
 
-const promise = loadStripe(`pk_test_TYooMQauvdEDq54NiTphI7jx`);
+// Need publishable key
+const promise = loadStripe('pk_test_TYooMQauvdEDq54NiTphI7jx');
 
 function getSteps() {
   return ['Review Booking', 'Payment Information', 'Confirm Booking'];
@@ -33,7 +34,7 @@ function getStepContent(stepIndex: number, setCustomerPaid, businessName, appoin
     case 0:
       return <ConfirmationCard businessName={businessName} appointmentDateTime={appointmentDateTime} employeeName={employeeName} service={service} />;
     case 1:
-      return <StripePaymentSetup paymentSuccess={setCustomerPaid} />;
+      return <StripePaymentSetup paymentSuccess={setCustomerPaid} price={service.price} />;
     case 2:
       return <BookingConfirmation businessName={businessName} appointmentDateTime={appointmentDateTime} employeeName={employeeName} service={service} />;
     default:
@@ -44,10 +45,11 @@ function getStepContent(stepIndex: number, setCustomerPaid, businessName, appoin
 function StripePaymentSetup(props) {
   // tslint:disable-next-line: no-shadowed-variable
   const classes = useStyles();
+  const price:number = props.price;
   return (
     <div className="App">
       <Elements stripe={promise}>
-        <CheckoutForm paymentSuccess={props.paymentSuccess} />
+        <CheckoutForm paymentSuccess={props.paymentSuccess} price={price}/>
       </Elements>
     </div>
   );
