@@ -20,6 +20,7 @@ import { StoreState } from '../../shared/store/types';
 import AppointmentPanel from '../employee-home/appointment-tab/AppointmentHome';
 import EmployeesTab from './EmployeesTab'
 import Sidebar from '../../shared/sidebar/Sidebar';
+import { Redirect } from 'react-router';
 
 const styles = (_theme: Theme) =>
   createStyles({
@@ -45,11 +46,12 @@ type State = {
 function mapStateToProps(state: StoreState) {
   return {
     business: state.business,
+    user: state.system.user
   };
 }
 
-class BusinessHome extends React.Component<Props, State> {
-  constructor(props: Props) {
+class BusinessHome extends React.Component<any, any> {
+  constructor(props: any) {
     super(props);
     this.state = {
       business: undefined,
@@ -98,6 +100,11 @@ class BusinessHome extends React.Component<Props, State> {
   render() {
     const { classes } = this.props;
     const isMobile = true;
+
+    if (this.props.user === undefined) {
+      return <Redirect to={'/'} />
+    }
+
     return (
       <div className={classes.root}>
         <Sidebar/>
@@ -190,7 +197,6 @@ function TabPanel(props: TabPanelProps) {
   );
 }
 
-export default connect(
-  mapStateToProps,
-  null,
-)(withStyles(styles, { withTheme: true })(BusinessHome));
+export default connect(mapStateToProps, null)(
+  withStyles(styles, { withTheme: true }
+)(BusinessHome));
