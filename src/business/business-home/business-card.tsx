@@ -59,7 +59,7 @@ type State = {
 interface Props extends WithStyles<typeof styles> {
 }
 
-class BBusinessCard extends React.Component<Props, State> {
+class BusinessCard extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = {
@@ -83,14 +83,14 @@ class BBusinessCard extends React.Component<Props, State> {
                 <Typography variant="h5">{this.state.businessName}</Typography>  
                 ) : (
                 // Edit/Update Business Name
-                <form autoComplete="off" style={{ padding: 10 }}>
+                <div style={{ padding: 10 }}>
                     <TextField
                     label="Business Name"
                     id="edit-businessName"
                     defaultValue={this.state.businessName}
                     />
                     <br />
-                </form>
+                </div>
                 )}
                 
                 {this.state.editInfo ? (
@@ -99,13 +99,13 @@ class BBusinessCard extends React.Component<Props, State> {
                 </Typography>
                 ) : (
                 // Edit/Update Description
-                <form autoComplete="off" style={{ padding: 10 }}>
+                <div style={{ padding: 10 }}>
                     <TextField
                     label="Description"
                     id="edit-description"
                     defaultValue={this.state.description}
                     />
-                </form>
+                </div>
                 )}
                 <StyledRating
               className={classes.userRating}
@@ -182,4 +182,4 @@ class BBusinessCard extends React.Component<Props, State> {
   }
 }
 
-export default withStyles(styles, { withTheme: true })(BBusinessCard);
+export default withStyles(styles, { withTheme: true })(BusinessCard);

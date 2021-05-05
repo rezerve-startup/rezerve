@@ -92,27 +92,23 @@ class AvailablityCard extends React.Component<Props, State> {
                 <ListItemSecondaryAction>
                   <Grid container={true} justify="flex-start" spacing={1}>
                     <Grid item={true} xs={true}>
-                      <form noValidate={true}>
-                        <TextField
-                          id="time"
-                          type="Time"
-                          disabled={editInfo}
-                          defaultValue={item.start}
-                          style={{ width: 104 }}
-                        />
-                      </form>
+                      <TextField
+                        id="time"
+                        type="Time"
+                        disabled={editInfo}
+                        defaultValue={item.start}
+                        style={{ width: 104 }}
+                      />
                     </Grid>
                     <Typography style={{ margin: 'auto' }}>-</Typography>
                     <Grid item={true} xs={true}>
-                      <form noValidate={true}>
-                        <TextField
-                          id="time"
-                          type="Time"
-                          disabled={editInfo}
-                          defaultValue={item.end}
-                          style={{ width: 104 }}
-                        />
-                      </form>
+                      <TextField
+                        id="time"
+                        type="Time"
+                        disabled={editInfo}
+                        defaultValue={item.end}
+                        style={{ width: 104 }}
+                      />
                     </Grid>
                   </Grid>
                 </ListItemSecondaryAction>
