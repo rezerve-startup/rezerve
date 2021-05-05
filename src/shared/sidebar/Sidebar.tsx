@@ -204,7 +204,13 @@ const Sidebar = (props: any ) => {
             <ListItemText className={classes.listText} primary={sidebarDataWithoutLogout[3].title} />
           </MenuItem>
         }
-        {sidebarDataWithoutLogout.slice(4).map((obj, i) => (
+        {props.user.employeeId === '' &&
+          <MenuItem button={true} component={Link} to={sidebarDataWithoutLogout[4].path}>
+            <ListItemIcon className={classes.listIcon}>{sidebarDataWithoutLogout[4].icon}</ListItemIcon>
+            <ListItemText className={classes.listText} primary={sidebarDataWithoutLogout[4].title} />
+          </MenuItem>
+        }
+        {sidebarDataWithoutLogout.slice(5).map((obj, i) => (
           <MenuItem button={true} key={i} component={Link} to={obj.path}>
             <ListItemIcon className={classes.listIcon}>{obj.icon}</ListItemIcon>
             <ListItemText className={classes.listText} primary={obj.title} />
