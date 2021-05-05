@@ -21,6 +21,7 @@ import AppointmentPanel from '../employee-home/appointment-tab/AppointmentHome';
 import EmployeesTab from './EmployeesTab'
 import Sidebar from '../../shared/sidebar/Sidebar';
 import { Redirect } from 'react-router';
+import BusinessPerformance from './business-performance/BusinessPerformance';
 
 const styles = (_theme: Theme) =>
   createStyles({
@@ -58,10 +59,8 @@ class BusinessHome extends React.Component<any, any> {
       businessId: '',
       tabs: [
         { label: 'Home', icon: <Home /> },
-        { label: 'Appointments', icon: <List /> },
-        { label: 'Clients', icon: <Person /> },
         // { label: 'Employees', icon: <People />},
-        { label: 'Preformance', icon: <Assessment /> },
+        { label: 'Performance', icon: <Assessment /> },
       ],
       tabValue: 0,
     };
@@ -70,31 +69,6 @@ class BusinessHome extends React.Component<any, any> {
   componentDidMount() {
     const fetchedBusinesses: any[] = [];
     let businessId = ''
-
-    firestore.collection('businesses').onSnapshot((snapshot) => {
-      snapshot.docs.forEach((doc) => {
-        const barbers: any[] = [];
-        firestore
-          .collection('businesses')
-          .doc(doc.id)
-          .collection('barbers')
-          .onSnapshot((snapshot2) => {
-            snapshot2.docs.forEach((barber) => {
-              barbers.push(barber.data());
-            });
-          });
-
-        const business = doc.data();
-        business.barbers = barbers;
-        businessId = doc.id
-        fetchedBusinesses.push(business);
-      });
-
-      this.setState({
-        business: fetchedBusinesses,
-        businessId
-      });
-    });
   }
 
   render() {
@@ -139,10 +113,7 @@ class BusinessHome extends React.Component<any, any> {
               <HomePanel isMobile={isMobile} />
             </TabPanel>
             <TabPanel value={this.state.tabValue} index={1}>
-              <AppointmentPanel />
-            </TabPanel>
-            <TabPanel value={this.state.tabValue} index={2}>
-              <ClientTab employeeName="Test Employee" />
+              <BusinessPerformance />
             </TabPanel>
             {/* <TabPanel value={this.state.tabValue} index={3}>
               <EmployeesTab businessId={this.state.businessId} />

@@ -198,6 +198,12 @@ const Sidebar = (props: any ) => {
         open={isMenuOpen}
         onClose={handleMenuClose}
       >
+        {props.user.customerId === '' && props.user.employeeInfo.isOwner === true &&
+          <MenuItem button={true} component={Link} to={sidebarDataWithoutLogout[3].path}>
+            <ListItemIcon className={classes.listIcon}>{sidebarDataWithoutLogout[3].icon}</ListItemIcon>
+            <ListItemText className={classes.listText} primary={sidebarDataWithoutLogout[3].title} />
+          </MenuItem>
+        }
         {sidebarDataWithoutLogout.slice(4).map((obj, i) => (
           <MenuItem button={true} key={i} component={Link} to={obj.path}>
             <ListItemIcon className={classes.listIcon}>{obj.icon}</ListItemIcon>
@@ -247,7 +253,8 @@ const Sidebar = (props: any ) => {
                     )
                   }
                 } else if (!(props.user.employeeId === '')) {
-                  if (!(obj.title === 'Appointments' || obj.title === 'Business Search')) {
+                  if (!(obj.title === 'Appointments' || obj.title === 'Business Search' || 
+                  (obj.title === 'Business Home' && props.user.employeeInfo.isOwner === false ))) {
                     return (
                       <ListItem button={true} key={i} component={Link} to={obj.path}>
                           <ListItemIcon className={classes.listIcon}>
