@@ -10,18 +10,17 @@ import {
   createStyles,
   withStyles,
   SvgIconProps,
+  CircularProgress,
 } from '@material-ui/core';
-import { Home, List, Person, Assessment, People } from '@material-ui/icons';
-import ClientTab from '../employee-home/client-tab/ClientTab';
+import { Home, Assessment } from '@material-ui/icons';
 import HomePanel from './HomeTab';
 import { connect } from 'react-redux';
 import { firestore } from '../../config/FirebaseConfig';
 import { StoreState } from '../../shared/store/types';
-import AppointmentPanel from '../employee-home/appointment-tab/AppointmentHome';
-import EmployeesTab from './EmployeesTab'
 import Sidebar from '../../shared/sidebar/Sidebar';
 import { Redirect } from 'react-router';
 import BusinessPerformance from './business-performance/BusinessPerformance';
+import { setEmployeeBusiness } from '../../shared/store/actions';
 
 const styles = (_theme: Theme) =>
   createStyles({
@@ -45,8 +44,8 @@ type State = {
 };
 
 function mapStateToProps(state: StoreState) {
+  console.log(state.system.user);
   return {
-    business: state.business,
     user: state.system.user
   };
 }
@@ -66,9 +65,19 @@ class BusinessHome extends React.Component<any, any> {
     };
   }
 
+  dispatchSetEmployeeBusiness(employeeBusiness: any) {
+    this.props.setEmployeeBusiness(employeeBusiness);
+  }
+
   componentDidMount() {
-    const fetchedBusinesses: any[] = [];
-    let businessId = ''
+    firestore.collection('businesses').where('employees', 'array-contains', this.props.user.employeeId).get()
+      .then((querySnapshot) => {
+        querySnapshot.forEach((businessDoc) => {
+          const businessData = businessDoc.data();
+
+          this.dispatchSetEmployeeBusiness(businessData);
+        });
+      });
   }
 
   render() {
@@ -77,6 +86,10 @@ class BusinessHome extends React.Component<any, any> {
 
     if (this.props.user === undefined) {
       return <Redirect to={'/'} />
+    }
+
+    if (this.props.user.employeeInfo.business === undefined) {
+      return <CircularProgress />
     }
 
     return (
@@ -168,6 +181,6 @@ function TabPanel(props: TabPanelProps) {
   );
 }
 
-export default connect(mapStateToProps, null)(
+export default connect(mapStateToProps, { setEmployeeBusiness })(
   withStyles(styles, { withTheme: true }
 )(BusinessHome));

@@ -35,7 +35,10 @@ import {
   SET_EMPLOYEE_SERVICES,
   SignUpActionTypes,
   CREATE_NEW_BUSINESS,
-  CREATE_NEW_CUSTOMER
+  CREATE_NEW_CUSTOMER,
+  SET_EMPLOYEE_BUSINESS,
+  SET_EMPLOYEE_BUSINESS_NAME,
+  SET_EMPLOYEE_BUSINESS_DESCRIPTION
 } from './types';
 
 // ****** SYSTEM ACTIONS ***************
@@ -99,6 +102,27 @@ export function setEmployeeServices(employeeServices: any[]): SystemActionTypes 
   return {
     type: SET_EMPLOYEE_SERVICES,
     payload: employeeServices
+  }
+}
+
+export function setEmployeeBusiness(employeeBusiness: any): SystemActionTypes {
+  return {
+    type: SET_EMPLOYEE_BUSINESS,
+    payload: employeeBusiness
+  }
+}
+
+export function setEmployeeBusinessName(businessName: string): SystemActionTypes {
+  return {
+    type: SET_EMPLOYEE_BUSINESS_NAME,
+    payload: businessName
+  }
+}
+
+export function setEmployeeBusinessDescription(businessDescription: string): SystemActionTypes {
+  return {
+    type: SET_EMPLOYEE_BUSINESS_DESCRIPTION,
+    payload: businessDescription
   }
 }
 

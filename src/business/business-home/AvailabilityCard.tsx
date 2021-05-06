@@ -80,7 +80,7 @@ class AvailablityCard extends React.Component<Props, State> {
     return (
       <Card>
         <CardContent className={classes.cardContent}>
-          <Typography variant="h5">Avaliability</Typography>
+          <Typography variant="h5">Availability</Typography>
           <Divider />
           <List>
             {this.state.businessSchedule.map((item: BusinessSchedule) => (

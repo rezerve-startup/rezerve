@@ -24,6 +24,10 @@ export const SET_EMPLOYEE_CLIENTS = 'SET_EMPLOYEE_CLIENTS';
 export const SET_EMPLOYEE_REVIEWS = 'SET_EMPLOYEE_REVIEWS';
 export const SET_EMPLOYEE_SERVICES = 'SET_EMPLOYEE_SERVICES';
 
+export const SET_EMPLOYEE_BUSINESS = 'SET_EMPLOYEE_BUSINESS';
+export const SET_EMPLOYEE_BUSINESS_NAME = 'SET_EMPLOYEE_BUSINESS_NAME';
+export const SET_EMPLOYEE_BUSINESS_DESCRIPTION = 'SET_EMPLOYEE_BUSINESS_DESCRIPTION';
+
 export const SET_USER_CUSTOMER_INFO = 'SET_USER_CUSTOMER_INFO';
 export const SET_USER_CUSTOMER_APPOINTMENTS = 'SET_USER_CUSTOMER_APPOINTMENTS';
 export const SET_USER_CUSTOMER_CONVERSATIONS = 'SET_USER_CUSTOMER_CONVERSATIONS';
@@ -78,6 +82,21 @@ interface SetEmployeeReviewsAction {
 interface SetEmployeeServicesAction {
   type: typeof SET_EMPLOYEE_SERVICES,
   payload: any[]
+}
+
+interface SetEmployeeBusinessAction {
+  type: typeof SET_EMPLOYEE_BUSINESS,
+  payload: any[]
+}
+
+interface SetEmployeeBusinessNameAction {
+  type: typeof SET_EMPLOYEE_BUSINESS_NAME,
+  payload: string
+}
+
+interface SetEmployeeBusinessDescription {
+  type: typeof SET_EMPLOYEE_BUSINESS_DESCRIPTION,
+  payload: string
 }
 
 interface SetUserCustomerInfoAction {
@@ -144,6 +163,9 @@ export type SystemActionTypes =
   SetEmployeeClientsAction |
   SetEmployeeReviewsAction |
   SetEmployeeServicesAction |
+  SetEmployeeBusinessAction |
+  SetEmployeeBusinessNameAction |
+  SetEmployeeBusinessDescription |
   SetUserCustomerInfoAction |
   SetUserCustomerAppointmentsAction |
   SetUserCustomerConversationsAction |

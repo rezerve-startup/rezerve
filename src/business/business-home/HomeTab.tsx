@@ -39,7 +39,7 @@ type State = {};
 class HomePanel extends React.Component<Props, State> {
   render() {
     const { classes, isMobile } = this.props;
-    const carouselComponents = [AvailabilityCard, PreferencesCard, ContactCard];
+    const carouselComponents = [AvailabilityCard];
 
     return (
       <div className={classes.root}>
@@ -50,7 +50,8 @@ class HomePanel extends React.Component<Props, State> {
                 <BusinessCard/>
               </Grid>
               <Grid item={true} xs={true}>
-                <Carousel
+                <AvailabilityCard />
+                {/* <Carousel
                   autoPlay={false}
                   animation="slide"
                   navButtonsAlwaysInvisible={isMobile ? true : false}
@@ -58,7 +59,7 @@ class HomePanel extends React.Component<Props, State> {
                   {carouselComponents.map((Component, i) => (
                     <Component key={i} />
                   ))}
-                </Carousel>
+                </Carousel> */}
               </Grid>
             </Grid>
           </Grid>
