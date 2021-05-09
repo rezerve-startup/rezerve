@@ -130,9 +130,9 @@ class BusinessInfo extends React.Component<any, BusinessInfoState> {
               .then(value => {
                 const appointment = value.data();
                 if (appointment?.status === 'completed') {
-                  this.setState({
-                    isAddReviewDisabled: false
-                  });
+                  // this.setState({
+                  //   isAddReviewDisabled: false
+                  // });
                 }
               });
           });
@@ -642,8 +642,6 @@ class BusinessInfo extends React.Component<any, BusinessInfoState> {
             </div>
             <BusinessInfoDetails
               businessId={this.state.businessKey}
-              businessOpeningTime={this.state.businessInfo.about.openingTime}
-              businessClosingTime={this.state.businessInfo.about.closingTime}
               businessOpenDates={this.state.businessInfo.about.daysOpen}  
               businessName={this.state.businessInfo.name}
             />

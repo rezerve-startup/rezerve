@@ -10,21 +10,28 @@ import {
   createStyles,
   withStyles,
   SvgIconProps,
+  CircularProgress,
 } from '@material-ui/core';
-import { Home, List, Person, Assessment, People } from '@material-ui/icons';
-import ClientTab from '../employee-home/client-tab/ClientTab';
+import { Home, Assessment } from '@material-ui/icons';
 import HomePanel from './HomeTab';
 import { connect } from 'react-redux';
 import { firestore } from '../../config/FirebaseConfig';
 import { StoreState } from '../../shared/store/types';
-import AppointmentPanel from '../employee-home/appointment-tab/AppointmentHome';
-import EmployeesTab from './EmployeesTab'
 import Sidebar from '../../shared/sidebar/Sidebar';
+import { Redirect } from 'react-router';
+import BusinessPerformance from './business-performance/BusinessPerformance';
+import { setEmployeeBusiness } from '../../shared/store/actions';
 
 const styles = (_theme: Theme) =>
   createStyles({
     root: {
       flexGrow: 1,
+    },
+    loadingContainer: {
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
+      height: '100%',
     },
   });
 
@@ -44,60 +51,56 @@ type State = {
 
 function mapStateToProps(state: StoreState) {
   return {
-    business: state.business,
+    user: state.system.user
   };
 }
 
-class BusinessHome extends React.Component<Props, State> {
-  constructor(props: Props) {
+class BusinessHome extends React.Component<any, any> {
+  constructor(props: any) {
     super(props);
     this.state = {
       business: undefined,
       businessId: '',
       tabs: [
         { label: 'Home', icon: <Home /> },
-        { label: 'Appointments', icon: <List /> },
-        { label: 'Clients', icon: <Person /> },
         // { label: 'Employees', icon: <People />},
-        { label: 'Preformance', icon: <Assessment /> },
+        { label: 'Performance', icon: <Assessment /> },
       ],
       tabValue: 0,
     };
   }
 
+  dispatchSetEmployeeBusiness(employeeBusiness: any) {
+    this.props.setEmployeeBusiness(employeeBusiness);
+  }
+
   componentDidMount() {
-    const fetchedBusinesses: any[] = [];
-    let businessId = ''
+    firestore.collection('businesses').where('employees', 'array-contains', this.props.user.employeeId).get()
+      .then((querySnapshot) => {
+        querySnapshot.forEach((businessDoc) => {
+          const businessData = businessDoc.data();
 
-    firestore.collection('businesses').onSnapshot((snapshot) => {
-      snapshot.docs.forEach((doc) => {
-        const barbers: any[] = [];
-        firestore
-          .collection('businesses')
-          .doc(doc.id)
-          .collection('barbers')
-          .onSnapshot((snapshot2) => {
-            snapshot2.docs.forEach((barber) => {
-              barbers.push(barber.data());
-            });
-          });
-
-        const business = doc.data();
-        business.barbers = barbers;
-        businessId = doc.id
-        fetchedBusinesses.push(business);
+          this.dispatchSetEmployeeBusiness(businessData);
+        });
       });
-
-      this.setState({
-        business: fetchedBusinesses,
-        businessId
-      });
-    });
   }
 
   render() {
     const { classes } = this.props;
     const isMobile = true;
+
+    if (this.props.user === undefined) {
+      return <Redirect to={'/'} />
+    }
+
+    if (this.props.user.employeeInfo.business === undefined) {
+      return (
+        <div className={classes.loadingSpinner}>
+          <CircularProgress size={75} />
+        </div>
+      )
+    }
+
     return (
       <div className={classes.root}>
         <Sidebar/>
@@ -132,10 +135,7 @@ class BusinessHome extends React.Component<Props, State> {
               <HomePanel isMobile={isMobile} />
             </TabPanel>
             <TabPanel value={this.state.tabValue} index={1}>
-              <AppointmentPanel />
-            </TabPanel>
-            <TabPanel value={this.state.tabValue} index={2}>
-              <ClientTab employeeName="Test Employee" />
+              <BusinessPerformance />
             </TabPanel>
             {/* <TabPanel value={this.state.tabValue} index={3}>
               <EmployeesTab businessId={this.state.businessId} />
@@ -190,7 +190,6 @@ function TabPanel(props: TabPanelProps) {
   );
 }
 
-export default connect(
-  mapStateToProps,
-  null,
-)(withStyles(styles, { withTheme: true })(BusinessHome));
+export default connect(mapStateToProps, { setEmployeeBusiness })(
+  withStyles(styles, { withTheme: true }
+)(BusinessHome));
