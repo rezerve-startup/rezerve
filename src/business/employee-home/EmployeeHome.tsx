@@ -17,7 +17,7 @@ import {
 import { Home, List, Person, Assessment } from '@material-ui/icons';
 import ClientTab from './client-tab/ClientTab';
 import HomeTab from './home-tab/HomeTab';
-import BusinessPerformance from './business-performance/BusinessPerformance';
+import BusinessPerformance from '../business-home/business-performance/BusinessPerformance';
 import { connect } from 'react-redux';
 import { firestore } from '../../config/FirebaseConfig';
 import { StoreState } from '../../shared/store/types';
@@ -76,13 +76,6 @@ class EmployeeHome extends React.Component<Props, State> {
   }
 
   componentDidMount() {
-    if (this.state.user?.employeeInfo?.isOwner) {
-      const tempTabs = this.state.tabs;
-      tempTabs.push({ label: 'Performance', icon: <Assessment /> },)
-      this.setState({
-        tabs: tempTabs
-      })
-    }
   }
 
   render() {
@@ -133,14 +126,7 @@ class EmployeeHome extends React.Component<Props, State> {
               </TabPanel>
               <TabPanel value={this.state.tabValue} index={2}>
                 <ClientTab />
-              </TabPanel>
-              {this.state.user.employeeInfo.isOwner &&
-                <TabPanel value={this.state.tabValue} index={3}>
-                  <BusinessPerformance />
-                </TabPanel>
-              }
-              
-              
+              </TabPanel>             
             </SwipeableViews>
           </Box>
         </div>

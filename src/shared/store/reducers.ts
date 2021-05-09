@@ -1,4 +1,3 @@
-import { stat } from 'fs';
 import {
   SystemState,
   SystemActionTypes,
@@ -40,7 +39,11 @@ import {
   CREATE_NEW_CUSTOMER,
   CREATE_NEW_BUSINESS,
   SignUpActionTypes,
-  SignUpState
+  SignUpState,
+  SET_EMPLOYEE_BUSINESS,
+  SET_EMPLOYEE_BUSINESS_NAME,
+  SET_EMPLOYEE_BUSINESS_DESCRIPTION,
+  UPDATE_BUSINESS_SCHEDULE
 } from './types';
 
 // ************** System Reducer ******************
@@ -138,6 +141,66 @@ export function systemReducer(
           employeeInfo: {
             ...state.user.employeeInfo,
             services: action.payload
+          }
+        }
+      }
+    }
+    case SET_EMPLOYEE_BUSINESS: {
+      return {
+        ...state,
+        user: {
+          ...state.user,
+          employeeInfo: {
+            ...state.user.employeeInfo,
+            business: action.payload
+          }
+        }
+      }
+    }
+    case SET_EMPLOYEE_BUSINESS_NAME: {
+      return {
+        ...state,
+        user: {
+          ...state.user,
+          employeeInfo: {
+            ...state.user.employeeInfo,
+            business: {
+              ...state.user.employeeInfo.business,
+              name: action.payload
+            }
+          }
+        }
+      }
+    }
+    case SET_EMPLOYEE_BUSINESS_DESCRIPTION: {
+      return {
+        ...state,
+        user: {
+          ...state.user,
+          employeeInfo: {
+            ...state.user.employeeInfo,
+            business: {
+              ...state.user.employeeInfo.business,
+              description: action.payload
+            }
+          }
+        }
+      }
+    }
+    case UPDATE_BUSINESS_SCHEDULE: {
+      return {
+        ...state,
+        user: {
+          ...state.user,
+          employeeInfo: {
+            ...state.user.employeeInfo,
+            business: {
+              ...state.user.employeeInfo.business,
+              about: {
+                ...state.user.employeeInfo.business.about,
+                daysOpen: action.payload
+              }
+            }
           }
         }
       }
