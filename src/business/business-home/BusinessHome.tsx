@@ -27,6 +27,12 @@ const styles = (_theme: Theme) =>
     root: {
       flexGrow: 1,
     },
+    loadingContainer: {
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
+      height: '100%',
+    },
   });
 
 interface CustomTab {
@@ -44,7 +50,6 @@ type State = {
 };
 
 function mapStateToProps(state: StoreState) {
-  console.log(state.system.user);
   return {
     user: state.system.user
   };
@@ -89,7 +94,11 @@ class BusinessHome extends React.Component<any, any> {
     }
 
     if (this.props.user.employeeInfo.business === undefined) {
-      return <CircularProgress />
+      return (
+        <div className={classes.loadingSpinner}>
+          <CircularProgress size={75} />
+        </div>
+      )
     }
 
     return (

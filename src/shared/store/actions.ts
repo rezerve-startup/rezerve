@@ -38,7 +38,8 @@ import {
   CREATE_NEW_CUSTOMER,
   SET_EMPLOYEE_BUSINESS,
   SET_EMPLOYEE_BUSINESS_NAME,
-  SET_EMPLOYEE_BUSINESS_DESCRIPTION
+  SET_EMPLOYEE_BUSINESS_DESCRIPTION,
+  UPDATE_BUSINESS_SCHEDULE
 } from './types';
 
 // ****** SYSTEM ACTIONS ***************
@@ -123,6 +124,13 @@ export function setEmployeeBusinessDescription(businessDescription: string): Sys
   return {
     type: SET_EMPLOYEE_BUSINESS_DESCRIPTION,
     payload: businessDescription
+  }
+}
+
+export function updateBusinessSchedule(businessSchedule: any[]): SystemActionTypes {
+  return {
+    type: UPDATE_BUSINESS_SCHEDULE,
+    payload: businessSchedule
   }
 }
 

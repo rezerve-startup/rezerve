@@ -27,6 +27,7 @@ export const SET_EMPLOYEE_SERVICES = 'SET_EMPLOYEE_SERVICES';
 export const SET_EMPLOYEE_BUSINESS = 'SET_EMPLOYEE_BUSINESS';
 export const SET_EMPLOYEE_BUSINESS_NAME = 'SET_EMPLOYEE_BUSINESS_NAME';
 export const SET_EMPLOYEE_BUSINESS_DESCRIPTION = 'SET_EMPLOYEE_BUSINESS_DESCRIPTION';
+export const UPDATE_BUSINESS_SCHEDULE = 'SET_BUSINESS_SCHEDULE';
 
 export const SET_USER_CUSTOMER_INFO = 'SET_USER_CUSTOMER_INFO';
 export const SET_USER_CUSTOMER_APPOINTMENTS = 'SET_USER_CUSTOMER_APPOINTMENTS';
@@ -99,6 +100,11 @@ interface SetEmployeeBusinessDescription {
   payload: string
 }
 
+interface UpdateBusinessScheduleAction {
+  type: typeof UPDATE_BUSINESS_SCHEDULE,
+  payload: any[]
+}
+
 interface SetUserCustomerInfoAction {
   type: typeof SET_USER_CUSTOMER_INFO;
   payload: any;
@@ -166,6 +172,7 @@ export type SystemActionTypes =
   SetEmployeeBusinessAction |
   SetEmployeeBusinessNameAction |
   SetEmployeeBusinessDescription |
+  UpdateBusinessScheduleAction |
   SetUserCustomerInfoAction |
   SetUserCustomerAppointmentsAction |
   SetUserCustomerConversationsAction |

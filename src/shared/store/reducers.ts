@@ -42,7 +42,8 @@ import {
   SignUpState,
   SET_EMPLOYEE_BUSINESS,
   SET_EMPLOYEE_BUSINESS_NAME,
-  SET_EMPLOYEE_BUSINESS_DESCRIPTION
+  SET_EMPLOYEE_BUSINESS_DESCRIPTION,
+  UPDATE_BUSINESS_SCHEDULE
 } from './types';
 
 // ************** System Reducer ******************
@@ -181,6 +182,24 @@ export function systemReducer(
             business: {
               ...state.user.employeeInfo.business,
               description: action.payload
+            }
+          }
+        }
+      }
+    }
+    case UPDATE_BUSINESS_SCHEDULE: {
+      return {
+        ...state,
+        user: {
+          ...state.user,
+          employeeInfo: {
+            ...state.user.employeeInfo,
+            business: {
+              ...state.user.employeeInfo.business,
+              about: {
+                ...state.user.employeeInfo.business.about,
+                daysOpen: action.payload
+              }
             }
           }
         }

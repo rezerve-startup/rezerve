@@ -18,6 +18,7 @@ import {
   Divider,
   Snackbar,
   IconButton,
+  Checkbox,
 } from '@material-ui/core';
 import CloseIcon from '@material-ui/icons/Close';
 import { StoreState } from '../../../shared/store/types';
@@ -66,7 +67,7 @@ function mapStateToProps(state: StoreState) {
   return({
     employeeId: state.system.user?.employeeId,
     employeeSchedule: state.system.user.employeeInfo?.availability,
-    businessSchedule: state.business.businessAvailability
+    businessSchedule: state.business.businessAvailability.daysOpen
   })
 }
 
@@ -113,6 +114,15 @@ class AvailablityCard extends React.Component<Props, State> {
     })
   }
 
+  updateEnabled(event, index) {
+    let daysOpen = this.state.employeeSchedule;
+    daysOpen[index].enabled = event.target.checked;
+
+    this.setState({
+      employeeSchedule: daysOpen
+    });
+  }
+
   handleCloseDisplayInvalidTimes() {
     this.setState({
       displayInvalidTimes: false
@@ -131,13 +141,18 @@ class AvailablityCard extends React.Component<Props, State> {
             <Divider />
               {this.state.employeeSchedule && this.state.employeeSchedule.map((item, index) => (
                 <div key={item.day} className={classes.dayOfWeek}>
+                  <Checkbox
+                    disabled={editInfo || !this.props.businessSchedule[index].enabled}
+                    checked={item.enabled}
+                    onChange={(e) => this.updateEnabled(e, index)}
+                  />
                   <Typography className={classes.dayText}>{item.day}</Typography>
                   <div className={classes.hourlyAvailability}>
                     <TextField
                       id="time"
                       type="Time"
                       onChange={(e) => this.handleStartTimeChange(index, e)}
-                      disabled={editInfo}
+                      disabled={editInfo || !this.props.businessSchedule[index].enabled || !item.enabled}
                       defaultValue={item.start}
                     />
                     <Typography style={{ marginRight: '0.25rem' }}>-</Typography>
@@ -145,7 +160,7 @@ class AvailablityCard extends React.Component<Props, State> {
                       id="time"
                       type="Time"
                       onChange={(e) => this.handleCloseTimeChange(index, e)}
-                      disabled={editInfo}
+                      disabled={editInfo || !this.props.businessSchedule[index].enabled || !item.enabled}
                       defaultValue={item.end}
                       style={{ width: 104 }}
                       size='small'
@@ -211,13 +226,22 @@ class AvailablityCard extends React.Component<Props, State> {
       let validTimes = true;
   
       for (let businessDay of this.state.employeeSchedule) {
-        if (businessDay.end < businessDay.start) {
+        if (businessDay.end <= businessDay.start) {
           validTimes = false;
           break;
         }
 
-        if (businessDay.end > this.props.businessSchedule.closingTime || businessDay.start < this.props.businessSchedule.openingTime) {
-          validTimes = false;
+        for (let overallBusinessDay of this.props.businessSchedule) {
+          if (overallBusinessDay.day === businessDay.day) {
+            if (businessDay.end > overallBusinessDay.end || businessDay.start < overallBusinessDay.start ||
+                (!overallBusinessDay.enabled && businessDay.enabled)) {
+              validTimes = false;
+              break;
+            }
+          }
+        }
+
+        if (!validTimes) {
           break;
         }
       }
