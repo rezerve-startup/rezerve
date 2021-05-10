@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { SyntheticEvent } from 'react';
 import {
   Theme,
   createStyles,
@@ -14,11 +14,14 @@ import {
   FormControl,
   InputLabel,
   MenuItem,
+  Button,
+  CardMedia
 } from '@material-ui/core';
 import { Close } from '@material-ui/icons';
 import { parsePhoneNumber } from 'libphonenumber-js';
 import { states } from './StateArray';
-import { FileObject } from 'material-ui-dropzone';
+import { storageRef } from '../../config/FirebaseConfig';
+import { DropzoneDialog, FileObject } from 'material-ui-dropzone';
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -34,6 +37,10 @@ const styles = (theme: Theme) =>
       textAlign: 'center',
       fontSize: 24,
     },
+    testImage: {
+      height: 50,
+      width: 50
+    }
   });
 
 // tslint:disable-next-line: no-empty-interface
@@ -47,14 +54,14 @@ interface NonStyleProps {
   state: string;
   zipcode: string;
   description: string;
-  coverImage: string;
-  updateValue: (name: string, value: string, valid: boolean) => void;
+  coverImages: string[];
+  updateValue: (name: string, value: string | string[], valid: boolean) => void;
 }
 
 interface RootState {
   errors: Errors;
   imageDialog: boolean;
-  coverImageFiles: FileObject[];
+  coverImageFiles: string[];
   snackbar: {
     open: boolean;
     message: string;
@@ -62,7 +69,7 @@ interface RootState {
   };
 }
 
-type Props = NonStyleProps & WithStyles<'root' | 'title' | 'card'>;
+type Props = NonStyleProps & WithStyles<'root' | 'title' | 'card' | 'testImage'>;
 
 const DecoratedBusinessInfoForm = withStyles(styles, { withTheme: true })(
   class BusinessInfoForm extends React.Component<Props, RootState> {
@@ -156,8 +163,23 @@ const DecoratedBusinessInfoForm = withStyles(styles, { withTheme: true })(
       this.setState({ ...this.state, imageDialog: false });
     };
 
-    handleImageUpload = (file: FileObject[]) => {
-      console.log(file);
+    handleImageUpload = (files: File[], event: SyntheticEvent) => {
+      const coverImageStrings: string[] = []
+
+      files.forEach((file: File) => {
+        const reader = new FileReader()
+
+        reader.onabort = () => console.log('file reading was aborted')
+        reader.onerror = () => console.log('file reading has failed')
+        reader.onload = () => { coverImageStrings.push(reader.result as string)
+        }
+        reader.readAsDataURL(file)
+      })
+      
+      const valid = this.validateForm()
+      if (coverImageStrings.length > 0) {
+        this.props.updateValue('coverImages', coverImageStrings, valid)
+      }
     };
 
     render() {
@@ -271,28 +293,28 @@ const DecoratedBusinessInfoForm = withStyles(styles, { withTheme: true })(
                     variant="outlined"
                   />
                 </Grid>
-                {/* <Grid item={true} xs={12}>
-                  <Button variant="contained" color="primary" onClick={this.openDialog}>
+
+                <Grid item={true} xs={12}>
+                  <Button variant="contained" color="primary" fullWidth={true} onClick={this.openDialog}>
                     Add Image
                   </Button>
 
-                  <DropzoneDialogBase
-                    dialogTitle={dialogTitle({
-                      toggleDialog: this.closeDialog
-                    })}
+                  <DropzoneDialog
                     acceptedFiles={['image/*']}
-                    fileObjects={this.state.coverImageFiles}
                     cancelButtonText={"cancel"}
                     submitButtonText={"submit"}
+                    filesLimit={3}
                     maxFileSize={5000000}
                     open={this.state.imageDialog}
-                    onAdd={this.handleImageUpload}
                     onClose={this.closeDialog}
-                    //onSave={this.handleImageUpload}
+                    onSave={this.handleImageUpload}
                     showPreviews={true}
                     showFileNamesInPreview={true}
                   />
-                </Grid> */}
+                </Grid>
+                <Grid item={true} xs={12}>
+                  <CardMedia className={classes.testImage} image={this.state.coverImageFiles[0]} />
+                </Grid>
               </Grid>
             </CardContent>
           </Card>

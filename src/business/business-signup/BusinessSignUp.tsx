@@ -57,7 +57,7 @@ interface ComponentState {
   state: string;
   zipcode: string;
   description: string;
-  coverImage: string;
+  coverImages: string[];
 }
 
 type State = ComponentState & SystemState;
@@ -75,18 +75,18 @@ class BusinessSignUp extends React.Component<any, State> {
       validForm: false,
       creatingUserAccount: false,
       employeeId: '',
-      email: '',
-      firstName: '',
-      lastName: '',
+      email: 'testimage@test.com',
+      firstName: 'Test',
+      lastName: 'Image',
       phone: '',
-      password: '',
+      password: 'testimage',
       name: '',
       address: '',
       city: '',
       state: '',
       zipcode: '',
       description: '',
-      coverImage: '',
+      coverImages: [],
       loggedIn: props.system.loggedIn,
       session: props.system.session,
       user: props.system.user,
@@ -176,7 +176,7 @@ class BusinessSignUp extends React.Component<any, State> {
       });
   }
 
-  updateValue = (name: string, value: string, valid: boolean) => {
+  updateValue = (name: string, value: string | string[], valid: boolean) => {
     this.setState({ ...this.state, validForm: valid, [name]: value });
   };
 
@@ -522,7 +522,7 @@ class BusinessSignUp extends React.Component<any, State> {
               ) : (
                 <div className={classes.root}>
                   <form
-                    className={classes.root}
+                    className={classes.form}
                     onSubmit={this.handleSubmit}
                     noValidate={true}
                     autoComplete="off"
@@ -546,7 +546,7 @@ class BusinessSignUp extends React.Component<any, State> {
                         state={this.state.state}
                         zipcode={this.state.zipcode}
                         description={this.state.description}
-                        coverImage={this.state.coverImage}
+                        coverImages={this.state.coverImages}
                         updateValue={this.updateValue}
                       />
                     ) : (
@@ -644,6 +644,10 @@ const styles = (theme: Theme) =>
     card: {
       padding: '4px',
       overflow: 'auto',
+    },
+    form: {
+      borderRadius: '0px',
+      boxShadow: '0px'
     },
     title: {
       textAlign: 'center',
