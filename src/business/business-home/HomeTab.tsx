@@ -10,8 +10,7 @@ import {
   Typography,
 } from '@material-ui/core';
 
-import BusinessCard from './BusinessCard';
-import BBusinessCard from  './business-card'
+import BusinessCard from  './business-card'
 import AvailabilityCard from './AvailabilityCard'
 import PreferencesCard from './PreferencesCard';
 import ContactCard from '../employee-home/home-tab/ContactCard';
@@ -40,7 +39,7 @@ type State = {};
 class HomePanel extends React.Component<Props, State> {
   render() {
     const { classes, isMobile } = this.props;
-    const carouselComponents = [AvailabilityCard, PreferencesCard, ContactCard];
+    const carouselComponents = [AvailabilityCard];
 
     return (
       <div className={classes.root}>
@@ -48,10 +47,11 @@ class HomePanel extends React.Component<Props, State> {
           <Grid item={true} xs={isMobile ? 12 : 6}>
             <Grid container={true} spacing={2} direction="column">
               <Grid item={true} xs={true}>
-                <BBusinessCard/>
+                <BusinessCard/>
               </Grid>
               <Grid item={true} xs={true}>
-                <Carousel
+                <AvailabilityCard />
+                {/* <Carousel
                   autoPlay={false}
                   animation="slide"
                   navButtonsAlwaysInvisible={isMobile ? true : false}
@@ -59,31 +59,7 @@ class HomePanel extends React.Component<Props, State> {
                   {carouselComponents.map((Component, i) => (
                     <Component key={i} />
                   ))}
-                </Carousel>
-              </Grid>
-            </Grid>
-          </Grid>
-          <Grid item={true} xs={isMobile ? 12 : 6}>
-            <Grid container={true} spacing={2} direction="column">
-              <Grid item={true} xs={true}>
-                <Paper className={classes.paper}>
-                  <Typography
-                    component="h1"
-                    variant="h1"
-                    color="primary"
-                    align="left"
-                  >
-                    20
-                  </Typography>
-                  <Typography
-                    component="h5"
-                    variant="h5"
-                    align="left"
-                    style={{ fontWeight: 600 }}
-                  >
-                    Upcoming Appointments
-                  </Typography>
-                </Paper>
+                </Carousel> */}
               </Grid>
             </Grid>
           </Grid>

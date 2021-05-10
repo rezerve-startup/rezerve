@@ -29,8 +29,6 @@ export const unsubscribe = auth.onAuthStateChanged((user) => {
   store.dispatch(setAuthChanging(true));
 
   if (user) {
-    console.log(1)
-    console.log(user);
     firestore
       .collection('users')
       .doc(`${user.uid}`)

@@ -297,13 +297,13 @@ class BusinessPerformance extends React.Component<
 
             
 
-            <div className={classes.sectionTitle}>
+            {/* <div className={classes.sectionTitle}>
               Profits
             </div>
             <div className={classes.businessPerformanceItem}>
               Total Revenue
               <div>${this.state.businessPerformance.totalRevenue.toFixed(2)}</div>
-            </div>
+            </div> */}
 
             <div className={classes.sectionTitle}>
               <div>Reviews & Rating</div>
