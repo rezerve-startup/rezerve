@@ -16,19 +16,35 @@ const calculateOrderAmount = (price) => {
   // Prices must be whole numbers are not decimals. Multiply by 100.
   // Adjust REZERVE_FEE as needed. Take price multiply by 100.
   // .75 additional charges will need be put in as 75 into the variable.
+  // Ex. A $24.20 hair cut will return as 2495 (24.20*100+75 = 2495) 
   const REZERVE_FEE = 75;
   const finalPrice = price.servicePrice * 100 + REZERVE_FEE;
   return finalPrice;
 };
 
 app.post('/create-payment-intent', async (req, res) => {
-  const price = req.body;
+  const price = req.body; //JSON sent in from CheckoutForm.tsx 
+
+  // const customer = await stripe.customers.create({
+    // source: tokenized mastercard,
+    // email: email here, 
+//  });
 
   // Create a PaymentIntent with the order amount and currency
   const paymentIntent = await stripe.paymentIntents.create({
     amount: calculateOrderAmount(price),
     currency: 'usd',
+    //transfer_group: '{id}', 
+
   });
+
+  // Transfer to business
+  //const transfer =  await strip.tranfer.create({ 
+    // amount: ,
+    // currency: ,
+    // destination: `{{CONNECTED_STRIPE_ACCOUNT_ID}}`,
+    // transfer_group: `{id}` ,
+  // }); 
 
   res.send({
     clientSecret: paymentIntent.client_secret,
