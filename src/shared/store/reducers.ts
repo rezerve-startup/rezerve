@@ -43,7 +43,8 @@ import {
   SET_EMPLOYEE_BUSINESS,
   SET_EMPLOYEE_BUSINESS_NAME,
   SET_EMPLOYEE_BUSINESS_DESCRIPTION,
-  UPDATE_BUSINESS_SCHEDULE
+  UPDATE_BUSINESS_SCHEDULE,
+  SET_CREATING_USER
 } from './types';
 
 // ************** System Reducer ******************
@@ -53,6 +54,7 @@ const initialSystemState: SystemState = {
   session: '',
   user: undefined,
   authChanging: true,
+  creatingUser: false,
   bookDialogStatus: false
 };
 
@@ -303,6 +305,12 @@ export function systemReducer(
       return {
         ...state,
         authChanging: action.payload
+      }
+    }
+    case SET_CREATING_USER: {
+      return {
+        ...state,
+        creatingUser: action.payload
       }
     }
     case SET_BOOK_DIALOG_STATUS: {

@@ -39,7 +39,8 @@ import {
   SET_EMPLOYEE_BUSINESS,
   SET_EMPLOYEE_BUSINESS_NAME,
   SET_EMPLOYEE_BUSINESS_DESCRIPTION,
-  UPDATE_BUSINESS_SCHEDULE
+  UPDATE_BUSINESS_SCHEDULE,
+  SET_CREATING_USER
 } from './types';
 
 // ****** SYSTEM ACTIONS ***************
@@ -200,6 +201,19 @@ export function setAuthChanging(authChangingValue: boolean): SystemActionTypes {
   return {
     type: AUTH_CHANGING,
     payload: authChangingValue
+  }
+}
+
+export function setCreatingUser(value: boolean) {
+  return dispatch => {
+    dispatch({
+      type: SET_CREATING_USER,
+      payload: value
+    })
+    
+    return new Promise<void>((resolve, reject) => {
+      resolve()
+    })
   }
 }
 

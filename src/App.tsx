@@ -87,6 +87,7 @@ class App extends React.Component<any, SystemState> {
       session: props.system.session,
       user: props.system.user,
       authChanging: props.system.authChanging,
+      creatingUser: props.system.creatingUser,
       bookDialogStatus: props.system.bookDialogStatus
     };
   }

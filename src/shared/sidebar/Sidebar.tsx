@@ -204,7 +204,7 @@ const Sidebar = (props: any ) => {
             <ListItemText className={classes.listText} primary={sidebarDataWithoutLogout[2].title} />
           </MenuItem>
         }
-        {props.user.customerId === '' && props.user.employeeInfo.isOwner === true &&
+        {props.user.employeeInfo.businessId === '' && props.user.employeeInfo.isOwner === true &&
           <MenuItem button={true} component={Link} to={sidebarDataWithoutLogout[3].path}>
             <ListItemIcon className={classes.listIcon}>{sidebarDataWithoutLogout[3].icon}</ListItemIcon>
             <ListItemText className={classes.listText} primary={sidebarDataWithoutLogout[3].title} />

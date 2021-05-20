@@ -377,6 +377,15 @@ class BusinessInfoDetails extends React.Component<any, any> {
       service: this.props.selectedEmployee.services[this.state.selectedService],
       status: 'requested'
     }).then((docRef) => {
+      firestore
+        .collection('businesses')
+        .doc(`${this.props.businessId}`)
+        .get()
+        .then((docRef) => {
+          const businessAppointments: string[] = docRef.data()?.appointments
+          businessAppointments.push(docRef.id)
+          firestore.collection('businesses').doc(`${this.props.businessId}`).update({ appointments: businessAppointments })
+        })
       firestore.collection('employees').doc(`${this.props.selectedEmployee.id}`).update({
         appointments: firebase.firestore.FieldValue.arrayUnion(docRef.id)
       }).then(() => {

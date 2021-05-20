@@ -201,7 +201,8 @@ class CustomerSignUp extends React.Component<any, State> {
                 { day: 'Wednesday', start: '08:00', end: '17:00' },
                 { day: 'Thursday', start: '08:00', end: '17:00' },
                 { day: 'Friday', start: '08:00', end: '17:00' },
-              ]
+              ],
+              businessId: ''
             }
           : {
               appointments: [],

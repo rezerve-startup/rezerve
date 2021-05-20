@@ -15,7 +15,7 @@ import {
 } from '@material-ui/core';
 import ArrowForwardIcon from '@material-ui/icons/ArrowForward';
 import { Close } from '@material-ui/icons';
-
+import { auth } from '../../config/FirebaseConfig'
 import BusinessSignUp from '../../business/business-signup/BusinessSignUp';
 import CustomerSignUp from '../../customer/customer-signup/CustomerSignup';
 

@@ -26,9 +26,8 @@ export const firestore = firebase.firestore();
 export const storageRef = firebase.storage().ref();
 
 export const unsubscribe = auth.onAuthStateChanged((user) => {
-  store.dispatch(setAuthChanging(true));
-
-  if (user) {
+  if (user && !store.getState().system.creatingUser) {
+    store.dispatch(setAuthChanging(true));
     firestore
       .collection('users')
       .doc(`${user.uid}`)

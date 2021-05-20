@@ -12,9 +12,17 @@ import {
   Fab,
   Dialog,
   MobileStepper,
+  CardHeader,
+  CardMedia,
 } from '@material-ui/core';
+import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { auth, firestore, unsubscribe } from '../../config/FirebaseConfig';
+import {
+  auth,
+  firestore,
+  unsubscribe,
+  storageRef,
+} from '../../config/FirebaseConfig';
 import {
   ArrowBack,
   ArrowForward,
@@ -23,7 +31,14 @@ import {
 } from '@material-ui/icons';
 import Geocode from 'react-geocode';
 import firebase from 'firebase';
-import { updateUser, createNewBusiness, setAuthChanging, logoutUser } from '../../shared/store/actions';
+import {
+  updateUser,
+  createNewBusiness,
+  setAuthChanging,
+  setCreatingUser,
+  logoutUser,
+} from '../../shared/store/actions';
+import { useHistory } from 'react-router-dom';
 import { StoreState, SystemState } from '../../shared/store/types';
 import BusinessRegisterLogin from './BusinessRegisterLogin';
 import UserInfoForm from '../../shared/sign-up/UserInfoForm';
@@ -39,12 +54,24 @@ function mapStateToProps(state: StoreState) {
   };
 }
 
+/* function mapDispatchToProps(dispatch) {
+  return bindActionCreators({ updateUser, createNewBusiness, setAuthChanging, setCreatingUser, logoutUser }, dispatch)
+} */
+const actionCreators = {
+  setAuthChanging,
+  setCreatingUser,
+  updateUser,
+  logoutUser,
+  createNewBusiness,
+};
+
 interface ComponentState {
   open: boolean;
   loading: boolean;
   activeStep: number;
   validForm: boolean;
   creatingUserAccount: boolean;
+  userUID: string;
   employeeId: string;
   email: string;
   firstName: string;
@@ -57,7 +84,8 @@ interface ComponentState {
   state: string;
   zipcode: string;
   description: string;
-  coverImages: string[];
+  coverImage: string;
+  coverImagePath: string;
 }
 
 type State = ComponentState & SystemState;
@@ -74,6 +102,7 @@ class BusinessSignUp extends React.Component<any, State> {
       activeStep: 0,
       validForm: false,
       creatingUserAccount: false,
+      userUID: '',
       employeeId: '',
       email: 'testimage@test.com',
       firstName: 'Test',
@@ -86,94 +115,77 @@ class BusinessSignUp extends React.Component<any, State> {
       state: '',
       zipcode: '',
       description: '',
-      coverImages: [],
+      coverImage: '',
+      coverImagePath: '',
       loggedIn: props.system.loggedIn,
       session: props.system.session,
       user: props.system.user,
       authChanging: props.system.authChanging,
+      creatingUser: props.system.creatingUser,
       bookDialogStatus: props.system.bookDialogStatus,
     };
 
     this.signInUser = this.signInUser.bind(this);
+    this.createNewUser = this.createNewUser.bind(this);
     this.dispatchUpdateUser = this.dispatchUpdateUser.bind(this);
+    this.dispatchSetCreatingUser = this.dispatchSetCreatingUser.bind(this);
     this.createNewBusiness = this.createNewBusiness.bind(this);
   }
 
   componentDidMount() {
     this._isMounted = true;
-    this.unsubscribe2 = auth.onAuthStateChanged((user) => {
-      if (user) {
-        if (this._isMounted) {
-          firestore
-            .collection('users')
-            .doc(user.uid)
-            .get()
-            .then((snapshot) => {
-              const userObj = snapshot.data();
-              this.setState({
-                ...this.state,
-                loggedIn: true,
-                activeStep: 0,
-                email: userObj?.email,
-                firstName: userObj?.firstName,
-                lastName: userObj?.lastName,
-                phone: userObj?.phone,
-              });
-            });
-        }
-      } else {
-        if (this._isMounted) {
-          this.setState({
-            ...this.state,
-            loggedIn: false,
-            activeStep: 0,
-          });
-        }
-      }
-    });
   }
 
   componentWillUnmount() {
+    this.props.setCreatingUser(false)
     this._isMounted = false;
-    unsubscribe();
-    this.unsubscribe2();
   }
 
   dispatchUpdateUser(newUser) {
     this.props.updateUser(newUser);
   }
 
-  signInUser(email: string, password: string) {
-    auth
-      .signInWithEmailAndPassword(email, password)
-      .then((userCreds) => {
-        if (userCreds !== null && userCreds.user) {
-          const user = userCreds.user;
+  dispatchSetCreatingUser(value: boolean) {
+    this.props.setCreatingUser(value);
+  }
 
-          firestore
-            .collection('users')
-            .doc(user.uid)
-            .get()
-            .then((snapshot) => {
-              const userObj = snapshot.data();
-              this.setState({
-                ...this.state,
-                loggedIn: true,
-                activeStep: 0,
-                email: userObj?.email,
-                firstName: userObj?.firstName,
-                lastName: userObj?.lastName,
-                phone: userObj?.phone,
-                password,
+  signInUser(email: string, password: string) {
+    console.log(this.props.system.creatingUser);
+
+    this.props.setCreatingUser(true).then(() => {
+      console.log(this.props.system.creatingUser);
+      auth
+        .signInWithEmailAndPassword(email, password)
+        .then((userCreds) => {
+          if (userCreds !== null && userCreds.user) {
+            const user = userCreds.user;
+
+            firestore
+              .collection('users')
+              .doc(user.uid)
+              .get()
+              .then((snapshot) => {
+                const userObj = snapshot.data();
+                this.setState({
+                  ...this.state,
+                  loggedIn: true,
+                  activeStep: 0,
+                  userUID: user.uid,
+                  email: userObj?.email,
+                  firstName: userObj?.firstName,
+                  lastName: userObj?.lastName,
+                  phone: userObj?.phone,
+                  password,
+                });
               });
-            });
-        } else {
-          this.setState({ ...this.state, loggedIn: false, activeStep: 0 });
-        }
-      })
-      .catch((e) => {
-        console.log(e);
-      });
+          } else {
+            this.setState({ ...this.state, loggedIn: false, activeStep: 0 });
+          }
+        })
+        .catch((e) => {
+          console.log(e);
+        })
+    });
   }
 
   updateValue = (name: string, value: string | string[], valid: boolean) => {
@@ -205,7 +217,6 @@ class BusinessSignUp extends React.Component<any, State> {
   };
 
   openDialog = () => {
-    unsubscribe();
     this.setState({ ...this.state, open: true });
   };
 
@@ -213,6 +224,27 @@ class BusinessSignUp extends React.Component<any, State> {
     alert('Are you sure you want to cancel creating your account?');
     this.setState({ ...this.state, open: false, creatingUserAccount: false });
   };
+
+  async createNewUser(email: string, password: string) {
+    if (this.state.creatingUserAccount) {
+      try {
+        const result = await auth.createUserWithEmailAndPassword(
+          email,
+          password,
+        );
+        return result.user?.uid;
+      } catch (e) {
+        console.log(e);
+        throw e;
+      }
+    } else {
+      return new Promise((resolve, reject) => {
+        setTimeout(() => {
+          resolve(this.state.userUID);
+        }, 1000);
+      });
+    }
+  }
 
   async createNewBusiness() {
     const email = this.state.email;
@@ -226,109 +258,118 @@ class BusinessSignUp extends React.Component<any, State> {
     const businessCity = this.state.city;
     const businessState = this.state.state;
     const businessZipcode = this.state.zipcode;
-
     const address = `${this.state.address}, ${this.state.city}, ${this.state.state}, ${this.state.zipcode}`;
 
+    this.setState({ ...this.state, loading: true });
     await Geocode.fromAddress(address)
       .then((res) => {
         const { lat, lng } = res.results[0].geometry.location;
         const loc = new firebase.firestore.GeoPoint(lat, lng);
-        if (this.state.creatingUserAccount) {
-          auth
-            .createUserWithEmailAndPassword(email, password)
-            .then((userCreds) => {
-              return userCreds.user?.uid;
+
+        this.createNewUser(email, password).then((userUID) => {
+          const newEmployeeData = {
+            businessId: '',
+            position: 'Stylist',
+            isOwner: true,
+            todos: [],
+            clients: [],
+            appointments: [],
+            availability: [
+              { day: 'Monday', start: '08:00', end: '17:00' },
+              { day: 'Tuesday', start: '08:00', end: '17:00' },
+              { day: 'Wednesday', start: '08:00', end: '17:00' },
+              { day: 'Thursday', start: '08:00', end: '17:00' },
+              { day: 'Friday', start: '08:00', end: '17:00' },
+            ],
+          };
+          const empRef = firestore.collection('employees').doc();
+          const userRef = firestore.collection('users').doc(`${userUID}`);
+
+          firestore
+            .runTransaction((transaction) => {
+              return transaction.get(empRef).then((empDocRef) => {
+                const newUserData = {
+                  employeeId: empDocRef.id,
+                  email,
+                  firstName,
+                  lastName,
+                  phone,
+                  customerId: '',
+                };
+
+                transaction.set(empRef, newEmployeeData);
+                transaction.set(userRef, newUserData);
+                return empDocRef.id;
+              });
             })
-            .then((userUID) => {
-              const newEmployeeData = {
-                businessId: '',
-                position: 'Stylist',
-                isOwner: true,
-                todos: [],
-                clients: [],
+            .then((employeeId) => {
+              const newBusinessData = {
+                name: businessName,
+                numWorkers: 1,
+                description: businessDescription,
+                about: {
+                  address: businessAddress,
+                  city: businessCity,
+                  state: businessState,
+                  zipcode: businessZipcode,
+                  daysOpen: [
+                    'Monday',
+                    'Tuesday',
+                    'Wednesday',
+                    'Thursday',
+                    'Friday',
+                  ],
+                  closingTime: '17:00',
+                  openingTime: '8:00',
+                  location: loc,
+                },
+                coverImage: '',
+                employees: [`${employeeId}`],
+                employeeRequests: [],
+                reviews: [],
+                perfomance: [],
                 appointments: [],
-                availability: [
-                  { day: 'Monday', start: '08:00', end: '17:00' },
-                  { day: 'Tuesday', start: '08:00', end: '17:00' },
-                  { day: 'Wednesday', start: '08:00', end: '17:00' },
-                  { day: 'Thursday', start: '08:00', end: '17:00' },
-                  { day: 'Friday', start: '08:00', end: '17:00' },
-                ],
+                overallRating: 0,
               };
-              const empRef = firestore.collection('employees').doc();
-              const userRef = firestore.collection('users').doc(`${userUID}`);
 
               firestore
-                .runTransaction((transaction) => {
-                  return transaction.get(empRef).then((empDocRef) => {
-                    const newUserData = {
-                      employeeId: empDocRef.id,
-                      email: email,
-                      firstName: firstName,
-                      lastName: lastName,
-                      phone: phone,
-                      customerId: '',
-                    };
+                .collection('businesses')
+                .add(newBusinessData)
+                .then((docRef) => {
+                  const path = `BusinessCoverImages/${docRef.id}/image`;
+                  const imageRef = storageRef.child(path);
 
-                    transaction.set(empRef, newEmployeeData);
-                    transaction.set(userRef, newUserData);
-                    return empDocRef.id;
-                  });
-                })
-                .then((employeeId) => {
-                  const newBusinessData = {
-                    name: businessName,
-                    numWorkers: 1,
-                    description: businessDescription,
-                    about: {
-                      address: businessAddress,
-                      city: businessCity,
-                      state: businessState,
-                      zipcode: businessZipcode,
-                      daysOpen: [
-                        'Monday',
-                        'Tuesday',
-                        'Wednesday',
-                        'Thursday',
-                        'Friday',
-                      ],
-                      closingTime: '17:00',
-                      openingTime: '8:00',
-                      location: loc,
-                    },
-                    employees: [`${employeeId}`],
-                    employeeRequests: [],
-                    reviews: [],
-                    perfomance: [],
-                    overallRating: 0
-                  };
+                  imageRef
+                    .putString(this.state.coverImage, 'data_url')
+                    .then((snapshot) => {
+                      docRef.update({ coverImage: path });
+                    });
 
                   firestore
-                    .collection('businesses')
-                    .add(newBusinessData)
-                    .then((docRef) => {
-                      firestore
-                        .collection('employees')
-                        .doc(employeeId)
-                        .update({
-                          businessId: docRef.id,
-                        })
-                        .then(() => {
-                          auth.signOut().then(() => {
-                            auth.signInWithEmailAndPassword(email, password).then(
-                              (userCreds) => {
-                                if (userCreds !== null && userCreds.user) {
-                                  const user = userCreds.user;
-                                  this.dispatchUpdateUser(user)
-                                }
-                                this.props.handleSignUpClose()
-                                this.setState({ ...this.state, open: false });
+                    .collection('employees')
+                    .doc(employeeId)
+                    .update({
+                      businessId: docRef.id,
+                    })
+                    .then(() => {
+                      this.props.setCreatingUser(false).then(() => {
+                        auth.signOut().then(() => {
+                          auth
+                            .signInWithEmailAndPassword(email, password)
+                            .then((userCreds) => {
+                              if (userCreds !== null && userCreds.user) {
+                                const user = userCreds.user;
+                                this.dispatchUpdateUser(user);
+                              }
+                              this.props.handleSignUpClose();
+                              this.setState({
+                                ...this.state,
+                                open: false,
+                                loading: false,
+                              });
                             });
-                          });
-                        })
-                        .catch((e) => {
-                          console.log(e);
                         });
+                      })
                     })
                     .catch((e) => {
                       console.log(e);
@@ -337,148 +378,12 @@ class BusinessSignUp extends React.Component<any, State> {
                 .catch((e) => {
                   console.log(e);
                 });
-            })
-            .catch((e) => {
-              console.log(e);
             });
-        } else {
-          auth
-            .signInWithEmailAndPassword(email, password)
-            .then((userCreds) => {
-              return userCreds.user?.uid;
-            })
-            .then((userUID) => {
-              const userDocRef = firestore.collection('users').doc(userUID);
-              const employeeRef = firestore.collection('employees').doc();
-
-              firestore
-                .runTransaction((transaction) => {
-                  return transaction.get(userDocRef).then((userDoc) => {
-                    if (!userDoc.exists) {
-                      throw new Error('User does not exist.');
-                    } else {
-                      const employeeId = userDoc.data()?.employeeId;
-                      if (employeeId) {
-                        console.log(
-                          `Fetched employee id from existing user: ${employeeId}`,
-                        );
-                        return employeeId;
-                      } else {
-                        return transaction
-                          .get(employeeRef)
-                          .then((employeeDoc) => {
-                            const newEmployeeData = {
-                              businessId: '',
-                              position: 'Stylist',
-                              isOwner: true,
-                              todos: [],
-                              clients: [],
-                              appointments: [],
-                              availability: [
-                                { day: 'Monday', start: '08:00', end: '17:00' },
-                                {
-                                  day: 'Tuesday',
-                                  start: '08:00',
-                                  end: '17:00',
-                                },
-                                {
-                                  day: 'Wednesday',
-                                  start: '08:00',
-                                  end: '17:00',
-                                },
-                                {
-                                  day: 'Thursday',
-                                  start: '08:00',
-                                  end: '17:00',
-                                },
-                                { day: 'Friday', start: '08:00', end: '17:00' },
-                              ],
-                            };
-                            transaction.set(employeeRef, newEmployeeData);
-                            console.log(
-                              `Created new employee for user: ${employeeRef.id}`,
-                            );
-                            return employeeRef.id;
-                          });
-                      }
-                    }
-                  });
-                })
-                .then((employeeId) => {
-                  const newBusinessData = {
-                    name: businessName,
-                    numWorkers: 1,
-                    description: businessDescription,
-                    about: {
-                      address: businessAddress,
-                      city: businessCity,
-                      state: businessState,
-                      zipcode: businessZipcode,
-                      daysOpen: [
-                        'Monday',
-                        'Tuesday',
-                        'Wednesday',
-                        'Thursday',
-                        'Friday',
-                      ],
-                      closingTime: '17:00',
-                      openingTime: '8:00',
-                      location: loc,
-                    },
-                    employees: [`${employeeId}`],
-                    employeeRequests: [],
-                    reviews: [],
-                    perfomance: [],
-                    overallRating: 0
-                  };
-
-                  firestore
-                    .collection('businesses')
-                    .add(newBusinessData)
-                    .then((docRef) => {
-                      console.log(
-                        `Created new business document: ${docRef.id}`,
-                      );
-                      firestore
-                        .collection('employees')
-                        .doc(employeeId)
-                        .update({
-                          businessId: docRef.id,
-                        })
-                        .then(() => {
-                          auth.signOut().then(() => {
-                            auth.signInWithEmailAndPassword(email, password).then(
-                              (userCreds) => {
-                                if (userCreds !== null && userCreds.user) {
-                                  const user = userCreds.user;
-                                  console.log("Signed in user...", user)
-                                  this.dispatchUpdateUser(user)
-                                }
-                                this.props.handleSignUpClose()
-                                this.setState({ ...this.state, open: false });
-                            });
-                          });
-                        })
-                        .catch((e) => {
-                          console.log(e);
-                        });
-                    })
-                    .catch((e) => {
-                      console.log(e);
-                    });
-                })
-                .catch((e) => {
-                  console.log(e);
-                });
-            })
-            .catch((e) => {
-              console.log(e);
-            });
-        }
+        });
       })
       .catch((e) => {
         console.log(e);
-      })
+      });
   }
 
   render() {
@@ -503,7 +408,9 @@ class BusinessSignUp extends React.Component<any, State> {
           disableBackdropClick={true}
         >
           <Card className={classes.card} elevation={0}>
-            <CardContent style={{ padding: '4px' }}>
+            <CardContent
+              style={{ padding: '4px', borderRadius: '0px', boxShadow: '0px' }}
+            >
               <Fab
                 className={classes.backFab}
                 color="primary"
@@ -546,23 +453,22 @@ class BusinessSignUp extends React.Component<any, State> {
                         state={this.state.state}
                         zipcode={this.state.zipcode}
                         description={this.state.description}
-                        coverImages={this.state.coverImages}
+                        coverImage={this.state.coverImage}
+                        coverImagePath={this.state.coverImagePath}
                         updateValue={this.updateValue}
                       />
                     ) : (
                       <Card className={classes.reviewContent} elevation={0}>
+                        <CardHeader
+                          title={
+                            'Are you sure you want to create this business?'
+                          }
+                        />
+                        <CardMedia
+                          image={this.state.coverImage}
+                          style={{ height: 250 }}
+                        />
                         <CardContent>
-                          <Typography
-                            variant="h5"
-                            component="h5"
-                            className={classes.title}
-                          >
-                            Are you sure you want to create this business?
-                          </Typography>
-
-                          <br />
-                          <br />
-
                           <Typography
                             variant="h5"
                             component="p"
@@ -644,10 +550,12 @@ const styles = (theme: Theme) =>
     card: {
       padding: '4px',
       overflow: 'auto',
+      borderRadius: '0px',
+      boxShadow: 'none',
     },
     form: {
       borderRadius: '0px',
-      boxShadow: '0px'
+      boxShadow: 'none',
     },
     title: {
       textAlign: 'center',
@@ -668,7 +576,7 @@ const styles = (theme: Theme) =>
       paddingTop: theme.spacing(2),
     },
     reviewContent: {
-      paddingTop: theme.spacing(8),
+      paddingTop: theme.spacing(1),
       flexGrow: 1,
     },
     createButtonDiv: {
@@ -682,7 +590,13 @@ const styles = (theme: Theme) =>
 const SpinnerAdornment = withStyles(styles, { withTheme: true })(
   (props: any) => {
     const { classes } = props;
-    return <CircularProgress className={classes.spinner} size={20} />;
+    return (
+      <CircularProgress
+        className={classes.spinner}
+        size={20}
+        color="secondary"
+      />
+    );
   },
 );
 
@@ -696,6 +610,7 @@ const AdornedButton = (props) => {
   );
 };
 
-export default connect(mapStateToProps, { updateUser, setAuthChanging, logoutUser })(
-  withStyles(styles, { withTheme: true })(BusinessSignUp),
-);
+export default connect(
+  mapStateToProps,
+  actionCreators,
+)(withStyles(styles, { withTheme: true })(BusinessSignUp));

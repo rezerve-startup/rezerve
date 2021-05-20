@@ -30,16 +30,17 @@ const styles = (theme: Theme) =>
     },
     card: {
       padding: '4px',
-      height: '150vh',
+      height: '120vh',
       overflow: 'auto',
+      borderRadius: '0px',
+      boxShadow: '0px',
     },
     title: {
       textAlign: 'center',
       fontSize: 24,
     },
     testImage: {
-      height: 50,
-      width: 50
+      height: 250,
     }
   });
 
@@ -54,7 +55,8 @@ interface NonStyleProps {
   state: string;
   zipcode: string;
   description: string;
-  coverImages: string[];
+  coverImage: string;
+  coverImagePath: string;
   updateValue: (name: string, value: string | string[], valid: boolean) => void;
 }
 
@@ -164,22 +166,20 @@ const DecoratedBusinessInfoForm = withStyles(styles, { withTheme: true })(
     };
 
     handleImageUpload = (files: File[], event: SyntheticEvent) => {
-      const coverImageStrings: string[] = []
-
       files.forEach((file: File) => {
         const reader = new FileReader()
 
         reader.onabort = () => console.log('file reading was aborted')
         reader.onerror = () => console.log('file reading has failed')
-        reader.onload = () => { coverImageStrings.push(reader.result as string)
+        reader.onload = () => { 
+          const valid = this.validateForm()
+          this.props.updateValue('coverImagePath', file.name, valid)
+          this.props.updateValue('coverImage', reader.result as string, valid)
         }
         reader.readAsDataURL(file)
       })
-      
-      const valid = this.validateForm()
-      if (coverImageStrings.length > 0) {
-        this.props.updateValue('coverImages', coverImageStrings, valid)
-      }
+
+      this.setState({ ...this.state, imageDialog: false })
     };
 
     render() {
@@ -295,15 +295,23 @@ const DecoratedBusinessInfoForm = withStyles(styles, { withTheme: true })(
                 </Grid>
 
                 <Grid item={true} xs={12}>
-                  <Button variant="contained" color="primary" fullWidth={true} onClick={this.openDialog}>
-                    Add Image
-                  </Button>
+                  {(this.props.coverImage === '') ? (
+                    <Button variant="contained" color="primary" fullWidth={true} onClick={this.openDialog}>
+                      Select Cover Image
+                    </Button>
+                  ) : (
+                    <Button variant="contained" color="primary" fullWidth={true} onClick={this.openDialog}>
+                      Change Cover Image
+                    </Button>
+                  )}
+                  
 
                   <DropzoneDialog
+                    initialFiles={[this.props.coverImage]}
                     acceptedFiles={['image/*']}
                     cancelButtonText={"cancel"}
                     submitButtonText={"submit"}
-                    filesLimit={3}
+                    filesLimit={1}
                     maxFileSize={5000000}
                     open={this.state.imageDialog}
                     onClose={this.closeDialog}
@@ -313,7 +321,8 @@ const DecoratedBusinessInfoForm = withStyles(styles, { withTheme: true })(
                   />
                 </Grid>
                 <Grid item={true} xs={12}>
-                  <CardMedia className={classes.testImage} image={this.state.coverImageFiles[0]} />
+                  <Typography variant="subtitle1" component="p">Current Cover Image: {this.props.coverImagePath}</Typography>
+                  <CardMedia className={classes.testImage} image={this.props.coverImage} />
                 </Grid>
               </Grid>
             </CardContent>

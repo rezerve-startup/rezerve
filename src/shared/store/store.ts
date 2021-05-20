@@ -1,6 +1,7 @@
-import { combineReducers, createStore } from 'redux';
+import { applyMiddleware, combineReducers, createStore } from 'redux';
 import { composeWithDevTools } from 'redux-devtools-extension';
 import { businessReducer, customerReducer, signUpReducer, systemReducer } from './reducers';
+import thunk from 'redux-thunk'
 
 const rootReducer = combineReducers({
   system: systemReducer,
@@ -9,6 +10,6 @@ const rootReducer = combineReducers({
   signUp: signUpReducer
 });
 
-const store = createStore(rootReducer, composeWithDevTools());
+const store = createStore(rootReducer, applyMiddleware(thunk));
 
 export default store;

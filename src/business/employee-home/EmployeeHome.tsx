@@ -88,7 +88,7 @@ class EmployeeHome extends React.Component<Props, State> {
 
     return (
       <div className={classes.root}>
-        {this.state.user.employeeInfo.businessId && 
+        {this.state.user.employeeId && 
         <div>
           <Sidebar />
           <Box m={1}>

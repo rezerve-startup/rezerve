@@ -11,6 +11,7 @@ export interface SystemState {
   session: string;
   user: any;
   authChanging: boolean;
+  creatingUser: boolean;
   bookDialogStatus: boolean;
 }
 
@@ -39,6 +40,7 @@ export const UPDATE_EMPLOYEE_APPOINTMENT_STATUS = 'UPDATE_EMPLOYEE_APPOINTMENT_S
 export const UPDATE_CUSTOMER_APPOINTMENT_STATUS = 'UPDATE_CUSTOMER_APPOINTMENT_STATUS';
 export const LOGOUT_USER = 'LOGOUT_USER';
 export const AUTH_CHANGING = 'AUTH_CHANGING';
+export const SET_CREATING_USER = 'SET_CREATING_USER'
 export const SET_BOOK_DIALOG_STATUS = 'SET_BOOK_DIALOG_STATUS';
 
 interface UpdateSessionAction {
@@ -159,6 +161,11 @@ interface AuthChangingAction {
   payload: boolean;
 }
 
+interface SetCreatingUserAction {
+  type: typeof SET_CREATING_USER;
+  payload: boolean;
+}
+
 export type SystemActionTypes = 
   UpdateSessionAction |
   UpdateUserAction |
@@ -183,6 +190,7 @@ export type SystemActionTypes =
   UpdateCustomerAppointmentStatusAction |
   LogoutUserAction |
   AuthChangingAction |
+  SetCreatingUserAction |
   SetBookDialogStatus;
 
 // ############ Business Types ##########################
