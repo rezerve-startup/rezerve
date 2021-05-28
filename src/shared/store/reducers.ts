@@ -39,8 +39,13 @@ import {
   SET_EMPLOYEE_SERVICES,
   CREATE_NEW_CUSTOMER,
   CREATE_NEW_BUSINESS,
+  UPDATE_CURRENT_LATITUDE,
+  UPDATE_CURRENT_LONGITUDE,
+  UPDATE_LOCATION_STATUS,
   SignUpActionTypes,
-  SignUpState
+  SignUpState,
+  LocationActionTypes,
+  LocationState
 } from './types';
 
 // ************** System Reducer ******************
@@ -377,6 +382,41 @@ export function signUpReducer(
       return {
         ...state,
         newUser: action.payload,
+      };
+    }
+    default:
+      return state
+  }
+}
+
+// LOCATION REDUCER
+const initLocationState: LocationState = {
+  newLat: 0,
+  newLong: 0,
+  newStatus: false
+};
+
+export function locationReducer(
+  state = initLocationState,
+  action: LocationActionTypes,
+): LocationState {
+  switch (action.type) {
+    case UPDATE_CURRENT_LATITUDE: {
+      return {
+        ...state,
+        newLat: action.payload,
+      };
+    }
+    case UPDATE_CURRENT_LONGITUDE: {
+      return {
+        ...state,
+        newLong: action.payload,
+      };
+    }
+    case UPDATE_LOCATION_STATUS: {
+      return {
+        ...state,
+        newStatus: action.payload,
       };
     }
     default:

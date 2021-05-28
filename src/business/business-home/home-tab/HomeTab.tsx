@@ -80,7 +80,7 @@ class HomeTab extends React.Component<Props, State> {
     firestore.collection('appointments').where('employeeId', '==', `${this.props.employeeId}`).get()
       .then((querySnapshot) => {
         let employeeAppts: any[] = [];
-
+        
         querySnapshot.forEach((apptDoc) => {
           const apptData = apptDoc.data();
 

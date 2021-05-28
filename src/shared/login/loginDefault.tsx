@@ -124,12 +124,6 @@ function LoginDefault(props) {
     event.preventDefault();
   };
 
-  const dispatchUpdateUser = () => {
-    props.setUserCustomerInfo();
-    props.setUserEmployeeInfo();
-    props.setBusinessAvailability(); 
-  }
-
   const handleSubmit = (event) => {
     auth.signOut();
     auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL)

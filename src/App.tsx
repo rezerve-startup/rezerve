@@ -110,6 +110,7 @@ class App extends React.Component<any, SystemState> {
 */
     return (
       <div className={classes.root}>
+        {auth.signOut}
         <ThemeProvider theme={theme}>
           <Router>
             <Switch>

@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import { Link, Redirect } from 'react-router-dom';
 import {
   AppBar,
@@ -13,9 +13,13 @@ import {
   Typography,
   Button,
   CircularProgress,
+  LinearProgress,
+  FormControl,
+  Select,
 } from '@material-ui/core';
 import SignUpPage from '../sign-up/SignUpPage'
 import HomeIcon from '@material-ui/icons/Home';
+import LocationOnIcon from '@material-ui/icons/LocationOn';
 //Extra
 import FaceIcon from '@material-ui/icons/Face';
 import PanToolIcon from '@material-ui/icons/PanTool';
@@ -25,13 +29,14 @@ import EmojiPeopleIcon from '@material-ui/icons/EmojiPeople';
 import { 
   setUserEmployeeInfo,
   setUserCustomerInfo, 
-  setBusinessAvailability 
+  setBusinessAvailability,
+  updateCurrentLatitude,
+  updateCurrentLongitude,
+  locationStatus
 } from '../../shared/store/actions';
 import CustomerBusinessSearch from '../../customer/customer-business-search/CustomerBusinessSearch';
-import { StoreState } from '../store/types';
-import { connect } from 'react-redux';
-import { auth, firestore } from '../../config/FirebaseConfig';
-import firebase from 'firebase';
+import { StoreState} from '../store/types';
+import { connect, useDispatch, useSelector} from 'react-redux';
 import LoginDefault from '../login/loginDefault';
 
 //import Sidebar from '../shared/sidebar/sidebar';
@@ -64,12 +69,16 @@ const useStyles = makeStyles((theme: Theme) =>
       backgroundColor: theme.palette.secondary.dark,
       color: theme.palette.secondary.light,
     },
+    locationBox: {
+      padding:'1px 1px 0px 1px',
+      marginBottom: '0'
+    },
     loadingSpinnerContainer: {
       display: 'flex',
       justifyContent: 'center',
       alignItems: 'center',
       height: '100%'
-    }
+    },
   }),
 );
 //--------------------------
@@ -107,11 +116,16 @@ function a11yProps(index: any) {
     'aria-controls': `scrollable-prevent-tabpanel-${index}`,
   };
 }
+type State = {
 
+}
 function mapStateToProps(state: StoreState) {
   return ({
     user: state.system.user,
-    authChanging: state.system.authChanging
+    authChanging: state.system.authChanging,
+    curLatitude: state.location.newLat,
+    curLongitude: state.location.newLong,
+    locStatus: state.location.newStatus
   })
 }
 
@@ -124,12 +138,51 @@ const LandingPageDefault = (props: any) => {
   const [tabValue, setTabValue] = React.useState(0);
   const [redirectToCustomer, setRedirectToCustomer] = React.useState(false);
   const [redirectToEmployee, setRedirectToEmployee] = React.useState(false);
+  const [loading, setLoading] = React.useState(false);
+  const [lat, setLat] = React.useState(0);
+  const [long, setLong] = React.useState(0);
+  const [didMount, setDidMount] = React.useState(false);
+
+  const stateLatitude = props.curLatitude;
+  const stateLongitude = props.curLongitude;
+  const locationStatus = props.locStatus;
+
+  const dispatchLocationStatus = (status: boolean) => {
+    props.locationStatus(status);
+  }
+
+  const getPosition = () => {
+    if(navigator.geolocation) {
+      setLoading(true);
+      navigator.geolocation.getCurrentPosition(showPosition, positionError)
+      //console.log("Geolocation was successful");
+    }
+    else {
+      //console.log("Geolocation not supported");
+      //dispatchLocation('36.0662', '94.1579')
+    }
+  }
+
+  useEffect(() => {
+    if(locationStatus === false){
+      getPosition();
+    }
+    setDidMount(true);
+    return() =>{
+      setDidMount(false);
+    }
+  }, [] );
+
+
+
   const handleTabChange = (
     event: React.ChangeEvent<{}>,
     newTabValue: number,
   ) => {
     setTabValue(newTabValue);
   };
+
+  
 
   if (props.user) {
     if (props.user.employeeId === '' && redirectToCustomer === false) {
@@ -147,8 +200,53 @@ const LandingPageDefault = (props: any) => {
     return <Redirect to={'/customer-home'} />
   }
 
+  //PROMPTS USER'S LOCATION AND STORE LATITUDE AND LONGITUDE IN REDUX
+  const dispatchLocation = (latitude: number, longitude: number) => {
+    props.updateCurrentLatitude(latitude);
+    props.updateCurrentLongitude(longitude);
+  }
+
+
+
+  const positionError = () => {
+    if(navigator.permissions) {
+      navigator.permissions.query({name: 'geolocation'})
+        .then(res => {
+          if(res.state !== 'granted')
+          {
+            dispatchLocation(36.0662419, -94.15785299999999);
+            setLoading(false)
+          }
+        })
+      }
+      else {
+        //console.log('Unable to access your location.');
+      }
+    }
+
+  const showPosition = (position) => {
+    let lat = position.coords.latitude;
+    let long = position.coords.longitude;
+    
+    setLat(lat);
+    setLong(long);
+    
+    dispatchLocation(lat, long);
+    dispatchLocationStatus(true);
+
+    setLoading(false);
+    
+    //CONSOLE TEST
+    //console.log("LOADING: " + JSON.stringify(loading));
+    //console.log("LAT: " + JSON.stringify(lat));
+    //console.log("LONG: " + JSON.stringify(long));
+    //console.log("Latitude from props: " + stateLatitude);
+    //console.log("Longitude from props: " + stateLongitude);
+    //console.log("Status from props: " + locationStatus);
+  }
+
+  if (props.authChanging === false){
   return (
-      props.authChanging === false ? (
         <div>
           <AppBar className={classes.container} position="sticky">
             <Box m={1}>
@@ -178,7 +276,7 @@ const LandingPageDefault = (props: any) => {
               </Grid>
             </Box>
           </AppBar>
-
+          
           <div className={classes.appBar}>
             <AppBar position="sticky">
               <Tabs
@@ -199,27 +297,38 @@ const LandingPageDefault = (props: any) => {
               </Tabs>
             </AppBar>
           </div>
-          <TabPanel tabValue={tabValue} index={0}>
-            <CustomerBusinessSearch filter="hair" />
-          </TabPanel>
-          <TabPanel tabValue={tabValue} index={2}>
-            <CustomerBusinessSearch filter="nails" />
-          </TabPanel>
-          <TabPanel tabValue={tabValue} index={4}>
-            <CustomerBusinessSearch filter="barber" />
-          </TabPanel>
-          <TabPanel tabValue={tabValue} index={6}>
-            <CustomerBusinessSearch filter="houseCall" />
-          </TabPanel>
-        </div>
-      ) : (
-        <div className={classes.loadingSpinnerContainer}>
-          <CircularProgress />
-        </div>
+
+          
+            {loading ? 
+              (<div className={classes.loadingSpinnerContainer}>
+                  <CircularProgress />
+              </div>)
+              : 
+              (<div>
+                  <TabPanel tabValue={tabValue} index={0}>
+                    <CustomerBusinessSearch filter="hair"/> 
+                  </TabPanel>
+                  <TabPanel tabValue={tabValue} index={2}>
+                    <CustomerBusinessSearch filter="nails"/>
+                  </TabPanel>
+                  <TabPanel tabValue={tabValue} index={4}>
+                    <CustomerBusinessSearch filter="barber"/>
+                  </TabPanel>
+                  <TabPanel tabValue={tabValue} index={6}>
+                    <CustomerBusinessSearch filter="houseCall"/>
+                  </TabPanel>
+                </div>)}
+      </div>
       )
-  );
+   }
+   else {
+     return(
+    <div className={classes.loadingSpinnerContainer}>
+      <CircularProgress />
+    </div>
+    );
+   } 
 }
 
-export default connect(mapStateToProps, { setUserCustomerInfo, setUserEmployeeInfo, setBusinessAvailability })(
-  LandingPageDefault
-);
+export default connect(mapStateToProps, { setUserCustomerInfo, setUserEmployeeInfo, 
+  setBusinessAvailability, updateCurrentLatitude, updateCurrentLongitude, locationStatus}) (LandingPageDefault);

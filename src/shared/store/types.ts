@@ -3,6 +3,7 @@ export interface StoreState {
   system: SystemState;
   business: BusinessState;
   customer: CustomerState;
+  location: LocationState;
 }
 
 // ############# System Types ###########################
@@ -271,3 +272,32 @@ interface CreateNewBusiness {
 }
 
 export type SignUpActionTypes = CreateNewCustomer | CreateNewBusiness
+
+
+// LOCATION
+export interface LocationState {
+  newLat: number,
+  newLong: number,
+  newStatus: boolean
+}
+
+export const UPDATE_CURRENT_LATITUDE = 'UPDATE_CURRENT_LATITUDE'
+export const UPDATE_CURRENT_LONGITUDE = 'UPDATE_CURRENT_LONGITUDE'
+export const UPDATE_LOCATION_STATUS = 'UPDATE_LOCATION_STATUS'
+
+interface updateCurrentLatitude {
+  type: typeof UPDATE_CURRENT_LATITUDE;
+  payload: number;
+}
+
+interface updateCurrentLongitude {
+  type: typeof UPDATE_CURRENT_LONGITUDE;
+  payload: number;
+}
+
+interface locationStatus {
+  type: typeof UPDATE_LOCATION_STATUS;
+  payload: boolean;
+}
+
+export type LocationActionTypes = updateCurrentLatitude | updateCurrentLongitude | locationStatus

@@ -35,7 +35,11 @@ import {
   SET_EMPLOYEE_SERVICES,
   SignUpActionTypes,
   CREATE_NEW_BUSINESS,
-  CREATE_NEW_CUSTOMER
+  CREATE_NEW_CUSTOMER,
+  UPDATE_CURRENT_LATITUDE,
+  UPDATE_CURRENT_LONGITUDE,
+  UPDATE_LOCATION_STATUS,
+  LocationActionTypes,
 } from './types';
 
 // ****** SYSTEM ACTIONS ***************
@@ -252,5 +256,27 @@ export function createNewBusiness(newBusiness: any): SignUpActionTypes {
   return {
     type: CREATE_NEW_BUSINESS,
     payload: newBusiness
+  }
+}
+
+// LOCATION ACTIONS
+export function updateCurrentLatitude (newLatitude: number): LocationActionTypes {
+  return {
+    type: UPDATE_CURRENT_LATITUDE,
+    payload: newLatitude
+  }
+}
+
+export function updateCurrentLongitude (newLongitude: number): LocationActionTypes {
+  return {
+    type: UPDATE_CURRENT_LONGITUDE,
+    payload: newLongitude
+  }
+}
+
+export function locationStatus (status: boolean): LocationActionTypes {
+  return {
+    type: UPDATE_LOCATION_STATUS,
+    payload: status
   }
 }

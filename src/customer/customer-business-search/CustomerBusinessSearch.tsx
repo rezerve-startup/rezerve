@@ -17,6 +17,7 @@ import {
   Grid,
   FormControl,
   Select,
+  Typography,
 } from '@material-ui/core';
 
 import LocationOnIcon from '@material-ui/icons/LocationOn';
@@ -27,7 +28,10 @@ import { connect } from 'react-redux';
 import { LoadScript, StandaloneSearchBox } from '@react-google-maps/api';
 import BusinessInfo from '../../business/business-info/BusinessInfo';
 import { StoreState } from '../../shared/store/types';
-import { addBusinessFound, clearBusinessesFound, setSelectedEmployee, clearEmployeesForBusiness } from '../../shared/store/actions';
+import { addBusinessFound, clearBusinessesFound, setSelectedEmployee, clearEmployeesForBusiness,
+  updateCurrentLatitude,
+  updateCurrentLongitude
+ } from '../../shared/store/actions';
 import { Business } from '../../models/Business.interface';
 
 import cat1 from '../../assets/cat1.jpg';
@@ -40,6 +44,15 @@ type CustomerBusinessSearchState = {
     businessInfo: Business | null;
   } | null;
   locationSearchValue: string | undefined;
+  nameSearchValue: string | undefined;
+  address: string;
+  userLatitude: number;
+  userLongitude: number;
+  count: number;
+  miles: number;
+  queryEmpty: boolean;
+  hidden: boolean;
+  buttonValue: string;
 };
 
 let searchBox: any;
@@ -49,6 +62,9 @@ function mapStateToProps(state: StoreState) {
 
   return {
     foundBusinesses: state.customer.foundBusinesses,
+    curLatitude: state.location.newLat,
+    curLongitude: state.location.newLong,
+    locStatus: state.location.newStatus
   };
 }
 
@@ -63,7 +79,16 @@ class CustomerBusinessSearch extends React.Component<
       searchBoxRef: null,
       businessSelectedIndicator: false,
       selectedBusiness: null,
-      locationSearchValue: ''
+      locationSearchValue: '',
+      nameSearchValue: '',
+      address: '',
+      userLatitude: this.props.curLatitude,
+      userLongitude: this.props.curLongitude,
+      count: 2,
+      miles: 0,
+      queryEmpty: false,
+      hidden: true,
+      buttonValue: 'Search by Name'
     };
   }
 
@@ -87,6 +112,18 @@ class CustomerBusinessSearch extends React.Component<
   searchBarbershopsByLocation(latitude, longitude, distance): void {
     this.dispatchClearBusinessesFound();
 
+    this.setState({userLatitude: latitude});
+    this.setState({userLongitude: longitude});
+    this.setState({miles: distance});
+    this.showPosition();
+    if(distance > this.state.count)
+    {
+      this.setState({count: 52});
+    }
+    
+    //console.log("Latitude from state: " + this.state.userLatitude);
+    //console.log("Longitude from state: " + this.state.userLongitude);
+
     let latUnit = 0.0144927536231884;
     let lngUnit = 0.0181818181818182;
 
@@ -104,6 +141,12 @@ class CustomerBusinessSearch extends React.Component<
       .where('about.location', '<=', greaterGeopoint);
 
     query.get().then((snapshot) => {
+      if(snapshot.empty){
+        this.setState({queryEmpty: true});
+      }
+      else{
+        this.setState({queryEmpty: false});
+      }
       snapshot.forEach((doc) => {
         let businessData = doc.data() as Business;
 
@@ -113,8 +156,9 @@ class CustomerBusinessSearch extends React.Component<
         };
 
         this.dispatchAddFoundBusiness(businessToAdd);
-      });
-    });
+      }
+      );
+    })
   }
 
   onLoad = (ref) => {
@@ -147,6 +191,33 @@ class CustomerBusinessSearch extends React.Component<
     });
   }
 
+  displayMore(): void {
+    this.setState({count: this.state.count + 2});
+    this.searchBarbershopsByLocation(this.state.userLatitude, this.state.userLongitude, this.state.count);
+    console.log("Count: " + this.state.count);
+  }
+
+  getAddress(): string {
+    this.showPosition();
+    return this.state.address;
+  }
+
+  setZip = (address) => {
+    //console.log("City: " + JSON.stringify(address.results[0].formatted_address));
+    this.setState({address: address.results[1].formatted_address});
+  }
+
+  showPosition = () => {
+    //console.log("Latitude from props: " + this.state.userLatitude);
+    //console.log("Longitude from props: " + this.state.userLongitude);
+    if(this.state.userLatitude !== 0 && this.state.userLongitude !== 0)
+    {
+      fetch(`https://maps.googleapis.com/maps/api/geocode/json?latlng=${this.state.userLatitude},${this.state.userLongitude}&key=${process.env.REACT_APP_GOOGLE_MAPS_API_KEY}`)
+        .then(res => res.json())
+        .then(address => this.setZip(address))
+    }
+  }
+
   returnToList(): void {
     this.setState({
       businessSelectedIndicator: false,
@@ -156,9 +227,32 @@ class CustomerBusinessSearch extends React.Component<
     this.dispatchClearEmployeesForBusiness();
     this.dispatchSetSelectedEmployee(null);
   }
+  
 
   handleSearchChange(searchChangeEvent): void {
     this.setState({ locationSearchValue: searchChangeEvent.target.value });
+  }
+
+  handleNameSearchChange(searchChangeEvent): void {
+    this.setState({ nameSearchValue: searchChangeEvent.target.value });
+  }
+  
+  handleSwithcSearch():void {
+    this.setState({ hidden: !this.state.hidden });
+    if(this.state.buttonValue === 'Search by Name')
+    {
+      this.setState({ buttonValue: 'Search by City' });
+    }
+    else
+    {
+      this.setState({ buttonValue: 'Search by Business Name' });
+    }
+  }
+
+  componentDidMount() {
+    this.searchBarbershopsByLocation(this.state.userLatitude, this.state.userLongitude, this.state.count);
+    this.setState({count: this.state.count + 2});
+    //console.log("Latitude from props: " + this.props.curLatitude);
   }
 
   render() {
@@ -174,32 +268,75 @@ class CustomerBusinessSearch extends React.Component<
                   googleMapsApiKey={`${process.env.REACT_APP_GOOGLE_MAPS_API_KEY}`}
                   libraries={mapsLibraries}
                 >
-                  <StandaloneSearchBox
-                    onLoad={this.onLoad}
-                    onPlacesChanged={this.onPlaceSelection}
-                    ref={searchBox}
-                  >
-                    <TextField
-                      className={classes.search}
-                      id="standard-basic"
-                      placeholder="Search by city"
-                      value={this.state.locationSearchValue}
-                      onChange={this.handleSearchChange.bind(this)}
-                      fullWidth
-                      InputProps={{
-                        startAdornment: (
-                          <InputAdornment position="start">
-                            <Search />
-                          </InputAdornment>
-                        ),
-                      }}
-                    />
-                  </StandaloneSearchBox>
+                  <Grid container alignItems="center">
+                    <Grid item xs={3}>
+                      <Button 
+                        variant="outlined" 
+                        color="secondary"
+                        onClick={()=>{this.handleSwithcSearch()}}
+                        >
+                          {this.state.buttonValue}
+                      </Button>
+                    </Grid>
+                    <Grid item xs={9} hidden={!this.state.hidden}>
+                      <StandaloneSearchBox
+                        onLoad={this.onLoad}
+                        onPlacesChanged={this.onPlaceSelection}
+                        ref={searchBox}
+                      >
+                        <TextField
+                          className={classes.search}
+                          id="standard-basic"
+                          placeholder="Search by city"
+                          value={this.state.locationSearchValue}
+                          onChange={this.handleSearchChange.bind(this)}
+                          fullWidth
+                          InputProps={{
+                            startAdornment: (
+                              <InputAdornment position="start">
+                                <Search />
+                              </InputAdornment>
+                            ),
+                          }}
+                        />
+                      </StandaloneSearchBox>
+                    </Grid>
+                    <Grid item xs={10} hidden={this.state.hidden}>
+                          <TextField
+                            className={classes.search}
+                            id="standard-basic"
+                            placeholder="Search by Business Name"
+                            value={this.state.nameSearchValue}
+                            onChange={this.handleNameSearchChange.bind(this)}
+                            fullWidth
+                            InputProps={{
+                              startAdornment: (
+                                <InputAdornment position="start">
+                                  <Search />
+                                </InputAdornment>
+                              ),
+                            }}/>
+                    </Grid>
+                  </Grid>
+
                 </LoadScript>
+                <Typography
+                  className={classes.location}
+                  variant="subtitle1"
+                  align="center">
+                    {this.state.queryEmpty ? 
+                      (
+                        <div>No businesses found</div>
+                      ):
+                      (
+                        <div>Businesses located within {this.state.miles} miles from {this.state.address}</div>
+                      )
+                    }
+                </Typography>
               </div>
               <Box m={1} className={classes.box}>
                 <Grid container alignItems="center" justify="space-between">
-                  <Grid item>
+                  {/* <Grid item>
                     <div>
                       Location&nbsp;
                       <LocationOnIcon
@@ -221,7 +358,7 @@ class CustomerBusinessSearch extends React.Component<
                         <option value={3}>Sort By: Name </option>
                       </Select>
                     </FormControl>
-                  </Grid>
+                  </Grid> */}
                 </Grid>
               </Box>
               <div></div>
@@ -240,14 +377,14 @@ class CustomerBusinessSearch extends React.Component<
                           {business.businessInfo.name}
                         </div>
                         <div className={classes.previewBottomInfo}>
-                          <div className={classes.previewBottomDistance}>
+                          {/* <div className={classes.previewBottomDistance}>
                             <LocationOn />
                             0.2 mi
-                          </div>
+                          </div> */}
                           <div className={classes.previewBottomRating}>
                             <Rating
                               size="small"
-                              value={business.businessInfo.performance.rating}
+                              value={business.businessInfo.overallRating}
                               precision={0.5}
                               readOnly={true}
                               classes={{
@@ -262,6 +399,14 @@ class CustomerBusinessSearch extends React.Component<
                   </Card>
                 );
               })}
+              <Grid container justify='center'>
+                <Grid item>
+                  <Button variant="contained" onClick={() => this.displayMore()}>
+                    More businesses
+                  </Button>
+                </Grid>
+              </Grid>
+                
             </div>
           </div>
         ) : (
@@ -351,6 +496,16 @@ const styles = (theme: Theme) =>
       margin: '1rem',
       height: '20vh',
     },
+    location: {
+      color: theme.palette.primary.main,
+      marginTop: '10px',
+      [theme.breakpoints.down('xs')]:{
+        fontSize: '12px',
+        marginBottom: '0px',
+        paddingBottome: '0px'
+      }
+    }
+    ,
     previewBusinessTitle: {
       textAlign: 'center',
       fontSize: '24px',
@@ -393,6 +548,7 @@ const styles = (theme: Theme) =>
     },
   });
 
-export default connect(mapStateToProps, { addBusinessFound, clearBusinessesFound, setSelectedEmployee, clearEmployeesForBusiness })(
+export default connect(mapStateToProps, { addBusinessFound, clearBusinessesFound, setSelectedEmployee,
+   clearEmployeesForBusiness, updateCurrentLatitude, updateCurrentLongitude })(
   withStyles(styles, { withTheme: true })(CustomerBusinessSearch)
 );

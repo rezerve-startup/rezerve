@@ -26,7 +26,7 @@ export const firestore = firebase.firestore();
 
 auth.onAuthStateChanged((user) => {
   store.dispatch(setAuthChanging(true));
-
+  console.log(user);
   if (user) {
     firestore
       .collection('users')
