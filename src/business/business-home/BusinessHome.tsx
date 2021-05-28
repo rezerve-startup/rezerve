@@ -12,8 +12,9 @@ import {
   SvgIconProps,
   CircularProgress,
 } from '@material-ui/core';
-import { Home, Assessment } from '@material-ui/icons';
+import { Home, Assessment, People } from '@material-ui/icons';
 import HomePanel from './HomeTab';
+import EmployeesTab from './EmployeesTab';
 import { connect } from 'react-redux';
 import { firestore } from '../../config/FirebaseConfig';
 import { StoreState } from '../../shared/store/types';
@@ -63,8 +64,8 @@ class BusinessHome extends React.Component<any, any> {
       businessId: '',
       tabs: [
         { label: 'Home', icon: <Home /> },
-        // { label: 'Employees', icon: <People />},
         { label: 'Performance', icon: <Assessment /> },
+        { label: 'Employees', icon: <People />},
       ],
       tabValue: 0,
     };
@@ -137,9 +138,9 @@ class BusinessHome extends React.Component<any, any> {
             <TabPanel value={this.state.tabValue} index={1}>
               <BusinessPerformance />
             </TabPanel>
-            {/* <TabPanel value={this.state.tabValue} index={3}>
+             <TabPanel value={this.state.tabValue} index={2}>
               <EmployeesTab businessId={this.state.businessId} />
-            </TabPanel> */}
+            </TabPanel>
           </SwipeableViews>
         </Box>
       </div>

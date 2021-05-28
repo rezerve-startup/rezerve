@@ -102,7 +102,7 @@ export default function EmployeeTab(props: any) {
           <TabPanel value={value} index={0}>
             {employeeRequests.forEach((emp) => {
               return (
-                <p>Employee</p>
+                <p>Employee Request</p>
               )
             })
           }
