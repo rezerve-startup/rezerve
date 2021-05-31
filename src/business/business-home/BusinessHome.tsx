@@ -101,7 +101,6 @@ class BusinessHome extends React.Component<any, any> {
         </div>
       )
     }
-
     return (
       <div className={classes.root}>
         <Sidebar/>
@@ -132,6 +131,7 @@ class BusinessHome extends React.Component<any, any> {
             onChangeIndex={this.handleChangeIndex}
             enableMouseEvents={true}
           >
+          
             <TabPanel value={this.state.tabValue} index={0}>
               <HomePanel isMobile={isMobile} />
             </TabPanel>
@@ -139,7 +139,7 @@ class BusinessHome extends React.Component<any, any> {
               <BusinessPerformance />
             </TabPanel>
              <TabPanel value={this.state.tabValue} index={2}>
-              <EmployeesTab businessId={this.state.businessId} />
+              <EmployeesTab/>
             </TabPanel>
           </SwipeableViews>
         </Box>

@@ -35,6 +35,7 @@ export default function EmployeeTab(props: any) {
       .doc(businessId)
       .get()
       .then((docRef) => {
+        console.log(docRef.data())
         const employeeIds: string[] = docRef.data()?.employees
         const employeeReqIds: string[] = docRef.data()?.employeeRequests
 
@@ -42,11 +43,11 @@ export default function EmployeeTab(props: any) {
           .collection('employees')
           .onSnapshot((snapshot) => {
             snapshot.docs.forEach((doc) => {
-              if (employeeIds.includes(doc.id)) {
+             /*{ if (employeeIds.includes(doc.id)) {
                 tmpEmployees.push(doc.data())
               } else if (employeeReqIds.includes(doc.id)) {
                 tmpEmployeeRequests.push(doc.data())
-              }
+              }}*/
             })
 
             setEmployees(tmpEmployees);
@@ -101,8 +102,8 @@ export default function EmployeeTab(props: any) {
         >
           <TabPanel value={value} index={0}>
             {employeeRequests.forEach((emp) => {
-              return (
-                <p>Employee Request</p>
+              return(
+                <p>Employee Requests</p>
               )
             })
           }
