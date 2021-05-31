@@ -139,7 +139,7 @@ class BusinessHome extends React.Component<any, any> {
               <BusinessPerformance />
             </TabPanel>
              <TabPanel value={this.state.tabValue} index={2}>
-              <EmployeesTab/>
+              <EmployeesTab businessId={this.props.user.employeeInfo.businessId}/>
             </TabPanel>
           </SwipeableViews>
         </Box>

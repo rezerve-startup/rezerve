@@ -35,29 +35,30 @@ export default function EmployeeTab(props: any) {
       .doc(businessId)
       .get()
       .then((docRef) => {
-        console.log(docRef.data())
         const employeeIds: string[] = docRef.data()?.employees
         const employeeReqIds: string[] = docRef.data()?.employeeRequests
-
         firestore
           .collection('employees')
           .onSnapshot((snapshot) => {
+            console.log(snapshot)
             snapshot.docs.forEach((doc) => {
-             /*{ if (employeeIds.includes(doc.id)) {
+              if (employeeIds.includes(doc.id)) {
                 tmpEmployees.push(doc.data())
               } else if (employeeReqIds.includes(doc.id)) {
                 tmpEmployeeRequests.push(doc.data())
-              }}*/
+              }
             })
 
             setEmployees(tmpEmployees);
             setEmployeeRequests(tmpEmployeeRequests);
           })
-      })
+      
+      
+    })
       .catch((e) => {
         console.log(e)
       })
-  })
+  }, [])
 
   const handleChange = (_event: any, newValue: number) => {
     setValue(newValue);
@@ -101,15 +102,20 @@ export default function EmployeeTab(props: any) {
           enableMouseEvents={true}
         >
           <TabPanel value={value} index={0}>
-            {employeeRequests.forEach((emp) => {
+            {employees.map((emp, index) => {
               return(
-                <p>Employee Requests</p>
+                <p key={index}> Employee #{index + 1}</p>
               )
             })
           }
           </TabPanel>
           <TabPanel value={value} index={1}>
-            Test
+          {employeeRequests.map((emp, index) => {
+              return(
+                <p key={index}> Employee Request #{index + 1}</p>
+              )
+            })
+          }
           </TabPanel>
         </SwipeableViews>
       </Box>
