@@ -30,6 +30,7 @@ export default function EmployeeTab(props: any) {
     const businessId = props.businessId
     const tmpEmployees: any = []
     const tmpEmployeeRequests: any = []
+    
     firestore
       .collection('businesses')
       .doc(businessId)
@@ -37,10 +38,11 @@ export default function EmployeeTab(props: any) {
       .then((docRef) => {
         const employeeIds: string[] = docRef.data()?.employees
         const employeeReqIds: string[] = docRef.data()?.employeeRequests
+
+        
         firestore
           .collection('employees')
           .onSnapshot((snapshot) => {
-            console.log(snapshot)
             snapshot.docs.forEach((doc) => {
               if (employeeIds.includes(doc.id)) {
                 tmpEmployees.push(doc.data())
@@ -51,10 +53,10 @@ export default function EmployeeTab(props: any) {
 
             setEmployees(tmpEmployees);
             setEmployeeRequests(tmpEmployeeRequests);
-          })
-      
-      
+          }) 
+   
     })
+      
       .catch((e) => {
         console.log(e)
       })
@@ -104,15 +106,15 @@ export default function EmployeeTab(props: any) {
           <TabPanel value={value} index={0}>
             {employees.map((emp, index) => {
               return(
-                <p key={index}> Employee #{index + 1}</p>
+                <p key={index}>{emp.position}</p>
               )
             })
           }
           </TabPanel>
           <TabPanel value={value} index={1}>
-          {employeeRequests.map((emp, index) => {
+          {employeeRequests.map((empR, index) => {
               return(
-                <p key={index}> Employee Request #{index + 1}</p>
+                <p key={index}>Request # {index + 1}---{empR.position}</p>
               )
             })
           }
