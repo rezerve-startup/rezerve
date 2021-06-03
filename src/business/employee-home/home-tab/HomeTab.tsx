@@ -55,7 +55,9 @@ function mapStateToProps(state: StoreState) {
   if (allAppointments) {
     allAppointments.forEach((appt) => {
       if (appt.datetime.toDate().valueOf() > dateNow) {
-        upcomingAppts.push(appt);
+        if (appt.status !== 'cancelled') {
+          upcomingAppts.push(appt);
+        }
       }
     })
   }
@@ -86,21 +88,33 @@ class HomeTab extends React.Component<Props, State> {
 
           apptData.appointmentId = apptDoc.id;
 
-          firestore.collection('users').where('customerId', '==', `${apptData.customerId}`).get()
-            .then((querySnapshot) => {
-              querySnapshot.forEach((userDoc) => {
-                const userData = userDoc.data();
+          if (apptData.customerId === 'Guest') {
+            apptData.client = {
+              firstName: 'Guest',
+              lastName: ''
+            };
 
-                apptData.client = {
-                  firstName: userData.firstName,
-                  lastName: userData.lastName
-                }
+            employeeAppts.push(apptData);
 
-                employeeAppts.push(apptData);
+            this.dispatchSetUserEmployeeAppointments(employeeAppts);
+          } else {
+            firestore.collection('users').where('customerId', '==', `${apptData.customerId}`).get()
+              .then((querySnapshot) => {
+                querySnapshot.forEach((userDoc) => {
+                  const userData = userDoc.data();
+  
+                  apptData.client = {
+                    firstName: userData.firstName,
+                    lastName: userData.lastName
+                  }
+  
+                  employeeAppts.push(apptData);
+  
+                  this.dispatchSetUserEmployeeAppointments(employeeAppts);
+                });
+              })
+          }
 
-                this.dispatchSetUserEmployeeAppointments(employeeAppts);
-              });
-            })
         });
       })
   }
@@ -158,9 +172,9 @@ class HomeTab extends React.Component<Props, State> {
               <Grid item={true} xs={true}>
                 <EmployeeServicesCard />
               </Grid>
-              <Grid item={true} xs={true}>
+              {/* <Grid item={true} xs={true}>
                 <TodoList />
-              </Grid>
+              </Grid> */}
             </Grid>
           </Grid>
         </Grid>

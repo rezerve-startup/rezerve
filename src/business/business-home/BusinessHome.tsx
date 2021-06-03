@@ -10,31 +10,28 @@ import {
   createStyles,
   withStyles,
   SvgIconProps,
-  useMediaQuery,
-  useTheme,
-  Divider,
+  CircularProgress,
 } from '@material-ui/core';
-import { Home, List, Person, Assessment } from '@material-ui/icons';
-import ClientTab from './client-tab/ClientTab';
-import HomeTab from './home-tab/HomeTab';
-import BusinessPerformance from './business-performance/BusinessPerformance';
+import { Home, Assessment } from '@material-ui/icons';
+import HomePanel from './HomeTab';
 import { connect } from 'react-redux';
 import { firestore } from '../../config/FirebaseConfig';
 import { StoreState } from '../../shared/store/types';
-import AppointmentHome from './appointment-tab/AppointmentHome';
-import { Redirect } from 'react-router';
 import Sidebar from '../../shared/sidebar/Sidebar';
+import { Redirect } from 'react-router';
+import BusinessPerformance from './business-performance/BusinessPerformance';
+import { setEmployeeBusiness } from '../../shared/store/actions';
 
-const styles = (theme: Theme) =>
+const styles = (_theme: Theme) =>
   createStyles({
     root: {
       flexGrow: 1,
     },
-    divider: {
-      marginTop: '8px',
-    },
-    appBar: {
-      backgroundColor: '#353535'
+    loadingContainer: {
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
+      height: '100%',
     },
   });
 
@@ -43,14 +40,11 @@ interface CustomTab {
   icon: React.ReactElement<SvgIconProps>;
 }
 
-interface Props extends WithStyles<typeof styles> {
-  isMobile: boolean;
-  business?: any;
-  user?: any;
-}
+interface Props extends WithStyles<typeof styles> {}
 
 type State = {
-  user: any;
+  business: any;
+  businessId: string;
   tabs: CustomTab[];
   tabValue: number;
 };
@@ -61,90 +55,93 @@ function mapStateToProps(state: StoreState) {
   };
 }
 
-class BusinessHome extends React.Component<Props, State> {
-  constructor(props: Props) {
+class BusinessHome extends React.Component<any, any> {
+  constructor(props: any) {
     super(props);
     this.state = {
-      user: this.props.user,
+      business: undefined,
+      businessId: '',
       tabs: [
         { label: 'Home', icon: <Home /> },
-        { label: 'Appointments', icon: <List /> },
-        { label: 'Clients', icon: <Person /> },
+        // { label: 'Employees', icon: <People />},
+        { label: 'Performance', icon: <Assessment /> },
       ],
       tabValue: 0,
     };
   }
 
+  dispatchSetEmployeeBusiness(employeeBusiness: any) {
+    this.props.setEmployeeBusiness(employeeBusiness);
+  }
+
   componentDidMount() {
-    if (this.state.user?.employeeInfo?.isOwner) {
-      const tempTabs = this.state.tabs;
-      tempTabs.push({ label: 'Performance', icon: <Assessment /> },)
-      this.setState({
-        tabs: tempTabs
-      })
-    }
+    firestore.collection('businesses').where('employees', 'array-contains', this.props.user.employeeId).get()
+      .then((querySnapshot) => {
+        querySnapshot.forEach((businessDoc) => {
+          const businessData = businessDoc.data();
+
+          this.dispatchSetEmployeeBusiness(businessData);
+        });
+      });
   }
 
   render() {
     const { classes } = this.props;
-    // const isMobile = false;
+    const isMobile = true;
 
     if (this.props.user === undefined) {
       return <Redirect to={'/'} />
     }
 
+    if (this.props.user.employeeInfo.business === undefined) {
+      return (
+        <div className={classes.loadingSpinner}>
+          <CircularProgress size={75} />
+        </div>
+      )
+    }
+
     return (
       <div className={classes.root}>
-        {this.state.user.employeeInfo.businessId && 
-        <div>
-          <Sidebar />
-          <Box m={1}>
-            <AppBar position="static" color="transparent" elevation={0}>
-              <Tabs
-                value={this.state.tabValue}
-                onChange={this.handleChange}
-                aria-label="business-tabs"
-                indicatorColor="primary"
-                centered={this.props.isMobile ? false : true}
-                variant={this.props.isMobile ? 'scrollable' : 'fullWidth'}
-                scrollButtons="on"
-              >
-                {this.state.tabs.map((tab: CustomTab, i: number) => (
-                  <Tab
-                    key={i}
-                    label={tab.label}
-                    icon={tab.icon}
-                    {...a11yProps(i)}
-                  />
-                ))}
-              </Tabs>
-            </AppBar>
-            <Divider className={classes.divider} variant="fullWidth" />
-            <SwipeableViews
-              index={this.state.tabValue}
-              onChangeIndex={this.handleChangeIndex}
-              enableMouseEvents={true}
+        <Sidebar/>
+        <Box m={1}>
+          
+          <AppBar position="static" color="default">
+            <Tabs
+              value={this.state.tabValue}
+              onChange={this.handleChange}
+              aria-label="business-tabs"
+              indicatorColor="primary"
+              centered={isMobile ? false : true}
+              variant={isMobile ? 'scrollable' : 'fullWidth'}
+              scrollButtons="on"
             >
-              <TabPanel value={this.state.tabValue} index={0}>
-                <HomeTab isMobile={this.props.isMobile} />
-              </TabPanel>
-              <TabPanel value={this.state.tabValue} index={1}>
-                <AppointmentHome />
-              </TabPanel>
-              <TabPanel value={this.state.tabValue} index={2}>
-                <ClientTab />
-              </TabPanel>
-              {this.state.user.employeeInfo.isOwner &&
-                <TabPanel value={this.state.tabValue} index={3}>
-                  <BusinessPerformance />
-                </TabPanel>
-              }
-              
-              
-            </SwipeableViews>
-          </Box>
-        </div>
-        }
+              {this.state.tabs.map((tab: CustomTab, i: number) => (
+                <Tab
+                  key={i}
+                  label={tab.label}
+                  icon={tab.icon}
+                  {...a11yProps(i)}
+                />
+              ))}
+          </Tabs>
+          </AppBar>
+          <SwipeableViews
+            index={this.state.tabValue}
+            onChangeIndex={this.handleChangeIndex}
+            enableMouseEvents={true}
+          >
+            <TabPanel value={this.state.tabValue} index={0}>
+              <HomePanel isMobile={isMobile} />
+            </TabPanel>
+            <TabPanel value={this.state.tabValue} index={1}>
+              <BusinessPerformance />
+            </TabPanel>
+            {/* <TabPanel value={this.state.tabValue} index={3}>
+              <EmployeesTab businessId={this.state.businessId} />
+            </TabPanel> */}
+          </SwipeableViews>
+        </Box>
       </div>
     );
   }
@@ -161,6 +158,8 @@ class BusinessHome extends React.Component<Props, State> {
     });
   };
 }
+
+
 
 function a11yProps(index: number) {
   return {
@@ -191,17 +190,6 @@ function TabPanel(props: TabPanelProps) {
   );
 }
 
-export const withMediaQuery = (Component: any) => {
-  return (props: any) => {
-    const theme = useTheme();
-    const isMobileProp = useMediaQuery(theme.breakpoints.down('sm'));
-    return <Component isMobile={isMobileProp} {...props} />;
-  };
-};
-
-export default withMediaQuery(
-  connect(
-    mapStateToProps,
-    null,
-  )(withStyles(styles, { withTheme: true })(BusinessHome)),
-);
+export default connect(mapStateToProps, { setEmployeeBusiness })(
+  withStyles(styles, { withTheme: true }
+)(BusinessHome));

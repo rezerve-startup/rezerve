@@ -24,9 +24,9 @@ firebase.initializeApp(firebaseConfig);
 export const auth = firebase.auth();
 export const firestore = firebase.firestore();
 
-auth.onAuthStateChanged((user) => {
+export const unsubscribe = auth.onAuthStateChanged((user) => {
   store.dispatch(setAuthChanging(true));
-  console.log(user);
+  //console.log(user);
   if (user) {
     firestore
       .collection('users')
@@ -34,7 +34,6 @@ auth.onAuthStateChanged((user) => {
       .get()
       .then((userObj) => {
         const userInfo = userObj.data();
-        console.log(userInfo);
         if (userInfo && userInfo.customerId !== '') {
           firestore.collection('customers').doc(userInfo.customerId).get()
             .then((customerObj) => {
@@ -83,7 +82,10 @@ auth.onAuthStateChanged((user) => {
             })
           }
         }
-      );
+      )
+      .catch((err) => {
+        //console.log(err);
+      })
   } else {
     store.dispatch(logoutUser());
     store.dispatch(setAuthChanging(false))

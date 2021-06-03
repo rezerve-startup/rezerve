@@ -157,8 +157,8 @@ class BusinessInfoDetails extends React.Component<any, any> {
 
         let businessOpen = false;
 
-        for (const day of this.props.businessOpenDates) {
-          if (moment().day(day).day() === moment(selectedDate.toISOString()).day()) {
+        for (const openDate of this.props.businessOpenDates) {
+          if (moment().day(openDate.day).day() === moment(selectedDate.toISOString()).day() && openDate.enabled) {
             businessOpen = true;
             break;
           }
@@ -169,7 +169,7 @@ class BusinessInfoDetails extends React.Component<any, any> {
           let employeeAvailabilityOnDay;
 
           for (const employeeSchedule of this.props.selectedEmployee.availability) {
-            if (moment().day(employeeSchedule.day).day() === moment(selectedDate.toISOString()).day()) {
+            if (moment().day(employeeSchedule.day).day() === moment(selectedDate.toISOString()).day() && employeeSchedule.enabled) {
               employeeWorking = true;
               employeeAvailabilityOnDay = employeeSchedule;
               break;
@@ -263,15 +263,15 @@ class BusinessInfoDetails extends React.Component<any, any> {
           let businessOpen = false;
   
           let currDayOfWeekSelected = dateMomentToSearch.local().format('dddd');
-          if (this.props.businessOpenDates.some((day) => day === currDayOfWeekSelected)) {
+          if (this.props.businessOpenDates.some((openDate) => (openDate.day === currDayOfWeekSelected && openDate.enabled))) {
             businessOpen = true;
           }
 
-          while (!this.props.businessOpenDates.some((day) => day === currDayOfWeekSelected)) {
+          while (!this.props.businessOpenDates.some((openDate) => (openDate.day === currDayOfWeekSelected && openDate.enabled))) {
             dateMomentToSearch.add(1, 'day');
             currDayOfWeekSelected = dateMomentToSearch.local().format('dddd');
 
-            if (this.props.businessOpenDates.some((day) => day === currDayOfWeekSelected)) {
+            if (this.props.businessOpenDates.some((openDate) => (openDate.day === currDayOfWeekSelected && openDate.enabled))) {
               businessOpen = true;
               break;
             }
@@ -282,7 +282,7 @@ class BusinessInfoDetails extends React.Component<any, any> {
             let employeeAvailabilityOnDay;
   
             for (const employeeSchedule of this.props.selectedEmployee.availability) {
-              if (dateMomentToSearch.local().format('dddd') === employeeSchedule.day) {
+              if (dateMomentToSearch.local().format('dddd') === employeeSchedule.day && employeeSchedule.enabled) {
                 employeeWorking = true;
                 employeeAvailabilityOnDay = employeeSchedule;
                 break;
@@ -350,13 +350,13 @@ class BusinessInfoDetails extends React.Component<any, any> {
       
                 tempMoment.add(30, 'minutes');
               }
-
-              if (foundAppointmentSlot) {
-                break;
-              } else {
-                dateMomentToSearch.add(1, 'day');
-              }
             }
+          }
+
+          if (foundAppointmentSlot) {
+            break;
+          } else {
+            dateMomentToSearch.add(1, 'day');
           }
         }
 
@@ -483,7 +483,7 @@ class BusinessInfoDetails extends React.Component<any, any> {
                 </Grid>
               </RadioGroup>
 
-              {this.props.selectedEmployee && this.props.selectedEmployee.services.map((service, index) => {
+              {this.props.selectedEmployee && this.props.selectedEmployee.services && this.props.selectedEmployee.services.length > 0 && this.props.selectedEmployee.services.map((service, index) => {
                 return (
                   <Card className={this.state.selectedService === index ? classes.selectedServiceCard : classes.serviceCard} 
                     variant="outlined" key={index} onClick={() => this.selectService(index)}>
@@ -554,18 +554,20 @@ class BusinessInfoDetails extends React.Component<any, any> {
           }
         </div>
 
-        <Dialog 
-          open={this.props.bookDialogStatus}
-          onClose={() => this.handleCloseBookDialog()}
-        >
-          <CustomerCheckout 
-            bookAppointment={this.bookAppointment} 
-            employeeName={this.props.selectedEmployee?.firstName} 
-            service={this.props.selectedEmployee?.services[this.state.selectedService]}
-            businessName={this.props.businessName}
-            appointmentDateTime={this.state.availableAppointmentTimes[this.state.selectedAppointmentSlot]}
-          />
-        </Dialog>
+        {this.props.selectedEmployee?.services !== undefined && (
+          <Dialog 
+            open={this.props.bookDialogStatus}
+            onClose={() => this.handleCloseBookDialog()}
+          >
+            <CustomerCheckout 
+              bookAppointment={this.bookAppointment} 
+              employeeName={this.props.selectedEmployee?.firstName} 
+              service={this.props.selectedEmployee?.services[this.state.selectedService]}
+              businessName={this.props.businessName}
+              appointmentDateTime={this.state.availableAppointmentTimes[this.state.selectedAppointmentSlot]}
+            />
+          </Dialog>
+        )}
 
         <Snackbar
           anchorOrigin={{

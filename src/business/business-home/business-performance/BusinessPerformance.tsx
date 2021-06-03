@@ -89,7 +89,7 @@ class BusinessPerformance extends React.Component<
       })
       // Get business reviews
       .then(() => {
-        this.state.business.reviews.forEach((reviewId: any) => {
+        this.state.business.reviews?.forEach((reviewId: any) => {
           let tempBusinessReview;
 
           firestore
@@ -116,23 +116,26 @@ class BusinessPerformance extends React.Component<
     const profileViews: any[] = [];
     const timeCheck = this.getTimeCheck(this.state.tabSelected);
 
-    info.performance.forEach((data: any) => {
-      if (data.date < now && data.date > timeCheck) {
-        if (data.type === 'AbandonedCart') {
-          abandonedCarts.push(data);
-        } else if (data.type === 'CompletedCart') {
-          completedCarts.push(data);
-        } else if (data.type === 'ProfileView') {
-          profileViews.push(data);
+    if (info.performance) {
+      info.performance.forEach((data: any) => {
+        if (data.date < now && data.date > timeCheck) {
+          if (data.type === 'AbandonedCart') {
+            abandonedCarts.push(data);
+          } else if (data.type === 'CompletedCart') {
+            completedCarts.push(data);
+          } else if (data.type === 'ProfileView') {
+            profileViews.push(data);
+          }
         }
-      }
-    });
+      });
+    }
 
     const result = this.state.businessPerformance;
     result.abandonedCarts = abandonedCarts.length;
     result.bookingPercentage = (completedCarts.length + abandonedCarts.length) === 0 ?
       0 :
       completedCarts.length / (completedCarts.length + abandonedCarts.length);
+    result.bookingPercentage *= 100;
     result.profileViews = profileViews.length;
 
     info.employees.forEach(employeeId => {
@@ -287,20 +290,20 @@ class BusinessPerformance extends React.Component<
                 </div>
                 <div className={classes.businessPerformanceItem}>
                   <div>Booking Percentage</div>
-                  <div>{this.state.businessPerformance.bookingPercentage}%</div>
+                  <div>{this.state.businessPerformance.bookingPercentage.toFixed(2)}%</div>
                 </div>
               </div>
             </div>
 
             
 
-            <div className={classes.sectionTitle}>
+            {/* <div className={classes.sectionTitle}>
               Profits
             </div>
             <div className={classes.businessPerformanceItem}>
               Total Revenue
-              <div>${this.state.businessPerformance.totalRevenue}</div>
-            </div>
+              <div>${this.state.businessPerformance.totalRevenue.toFixed(2)}</div>
+            </div> */}
 
             <div className={classes.sectionTitle}>
               <div>Reviews & Rating</div>

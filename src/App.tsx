@@ -9,6 +9,7 @@ import {
   withStyles,
 } from '@material-ui/core';
 
+import EmployeeHome from './business/employee-home/EmployeeHome';
 import BusinessInfo from './business/business-info/BusinessInfo';
 import BusinessHome from './business/business-home/BusinessHome';
 import BusinessAccountInfo from './business/business-signup/BusinessInfoForm';
@@ -48,6 +49,7 @@ const routes = [
   { path: '/sign-up-page', component: SignUpPage },
   { path: '/customer-sign-up', component: CustomerSignUp },
   { path: '/temp-login', component: TempLoginPage },
+  { path: '/employee-home', component: EmployeeHome },
   { path: '/business-home', component: BusinessHome },
   { path: '/login-page', component: LoginDialog },
   { path: '/', component: LandingDefault },
@@ -58,12 +60,12 @@ const theme = createMuiTheme({
     primary: {
       main: '#FE8488',
       light: '#FF6D6D',
-      dark: '#FF2B2B',
+      dark: '#f00604',
     },
     secondary: {
       main: '#5B5B5B',
-      light: '#D7D7D7',
-      dark: '#353535',
+      light: '#e2e2e2',
+      dark: '#232323',
     },
   },
 });
@@ -123,6 +125,7 @@ class App extends React.Component<any, SystemState> {
               <Route path={'/temp-login'} exact={true} component={TempLoginPage}/>
               <Route path={'/appointments'} exact={true} component={CustomerAppointmentHome}/>
               <Route path={'/customer-home'} exact={true} component={LandingLoggedIn}/>
+              <Route path={'/employee-home'} exact={true} component={EmployeeHome} />
               <Route path={'/business-home'} exact={true} component={BusinessHome}/>
               <Route path={'/messages'} exact={true} component={MessagingHome}/>
               <Route path={'**'} exact><Redirect to={'/'}></Redirect></Route>

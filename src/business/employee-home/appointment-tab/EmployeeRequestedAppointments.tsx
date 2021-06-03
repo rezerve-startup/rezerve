@@ -26,12 +26,11 @@ import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import { connect } from 'react-redux';
 import { StoreState } from '../../../shared/store/types';
 import moment from 'moment';
+import image from '../../../assets/avatar.jpg';
 
 import { updateEmployeeAppointmentStatus, setUserEmployeeAppointments } from '../../../shared/store/actions';
 import { firestore } from '../../../config/FirebaseConfig';
 import firebase from 'firebase';
-
-const image = require('../../../assets/avatar.jpg');
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -588,7 +587,7 @@ class EmployeeRequestedAppointments extends React.Component<Props, State> {
             <TextField value={this.state.messageToCustomer} onChange={(e) => this.handleOnChangeCustomerMessage(e)} />
           </DialogContent>
           <DialogActions>
-            <Button onClick={() => this.sendMessageToCustomer()}>Send</Button>
+            <Button onClick={() => this.sendMessageToCustomer(this.state.messageToCustomer, this.state.customerId)}>Send</Button>
             <Button onClick={() => this.closeMessageDialog()}>Cancel</Button>
           </DialogActions>
         </Dialog>
@@ -621,6 +620,14 @@ class EmployeeRequestedAppointments extends React.Component<Props, State> {
     }).then(() => {
       this.dispatchUpdateEmployeeAppointmentStatus(appointmentToUpdate);
 
+      if (appointmentToUpdate.customerId !== 'Guest') {
+        if (appointmentToUpdate.status === 'cancelled') {
+          this.sendMessageToCustomer(`We're sorry, but your appointment on ${appointmentToUpdate.formattedDate} from ${appointmentToUpdate.startTime} - ${appointmentToUpdate.endTime} has been cancelled.`, appointmentToUpdate.customerId);
+        } else if (appointmentToUpdate.status === 'accepted') {
+          this.sendMessageToCustomer(`Your appointment on ${appointmentToUpdate.formattedDate} from ${appointmentToUpdate.startTime} - ${appointmentToUpdate.endTime} has been accepted.`, appointmentToUpdate.customerId);
+        }
+      }
+
       this.setState({
         acceptAppointmentStatusDialogOpen: false,
         cancelAppointmentStatusDialogOpen: false,
@@ -634,9 +641,7 @@ class EmployeeRequestedAppointments extends React.Component<Props, State> {
     })
   }
 
-  sendMessageToCustomer() {
-    const customerId = this.state.customerId;
-
+  sendMessageToCustomer(messageToSend: string, customerId: string) {
     firestore.collection('messages').where('employeeId', '==', `${this.props.employeeId}`).get()
       .then((querySnapshot) => {
           let customerIdFound = false;
@@ -650,7 +655,7 @@ class EmployeeRequestedAppointments extends React.Component<Props, State> {
               const messageToAdd = {
                 senderId: this.props.employeeId,
                 datetime: firebase.firestore.Timestamp.fromDate(new Date(Date.now())),
-                message: this.state.messageToCustomer
+                message: messageToSend
               }
 
               messagesToUpdate.push(messageToAdd);
@@ -667,7 +672,7 @@ class EmployeeRequestedAppointments extends React.Component<Props, State> {
             const messagesToAdd = [{
               senderId: this.props.employeeId,
               datetime: currentDatetime,
-              message: this.state.messageToCustomer
+              message: messageToSend
             }];
 
             const documentToAdd = {

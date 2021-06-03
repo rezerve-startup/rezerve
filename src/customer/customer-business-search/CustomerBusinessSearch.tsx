@@ -4,6 +4,13 @@ import { Rating } from '@material-ui/lab';
 import { LocationOn } from '@material-ui/icons';
 import firebase from 'firebase';
 import {
+  InstantSearch,
+  Hits,
+  SearchBox,
+  connectAutoComplete
+} from 'react-instantsearch-dom';
+
+import {
   Card,
   withStyles,
   createStyles,
@@ -18,6 +25,12 @@ import {
   FormControl,
   Select,
   Typography,
+  Paper,
+  MenuList,
+  MenuItem,
+  ClickAwayListener,
+  Grow,
+  Popper,
 } from '@material-ui/core';
 
 import LocationOnIcon from '@material-ui/icons/LocationOn';
@@ -35,6 +48,8 @@ import { addBusinessFound, clearBusinessesFound, setSelectedEmployee, clearEmplo
 import { Business } from '../../models/Business.interface';
 
 import cat1 from '../../assets/cat1.jpg';
+import algoliasearch from 'algoliasearch';
+import { Link } from 'react-router-dom';
 
 type CustomerBusinessSearchState = {
   searchBoxRef: any;
@@ -53,6 +68,8 @@ type CustomerBusinessSearchState = {
   queryEmpty: boolean;
   hidden: boolean;
   buttonValue: string;
+  open: boolean;
+  anchorRef: any;
 };
 
 let searchBox: any;
@@ -67,6 +84,7 @@ function mapStateToProps(state: StoreState) {
     locStatus: state.location.newStatus
   };
 }
+
 
 class CustomerBusinessSearch extends React.Component<
   any,
@@ -88,7 +106,9 @@ class CustomerBusinessSearch extends React.Component<
       miles: 0,
       queryEmpty: false,
       hidden: true,
-      buttonValue: 'Search by Name'
+      buttonValue: 'Search by Business Name',
+      open: false,
+      anchorRef: React.createRef()
     };
   }
 
@@ -239,7 +259,7 @@ class CustomerBusinessSearch extends React.Component<
   
   handleSwithcSearch():void {
     this.setState({ hidden: !this.state.hidden });
-    if(this.state.buttonValue === 'Search by Name')
+    if(this.state.buttonValue === 'Search by Business Name')
     {
       this.setState({ buttonValue: 'Search by City' });
     }
@@ -247,16 +267,103 @@ class CustomerBusinessSearch extends React.Component<
     {
       this.setState({ buttonValue: 'Search by Business Name' });
     }
+    //console.log(this.state.buttonValue);
+  }
+
+  handleOnSearchByName(): void {
+    this.setState({
+      //anchorEl: event,
+      open: true
+    });
+
+  }
+
+  handleMenuSelection(selection) {
+    this.dispatchClearBusinessesFound();
+    let docRef = firestore.collection('businesses');
+    let query = docRef
+      .where('name', '==', selection);
+
+    query.get().then((snapshot) => {
+      if(snapshot.empty){
+        this.setState({queryEmpty: true});
+      }
+      else{
+        this.setState({queryEmpty: false});
+      }
+      snapshot.forEach((doc) => {
+        let businessData = doc.data() as Business;
+
+        let businessToAdd = {
+          key: doc.id,
+          businessInfo: businessData,
+        };
+
+        this.dispatchAddFoundBusiness(businessToAdd);
+      }
+      );
+    })
   }
 
   componentDidMount() {
     this.searchBarbershopsByLocation(this.state.userLatitude, this.state.userLongitude, this.state.count);
     this.setState({count: this.state.count + 2});
+
     //console.log("Latitude from props: " + this.props.curLatitude);
   }
 
+  
+
   render() {
     const { classes } = this.props;
+    
+    //Algolia implementation
+    const searchClient = algoliasearch("QDMMNJHF77","3a233c2bc51c8de99d7da44b86f8e1b0");
+    // Multi index
+    let anchorEl;
+    const Autocomplete = ({ hits, currentRefinement, refine }) => (
+      <div>
+        <TextField
+          //inputRef={this.state.anchorEl}
+          className={classes.search}
+          id="standard-basic"
+          placeholder="Search by Business Name"
+          value={currentRefinement}
+          onChange={
+            (event) => {
+              refine(event.currentTarget.value);
+            }
+          }
+          fullWidth
+          InputProps={{
+            startAdornment: (
+            <InputAdornment position="start">
+              <Search/>
+            </InputAdornment>
+            ),
+            }}/>
+            {/*<Popper open={this.state.open} anchorEl={this.state.anchorRef.current} role={undefined} transition disablePortal>
+            {({ TransitionProps, placement }) => (
+              <Grow
+                {...TransitionProps}
+                style={{ transformOrigin: placement === 'bottom' ? 'center top' : 'center bottom' }}
+            >*/}
+            
+                  <Paper>
+                    <MenuList >
+                      {hits.map(hit => (
+                        <MenuItem 
+                        onClick={() => this.handleMenuSelection(hit.name)}
+                        > {hit.name}</MenuItem>))}
+                    </MenuList>
+                  </Paper>{/*
+                  </Grow>
+              )}
+              </Popper>*/}
+      </div>
+    );
+    
+    const CustomAutocomplete = connectAutoComplete(Autocomplete);
 
     return (
       <div>
@@ -301,26 +408,19 @@ class CustomerBusinessSearch extends React.Component<
                         />
                       </StandaloneSearchBox>
                     </Grid>
-                    <Grid item xs={10} hidden={this.state.hidden}>
-                          <TextField
-                            className={classes.search}
-                            id="standard-basic"
-                            placeholder="Search by Business Name"
-                            value={this.state.nameSearchValue}
-                            onChange={this.handleNameSearchChange.bind(this)}
-                            fullWidth
-                            InputProps={{
-                              startAdornment: (
-                                <InputAdornment position="start">
-                                  <Search />
-                                </InputAdornment>
-                              ),
-                            }}/>
+                    <Grid item xs={9} hidden={this.state.hidden}>
+                            <InstantSearch
+                              indexName="Business_Data"
+                              searchClient={searchClient}
+                            >
+                              <CustomAutocomplete />
+                            </InstantSearch>
                     </Grid>
                   </Grid>
 
                 </LoadScript>
                 <Typography
+                  hidden={!this.state.hidden}
                   className={classes.location}
                   variant="subtitle1"
                   align="center">
@@ -399,8 +499,8 @@ class CustomerBusinessSearch extends React.Component<
                   </Card>
                 );
               })}
-              <Grid container justify='center'>
-                <Grid item>
+              <Grid container justify='center' >
+                <Grid item hidden={!this.state.hidden}>
                   <Button variant="contained" onClick={() => this.displayMore()}>
                     More businesses
                   </Button>
@@ -497,7 +597,7 @@ const styles = (theme: Theme) =>
       height: '20vh',
     },
     location: {
-      color: theme.palette.primary.main,
+      color: theme.palette.primary.dark,
       marginTop: '10px',
       [theme.breakpoints.down('xs')]:{
         fontSize: '12px',

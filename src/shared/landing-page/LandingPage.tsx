@@ -193,7 +193,7 @@ const LandingPageDefault = (props: any) => {
   }
 
   if (redirectToEmployee) {
-    return <Redirect to={'/business-home'} />
+    return <Redirect to={'/employee-home'} />
   }
 
   if (redirectToCustomer) {

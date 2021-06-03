@@ -37,6 +37,7 @@ import {
   Search,
   Home,
   Close,
+  Business
 } from '@material-ui/icons';
 import { connect } from 'react-redux';
 import { StoreState } from '../store/types';
@@ -58,9 +59,15 @@ const sidebarDataWithoutLogout = [
     cName: 'nav-text',
   },
   {
+    title: 'Employee Home',
+    path: '/employee-home',
+    icon: <Home />,
+    cName: 'nav-text'
+  },
+  {
     title: 'Business Home',
     path: '/business-home',
-    icon: <Home />,
+    icon: <Business />,
     cName: 'nav-text',
   },
   {
@@ -191,7 +198,25 @@ const Sidebar = (props: any ) => {
         open={isMenuOpen}
         onClose={handleMenuClose}
       >
-        {sidebarDataWithoutLogout.slice(4).map((obj, i) => (
+        {props.user.customerId === '' &&
+          <MenuItem button={true} component={Link} to={sidebarDataWithoutLogout[2].path}>
+            <ListItemIcon className={classes.listIcon}>{sidebarDataWithoutLogout[2].icon}</ListItemIcon>
+            <ListItemText className={classes.listText} primary={sidebarDataWithoutLogout[2].title} />
+          </MenuItem>
+        }
+        {props.user.customerId === '' && props.user.employeeInfo.isOwner === true &&
+          <MenuItem button={true} component={Link} to={sidebarDataWithoutLogout[3].path}>
+            <ListItemIcon className={classes.listIcon}>{sidebarDataWithoutLogout[3].icon}</ListItemIcon>
+            <ListItemText className={classes.listText} primary={sidebarDataWithoutLogout[3].title} />
+          </MenuItem>
+        }
+        {props.user.employeeId === '' &&
+          <MenuItem button={true} component={Link} to={sidebarDataWithoutLogout[4].path}>
+            <ListItemIcon className={classes.listIcon}>{sidebarDataWithoutLogout[4].icon}</ListItemIcon>
+            <ListItemText className={classes.listText} primary={sidebarDataWithoutLogout[4].title} />
+          </MenuItem>
+        }
+        {sidebarDataWithoutLogout.slice(5).map((obj, i) => (
           <MenuItem button={true} key={i} component={Link} to={obj.path}>
             <ListItemIcon className={classes.listIcon}>{obj.icon}</ListItemIcon>
             <ListItemText className={classes.listText} primary={obj.title} />
@@ -229,7 +254,7 @@ const Sidebar = (props: any ) => {
             <Divider className={classes.divider} />
             {sidebarDataWithoutLogout.map((obj, i) => {
                 if (!(props.user.customerId === '')) {
-                  if (!(obj.title === 'Business Home')) {
+                  if (!(obj.title === 'Business Home' || obj.title === 'Employee Home')) {
                     return (
                         <ListItem button={true} key={i} component={Link} to={obj.path}>
                             <ListItemIcon className={classes.listIcon}>
@@ -240,7 +265,8 @@ const Sidebar = (props: any ) => {
                     )
                   }
                 } else if (!(props.user.employeeId === '')) {
-                  if (!(obj.title === 'Appointments' || obj.title === 'Business Search')) {
+                  if (!(obj.title === 'Appointments' || obj.title === 'Business Search' || 
+                  (obj.title === 'Business Home' && props.user.employeeInfo.isOwner === false ))) {
                     return (
                       <ListItem button={true} key={i} component={Link} to={obj.path}>
                           <ListItemIcon className={classes.listIcon}>
