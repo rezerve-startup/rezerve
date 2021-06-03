@@ -9,6 +9,7 @@ import {
   withStyles,
 } from '@material-ui/core';
 
+
 import EmployeeHome from './business/employee-home/EmployeeHome';
 import BusinessInfo from './business/business-info/BusinessInfo';
 import BusinessHome from './business/business-home/BusinessHome';
@@ -18,7 +19,7 @@ import BusinessPersonalInfo from './business/business-signup/BusinPersInfoPage';
 
 import LandingDefault from './shared/landing-page/LandingPage';
 import LandingLoggedIn from './shared/landing-page/LandingPageLog';
-
+import Preview from './shared/preview/about';
 import SignUpPage from './shared/sign-up/SignUpPage';
 import LoginDialog from './shared/login/loginDefault';
 
@@ -116,6 +117,7 @@ class App extends React.Component<any, SystemState> {
           <Router>
             <Switch>
               <Route path={'/'} exact={true} component={LandingDefault}/>
+              <Route path={'/preview'} exact={true} component={Preview}/>
               <Route path={'/business-sign-up'} exact={true} component={BusinessSignUp}/>
               <Route path={'/business-account-info'} exact={true} component={BusinessAccountInfo}/>
               <Route path={'/business-personal-info'} exact={true} component={BusinessPersonalInfo}/>
