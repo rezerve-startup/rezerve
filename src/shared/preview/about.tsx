@@ -75,7 +75,6 @@ function Preview() {
 			</Typography>
 			
 				</div>
-		
 				<div className= {classes.font}>   <h3>THE FIRST FREE TO USE BOOKING AND
 			<br/> BUSINESS MANAGEMENT SOFTWARE FOR STYLIST<br/>
 			AND BEAUTY PROFFESSIONALS </h3></div>	
@@ -89,10 +88,17 @@ function Preview() {
 			 
 			</div>
 			<div className={classes.font}>
-           MAKE BOOKING EASY. CREATE YOUR PROFILE AND 
+          <Grid></Grid> MAKE BOOKING EASY. CREATE YOUR PROFILE AND 
 				CHANGE YOUR BUSINESS TODAY!
 				 </div>
-				/*<List dense={dense}>
+			
+          
+		
+			<Button className={classes.title} type="submit" color="primary" variant="contained"  href = {"/"}>
+				Get Started Now
+				</Button>
+		</div>
+		/*<List dense={dense}>
               
                 <ListItem>
                   <ListItemText
@@ -105,13 +111,6 @@ function Preview() {
                   />
                 </ListItem>
             </List>*/
-          
-		
-			<Button className={classes.title} type="submit" color="primary" variant="contained"  href = {"/"}>
-				Get Started Now
-				</Button>
-		</div>
-		
 
  );	
  
