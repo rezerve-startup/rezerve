@@ -116,8 +116,8 @@ class App extends React.Component<any, SystemState> {
         <ThemeProvider theme={theme}>
           <Router>
             <Switch>
-              <Route path={'/'} exact={true} component={LandingDefault}/>
-              <Route path={'/preview'} exact={true} component={Preview}/>
+              <Route path={'/'} exact={true} component={Preview}/>
+              <Route path={'/LandingPage'} exact={true} component={LandingDefault}/>
               <Route path={'/business-sign-up'} exact={true} component={BusinessSignUp}/>
               <Route path={'/business-account-info'} exact={true} component={BusinessAccountInfo}/>
               <Route path={'/business-personal-info'} exact={true} component={BusinessPersonalInfo}/>

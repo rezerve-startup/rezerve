@@ -94,7 +94,7 @@ function Preview() {
 			
           
 		
-			<Button className={classes.title} type="submit" color="primary" variant="contained"  href = {"/"}>
+			<Button className={classes.title} type="submit" color="primary" variant="contained"  href = {"/LandingPage"}>
 				Get Started Now
 				</Button>
 		</div>
