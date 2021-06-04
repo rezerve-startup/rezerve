@@ -1,5 +1,4 @@
 import { Button, createStyles, makeStyles, Theme } from '@material-ui/core';
-import Image from "material-ui-image";
 import logo from './unknown.png';
 import React, { useState } from 'react';
 import Typography from '@material-ui/core/Typography';

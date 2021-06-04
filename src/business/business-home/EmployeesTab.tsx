@@ -57,8 +57,6 @@ export default function EmployeeTab(props: any) {
     const tmpEmployeeInfo: any = []
     const tmpEmployeeReqInfo: any = []
     
-    var tmpUser;
-    
     firestore
       .collection('businesses')
       .doc(businessId)
@@ -66,8 +64,6 @@ export default function EmployeeTab(props: any) {
       .then((docRef) => {
         const employeeIds: string[] = docRef.data()?.employees
         const employeeReqIds: string[] = docRef.data()?.employeeRequests
-        const userCollection = firestore.collection('users')
-
         firestore
           .collection('employees')
           .onSnapshot((snapshot) => {
@@ -87,22 +83,26 @@ export default function EmployeeTab(props: any) {
             setEmployeeRequests(tmpEmployeeRequests);
             setEmployeeIds(tmpEmployeeIds);
             setEmployeeReqIds(tmpEmployeeReqIds);
-          })
-          
-          
-   
-    }).then(() => {
-      employeeIds.forEach((value) =>{
-        firestore
-        .collection('users').where('employeeId', '==', value )
-        .onSnapshot((snapshot) => {
-          snapshot.docs.forEach((docRef) => {
-              tmpEmployeeInfo.push(docRef.data())
+
+            firestore
+            .collection('users')
+            .onSnapshot((snapshot) => {
+              snapshot.docs.forEach((doc) => {
+                const usr = doc.data()
+                const name = usr.firstName + " " + usr.lastName
+                if (employeeIds.includes(usr.employeeId)) {
+                  tmpEmployeeInfo.push(name)
+                } else if (employeeReqIds.includes(usr.employeeId)) {
+                  tmpEmployeeReqInfo.push(name)
+                }
+              })
+              setEmployeeInfo(tmpEmployeeInfo)
+              setEmployeeReqInfo(tmpEmployeeReqInfo)
             })
-            setEmployeeInfo(tmpEmployeeInfo)
           })
-      })
-    })
+        })   
+   
+    
       
       .catch((e) => {
         console.log(e)
@@ -156,18 +156,18 @@ export default function EmployeeTab(props: any) {
             
             {employees.map((emp, index) => {
             const id = employeeIds[index]
-            
+            const empName = employeeInfo[index]
               return(
                 <div className={classes.employeeList}>
                   <Card className={classes.employeeList}>
                     <CardContent>
                       <div>
                         <Typography variant="h6">
-                              {id}
+                              {empName}
                           </Typography>
-
+                          
                           <Typography variant="subtitle1" color="textSecondary">
-                              {emp.position}
+                              {emp.position}{!emp.isOwner? (""):(" (Owner)")}
                           </Typography>
                       </div>
                     </CardContent>
@@ -185,13 +185,14 @@ export default function EmployeeTab(props: any) {
           <TabPanel value={value} index={1}>
           {employeeRequests.map((empR, index) => {
             const id = employeeReqIds[index]
+            const empName = employeeReqInfo[index]
               return(
                 <div className={classes.employeeList}>
                   <Card className={classes.employeeList}>
                     <CardContent>
                       <div>
                         <Typography variant="h6">
-                              {id}
+                              {empName}
                           </Typography>
 
                           <Typography variant="subtitle1" color="textSecondary">
@@ -268,7 +269,4 @@ function removeEmployee(id, businessId){
   businessRef.update({
     employees: firebase.firestore.FieldValue.arrayRemove(id)
   })
-}
-function GetEmployeeInfo(empId){
-
 }
