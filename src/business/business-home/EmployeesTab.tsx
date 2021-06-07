@@ -31,8 +31,9 @@ const useStyles = makeStyles({
     position: 'fixed'
   },
   button2: {
-    left: '40px',
-    position: 'relative'
+    left: '200px',
+    position: 'relative',
+    display: 'flex',
   }
 });
 
@@ -60,47 +61,47 @@ export default function EmployeeTab(props: any) {
     firestore
       .collection('businesses')
       .doc(businessId)
-      .get()
+      .get() 
       .then((docRef) => {
         const employeeIds: string[] = docRef.data()?.employees
         const employeeReqIds: string[] = docRef.data()?.employeeRequests
+        setEmployeeIds(employeeIds)
+        setEmployeeReqIds(employeeReqIds)
         firestore
           .collection('employees')
           .onSnapshot((snapshot) => {
             snapshot.docs.forEach((doc) => {
-
-              if (employeeIds.includes(doc.id)) {
-                
-                tmpEmployees.push(doc.data())
-                tmpEmployeeIds.push(doc.id)
-              } else if (employeeReqIds.includes(doc.id)) {
-                tmpEmployeeRequests.push(doc.data())
-                tmpEmployeeReqIds.push(doc.id)
+              var empId = doc.id
+              const empData = doc.data() 
+              const index = employeeIds.indexOf(doc.id)
+              const index2 = employeeReqIds.indexOf(doc.id)  
+              if (employeeIds.includes(empId)) {
+                tmpEmployees[index] = empData
+              } else if (employeeReqIds.includes(empId)) {
+                tmpEmployeeRequests[index2] = empData
               }
             })
-
-            setEmployees(tmpEmployees);
-            setEmployeeRequests(tmpEmployeeRequests);
-            setEmployeeIds(tmpEmployeeIds);
-            setEmployeeReqIds(tmpEmployeeReqIds);
-
             firestore
             .collection('users')
             .onSnapshot((snapshot) => {
               snapshot.docs.forEach((doc) => {
                 const usr = doc.data()
                 const name = usr.firstName + " " + usr.lastName
+                const index = employeeIds.indexOf(usr.employeeId)
+                const index2 = employeeReqIds.indexOf(usr.employeeId)
                 if (employeeIds.includes(usr.employeeId)) {
-                  tmpEmployeeInfo.push(name)
+                  tmpEmployeeInfo[index] = name
                 } else if (employeeReqIds.includes(usr.employeeId)) {
-                  tmpEmployeeReqInfo.push(name)
+                  tmpEmployeeReqInfo[index2] = name
                 }
               })
               setEmployeeInfo(tmpEmployeeInfo)
               setEmployeeReqInfo(tmpEmployeeReqInfo)
             })
+            setEmployees(tmpEmployees);
+            setEmployeeRequests(tmpEmployeeRequests);
           })
-        })   
+        }) 
    
     
       
@@ -202,8 +203,8 @@ export default function EmployeeTab(props: any) {
                     </CardContent>
                     <CardActions>
                       <div className={classes.button2}>
-                      <button onClick={() => {acceptRequest(id, props.businessId)}}>Add</button>
-                      <button onClick={() => {removeRequest(id, props.businessId)}}>Remove</button>
+                      <button  onClick={() => {acceptRequest(id, props.businessId)}}>Add</button>
+                      <button  onClick={() => {removeRequest(id, props.businessId)}}>Remove</button>
                       </div>
                     </CardActions>
                 </Card>

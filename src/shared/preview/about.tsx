@@ -8,6 +8,7 @@ import IconButton from '@material-ui/core/IconButton';
 import Grid from '@material-ui/core/Grid';
 import ListItemText from '@material-ui/core/ListItemText';
 import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
+import FiberManualRecordRoundedIcon from '@material-ui/icons/FiberManualRecordRounded';
 const useStyles = makeStyles((theme: Theme) =>
 	createStyles({
 		root: {
@@ -17,34 +18,59 @@ const useStyles = makeStyles((theme: Theme) =>
 		},
 		previewButton: {
 			display: 'flex',
-			borderRadius: '30px',
-			marginRight: '5px',
-			backgroundColor: theme.palette.secondary.dark,
+			backgroundColor: '#f00604',
+			padding: '15px 32px',
 			color: theme.palette.secondary.light,
-			border: '1px solid white',
 			justifyContent: 'center',
-      alignItems: 'center',
-			'&:hover': {
-				backgroundColor: theme.palette.secondary.dark,
-				color: theme.palette.secondary.light,
-			},
-			
+      		alignItems: 'center',
+			alignText: 'center',	
 		},
-		title: {
+		buttonDiv: {
+			display: 'flex',
+			justifyContent: 'center',
+      		alignItems: 'center',
+			alignText: 'center',
+			padding: '50px'
+		},
+	title: {
       display: 'flex',
       color: theme.palette.background.paper,
       textDecoration: 'none',
       justifyContent: 'center',
-      alignItems: 'center'
+      alignItems: 'center',
     },
-		font:{
-			display: 'flex',
-      color: theme.palette.background.paper,
+	font:{
+	  display: 'flex',
+      color: 'white',
       textDecoration: 'none',
       justifyContent: 'center',
       alignItems: 'center',
-			fontSize: 12,
-		}
+	  alignText: 'center',
+	  fontSize: 24,
+	  padding: '10px',
+	  fontFamily: [
+		  'Teko',
+		  'sans-serif'
+	  ].join(',')
+		},
+	lightFont:{
+		color: '#e2e2e2',
+		fontFamily: [
+			'Raleway',
+			'sans-serif'
+		].join(','),
+		fontSize: 14,
+	},
+	logo:{
+		height: '200px',
+		width: '200px'
+	},
+	list:{
+		alignText: 'center',
+		color: 'white',
+		alignContent: 'center',
+		padding: '25px'
+	}
 	}),
 );
 
@@ -60,6 +86,12 @@ function Preview() {
 	const classes = useStyles();
 	const [dense, setDense] = React.useState(false);
   const [secondary, setSecondary] = React.useState(false);
+  const list = [
+	  {item: 'MANAGE YOUR SCHEDULE', buffer: '.....'},
+	  {item: 'REACH NEW CUSTOMERS' ,buffer: '......'},
+	  {item: 'CONNECT WITH CLIENTS', buffer: '.......'},
+	  {item: 'TRACK YOUR PERFORMANCE', buffer: ''}
+  ];
 		
 	return (
 		<div className={classes.root}>
@@ -70,32 +102,48 @@ function Preview() {
 			noWrap={true}
 			color="primary"
 			gutterBottom>
-				 <img src={logo}/>
+				 <img className={classes.logo}src={logo}/>
 			</Typography>
 			
 				</div>
-				<div className= {classes.font}>   <h3>THE FIRST FREE TO USE BOOKING AND
-			<br/> BUSINESS MANAGEMENT SOFTWARE FOR STYLIST<br/>
-			AND BEAUTY PROFFESSIONALS </h3></div>	
-			<div className= {classes.font}>
-			<ul>
-					<li>MANAGE YOUR SCHEDULE</li>
-					<li>REACH NEW CUSTOMERS</li> 
-					<li>CONNECT WITH CLIENTS </li> 
-					<li>TRACK YOUR PERFORMANCE</li> 
-						</ul> 
-			 
+				<div className= {classes.title}>
+					<Typography variant="body1" align='center'>
+						<div className={classes.lightFont}>
+					THE FIRST FREE TO USE BOOKING AND <br/>BUSINESS MANAGEMENT SOFTWARE FOR <br/>STYLISTS AND BEAUTY PROFESSIONALS	
+						</div>
+					</Typography>	
+				</div>	
+			<div className={classes.list}>
+				
+					
+				{list.map((li, i) =>{
+						return(
+							<Typography align= 'center' variant="body2">
+								<div className={classes.font}>
+									<FiberManualRecordRoundedIcon style={{color: '#f00604', fontSize: 32}}/>
+									<span>{li.item}</span>
+									<span style={{color: '#232323'}}>{li.buffer}</span>
+								</div>
+							</Typography>
+						)
+					})
+				}	 
 			</div>
+
 			<div className={classes.font}>
-          <Grid></Grid> MAKE BOOKING EASY. CREATE YOUR PROFILE AND 
-				CHANGE YOUR BUSINESS TODAY!
-				 </div>
+				<Typography align= 'center' variant="body2">
+				<div className={classes.font}>
+						MAKE BOOKING EASY. CREATE YOUR PROFILE AND CHANGE YOUR BUSINESS TODAY!
+					</div>
+				</Typography>
+			</div>
 			
           
-		
-			<Button className={classes.title} type="submit" color="primary" variant="contained"  href = {"/LandingPage"}>
+			<div className={classes.buttonDiv}>
+			<Button className={classes.previewButton}type="submit" variant="contained"  href = {"/LandingPage"}>
 				Get Started Now
 				</Button>
+				</div>
 		</div>
 		/*<List dense={dense}>
               
