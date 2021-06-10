@@ -144,13 +144,13 @@ class BusinessPerformance extends React.Component<
     result.bookingPercentage *= 100;
     result.profileViews = profileViews.length;
 
-    info.employees.forEach(employeeId => {
+    info.employees.forEach((employeeId : string) => {
       firestore.collection('employees')
         .doc(employeeId)
         .get()
         .then(value => {
           const employee = value.data();
-          employee?.appointments?.forEach(appointmentId => {
+          employee?.appointments?.forEach((appointmentId : string) => {
             firestore.collection('appointments')
               .doc(appointmentId)
               .get()
@@ -174,7 +174,7 @@ class BusinessPerformance extends React.Component<
   }
 
   getUserForRating(review: Review): void {
-    let numberReviewsShown;
+    let numberReviewsShown: number;
 
     firestore
       .collection('users')
