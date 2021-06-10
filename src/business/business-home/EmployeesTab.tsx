@@ -50,6 +50,37 @@ export default function EmployeeTab(props: any) {
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
   useEffect(() => {
+      getInformation();
+  }, [])
+
+  const acceptRequest = (id, businessId) => {
+    const businessRef = firestore.collection("businesses").doc(businessId);
+    
+    businessRef.update({
+      employees: firebase.firestore.FieldValue.arrayUnion(id),
+      employeeRequests: firebase.firestore.FieldValue.arrayRemove(id)
+    })
+
+    getInformation();
+  }
+
+  const removeRequest = (id, businessId) => {
+    const businessRef = firestore.collection("businesses").doc(businessId);
+    businessRef.update({
+      employeeRequests: firebase.firestore.FieldValue.arrayRemove(id)
+    })
+    getInformation();
+  }
+  
+  const removeEmployee = (id, businessId) => {
+    const businessRef = firestore.collection("businesses").doc(businessId);
+    businessRef.update({
+      employees: firebase.firestore.FieldValue.arrayRemove(id)
+    })
+    getInformation();
+  }
+  
+  const getInformation = () => {
     const businessId = props.businessId
     const tmpEmployees: any = []
     const tmpEmployeeRequests: any = []
@@ -108,8 +139,7 @@ export default function EmployeeTab(props: any) {
       .catch((e) => {
         console.log(e)
       })
-  }, [])
-
+  }
 
   const handleChange = (_event: any, newValue: number) => {
     setValue(newValue);
@@ -219,6 +249,9 @@ export default function EmployeeTab(props: any) {
   );
 }
 
+
+
+
 type TabPanelProps = {
   children: React.ReactNode;
   index: number;
@@ -246,28 +279,4 @@ function a11yProps(index: number) {
     id: `appointment-tab-${index}`,
     'aria-controls': `appointment-tabpanel-${index}`,
   };
-}
-
-function acceptRequest(id, businessId){
-    const businessRef = firestore.collection("businesses").doc(businessId);
-    const employeeRef = firestore.collection("employees").doc(id);
-    
-    businessRef.update({
-      employees: firebase.firestore.FieldValue.arrayUnion(id),
-      employeeRequests: firebase.firestore.FieldValue.arrayRemove(id)
-    })
-}
-
-function removeRequest(id, businessId){
-  const businessRef = firestore.collection("businesses").doc(businessId);
-  businessRef.update({
-    employeeRequests: firebase.firestore.FieldValue.arrayRemove(id)
-  })
-}
-
-function removeEmployee(id, businessId){
-  const businessRef = firestore.collection("businesses").doc(businessId);
-  businessRef.update({
-    employees: firebase.firestore.FieldValue.arrayRemove(id)
-  })
 }
