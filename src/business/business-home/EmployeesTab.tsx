@@ -102,14 +102,12 @@ export default function EmployeeTab(props: any) {
           .collection('employees')
           .onSnapshot((snapshot) => {
             snapshot.docs.forEach((doc) => {
-              var empId = doc.id
-              const empData = doc.data() 
-              const index = employeeIds.indexOf(doc.id)
-              const index2 = employeeReqIds.indexOf(doc.id)  
-              if (employeeIds.includes(empId)) {
-                tmpEmployees[index] = empData
-              } else if (employeeReqIds.includes(empId)) {
-                tmpEmployeeRequests[index2] = empData
+              const employeeIndex = employeeIds.indexOf(doc.id)
+              const employeeRequestIndex = employeeReqIds.indexOf(doc.id)  
+              if (employeeIds.includes(doc.id)) {
+                tmpEmployees[employeeIndex] = doc.data()
+              } else if (employeeReqIds.includes(doc.id)) {
+                tmpEmployeeRequests[employeeRequestIndex] = doc.data()
               }
             })
             firestore
@@ -118,12 +116,12 @@ export default function EmployeeTab(props: any) {
               snapshot.docs.forEach((doc) => {
                 const usr = doc.data()
                 const name = usr.firstName + " " + usr.lastName
-                const index = employeeIds.indexOf(usr.employeeId)
-                const index2 = employeeReqIds.indexOf(usr.employeeId)
+                const employeeIndex = employeeIds.indexOf(usr.employeeId)
+                const employeeRequestIndex = employeeReqIds.indexOf(usr.employeeId)
                 if (employeeIds.includes(usr.employeeId)) {
-                  tmpEmployeeInfo[index] = name
+                  tmpEmployeeInfo[employeeIndex] = name
                 } else if (employeeReqIds.includes(usr.employeeId)) {
-                  tmpEmployeeReqInfo[index2] = name
+                  tmpEmployeeReqInfo[employeeRequestIndex] = name
                 }
               })
               setEmployeeInfo(tmpEmployeeInfo)
@@ -189,7 +187,7 @@ export default function EmployeeTab(props: any) {
             const id = employeeIds[index]
             const empName = employeeInfo[index]
               return(
-                <div className={classes.employeeList}>
+                <div className={classes.employeeList} key={index}>
                   <Card className={classes.employeeList}>
                     <CardContent>
                       <div>
@@ -218,7 +216,7 @@ export default function EmployeeTab(props: any) {
             const id = employeeReqIds[index]
             const empName = employeeReqInfo[index]
               return(
-                <div className={classes.employeeList}>
+                <div className={classes.employeeList} key={index}>
                   <Card className={classes.employeeList}>
                     <CardContent>
                       <div>

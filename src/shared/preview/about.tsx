@@ -74,14 +74,6 @@ const useStyles = makeStyles((theme: Theme) =>
 	}),
 );
 
-function generate(element) {
-  return [0].map((value) =>
-    React.cloneElement(element, {
-      key: value,
-    }),
-  );
-}
-
 function Preview() {
 	const classes = useStyles();
 	const [dense, setDense] = React.useState(false);
@@ -119,7 +111,7 @@ function Preview() {
 				{list.map((li, i) =>{
 						return(
 							<Typography align= 'center' variant="body2">
-								<div className={classes.font}>
+								<div className={classes.font} key={i}>
 									<FiberManualRecordRoundedIcon style={{color: '#f00604', fontSize: 32}}/>
 									<span>{li.item}</span>
 									<span style={{color: '#232323'}}>{li.buffer}</span>
