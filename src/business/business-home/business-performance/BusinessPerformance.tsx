@@ -29,6 +29,9 @@ type BusinessPerformanceState = {
     rating: number;
     ratingCount: number;
     totalRevenue: number;
+    appointmentsTotal: number;
+    completedAppointments: number;
+    cancelledAppointments: number;
   };
   businessReviewsStored: any[];
   businessReviewsShown: any[];
@@ -61,6 +64,9 @@ class BusinessPerformance extends React.Component<
         rating: 0,
         ratingCount: 0,
         totalRevenue: 0,
+        appointmentsTotal: 0,
+        completedAppointments: 0,
+        cancelledAppointments: 0,
       },
       businessReviewsStored: [],
       businessReviewsShown: [],
@@ -138,20 +144,26 @@ class BusinessPerformance extends React.Component<
     result.bookingPercentage *= 100;
     result.profileViews = profileViews.length;
 
-    info.employees.forEach(employeeId => {
+    info.employees.forEach((employeeId : string) => {
       firestore.collection('employees')
         .doc(employeeId)
         .get()
         .then(value => {
           const employee = value.data();
-          employee?.appointments?.forEach(appointmentId => {
+          employee?.appointments?.forEach((appointmentId : string) => {
             firestore.collection('appointments')
               .doc(appointmentId)
               .get()
               .then(value => {
                 const appointment = value.data();
-                if (appointment?.status !== 'cancelled' && appointment?.datetime < now && appointment?.datetime > timeCheck) {
-                  result.totalRevenue += appointment?.service.price;
+                if (appointment?.datetime < now && appointment?.datetime > timeCheck) {
+                  if (appointment?.status !== 'cancelled') {
+                    result.totalRevenue += appointment?.service.price;
+                    result.completedAppointments++;
+                  } else if (appointment?.status === 'cancelled') {
+                    result.cancelledAppointments++;
+                  }
+                  result.appointmentsTotal++;
                 }
               });
           });
@@ -162,7 +174,7 @@ class BusinessPerformance extends React.Component<
   }
 
   getUserForRating(review: Review): void {
-    let numberReviewsShown;
+    let numberReviewsShown: number;
 
     firestore
       .collection('users')
@@ -224,6 +236,9 @@ class BusinessPerformance extends React.Component<
         rating: 0,
         ratingCount: 0,
         totalRevenue: 0,
+        appointmentsTotal: 0,
+        completedAppointments: 0,
+        cancelledAppointments: 0,
       },
       businessReviewsStored: [],
       businessReviewsShown: [],
@@ -273,6 +288,26 @@ class BusinessPerformance extends React.Component<
                 <Tab label="Month" />
                 <Tab label="Year" />
               </Tabs>
+            </div>
+
+            <div className={classes.sectionTitle}>
+              <div>Appointments</div>
+            </div>
+            <div>
+              <div className={classes.businessPerformanceItem}>
+                <div>Appointments</div>
+                <div>{this.state.businessPerformance.appointmentsTotal}</div>
+              </div>
+              <div className={classes.businessPerformanceItemContainer}>
+                <div className={classes.businessPerformanceItem}>
+                  <div>Completed</div>
+                  <div>{this.state.businessPerformance.completedAppointments}</div>
+                </div>
+                <div className={classes.businessPerformanceItem}>
+                  <div>Cancelled</div>
+                  <div>{this.state.businessPerformance.cancelledAppointments}%</div>
+                </div>
+              </div>
             </div>
 
             <div className={classes.sectionTitle}>
