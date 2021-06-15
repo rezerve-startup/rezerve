@@ -21,6 +21,7 @@ export interface Business {
     performance: Performance[];
     overallRating: number;
     reviews: Review[];
+    type: string;
 }
 
 export interface Performance {

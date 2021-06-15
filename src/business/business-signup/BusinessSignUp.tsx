@@ -53,6 +53,7 @@ interface ComponentState {
   phone: string;
   password: string;
   name: string;
+  type: string;
   address: string;
   city: string;
   state: string;
@@ -85,6 +86,7 @@ class BusinessSignUp extends React.Component<any, State> {
       phone: '',
       password: '',
       name: '',
+      type: '',
       address: '',
       city: '',
       state: '',
@@ -225,6 +227,7 @@ class BusinessSignUp extends React.Component<any, State> {
     const lastName = this.state.lastName;
     const phone = this.state.phone;
     const businessName = this.state.name;
+    const businessType = this.state.type;
     const businessDescription = this.state.description;
     const businessAddress = this.state.address;
     const businessCity = this.state.city;
@@ -282,6 +285,7 @@ class BusinessSignUp extends React.Component<any, State> {
                 .then((employeeId) => {
                   const newBusinessData = {
                     name: businessName,
+                    type: businessType,
                     numWorkers: 1,
                     description: businessDescription,
                     about: {
@@ -411,6 +415,7 @@ class BusinessSignUp extends React.Component<any, State> {
                 .then((employeeId) => {
                   const newBusinessData = {
                     name: businessName,
+                    type: businessType,
                     numWorkers: 1,
                     description: businessDescription,
                     about: {
@@ -443,15 +448,7 @@ class BusinessSignUp extends React.Component<any, State> {
                       console.log(
                         `Created new business document: ${docRef.id}`,
                       );
-                      //Index the new business name
-                      const objects = [{
-                        objectID: docRef.id,
-                        name: newBusinessData.name
-                      }]
-
-                      index.saveObjects(objects);
-
-                      
+                                           
 
                       firestore
                         .collection('employees')
@@ -556,6 +553,7 @@ class BusinessSignUp extends React.Component<any, State> {
                       <BusinessInfoFrom
                         title="Business Info"
                         name={this.state.name}
+                        type={this.state.type}
                         address={this.state.address}
                         city={this.state.city}
                         state={this.state.state}
@@ -605,6 +603,16 @@ class BusinessSignUp extends React.Component<any, State> {
                             variant="contained"
                             type="submit"
                             loading={this.state.loading}
+                            onClick={() => {
+                              console.log(this.state.name);
+                              //Index the new business name
+                              //const objects = [{
+                              //  objectID: docRef.id,
+                              //  name: newBusinessData.name
+                              //}]
+                        
+                              index.saveObjects([{name: this.state.name}], { autoGenerateObjectIDIfNotExist: true }); 
+                            }}
                           >
                             Create Business
                           </AdornedButton>
@@ -701,6 +709,7 @@ const AdornedButton = (props) => {
   const { children, loading, ...rest } = props;
   return (
     <Button {...rest}>
+      
       {children}
       {loading && <SpinnerAdornment {...rest} />}
     </Button>

@@ -215,6 +215,7 @@ const LandingPageDefault = (props: any) => {
           if(res.state !== 'granted')
           {
             dispatchLocation(36.0662419, -94.15785299999999);
+            //console.log('Unable to access your location.');
             setLoading(false)
           }
         })
@@ -301,21 +302,26 @@ const LandingPageDefault = (props: any) => {
           
             {loading ? 
               (<div className={classes.loadingSpinnerContainer}>
-                  <CircularProgress />
+                <Grid container alignItems="center" justify="center" direction="row" 
+                  style={{minHeight:'70vh'}}>
+                  <Grid item>
+                    <CircularProgress />
+                  </Grid>
+                </Grid>
               </div>)
               : 
               (<div>
                   <TabPanel tabValue={tabValue} index={0}>
-                    <CustomerBusinessSearch filter="hair"/> 
+                    <CustomerBusinessSearch tabSelected={"Hair"}/> 
                   </TabPanel>
                   <TabPanel tabValue={tabValue} index={2}>
-                    <CustomerBusinessSearch filter="nails"/>
+                    <CustomerBusinessSearch tabSelected={"Nail"}/>
                   </TabPanel>
                   <TabPanel tabValue={tabValue} index={4}>
-                    <CustomerBusinessSearch filter="barber"/>
+                    <CustomerBusinessSearch tabSelected={"Barber"}/>
                   </TabPanel>
                   <TabPanel tabValue={tabValue} index={6}>
-                    <CustomerBusinessSearch filter="houseCall"/>
+                    <CustomerBusinessSearch tabSelected={"House Calls"}/>
                   </TabPanel>
                 </div>)}
       </div>

@@ -65,7 +65,6 @@ type CustomerBusinessSearchState = {
   userLongitude: number;
   count: number;
   miles: number;
-  queryEmpty: boolean;
   hidden: boolean;
   buttonValue: string;
   open: boolean;
@@ -104,11 +103,10 @@ class CustomerBusinessSearch extends React.Component<
       userLongitude: this.props.curLongitude,
       count: 2,
       miles: 0,
-      queryEmpty: false,
       hidden: true,
       buttonValue: 'Search by Business Name',
       open: false,
-      anchorRef: React.createRef()
+      anchorRef: undefined,
     };
   }
 
@@ -161,21 +159,17 @@ class CustomerBusinessSearch extends React.Component<
       .where('about.location', '<=', greaterGeopoint);
 
     query.get().then((snapshot) => {
-      if(snapshot.empty){
-        this.setState({queryEmpty: true});
-      }
-      else{
-        this.setState({queryEmpty: false});
-      }
       snapshot.forEach((doc) => {
         let businessData = doc.data() as Business;
+        if(businessData.type === this.props.tabSelected)
+        {      
+          let businessToAdd = {
+            key: doc.id,
+            businessInfo: businessData,
+          };
 
-        let businessToAdd = {
-          key: doc.id,
-          businessInfo: businessData,
-        };
-
-        this.dispatchAddFoundBusiness(businessToAdd);
+          this.dispatchAddFoundBusiness(businessToAdd);
+        }
       }
       );
     })
@@ -214,7 +208,7 @@ class CustomerBusinessSearch extends React.Component<
   displayMore(): void {
     this.setState({count: this.state.count + 2});
     this.searchBarbershopsByLocation(this.state.userLatitude, this.state.userLongitude, this.state.count);
-    console.log("Count: " + this.state.count);
+    //console.log("Count: " + this.state.count);
   }
 
   getAddress(): string {
@@ -234,7 +228,12 @@ class CustomerBusinessSearch extends React.Component<
     {
       fetch(`https://maps.googleapis.com/maps/api/geocode/json?latlng=${this.state.userLatitude},${this.state.userLongitude}&key=${process.env.REACT_APP_GOOGLE_MAPS_API_KEY}`)
         .then(res => res.json())
-        .then(address => this.setZip(address))
+        .then((address) => {
+          if((address.results).length !== 0)
+          {
+            this.setZip(address);
+          }
+        })
     }
   }
 
@@ -257,7 +256,7 @@ class CustomerBusinessSearch extends React.Component<
     this.setState({ nameSearchValue: searchChangeEvent.target.value });
   }
   
-  handleSwithcSearch():void {
+  handleSwitchcSearch():void {
     this.setState({ hidden: !this.state.hidden });
     if(this.state.buttonValue === 'Search by Business Name')
     {
@@ -270,13 +269,25 @@ class CustomerBusinessSearch extends React.Component<
     //console.log(this.state.buttonValue);
   }
 
-  handleOnSearchByName(): void {
+  handleOnSearchByName = event => {
     this.setState({
-      //anchorEl: event,
       open: true
     });
-
   }
+
+  handleClosePopper() {
+    this.setState({
+      open: false
+    });
+  }
+
+  setAnchor = event => {
+    console.log(event.currentTarget);
+    this.setState({
+      anchorRef: event.currentTarget
+    });
+  }
+
 
   handleMenuSelection(selection) {
     this.dispatchClearBusinessesFound();
@@ -285,12 +296,6 @@ class CustomerBusinessSearch extends React.Component<
       .where('name', '==', selection);
 
     query.get().then((snapshot) => {
-      if(snapshot.empty){
-        this.setState({queryEmpty: true});
-      }
-      else{
-        this.setState({queryEmpty: false});
-      }
       snapshot.forEach((doc) => {
         let businessData = doc.data() as Business;
 
@@ -305,6 +310,7 @@ class CustomerBusinessSearch extends React.Component<
     })
   }
 
+  
   componentDidMount() {
     this.searchBarbershopsByLocation(this.state.userLatitude, this.state.userLongitude, this.state.count);
     this.setState({count: this.state.count + 2});
@@ -312,15 +318,10 @@ class CustomerBusinessSearch extends React.Component<
     //console.log("Latitude from props: " + this.props.curLatitude);
   }
 
-  
-
   render() {
     const { classes } = this.props;
-    
     //Algolia implementation
     const searchClient = algoliasearch("QDMMNJHF77","3a233c2bc51c8de99d7da44b86f8e1b0");
-    // Multi index
-    let anchorEl;
     const Autocomplete = ({ hits, currentRefinement, refine }) => (
       <div>
         <TextField
@@ -331,9 +332,10 @@ class CustomerBusinessSearch extends React.Component<
           value={currentRefinement}
           onChange={
             (event) => {
-              refine(event.currentTarget.value);
+              refine(event.currentTarget.value);     
             }
           }
+          onFocus={this.handleOnSearchByName}
           fullWidth
           InputProps={{
             startAdornment: (
@@ -341,25 +343,21 @@ class CustomerBusinessSearch extends React.Component<
               <Search/>
             </InputAdornment>
             ),
-            }}/>
-            {/*<Popper open={this.state.open} anchorEl={this.state.anchorRef.current} role={undefined} transition disablePortal>
-            {({ TransitionProps, placement }) => (
-              <Grow
-                {...TransitionProps}
-                style={{ transformOrigin: placement === 'bottom' ? 'center top' : 'center bottom' }}
-            >*/}
-            
+            }}
+          />
+            <Popper open={this.state.open} anchorEl={this.state.anchorRef} placement={'bottom'} transition>            
                   <Paper>
                     <MenuList >
                       {hits.map(hit => (
                         <MenuItem 
-                        onClick={() => this.handleMenuSelection(hit.name)}
+                        onClick={() => {
+                          this.handleMenuSelection(hit.name);
+                          this.handleClosePopper();
+                        }}
                         > {hit.name}</MenuItem>))}
                     </MenuList>
-                  </Paper>{/*
-                  </Grow>
-              )}
-              </Popper>*/}
+                  </Paper>
+              </Popper>
       </div>
     );
     
@@ -380,7 +378,12 @@ class CustomerBusinessSearch extends React.Component<
                       <Button 
                         variant="outlined" 
                         color="secondary"
-                        onClick={()=>{this.handleSwithcSearch()}}
+                        disabled={true}
+                        onClick={(event)=>{
+                          this.handleSwitchcSearch();
+                          this.setAnchor(event);
+                          this.handleClosePopper();
+                        }}
                         >
                           {this.state.buttonValue}
                       </Button>
@@ -409,12 +412,12 @@ class CustomerBusinessSearch extends React.Component<
                       </StandaloneSearchBox>
                     </Grid>
                     <Grid item xs={9} hidden={this.state.hidden}>
-                            <InstantSearch
-                              indexName="Business_Data"
-                              searchClient={searchClient}
-                            >
-                              <CustomAutocomplete />
-                            </InstantSearch>
+                      <InstantSearch
+                        indexName="Business_Data"
+                        searchClient={searchClient} 
+                      >
+                        <CustomAutocomplete/>
+                      </InstantSearch>
                     </Grid>
                   </Grid>
 
@@ -424,44 +427,25 @@ class CustomerBusinessSearch extends React.Component<
                   className={classes.location}
                   variant="subtitle1"
                   align="center">
-                    {this.state.queryEmpty ? 
+                    {(this.props.foundBusinesses).length === 0 ? 
                       (
-                        <div>No businesses found</div>
+                        <div>No business found</div>
                       ):
                       (
-                        <div>Businesses located within {this.state.miles} miles from {this.state.address}</div>
+                        <div>
+                          {(this.props.foundBusinesses).length === 1 ? 
+                          (
+                            <div>Business located within {this.state.miles} miles from {this.state.address}</div>
+                          ): 
+                          (
+                            <div>Businesses located within {this.state.miles} miles from {this.state.address}</div>
+                          )}
+                        </div>
                       )
                     }
                 </Typography>
               </div>
-              <Box m={1} className={classes.box}>
-                <Grid container alignItems="center" justify="space-between">
-                  {/* <Grid item>
-                    <div>
-                      Location&nbsp;
-                      <LocationOnIcon
-                        fontSize="small"
-                        style={{ color: '#FF2B2B' }}
-                      />
-                    </div>
-                  </Grid>
-                  <Grid item>
-                    <FormControl variant="outlined">
-                      <Select
-                        className={classes.select}
-                        native
-                        //onChange={handleChange}
-                        IconComponent={ExpandMoreIcon}
-                      >
-                        <option value={1}>Sort By: Near me</option>
-                        <option value={2}>Sort By: Ratings</option>
-                        <option value={3}>Sort By: Name </option>
-                      </Select>
-                    </FormControl>
-                  </Grid> */}
-                </Grid>
-              </Box>
-              <div></div>
+
               {this.props.foundBusinesses.map((business, i) => {
                 return (
                   <Card className={classes.businessInfoPreview} key={i}>

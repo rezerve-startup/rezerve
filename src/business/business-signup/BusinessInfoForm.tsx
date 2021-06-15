@@ -42,6 +42,7 @@ interface Errors {}
 interface NonStyleProps {
   title: string;
   name: string;
+  type: string;
   address: string;
   city: string;
   state: string;
@@ -124,6 +125,8 @@ const DecoratedBusinessInfoForm = withStyles(styles, { withTheme: true })(
 
       const errors = this.state.errors;
 
+      //console.log(name + " => " + value);
+
       /* switch (name) {
         case 'email':
           errors.email = this.validateEmail(value) ? '' : 'Email is not valid';
@@ -198,6 +201,23 @@ const DecoratedBusinessInfoForm = withStyles(styles, { withTheme: true })(
                     variant="outlined"
                   />
                 </Grid>
+                <Grid item={true} xs={3}>
+                <FormControl variant="outlined" required fullWidth={true}> 
+                    <InputLabel>Business Type</InputLabel>
+                    <Select
+                      name="type"
+                      label="Business Type"
+                      variant="outlined"
+                      value={this.props.type}
+                      onChange={this.handleChange}
+                    >
+                      <MenuItem value="Hair">Hair</MenuItem>
+                      <MenuItem value="Nail">Nail</MenuItem>
+                      <MenuItem value="Barber">Barber</MenuItem>
+                      <MenuItem value="House Call">House Call</MenuItem>
+                    </Select>
+                  </FormControl>
+                </Grid>
                 <Grid item={true} xs={12}>
                   <TextField
                     name="address"
@@ -221,7 +241,7 @@ const DecoratedBusinessInfoForm = withStyles(styles, { withTheme: true })(
                   />
                 </Grid>
                 <Grid item={true} xs={6}>
-                  <FormControl variant="outlined">
+                  <FormControl variant="outlined" required fullWidth={true}>
                     <InputLabel>State</InputLabel>
                     <Select
                       name="state"
