@@ -130,9 +130,9 @@ const LandingPageDefault = (props: any) => {
   ) => {
     setTabValue(newTabValue);
   };
-
+  
   if (props.user) {
-    if (props.user.employeeId === '' && redirectToCustomer === false) {
+    if ((props.user.employeeId === '' && redirectToCustomer === false)) {
       setRedirectToCustomer(true);
     } else if (props.user.customerId === '' && redirectToEmployee === false) {
       setRedirectToEmployee(true)
@@ -178,7 +178,7 @@ const LandingPageDefault = (props: any) => {
               </Grid>
             </Box>
           </AppBar>
-
+          
           <div className={classes.appBar}>
             <AppBar position="sticky">
               <Tabs

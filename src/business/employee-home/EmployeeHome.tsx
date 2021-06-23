@@ -85,7 +85,9 @@ class EmployeeHome extends React.Component<Props, State> {
     if (this.props.user === undefined) {
       return <Redirect to={'/'} />
     }
-
+    else if(this.state.user.employeeInfo.businessId === undefined){
+        return <Redirect to={'/customer-home'}/>
+    }
     return (
       <div className={classes.root}>
         {this.state.user.employeeInfo.businessId && 

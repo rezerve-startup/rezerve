@@ -34,6 +34,10 @@ const useStyles = makeStyles((theme: Theme) =>
       color: theme.palette.secondary.light,
     },
    
+    alert:{
+      backgroundColor: theme.palette.primary.dark,
+      color: theme.palette.secondary.light
+    },
 
     navItem: {
       backgroundColor: 'white',
@@ -137,6 +141,17 @@ const LandingPageLoggedIn = (props: any) => {
   return (
     <div>
       <Sidebar />
+      {
+        (props.user.customerId === '')? (
+          <div>
+                <AppBar className={classes.alert} position="sticky">
+                  <Typography align="center" variant="caption">
+                      Your request is still awaiting business approval. When approved, you will gain access to employee features. 
+                  </Typography>
+                </AppBar>
+              </div>
+        ):("")
+      }
       <AppBar position="static">
         <Tabs
           centered
