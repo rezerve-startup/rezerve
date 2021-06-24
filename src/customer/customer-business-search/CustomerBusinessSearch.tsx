@@ -104,7 +104,7 @@ class CustomerBusinessSearch extends React.Component<
       count: 2,
       miles: 0,
       hidden: true,
-      buttonValue: 'Search by Business Name',
+      buttonValue: 'by Name',
       open: false,
       anchorRef: undefined,
     };
@@ -258,18 +258,20 @@ class CustomerBusinessSearch extends React.Component<
   
   handleSwitchcSearch():void {
     this.setState({ hidden: !this.state.hidden });
-    if(this.state.buttonValue === 'Search by Business Name')
+    if(this.state.buttonValue === 'by Name')
     {
-      this.setState({ buttonValue: 'Search by City' });
+      this.setState({ buttonValue: 'by City' });
+      this.handleOpenPopper();
     }
     else
     {
-      this.setState({ buttonValue: 'Search by Business Name' });
+      this.handleClosePopper();
+      this.setState({ buttonValue: 'by Name' });
     }
     //console.log(this.state.buttonValue);
   }
 
-  handleOnSearchByName = event => {
+  handleOpenPopper () {
     this.setState({
       open: true
     });
@@ -322,6 +324,8 @@ class CustomerBusinessSearch extends React.Component<
     const { classes } = this.props;
     //Algolia implementation
     const searchClient = algoliasearch("QDMMNJHF77","3a233c2bc51c8de99d7da44b86f8e1b0");
+    
+
     const Autocomplete = ({ hits, currentRefinement, refine }) => (
       <div>
         <TextField
@@ -329,23 +333,20 @@ class CustomerBusinessSearch extends React.Component<
           className={classes.search}
           id="standard-basic"
           placeholder="Search by Business Name"
+          fullWidth
           value={currentRefinement}
           onChange={
             (event) => {
-              refine(event.currentTarget.value);     
+              refine(event.currentTarget.value);
             }
           }
-          onFocus={this.handleOnSearchByName}
-          fullWidth
-          InputProps={{
-            startAdornment: (
-            <InputAdornment position="start">
-              <Search/>
-            </InputAdornment>
-            ),
-            }}
           />
-            <Popper open={this.state.open} anchorEl={this.state.anchorRef} placement={'bottom'} transition>            
+            <Popper
+              open={this.state.open}
+              anchorEl={this.state.anchorRef}
+              placement={'bottom'} 
+              transition
+              >            
                   <Paper>
                     <MenuList >
                       {hits.map(hit => (
@@ -373,24 +374,14 @@ class CustomerBusinessSearch extends React.Component<
                   googleMapsApiKey={`${process.env.REACT_APP_GOOGLE_MAPS_API_KEY}`}
                   libraries={mapsLibraries}
                 >
-                  <Grid container alignItems="center">
-                    <Grid item xs={3}>
-                      <Button 
-                        variant="outlined" 
-                        color="secondary"
-                        disabled={true}
-                        onClick={(event)=>{
-                          this.handleSwitchcSearch();
-                          this.setAnchor(event);
-                          this.handleClosePopper();
-                        }}
-                        >
-                          {this.state.buttonValue}
-                      </Button>
-                    </Grid>
-                    <Grid item xs={9} hidden={!this.state.hidden}>
+                  <Grid container alignItems="center" spacing={1}>
+                    
+                    <Grid item xs={8} sm={10} hidden={!this.state.hidden} >
                       <StandaloneSearchBox
-                        onLoad={this.onLoad}
+                        onLoad={ (event)=>{
+                          this.onLoad(event);
+                        }
+                        }
                         onPlacesChanged={this.onPlaceSelection}
                         ref={searchBox}
                       >
@@ -401,24 +392,34 @@ class CustomerBusinessSearch extends React.Component<
                           value={this.state.locationSearchValue}
                           onChange={this.handleSearchChange.bind(this)}
                           fullWidth
-                          InputProps={{
-                            startAdornment: (
-                              <InputAdornment position="start">
-                                <Search />
-                              </InputAdornment>
-                            ),
-                          }}
                         />
                       </StandaloneSearchBox>
                     </Grid>
-                    <Grid item xs={9} hidden={this.state.hidden}>
+                    <Grid item xs={8} sm={10} hidden={this.state.hidden}>
                       <InstantSearch
                         indexName="Business_Data"
-                        searchClient={searchClient} 
+                        searchClient={searchClient}
                       >
-                        <CustomAutocomplete/>
+                          {this.setAnchor}
+                          <CustomAutocomplete/>
                       </InstantSearch>
-                    </Grid>
+                    </Grid>                    
+                    <Grid item xs={4} sm={2} alignItems="baseline"> 
+                      <Button 
+                            className={classes.searchButton}
+                            variant="outlined"
+                            fullWidth={true}
+                            color="secondary"
+                            disabled
+                            onClick={(event)=>{
+                              this.handleSwitchcSearch();
+                              this.setAnchor(event);
+                            }}
+                            >
+                              <Search/>
+                              {this.state.buttonValue}
+                        </Button>
+                      </Grid>
                   </Grid>
 
                 </LoadScript>
@@ -548,6 +549,10 @@ const styles = (theme: Theme) =>
         borderBottomColor: theme.palette.secondary.light,
       },
     },
+    popper: {
+      minWidth: '100vh',
+      width: '100vh',
+    },
     select: {
       borderRadius: '30px',
       '& .MuiOutlinedInput-notchedOutline': {
@@ -587,6 +592,12 @@ const styles = (theme: Theme) =>
         fontSize: '12px',
         marginBottom: '0px',
         paddingBottome: '0px'
+      }
+    },
+    searchButton: {
+      [theme.breakpoints.down('xs')]:{
+        fontSize: '11px',
+        padding: 0,
       }
     }
     ,
