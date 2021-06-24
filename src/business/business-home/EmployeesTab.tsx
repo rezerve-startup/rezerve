@@ -48,17 +48,19 @@ export default function EmployeeTab(props: any) {
   const [employeeInfo, setEmployeeInfo]: any[] = React.useState([])
   const [employeeReqInfo, setEmployeeReqInfo]: any[] = React.useState([])
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
-
   useEffect(() => {
       getInformation();
   }, [])
-
+//V6v6EWVILJ6P4oaGLy1y
   const acceptRequest = (id, businessId) => {
     const businessRef = firestore.collection("businesses").doc(businessId);
-    
+    const employeeRef = firestore.collection("employees").doc(id);
     businessRef.update({
       employees: firebase.firestore.FieldValue.arrayUnion(id),
       employeeRequests: firebase.firestore.FieldValue.arrayRemove(id)
+    })
+    employeeRef.update({
+      businessId: businessId,
     })
 
     getInformation();
@@ -74,8 +76,12 @@ export default function EmployeeTab(props: any) {
   
   const removeEmployee = (id, businessId) => {
     const businessRef = firestore.collection("businesses").doc(businessId);
+    const employeeRef = firestore.collection("employees").doc(id);
     businessRef.update({
       employees: firebase.firestore.FieldValue.arrayRemove(id)
+    })
+    employeeRef.update({
+      businessId: firebase.firestore.FieldValue.delete(),
     })
     getInformation();
   }

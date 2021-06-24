@@ -182,10 +182,8 @@ const LandingPageDefault = (props: any) => {
     setTabValue(newTabValue);
   };
 
-  
-
   if (props.user) {
-    if (props.user.employeeId === '' && redirectToCustomer === false) {
+    if ((props.user.employeeId === '' && redirectToCustomer === false)) {
       setRedirectToCustomer(true);
     } else if (props.user.customerId === '' && redirectToEmployee === false) {
       setRedirectToEmployee(true)
