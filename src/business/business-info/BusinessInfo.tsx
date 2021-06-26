@@ -113,26 +113,54 @@ class BusinessInfo extends React.Component<any, BusinessInfoState> {
   componentDidMount() {
     this.getBusinessInfoData();
     this.addProfileView();
+   // this.updateCompletedAppointments();
     this.checkCustomer();
   }
+
+  // updateCompletedAppointments(){
+  //   firestore.collection('customers')
+  //       .doc(this.state.addReview.customerId)
+  //       .get() 
+  //       .then((value) => {
+  //         const appointments = value.data()?.appointments;
+  //         appointments.forEach(id => {
+  //           const appointmentRef = firestore.collection('appointments').doc(id)
+  //             appointmentRef
+  //             .get()
+  //             .then(value => {
+  //               const appointment = value.data();
+  //               if (appointment?.status === 'accepted' && appointment?.datetime.toDate() < Date.now()){
+  //                 appointmentRef.update({
+  //                   status: "completed"
+  //                 })
+  //                 this.setState({
+  //                   notLoggedInMessageOpen : false
+  //                 })
+  //               }
+  //             });
+  //         });
+  //       });
+  // }
 
   checkCustomer() {
     if (this.props.customerId !== undefined) {
       firestore.collection('customers')
         .doc(this.state.addReview.customerId)
-        .get()
+        .get() 
         .then((value) => {
           const appointments = value.data()?.appointments;
           appointments.forEach(id => {
-            firestore.collection('appointments')
-              .doc(id)
-              .get()
+            const appointmentRef = firestore.collection('appointments').doc(id)
+              appointmentRef.get()
               .then(value => {
                 const appointment = value.data();
-                if (appointment?.status === 'completed') {
-                  // this.setState({
-                  //   isAddReviewDisabled: false
-                  // });
+                if ((appointment?.businessId === this.state.businessKey && appointment?.status === 'completed') || (appointment?.status === 'accepted' && appointment?.datetime.toDate() < Date.now())) {
+                  this.setState({
+                    isAddReviewDisabled: false
+                  });
+                  appointmentRef.update({
+                    status: "completed"
+                  })
                 }
               });
           });
