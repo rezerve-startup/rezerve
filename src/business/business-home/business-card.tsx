@@ -43,8 +43,8 @@ const styles = (theme: Theme) =>
       flex: '1 0 auto',
     },
     userImage: {
-      width: '100%',
-      height: '100%',
+      width: '450px',
+      height: '300px',
     },
     userRating: {
       marginTop: '16px',
@@ -97,8 +97,8 @@ class BusinessCard extends React.Component<any, any> {
 
   handleBusinessDescriptionChange(e) {
     this.setState({
-      description: e.target.value
-    })
+      businessDescription: e.target.value
+    });
   }
 
   handleCloseInvalidBusinessChangeMessage() {
@@ -124,11 +124,6 @@ class BusinessCard extends React.Component<any, any> {
           <CardContent className={classes.userContent}>
             {!this.state.editInfo ? (
               <div className={classes.cardContent}>
-                <img
-                    className={classes.userImage}
-                    title="Business Image"
-                    src={image}
-                />
                 <Typography variant="h5">
                   {this.props.business.name}
                 </Typography>
