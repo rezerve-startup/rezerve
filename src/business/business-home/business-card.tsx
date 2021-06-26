@@ -132,7 +132,7 @@ class BusinessCard extends React.Component<any, any> {
                 </Typography>
                 <StyledRating
                   className={classes.userRating}
-                  value={3.5}
+                  value={this.props.business.overallRating}
                   defaultValue={2.5}
                   precision={0.5}
                   size='medium'
