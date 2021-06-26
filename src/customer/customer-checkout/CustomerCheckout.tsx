@@ -93,7 +93,7 @@ const ConfirmationCard = (props: any) => {
       
       <div style={{textAlign: 'center'}}>
         <Typography variant="caption">
-          *Your payment in the next step is only for the Booking Fee. Service payment will happen at {props.businessName}.
+          *Your payment in Step 2 is only for the Booking Fee. Service payment will happen at {props.businessName}.
         </Typography>
       </div>
 
