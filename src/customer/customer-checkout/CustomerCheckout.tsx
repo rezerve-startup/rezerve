@@ -69,16 +69,34 @@ const ConfirmationCard = (props: any) => {
         <div>{props.employeeName}</div>
       </div>
 
+      <div className={classes.confirmationAppointmentDate}>
+        <div>{props.appointmentDateTime.format('ddd MM/DD/YYYY')}</div>
+        <div>{props.appointmentDateTime.format('h:mm A')}</div>
+      </div>
+      <Divider className={classes.divider0} />
       <div className={classes.confirmationServicePrice}>
         <div>{props.service.name}</div>
         <div>${props.service.price}</div>
       </div>
 
-      <Divider className={classes.divider0} />
-      <div className={classes.confirmationAppointmentDate}>
-        <div>{props.appointmentDateTime.format('ddd MM/DD/YYYY')}</div>
-        <div>{props.appointmentDateTime.format('h:mm A')}</div>
+      <div className={classes.confirmationServicePrice}>
+        <div>Booking Fee</div>
+        <div>$0.75</div>
       </div>
+      <Divider className={classes.divider1} />
+      <div className={classes.confirmationServicePrice}>
+        <div>*Payment Due</div>
+        <div>$0.75</div>
+      </div>
+
+      <Divider className={classes.divider0} />
+      
+      <div style={{textAlign: 'center'}}>
+        <Typography variant="caption">
+          *Your payment in the next step is only for the Booking Fee. Service payment will happen at {props.businessName}.
+        </Typography>
+      </div>
+
     </div>
   );
 }
@@ -89,14 +107,6 @@ const BookingConfirmation = (props: any) => {
   return (
     <div>
       <ConfirmationCard businessName={props.businessName} appointmentDateTime={props.appointmentDateTime} employeeName={props.employeeName} service={props.service} />
-      <div className={classes.itemPlus1}>
-        <div>Receive Text Reminders/Updates</div>
-        <Checkbox className={classes.checkbox} />
-      </div>
-
-      <div className={classes.phoneField}>
-        <TextField type="tel" placeholder="Phone Number" />
-      </div>
     </div>
   );
 }
@@ -194,8 +204,8 @@ const useStyles = makeStyles((theme) => ({
     // Theme Color, or use css color in quote
     background: 'white',
     color: 'white',
-    height: '10px',
-    width: '95%',
+    height: '2px',
+    width: '98%',
     margin: 'auto',
   },
 
@@ -207,7 +217,8 @@ const useStyles = makeStyles((theme) => ({
   confirmationBusinessName: {
     fontWeight: 'bold',
     paddingLeft: '0.25rem',
-    paddingRight: '0.25rem'
+    paddingRight: '0.25rem',
+    fontSize: '18pt'
   },
 
   confirmationEmployeeName: {
