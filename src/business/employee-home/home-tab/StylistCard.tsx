@@ -17,8 +17,8 @@ import {
 import { Rating } from '@material-ui/lab';
 import { connect } from 'react-redux';
 import { StoreState } from '../../../shared/store/types';
-import { setEmployeeReviews } from '../../../shared/store/actions';
-import { firestore } from '../../../config/FirebaseConfig';
+import { setEmployeeReviews, setEmployeePosition } from '../../../shared/store/actions';
+import { auth, firestore } from '../../../config/FirebaseConfig';
 
 const image = require('../../../assets/avatar.jpg');
 
@@ -50,14 +50,16 @@ const StyledRating = withStyles((theme) => ({
 
 
 type State = {
-  employeeName: string;
+  employeeFirstName: string;
+  employeeLastName: string;
   employeePosition: string;
   editInfo: boolean;
 };
 
 interface Props extends WithStyles<typeof styles> {
   employeeId?: any;
-  employeeName?: any;
+  employeeFirstName?: any;
+  employeeLastName?: any;
   employeePosition?: any;
 }
 
@@ -72,7 +74,9 @@ function mapStateToProps(state: StoreState) {
   }
 
   return {
-    employeeName: state.system.user?.firstName,
+    employeeFirstName: state.system.user?.firstName,
+    employeeLastName: state.system.user?.lastName,
+    employeeUserId: state.system.user.id,
     employeeId: state.system.user?.employeeId,
     employeePosition: state.system.user.employeeInfo?.position,
     employeeReviews: reviewsToAdd
@@ -85,7 +89,8 @@ class StylistCard extends React.Component<any, any>{
     super(props);
 
     this.state = {
-      employeeName: props.employeeName,
+      employeeFirstName: props.employeeFirstName,
+      employeeLastName: props.employeeLastName,
       employeeId: props.employeeId,
       employeePosition: props.employeePosition,
       editInfo: false,
@@ -123,14 +128,11 @@ class StylistCard extends React.Component<any, any>{
   updateEmployeePosition(){
     firestore.collection('employees').doc(`${this.props.employeeId}`).update({
       position: this.state.employeePosition
+    }).then(() => {
+      this.dispatchSetEmployeePosition(this.state.employeePosition)
     })
   }
-  
-  handleEmployeeNameChange(e) {
-    this.setState({
-      employeeName: e.target.value
-    });
-  }
+
 
   handleEmployeePositionChange(e) {
     this.setState({
@@ -142,9 +144,12 @@ class StylistCard extends React.Component<any, any>{
     this.props.setEmployeeReviews(employeeReviews);
   }
   
+  dispatchSetEmployeePosition = (employeePosition: string) => {
+    this.props.setEmployeePosition(employeePosition);
+  }
+
   render(){
     const { classes } = this.props;
-    {console.log(this.state.employeePosition)}
     return (
       <Card className={this.props.card} elevation={0}>
         <Grid container={true} justify="space-between" spacing={2}>
@@ -153,7 +158,7 @@ class StylistCard extends React.Component<any, any>{
             {!this.state.editInfo ? (
                 <div>
                   <Typography variant="h5">
-                    {this.state.employeeName}
+                    {this.state.employeeFirstName}
                   </Typography>
                   <Typography variant="subtitle1" color="textSecondary">
                     {this.state.employeePosition}
@@ -172,12 +177,16 @@ class StylistCard extends React.Component<any, any>{
                 <div>
                   {/* Edit/Update Business Name */}
                   <div style={{ padding: 10 }}>
-                      <TextField
-                        label="First Name"
+                  <Typography variant="h5">
+                    {this.state.employeeFirstName}  
+                  </Typography>
+                      
+                      {/* <TextField
+                        label="Last Name"
                         id="edit-firstName"
-                        onChange={(e) => this.handleEmployeeNameChange(e)}
-                        value={this.state.employeeName}
-                      />
+                        onChange={(e) => this.handleEmployeeLastNameChange(e)}
+                        value={this.state.employeeLastName}
+                      /> <span/> */}
                       <br />
                   </div>
                   <div style={{ padding: 10 }}>
@@ -242,19 +251,19 @@ class StylistCard extends React.Component<any, any>{
   }
   
   updateData() {
-    if (this.state.employeeName === '' || this.state.employeePosition === '') {
+    if (this.state.employeeFirstName === '' || this.state.employeeFirstName === ''  || this.state.employeePosition === '') {
       console.log("whoopsies")
     } else {
-      const employeeName = this.state.employeeName
       this.updateEmployeePosition()
     }
     
     this.setState({
-      employeeName: this.state.employeeName,
+      employeeFirstName: this.state.employeeFirstName,
+      employeeLastName: this.state.employeeLastName,
       employeePosition: this.state.employeePosition,
       editInfo: !this.state.editInfo
     })
   }
 }
 
-export default connect(mapStateToProps, {setEmployeeReviews})(StylistCard);
+export default connect(mapStateToProps, {setEmployeeReviews, setEmployeePosition})(StylistCard);
