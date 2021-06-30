@@ -18,7 +18,7 @@ import { Rating } from '@material-ui/lab';
 import { connect } from 'react-redux';
 import { StoreState } from '../../../shared/store/types';
 import { setEmployeeReviews, setEmployeePosition } from '../../../shared/store/actions';
-import { auth, firestore } from '../../../config/FirebaseConfig';
+import { firestore } from '../../../config/FirebaseConfig';
 
 const image = require('../../../assets/avatar.jpg');
 
