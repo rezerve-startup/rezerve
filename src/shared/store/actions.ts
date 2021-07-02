@@ -43,6 +43,7 @@ import {
   SET_EMPLOYEE_BUSINESS,
   SET_EMPLOYEE_BUSINESS_NAME,
   SET_EMPLOYEE_BUSINESS_DESCRIPTION,
+  SET_EMPLOYEE_POSITION,
   UPDATE_BUSINESS_SCHEDULE
 } from './types';
 
@@ -128,6 +129,13 @@ export function setEmployeeBusinessDescription(businessDescription: string): Sys
   return {
     type: SET_EMPLOYEE_BUSINESS_DESCRIPTION,
     payload: businessDescription
+  }
+}
+
+export function setEmployeePosition(employeePosition: string): SystemActionTypes {
+  return {
+    type: SET_EMPLOYEE_POSITION,
+    payload: employeePosition
   }
 }
 
