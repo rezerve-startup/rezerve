@@ -255,11 +255,13 @@ class BusinessSignUp extends React.Component<any, State> {
                 clients: [],
                 appointments: [],
                 availability: [
+                  { day: 'Sunday', enabled: true, start: '08:00', end: '17:00' },
                   { day: 'Monday', enabled: true, start: '08:00', end: '17:00' },
                   { day: 'Tuesday', enabled: true, start: '08:00', end: '17:00' },
                   { day: 'Wednesday', enabled: true, start: '08:00', end: '17:00' },
                   { day: 'Thursday', enabled: true, start: '08:00', end: '17:00' },
                   { day: 'Friday', enabled: true, start: '08:00', end: '17:00' },
+                  { day: 'Saturday', enabled: true, start: '08:00', end: '17:00' }
                 ],
               };
               const empRef = firestore.collection('employees').doc();
@@ -295,6 +297,11 @@ class BusinessSignUp extends React.Component<any, State> {
                       zipcode: businessZipcode,
                       daysOpen: [
                         { 
+                          day: 'Sunday',
+                          enabled: true,
+                          start: '08:00', 
+                          end: '17:00' },
+                        { 
                           day: 'Monday',
                           enabled: true,
                           start: '08:00', 
@@ -322,6 +329,11 @@ class BusinessSignUp extends React.Component<any, State> {
                           enabled: true,
                           start: '08:00', 
                           end: '17:00' },
+                          { 
+                          day: 'Saturday',
+                          enabled: true,
+                          start: '08:00', 
+                          end: '17:00' }
                       ],
                       closingTime: '17:00',
                       openingTime: '8:00',
@@ -407,6 +419,11 @@ class BusinessSignUp extends React.Component<any, State> {
                               appointments: [],
                               availability: [
                                 { 
+                                  day: 'Sunday',
+                                  enabled: true,
+                                  start: '08:00', 
+                                  end: '17:00' },
+                                { 
                                   day: 'Monday',
                                   enabled: true,
                                   start: '08:00', 
@@ -434,6 +451,11 @@ class BusinessSignUp extends React.Component<any, State> {
                                   enabled: true,
                                   start: '08:00', 
                                   end: '17:00' },
+                                  { 
+                                  day: 'Saturday',
+                                  enabled: true,
+                                  start: '08:00', 
+                                  end: '17:00' }
                               ],
                             };
                             transaction.set(employeeRef, newEmployeeData);
