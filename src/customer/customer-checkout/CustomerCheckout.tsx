@@ -21,9 +21,8 @@ import { Elements } from '@stripe/react-stripe-js';
 import CheckoutForm from './CheckoutForm';
 import './CustomerCheckout.css';
 import moment, { Moment } from 'moment';
-
-// Need publishable key
-const promise = loadStripe('pk_test_TYooMQauvdEDq54NiTphI7jx');
+const PUBLIC_KEY = "pk_test_51IT9oWG4OM4l9C1dre9yGOSSd1MtmDOWcGsjlv7Exe6u46E2UpIjt92w9zO7ld2i0v1os1NaYwWX48MxqbhvRoq8009WuwQftX"
+const promise = loadStripe(PUBLIC_KEY);
 
 function getSteps() {
   return ['Review Booking', 'Payment Information', 'Confirm Booking'];
