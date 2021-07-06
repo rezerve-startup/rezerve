@@ -12,15 +12,6 @@ app.use(express.static('.'));
 app.use(express.json());
 app.use(cors());
 
-const calculateOrderAmount = (price) => {
-  // Prices must be whole numbers are not decimals. Multiply by 100.
-  // Adjust REZERVE_FEE as needed. Take price multiply by 100.
-  // .75 additional charges will need be put in as 75 into the variable.
-  // Ex. A $24.20 hair cut will return as 2495 (24.20*100+75 = 2495) 
-  const REZERVE_FEE = 75;
-  const finalPrice = price.servicePrice * 100 + REZERVE_FEE;
-  return finalPrice;
-};
 
 app.post('/create-payment-intent', async (req, res) => {
   const price = req.body; //JSON sent in from CheckoutForm.tsx 
@@ -32,10 +23,9 @@ app.post('/create-payment-intent', async (req, res) => {
 
   // Create a PaymentIntent with the order amount and currency
   const paymentIntent = await stripe.paymentIntents.create({
-    amount: calculateOrderAmount(price),
+    amount: 75,
     currency: 'usd',
-    //transfer_group: '{id}', 
-
+	description: 'Rezerve Booking Fee'
   });
 
   // Transfer to business
@@ -53,8 +43,8 @@ app.post('/create-payment-intent', async (req, res) => {
 
 // Use for live site
 // tslint:disable-next-line: no-console
-app.listen(process.env.PORT || 5000, () => console.log(`Node server listening on port ${process.env.PORT || 5000}!`));
+//app.listen(process.env.PORT || 5000, () => console.log(`Node server listening on port ${process.env.PORT || 5000}!`));
 
 // Use for local testing
 // tslint:disable-next-line: no-console
-//app.listen(4242, () => console.log('Node server listening on port 4242!'));
+app.listen(4242, () => console.log('Node server listening on port 4242!'));
