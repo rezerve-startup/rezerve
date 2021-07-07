@@ -46,6 +46,7 @@ import {
   SET_EMPLOYEE_BUSINESS,
   SET_EMPLOYEE_BUSINESS_NAME,
   SET_EMPLOYEE_BUSINESS_DESCRIPTION,
+  SET_EMPLOYEE_POSITION,
   UPDATE_BUSINESS_SCHEDULE
 } from './types';
 
@@ -186,6 +187,19 @@ export function systemReducer(
               ...state.user.employeeInfo.business,
               description: action.payload
             }
+          }
+        }
+      }
+    }
+
+    case SET_EMPLOYEE_POSITION: {
+      return {
+        ...state,
+        user: {
+          ...state.user,
+          employeeInfo: {
+            ...state.user.employeeInfo,
+            position: action.payload
           }
         }
       }

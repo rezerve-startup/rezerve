@@ -32,21 +32,30 @@ const styles = (theme: Theme) =>
       flexGrow: 1,
     },
     card: {
-      padding: theme.spacing(1),
-    },
-    cardContent: {
-      padding: '2px',
+      // padding: theme.spacing(1),
+      // height: '27rem',
     },
     openHours: {
-      padding: theme.spacing(1),
       textAlign: 'center',
       backgroundColor: theme.palette.background.paper,
       insert: true,
     },
     dayOfWeek: {
-      marginRight: '100px',
-      fontSize: '14px',
+      // padding: theme.spacing(1),
+      display: 'flex',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      fontSize: '1rem',
     },
+    dayText: {
+      textAlign: 'left',
+      justifyContent: 'left',
+      marginRight: '0.5rem'
+    },
+    hourlyAvailability: {
+      display: 'flex',
+      alignItems: 'center'
+    }
   });
 
 type State = {
@@ -127,50 +136,39 @@ class AvailablityCard extends React.Component<any, any> {
     const { editInfo } = this.state;
     return (
       <div>
-        <Card>
-          <CardContent className={classes.cardContent}>
+        <Card className={classes.card} elevation={0}>
+          <CardContent>
             <Typography variant="h5">Availability</Typography>
             <Divider />
-            <List>
-              {this.state.businessSchedule.map((item: BusinessSchedule, index) => (
-                <ListItem key={item.day}>
+              {this.state.businessSchedule && this.state.businessSchedule.map((item, index) => (
+                <div key={item.day} className={classes.dayOfWeek}>
                   <Checkbox
-                    disabled={!this.state.editInfo}
+                    disabled={!editInfo}
                     checked={item.enabled}
                     onChange={(e) => this.updateEnabled(e, index)}
                   />
-                  <ListItemText
-                    primary={item.day}
-                    classes={{ primary: classes.dayOfWeek }}
-                  />
-                  <ListItemSecondaryAction>
-                    <Grid container={true} justify="flex-start" spacing={1}>
-                      <Grid item={true} xs={true}>
-                        <TextField
-                          id="time"
-                          type="Time"
-                          disabled={!editInfo || !item.enabled}
-                          onChange={(e) => this.handleStartTimeChange(index, e)}
-                          defaultValue={item.start}
-                          style={{ width: 104 }}
-                        />
-                      </Grid>
-                      <Typography style={{ margin: 'auto' }}>-</Typography>
-                      <Grid item={true} xs={true}>
-                        <TextField
-                          id="time"
-                          type="Time"
-                          disabled={!editInfo || !item.enabled}
-                          onChange={(e) => this.handleCloseTimeChange(index, e)}
-                          defaultValue={item.end}
-                          style={{ width: 104 }}
-                        />
-                      </Grid>
-                    </Grid>
-                  </ListItemSecondaryAction>
-                </ListItem>
+                  <Typography className={classes.dayText}>{item.day}</Typography>
+                  <div className={classes.hourlyAvailability}>
+                    <TextField
+                      id="time"
+                      type="Time"
+                      onChange={(e) => this.handleStartTimeChange(index, e)}
+                      disabled={!editInfo || !item.enabled}
+                      defaultValue={item.start}
+                    />
+                    <Typography style={{ marginRight: '0.25rem' }}>-</Typography>
+                    <TextField
+                      id="time"
+                      type="Time"
+                      onChange={(e) => this.handleCloseTimeChange(index, e)}
+                      disabled={!editInfo || !item.enabled}
+                      defaultValue={item.end}
+                      style={{ width: 104 }}
+                      size='small'
+                    />
+                  </div>
+                </div>
               ))}
-            </List>
           </CardContent>
           <CardActions style={{ justifyContent: 'center' }}>
             {!this.state.editInfo ? (

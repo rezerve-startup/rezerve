@@ -21,9 +21,8 @@ import { Elements } from '@stripe/react-stripe-js';
 import CheckoutForm from './CheckoutForm';
 import './CustomerCheckout.css';
 import moment, { Moment } from 'moment';
-
-// Need publishable key
-const promise = loadStripe('pk_test_TYooMQauvdEDq54NiTphI7jx');
+const PUBLIC_KEY = "pk_test_51IT9oWG4OM4l9C1dre9yGOSSd1MtmDOWcGsjlv7Exe6u46E2UpIjt92w9zO7ld2i0v1os1NaYwWX48MxqbhvRoq8009WuwQftX"
+const promise = loadStripe(PUBLIC_KEY);
 
 function getSteps() {
   return ['Review Booking', 'Payment Information', 'Confirm Booking'];
@@ -69,16 +68,34 @@ const ConfirmationCard = (props: any) => {
         <div>{props.employeeName}</div>
       </div>
 
+      <div className={classes.confirmationAppointmentDate}>
+        <div>{props.appointmentDateTime.format('ddd MM/DD/YYYY')}</div>
+        <div>{props.appointmentDateTime.format('h:mm A')}</div>
+      </div>
+      <Divider className={classes.divider0} />
       <div className={classes.confirmationServicePrice}>
         <div>{props.service.name}</div>
         <div>${props.service.price}</div>
       </div>
 
-      <Divider className={classes.divider0} />
-      <div className={classes.confirmationAppointmentDate}>
-        <div>{props.appointmentDateTime.format('ddd MM/DD/YYYY')}</div>
-        <div>{props.appointmentDateTime.format('h:mm A')}</div>
+      <div className={classes.confirmationServicePrice}>
+        <div>Booking Fee</div>
+        <div>$0.75</div>
       </div>
+      <Divider className={classes.divider1} />
+      <div className={classes.confirmationServicePrice}>
+        <div>*Payment Due</div>
+        <div>$0.75</div>
+      </div>
+
+      <Divider className={classes.divider0} />
+      
+      <div style={{textAlign: 'center'}}>
+        <Typography variant="caption">
+          *Your payment in Step 2 is only for the Booking Fee. Service payment will happen at {props.businessName}.
+        </Typography>
+      </div>
+
     </div>
   );
 }
@@ -89,14 +106,6 @@ const BookingConfirmation = (props: any) => {
   return (
     <div>
       <ConfirmationCard businessName={props.businessName} appointmentDateTime={props.appointmentDateTime} employeeName={props.employeeName} service={props.service} />
-      <div className={classes.itemPlus1}>
-        <div>Receive Text Reminders/Updates</div>
-        <Checkbox className={classes.checkbox} />
-      </div>
-
-      <div className={classes.phoneField}>
-        <TextField type="tel" placeholder="Phone Number" />
-      </div>
     </div>
   );
 }
@@ -194,8 +203,8 @@ const useStyles = makeStyles((theme) => ({
     // Theme Color, or use css color in quote
     background: 'white',
     color: 'white',
-    height: '10px',
-    width: '95%',
+    height: '2px',
+    width: '98%',
     margin: 'auto',
   },
 
@@ -207,7 +216,8 @@ const useStyles = makeStyles((theme) => ({
   confirmationBusinessName: {
     fontWeight: 'bold',
     paddingLeft: '0.25rem',
-    paddingRight: '0.25rem'
+    paddingRight: '0.25rem',
+    fontSize: '18pt'
   },
 
   confirmationEmployeeName: {
