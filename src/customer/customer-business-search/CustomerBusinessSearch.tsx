@@ -1,13 +1,10 @@
 import React from 'react';
 import { Search } from '@material-ui/icons';
 import { Rating } from '@material-ui/lab';
-import { LocationOn } from '@material-ui/icons';
 import firebase from 'firebase';
 import {
   InstantSearch,
-  Hits,
-  SearchBox,
-  connectAutoComplete
+  connectAutoComplete,
 } from 'react-instantsearch-dom';
 
 import {
@@ -16,25 +13,13 @@ import {
   createStyles,
   Theme,
   TextField,
-  InputAdornment,
   CardActionArea,
   CardMedia,
   Button,
-  Box,
   Grid,
-  FormControl,
-  Select,
   Typography,
-  Paper,
-  MenuList,
-  MenuItem,
-  ClickAwayListener,
-  Grow,
-  Popper,
 } from '@material-ui/core';
-
-import LocationOnIcon from '@material-ui/icons/LocationOn';
-import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+import Autocomplete from '@material-ui/lab/Autocomplete';
 
 import { firestore } from '../../config/FirebaseConfig';
 import { connect } from 'react-redux';
@@ -49,7 +34,6 @@ import { Business } from '../../models/Business.interface';
 
 import cat1 from '../../assets/cat1.jpg';
 import algoliasearch from 'algoliasearch';
-import { Link } from 'react-router-dom';
 
 type CustomerBusinessSearchState = {
   searchBoxRef: any;
@@ -67,8 +51,6 @@ type CustomerBusinessSearchState = {
   miles: number;
   hidden: boolean;
   buttonValue: string;
-  open: boolean;
-  anchorRef: any;
 };
 
 let searchBox: any;
@@ -101,12 +83,10 @@ class CustomerBusinessSearch extends React.Component<
       address: '',
       userLatitude: this.props.curLatitude,
       userLongitude: this.props.curLongitude,
-      count: 2,
+      count: 5,
       miles: 0,
       hidden: true,
       buttonValue: 'by Name',
-      open: false,
-      anchorRef: undefined,
     };
   }
 
@@ -133,10 +113,9 @@ class CustomerBusinessSearch extends React.Component<
     this.setState({userLatitude: latitude});
     this.setState({userLongitude: longitude});
     this.setState({miles: distance});
-    this.showPosition();
     if(distance > this.state.count)
     {
-      this.setState({count: 52});
+      this.setState({count: 55});
     }
     
     //console.log("Latitude from state: " + this.state.userLatitude);
@@ -158,9 +137,12 @@ class CustomerBusinessSearch extends React.Component<
       .where('about.location', '>=', lesserGeopoint)
       .where('about.location', '<=', greaterGeopoint);
 
+
     query.get().then((snapshot) => {
       snapshot.forEach((doc) => {
         let businessData = doc.data() as Business;
+        //console.log(this.props.tabSelected)
+        //console.log(" = " + businessData.type)
         if(businessData.type === this.props.tabSelected)
         {      
           let businessToAdd = {
@@ -206,35 +188,9 @@ class CustomerBusinessSearch extends React.Component<
   }
 
   displayMore(): void {
-    this.setState({count: this.state.count + 2});
+    this.setState({count: this.state.count + 5});
     this.searchBarbershopsByLocation(this.state.userLatitude, this.state.userLongitude, this.state.count);
     //console.log("Count: " + this.state.count);
-  }
-
-  getAddress(): string {
-    this.showPosition();
-    return this.state.address;
-  }
-
-  setZip = (address) => {
-    //console.log("City: " + JSON.stringify(address.results[0].formatted_address));
-    this.setState({address: address.results[1].formatted_address});
-  }
-
-  showPosition = () => {
-    //console.log("Latitude from props: " + this.state.userLatitude);
-    //console.log("Longitude from props: " + this.state.userLongitude);
-    if(this.state.userLatitude !== 0 && this.state.userLongitude !== 0)
-    {
-      fetch(`https://maps.googleapis.com/maps/api/geocode/json?latlng=${this.state.userLatitude},${this.state.userLongitude}&key=${process.env.REACT_APP_GOOGLE_MAPS_API_KEY}`)
-        .then(res => res.json())
-        .then((address) => {
-          if((address.results).length !== 0)
-          {
-            this.setZip(address);
-          }
-        })
-    }
   }
 
   returnToList(): void {
@@ -257,37 +213,16 @@ class CustomerBusinessSearch extends React.Component<
   }
   
   handleSwitchcSearch():void {
+    this.dispatchClearBusinessesFound();
     this.setState({ hidden: !this.state.hidden });
     if(this.state.buttonValue === 'by Name')
     {
       this.setState({ buttonValue: 'by City' });
-      this.handleOpenPopper();
     }
     else
     {
-      this.handleClosePopper();
       this.setState({ buttonValue: 'by Name' });
     }
-    //console.log(this.state.buttonValue);
-  }
-
-  handleOpenPopper () {
-    this.setState({
-      open: true
-    });
-  }
-
-  handleClosePopper() {
-    this.setState({
-      open: false
-    });
-  }
-
-  setAnchor = event => {
-    console.log(event.currentTarget);
-    this.setState({
-      anchorRef: event.currentTarget
-    });
   }
 
 
@@ -315,7 +250,7 @@ class CustomerBusinessSearch extends React.Component<
   
   componentDidMount() {
     this.searchBarbershopsByLocation(this.state.userLatitude, this.state.userLongitude, this.state.count);
-    this.setState({count: this.state.count + 2});
+    this.setState({count: this.state.count + 5});
 
     //console.log("Latitude from props: " + this.props.curLatitude);
   }
@@ -324,45 +259,38 @@ class CustomerBusinessSearch extends React.Component<
     const { classes } = this.props;
     //Algolia implementation
     const searchClient = algoliasearch("QDMMNJHF77","3a233c2bc51c8de99d7da44b86f8e1b0");
-    
 
-    const Autocomplete = ({ hits, currentRefinement, refine }) => (
+    const autocomplete = ({hits, currentRefinement, refine }) => (
       <div>
-        <TextField
-          //inputRef={this.state.anchorEl}
-          className={classes.search}
-          id="standard-basic"
-          placeholder="Search by Business Name"
-          fullWidth
-          value={currentRefinement}
-          onChange={
-            (event) => {
-              refine(event.currentTarget.value);
+      <Autocomplete
+          freeSolo
+          id="combo-box-demo"
+          options={hits.map(hit => (hit.name))}
+          onChange={(event: any, newValue: string | null) => {
+            this.handleMenuSelection(newValue);
+          }}
+          renderInput={(params) => 
+            <TextField
+            {... params}
+            //inputRef={this.state.anchorEl}
+            className={classes.search}
+            id="standard-basic"
+            placeholder="Search by Business Name"
+            fullWidth
+            value={currentRefinement}
+            onChange={
+              (event) => {
+                refine(event.currentTarget.value);
+              }
             }
-          }
-          />
-            <Popper
-              open={this.state.open}
-              anchorEl={this.state.anchorRef}
-              placement={'bottom'} 
-              transition
-              >            
-                  <Paper>
-                    <MenuList >
-                      {hits.map(hit => (
-                        <MenuItem 
-                        onClick={() => {
-                          this.handleMenuSelection(hit.name);
-                          this.handleClosePopper();
-                        }}
-                        > {hit.name}</MenuItem>))}
-                    </MenuList>
-                  </Paper>
-              </Popper>
+            />
+        }
+        />
+        
       </div>
     );
     
-    const CustomAutocomplete = connectAutoComplete(Autocomplete);
+    const CustomAutocomplete = connectAutoComplete(autocomplete);
 
     return (
       <div>
@@ -370,12 +298,12 @@ class CustomerBusinessSearch extends React.Component<
           <div className={classes.customerBusinessSearchPage}>
             <div className={classes.changingColors}>
               <div className={classes.searchBoxContainer}>
-                <LoadScript
-                  googleMapsApiKey={`${process.env.REACT_APP_GOOGLE_MAPS_API_KEY}`}
-                  libraries={mapsLibraries}
-                >
                   <Grid container alignItems="center" spacing={1}>
-                    
+                  <LoadScript
+                    googleMapsApiKey={`${process.env.REACT_APP_GOOGLE_MAPS_API_KEY}`}
+                    libraries={mapsLibraries}
+                  >
+                    {/* GOOGLE MAPS SEARCH */}            
                     <Grid item xs={8} sm={10} hidden={!this.state.hidden} >
                       <StandaloneSearchBox
                         onLoad={ (event)=>{
@@ -395,34 +323,35 @@ class CustomerBusinessSearch extends React.Component<
                         />
                       </StandaloneSearchBox>
                     </Grid>
+
+                    {/* ALGOLIA SEARCH */}
                     <Grid item xs={8} sm={10} hidden={this.state.hidden}>
-                      <InstantSearch
+                    <InstantSearch
                         indexName="Business_Data"
                         searchClient={searchClient}
+                        refresh
                       >
-                          {this.setAnchor}
-                          <CustomAutocomplete/>
+                      <CustomAutocomplete />
                       </InstantSearch>
                     </Grid>                    
-                    <Grid item xs={4} sm={2} alignItems="baseline"> 
+                    <Grid item xs={4} sm={2}> 
                       <Button 
                             className={classes.searchButton}
                             variant="outlined"
                             fullWidth={true}
                             color="secondary"
-                            disabled
                             onClick={(event)=>{
                               this.handleSwitchcSearch();
-                              this.setAnchor(event);
                             }}
                             >
                               <Search/>
                               {this.state.buttonValue}
                         </Button>
                       </Grid>
-                  </Grid>
-
                 </LoadScript>
+                </Grid>
+
+                
                 <Typography
                   hidden={!this.state.hidden}
                   className={classes.location}
@@ -487,7 +416,7 @@ class CustomerBusinessSearch extends React.Component<
               <Grid container justify='center' >
                 <Grid item hidden={!this.state.hidden}>
                   <Button variant="contained" onClick={() => this.displayMore()}>
-                    More businesses
+                    Load More Businesses
                   </Button>
                 </Grid>
               </Grid>

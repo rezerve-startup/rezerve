@@ -7,13 +7,11 @@ import {
   makeStyles,
   Theme,
   Dialog,
-  Fab,
   IconButton,
   Typography,
   Card,
   CardContent,
 } from '@material-ui/core';
-import ArrowForwardIcon from '@material-ui/icons/ArrowForward';
 import { Close } from '@material-ui/icons';
 
 import BusinessSignUp from '../../business/business-signup/BusinessSignUp';
@@ -27,7 +25,7 @@ const useStyles = makeStyles((theme: Theme) =>
       paddingTop: 15,
     },
     button: {
-      backgroundColor: theme.palette.secondary.dark,
+      backgroundColor: theme.palette.primary.dark,
       color: theme.palette.primary.light,
       borderRadius: '30px',
       boxShadow: 'none',
@@ -59,6 +57,9 @@ const useStyles = makeStyles((theme: Theme) =>
     title: {
       fontWeight: 'bold',
     },
+    typo: {
+      color: theme.palette.primary.main
+    }
   }),
 );
 
@@ -96,7 +97,19 @@ function SignUpPage() {
                   }>
                     Sign Up
                   </Typography>
+                  
                   <Grid container={true} spacing={1} style={{ marginTop: '24px' }} direction="column">
+                    <Grid item>
+                      <Typography
+                        className={classes.typo}
+                        variant="caption"
+                        component="p"
+                        color="textSecondary"
+                        align="center"
+                      >
+                        * Employees signup as users
+                    </Typography>
+                    </Grid>
                     <Grid item>
                       <CustomerSignUp handleSignUpClose={handleClose} />
                     </Grid>

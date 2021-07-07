@@ -171,19 +171,17 @@ const LandingPageLoggedIn = (props: any) => {
         </Tabs>
       </AppBar>
 
-      {/*</AppBar>*/}
-
       <TabPanel tabValue={tabValue} index={0}>
-        <CustomerBusinessSearch filter="hair" />
+        <CustomerBusinessSearch tabSelected={"Hair"}/> 
       </TabPanel>
       <TabPanel tabValue={tabValue} index={2}>
-        <CustomerBusinessSearch filter="nails" />
+        <CustomerBusinessSearch tabSelected={"Nail"}/>
       </TabPanel>
       <TabPanel tabValue={tabValue} index={4}>
-        <CustomerBusinessSearch filter="barber" />
+        <CustomerBusinessSearch tabSelected={"Barber"}/>
       </TabPanel>
       <TabPanel tabValue={tabValue} index={6}>
-        <CustomerBusinessSearch filter="houseCall" />
+        <CustomerBusinessSearch tabSelected={"House Call"}/>
       </TabPanel>
     </div>
   );

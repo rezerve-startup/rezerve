@@ -127,6 +127,7 @@ class BusinessRegisterLogin extends React.Component<any, State> {
                 LOG IN
               </Typography>
               <Typography
+                className={classes.typo}
                 variant="subtitle2"
                 color="textSecondary"
                 component="p"
@@ -238,8 +239,8 @@ const styles = (theme: Theme) =>
     spinner: {
       marginLeft: theme.spacing(2),
     },
-    signUpText: {
-      
+    typo: {
+      color: theme.palette.primary.main
     }
   });
 

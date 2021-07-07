@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { Link, Redirect } from 'react-router-dom';
 import {
   Typography,
@@ -43,7 +43,6 @@ import { connect } from 'react-redux';
 import { StoreState } from '../store/types';
 import { setEmployeePhone, setEmployeeEmail } from '../store/actions';
 import { auth, firestore } from '../../config/FirebaseConfig';
-import MessagingHome from '../messaging/MessagingHome';
 
 const sidebarDataWithoutLogout = [
   {

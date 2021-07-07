@@ -150,36 +150,40 @@ class BusinessSignUp extends React.Component<any, State> {
   }
 
   signInUser(email: string, password: string) {
-    auth
-      .signInWithEmailAndPassword(email, password)
-      .then((userCreds) => {
-        if (userCreds !== null && userCreds.user) {
-          const user = userCreds.user;
+    auth.signOut();
+    //auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL)
+      //.then(() => {
+        auth
+          .signInWithEmailAndPassword(email, password)
+          .then((userCreds) => {
+            if (userCreds !== null && userCreds.user) {
+              const user = userCreds.user;
 
-          firestore
-            .collection('users')
-            .doc(user.uid)
-            .get()
-            .then((snapshot) => {
-              const userObj = snapshot.data();
-              this.setState({
-                ...this.state,
-                loggedIn: true,
-                activeStep: 0,
-                email: userObj?.email,
-                firstName: userObj?.firstName,
-                lastName: userObj?.lastName,
-                phone: userObj?.phone,
-                password,
-              });
-            });
-        } else {
-          this.setState({ ...this.state, loggedIn: false, activeStep: 0 });
-        }
-      })
-      .catch((e) => {
-        console.log(e);
-      });
+              firestore
+                .collection('users')
+                .doc(user.uid)
+                .get()
+                .then((snapshot) => {
+                  const userObj = snapshot.data();
+                  this.setState({
+                    ...this.state,
+                    loggedIn: true,
+                    activeStep: 0,
+                    email: userObj?.email,
+                    firstName: userObj?.firstName,
+                    lastName: userObj?.lastName,
+                    phone: userObj?.phone,
+                    password,
+                  });
+                });
+            } else {
+              this.setState({ ...this.state, loggedIn: false, activeStep: 0 });
+            }
+          })
+          .catch((e) => {
+            console.log(e);
+          });
+      //});
   }
 
   updateValue = (name: string, value: string, valid: boolean) => {
@@ -260,6 +264,8 @@ class BusinessSignUp extends React.Component<any, State> {
                   { day: 'Wednesday', enabled: true, start: '08:00', end: '17:00' },
                   { day: 'Thursday', enabled: true, start: '08:00', end: '17:00' },
                   { day: 'Friday', enabled: true, start: '08:00', end: '17:00' },
+                  { day: 'Saturday', enabled: true, start: '08:00', end: '17:00' },
+                  { day: 'Sunday', enabled: true, start: '08:00', end: '17:00' },
                 ],
               };
               const empRef = firestore.collection('employees').doc();
@@ -321,7 +327,21 @@ class BusinessSignUp extends React.Component<any, State> {
                           day: 'Friday',
                           enabled: true,
                           start: '08:00', 
-                          end: '17:00' },
+                          end: '17:00',
+                        },
+                        { 
+                          day: 'Saturday',
+                          enabled: true,
+                          start: '08:00', 
+                          end: '17:00',
+                        },
+                        { 
+                          day: 'Sunday',
+                          enabled: true,
+                          start: '08:00', 
+                          end: '17:00',
+                        },
+                          
                       ],
                       closingTime: '17:00',
                       openingTime: '8:00',
@@ -433,7 +453,20 @@ class BusinessSignUp extends React.Component<any, State> {
                                   day: 'Friday',
                                   enabled: true,
                                   start: '08:00', 
-                                  end: '17:00' },
+                                  end: '17:00',
+                                },
+                                { 
+                                  day: 'Saturday',
+                                  enabled: true,
+                                  start: '08:00', 
+                                  end: '17:00',
+                                },
+                                { 
+                                  day: 'Sunday',
+                                  enabled: true,
+                                  start: '08:00', 
+                                  end: '17:00',
+                                },
                               ],
                             };
                             transaction.set(employeeRef, newEmployeeData);
@@ -463,6 +496,8 @@ class BusinessSignUp extends React.Component<any, State> {
                         'Wednesday',
                         'Thursday',
                         'Friday',
+                        'Saturday',
+                        'Sunday',
                       ],
                       closingTime: '17:00',
                       openingTime: '8:00',
@@ -639,12 +674,12 @@ class BusinessSignUp extends React.Component<any, State> {
                             loading={this.state.loading}
                             onClick={() => {
                               console.log(this.state.name);
-                              //Index the new business name
+                              //Index the new business name to Algolia Search
                               //const objects = [{
                               //  objectID: docRef.id,
                               //  name: newBusinessData.name
                               //}]
-                        
+                              
                               index.saveObjects([{name: this.state.name}], { autoGenerateObjectIDIfNotExist: true }); 
                             }}
                           >
@@ -697,6 +732,7 @@ const styles = (theme: Theme) =>
   createStyles({
     root: {
       flexGrow: 1,
+      
     },
     card: {
       padding: '4px',
@@ -707,8 +743,8 @@ const styles = (theme: Theme) =>
       fontSize: 24,
     },
     businessButton: {
-      backgroundColor: theme.palette.secondary.dark,
-      color: 'white',
+      backgroundColor: theme.palette.primary.main,
+      color: theme.palette.secondary.dark,
       borderRadius: '30px',
       height: '50px',
       boxShadow: 'none',
@@ -718,7 +754,6 @@ const styles = (theme: Theme) =>
         color: theme.palette.primary.light,
         boxShadow: 'none',
       },
-      paddingTop: theme.spacing(2),
     },
     reviewContent: {
       paddingTop: theme.spacing(8),

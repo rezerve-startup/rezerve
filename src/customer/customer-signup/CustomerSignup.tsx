@@ -23,6 +23,8 @@ import {
   Fab,
   Dialog,
   Snackbar,
+  Divider,
+  TextField,
 } from '@material-ui/core';
 import { createNewCustomer, updateUser, setAuthChanging, logoutUser } from '../../shared/store/actions';
 import { connect } from 'react-redux';
@@ -30,7 +32,13 @@ import { auth, firestore } from '../../config/FirebaseConfig';
 import { Image, ArrowBack, ArrowForward, Close } from '@material-ui/icons';
 import { Alert } from '@material-ui/lab';
 import UserInfoForm from '../../shared/sign-up/UserInfoForm';
+import Autocomplete from '@material-ui/lab/Autocomplete';
+import algoliasearch from 'algoliasearch';
 import firebase from 'firebase';
+import {
+  InstantSearch,
+  connectAutoComplete,
+} from 'react-instantsearch-dom';
 
 interface Business {
   id: string;
@@ -183,7 +191,7 @@ class CustomerSignUp extends React.Component<any, State> {
     this.setState({ ...this.state, loading: true });
     const emailToUse = this.state.email;
     const passwordToUse = this.state.password;
-
+    
     auth
       .createUserWithEmailAndPassword(emailToUse, passwordToUse)
       .then((res) => {
@@ -196,11 +204,13 @@ class CustomerSignUp extends React.Component<any, State> {
               clients: [],
               appointments: [],
               availability: [
+                { day: 'Sunday', start: '08:00', end: '17:00' },
                 { day: 'Monday', start: '08:00', end: '17:00' },
                 { day: 'Tuesday', start: '08:00', end: '17:00' },
                 { day: 'Wednesday', start: '08:00', end: '17:00' },
                 { day: 'Thursday', start: '08:00', end: '17:00' },
                 { day: 'Friday', start: '08:00', end: '17:00' },
+                { day: 'Saturday', start: '08:00', end: '17:00' },
               ]
             }
           : {
@@ -268,17 +278,20 @@ class CustomerSignUp extends React.Component<any, State> {
                 //   },
                 // });
 
-                auth.signOut().then(() => {
-                  auth.signInWithEmailAndPassword(emailToUse, passwordToUse).then((userCreds) => {
-                    if (userCreds !== null && userCreds.user) {
-                      const user = userCreds.user;
-                      this.dispatchUpdateUser(user)
-                    }
-                    this.props.handleSignUpClose()
-                    this.setState({ ...this.state, loading: false, open: false })
+                //auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL)
+                //.then(() => {
+                  auth
+                    .signInWithEmailAndPassword(emailToUse, passwordToUse)
+                    .then((userCreds) => {
+                      if (userCreds !== null && userCreds.user) {
+                        const user = userCreds.user;
+                        this.dispatchUpdateUser(user)
+                      }
+                      this.props.handleSignUpClose()
+                      this.setState({ ...this.state, loading: false, open: false })
+                    });
                   });
-                });
-              });
+              //});
           })
           .catch((e) => {
             console.log(e);
@@ -490,7 +503,11 @@ const styles = (theme: Theme) =>
       width: '100%',
       maxHeight: '300px',
       overflow: 'auto',
-      backgroundColor: theme.palette.secondary.main,
+      border: '1px',
+    },
+    listRootHeader: {
+      backgroundColor: theme.palette.secondary.light,
+      color: 'black',
     },
     selectedBusiness: {
       marginTop: theme.spacing(2),
@@ -542,42 +559,93 @@ const BusinessSearchComponent = withStyles(styles, { withTheme: true })(
 
     function handleClick(business) {
       props.onBusinessSelect(business);
+      console.log(business);
     }
 
     function handleChange() {
       props.onBusinessSelect(undefined);
     }
 
+    function handleSearchSelection(selection) {
+      handleClick(businesses.find( ({name}) => name === selection  ));
+    }
+
+    const searchClient = algoliasearch("QDMMNJHF77","3a233c2bc51c8de99d7da44b86f8e1b0");
+
+    const autocomplete = ({hits, currentRefinement, refine }) => (
+      <div>
+      <Autocomplete
+          freeSolo
+          id="combo-box-demo"
+          options={hits.map(hit => (hit.name))}
+          onChange={(event: any, newValue: string | null) => {
+            handleSearchSelection(newValue);
+          }}
+          renderInput={(params) => 
+            <TextField
+            {... params}
+            //inputRef={this.state.anchorEl}
+            className={classes.search}
+            id="standard-basic"
+            placeholder="Search your Business Here"
+            fullWidth
+            value={currentRefinement}
+            onChange={
+              (event) => {
+                refine(event.currentTarget.value);
+              }
+            }
+            />
+        }
+        />
+        
+      </div>
+    );
+
+    const CustomAutocomplete = connectAutoComplete(autocomplete);
     return isEmployee && !selectedBusiness ? (
-      <List
-        subheader={
-          <ListSubheader>
+      <Card>
+          <ListSubheader className={classes.listRootHeader}>
             Please select <strong>your</strong> business from below
           </ListSubheader>
-        }
-        className={classes.listRoot}
-      >
-        {businesses.map((business, idx) => {
-          return (
-            // tslint:disable-next-line: jsx-no-lambda
-            <ListItem key={idx} onClick={() => handleClick(business)}>
-              <ListItemAvatar>
-                <Avatar>
-                  {business.image === 'Add Image' ? (
-                    <Image />
-                  ) : (
-                    <Avatar src={business.image} />
-                  )}
-                </Avatar>
-              </ListItemAvatar>
-              <ListItemText
-                primary={business.name}
-                secondary={business.location}
-              />
-            </ListItem>
-          );
-        })}
-      </List>
+        <CardContent>
+        <InstantSearch
+            indexName="Business_Data"
+            searchClient={searchClient}
+            refresh
+          >
+            <CustomAutocomplete />
+        </InstantSearch>
+          <List
+            className={classes.listRoot}
+          >
+          
+            {businesses.map((business, idx) => {
+              return (
+                // tslint:disable-next-line: jsx-no-lambda
+                <div>
+                  <ListItem key={idx} onClick={() => handleClick(business)}>
+                    <ListItemAvatar>
+                      <Avatar>
+                        {business.image === 'Add Image' ? (
+                          <Image />
+                        ) : (
+                          <Avatar src={business.image} />
+                        )}
+                      </Avatar>
+                    </ListItemAvatar>
+                    <ListItemText
+                      primary={business.name}
+                      secondary={business.location}
+                    />
+                  </ListItem>
+                  <Divider />
+                </div>
+              );
+            })}
+          </List>
+        </CardContent>
+      </Card>
     ) : isEmployee ? (
       <div className={classes.selectedBusiness}>
         <Typography

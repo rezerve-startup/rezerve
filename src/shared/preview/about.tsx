@@ -1,13 +1,7 @@
 import { Button, createStyles, makeStyles, Theme } from '@material-ui/core';
 import logo from './unknown.png';
-import React, { useState } from 'react';
+import React from 'react';
 import Typography from '@material-ui/core/Typography';
-import List from '@material-ui/core/List';
-import ListItem from '@material-ui/core/ListItem';
-import IconButton from '@material-ui/core/IconButton';
-import Grid from '@material-ui/core/Grid';
-import ListItemText from '@material-ui/core/ListItemText';
-import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
 import FiberManualRecordRoundedIcon from '@material-ui/icons/FiberManualRecordRounded';
 const useStyles = makeStyles((theme: Theme) =>
 	createStyles({

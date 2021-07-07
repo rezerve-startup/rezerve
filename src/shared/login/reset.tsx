@@ -8,7 +8,6 @@ import {
   Theme,
   Dialog,
   IconButton,
-  InputAdornment,
   Card,
   Typography,
   TextField,
@@ -16,12 +15,11 @@ import {
   CardActions,
   Snackbar,
 } from '@material-ui/core';
-import ArrowForwardIcon from '@material-ui/icons/ArrowForward';
 import { Close } from '@material-ui/icons';
 import MuiAlert, { AlertProps } from '@material-ui/lab/Alert';
 
 import { connect } from 'react-redux';
-import { auth, firestore } from '../../config/FirebaseConfig';
+import { auth } from '../../config/FirebaseConfig';
 import { updateUser } from '../../shared/store/actions';
 import { StoreState } from '../../shared/store/types';
 import SignUpPage from '../sign-up/SignUpPage';
@@ -30,7 +28,7 @@ import SignUpPage from '../sign-up/SignUpPage';
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {
-      backgroundColor: theme.palette.secondary.dark,
+      backgroundColor: 'white',
       minHeight: '100vh',
       flex: '1'
     },
@@ -44,7 +42,6 @@ const useStyles = makeStyles((theme: Theme) =>
       [theme.breakpoints.up('lg')]:{
         width: '50vw'
       },
-      backgroundColor: theme.palette.secondary.dark,
       padding: '4px',
       overflow: 'auto',
     },

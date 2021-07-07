@@ -38,7 +38,7 @@ export const unsubscribe = auth.onAuthStateChanged((user) => {
           firestore.collection('customers').doc(userInfo.customerId).get()
             .then((customerObj) => {
               let customerInfo = customerObj.data();
-
+              console.log(customerInfo);
               let customerInfoToAdd = {}
               userInfo.customerInfo = customerInfoToAdd;
 
