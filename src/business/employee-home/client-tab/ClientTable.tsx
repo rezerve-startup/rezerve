@@ -497,7 +497,7 @@ const ClientTable = (props: any) => {
 
                 if (apptData.datetime.toDate() < Date.now()) {
                   if (employeeClients[`${apptData.customerId}`]) {
-                    if (apptData.status === 'accepted') {
+                    if (apptData.status === 'accepted' || apptData.status === 'completed') {
                       let numVisits = employeeClients[`${apptData.customerId}`] + 1;
 
                       employeeClients[`${apptData.customerId}`].numVisits += 1;
@@ -646,15 +646,6 @@ const ClientTable = (props: any) => {
             </TableBody>
           </Table>
         </TableContainer>
-        <TablePagination
-          rowsPerPageOptions={[5, 10, 25]}
-          component="div"
-          count={props.employeeClients.length}
-          rowsPerPage={rowsPerPage}
-          page={page}
-          onPageChange={handleChangePage}
-          onRowsPerPageChange={handleChangeRowsPerPage}
-        />
       </Paper>
     </div>
   );
