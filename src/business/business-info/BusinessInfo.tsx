@@ -16,7 +16,8 @@ import {
   Radio,
   Grid,
   Snackbar,
-  IconButton
+  IconButton,
+  Typography
 } from '@material-ui/core';
 import CloseIcon from '@material-ui/icons/Close';
 
@@ -25,9 +26,7 @@ import { connect } from 'react-redux';
 import { addEmployeeForBusiness, clearEmployeesForBusiness, setSelectedEmployee } from '../../shared/store/actions';
 import { StoreState } from '../../shared/store/types';
 import BusinessInfoDetails from './business-info-details/BusinessInfoDetails';
-import cat1 from '../../assets/business-pictures/cat1.jpg';
-import cat2 from '../../assets/business-pictures/cat2.jpg';
-import cat3 from '../../assets/business-pictures/cat3.jpg';
+import avatar from '../../assets/avatar.jpg';
 import MapsContainer from './MapsContainer';
 import { LoadScript } from '@react-google-maps/api';
 import { Business } from '../../models/Business.interface';
@@ -449,9 +448,7 @@ class BusinessInfo extends React.Component<any, BusinessInfoState> {
     const { classes } = this.props;
 
     const businessPictures = [
-      { imageUrl: cat1 },
-      { imageUrl: cat2 },
-      { imageUrl: cat3 },
+      { imageUrl: avatar}
     ];
 
     return (
@@ -459,21 +456,9 @@ class BusinessInfo extends React.Component<any, BusinessInfoState> {
         {this.state.businessInfo !== undefined ? (
           <div>
             <div className={classes.businessOverview}>
-              <div className={classes.carouselContainer}>
-                <Carousel 
-                  navButtonsAlwaysVisible={true} autoPlay={false}
-                >
-                  {businessPictures.map((businessPicture, i) => (
-                    <Paper key={i} elevation={0}>
-                      <img
-                        className={classes.businessPicture}
-                        src={businessPicture.imageUrl}
-                        alt=""
-                      />
-                    </Paper>
-                  ))}
-                </Carousel>
-              </div>
+              {/* <div className={classes.carouselContainer}>
+                    Business Pictures could go here
+                  </div> */}
 
               <div className={classes.businessInformation}>
                 {/* The value that is being updated dynamically via state changes */}
@@ -511,7 +496,9 @@ class BusinessInfo extends React.Component<any, BusinessInfoState> {
                   <b>ABOUT US</b>
                 </div>
                 <div className={classes.aboutContent}>
+                  <Typography align="center">
                   {this.state.businessInfo.description}
+                  </Typography>
                 </div>
               </div>
 

@@ -93,7 +93,6 @@ interface HeadCell {
 }
 
 const headCells: HeadCell[] = [
-  { id: 'name', numeric: false, disablePadding: true, label: 'Client Name' },
   {
     id: 'numVisits',
     numeric: true,
@@ -142,6 +141,11 @@ function EnhancedTableHead(props: EnhancedTableProps) {
             inputProps={{ 'aria-label': 'select all desserts' }}
           />
         </TableCell>
+
+        <TableCell align="left">
+          <Typography align="left">Select All</Typography> 
+        </TableCell>
+
         {headCells.map((headCell) => (
           <TableCell
             key={headCell.id}

@@ -217,6 +217,8 @@ export default function EmployeeTab(props: any) {
             })
           }
           </TabPanel>
+          </SwipeableViews>
+          <SwipeableViews>
           <TabPanel value={value} index={1}>
           {employeeRequests.map((empR, index) => {
             const id = employeeReqIds[index]
@@ -236,7 +238,7 @@ export default function EmployeeTab(props: any) {
                       </div>
                     </CardContent>
                     <CardActions>
-                      <div className={classes.button2}>
+                      <div className={classes.button}>
                       <button  onClick={() => {acceptRequest(id, props.businessId)}}>Add</button>
                       <button  onClick={() => {removeRequest(id, props.businessId)}}>Remove</button>
                       </div>
@@ -247,7 +249,7 @@ export default function EmployeeTab(props: any) {
             })
           }
           </TabPanel>
-        </SwipeableViews>
+          </SwipeableViews>
       </Box>
     </div>
   );

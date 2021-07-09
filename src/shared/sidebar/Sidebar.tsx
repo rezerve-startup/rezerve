@@ -81,12 +81,6 @@ const sidebarDataWithoutLogout = [
     icon: <Help />,
     cName: 'nav-text',
   },
-  {
-    title: 'Settings',
-    path: '/settings',
-    icon: <Settings />,
-    cName: 'nav-text',
-  },
 ];
 
 function mapStateToProps(state: StoreState) {
@@ -221,10 +215,10 @@ const Sidebar = (props: any ) => {
             <ListItemText className={classes.listText} primary={obj.title} />
           </MenuItem>
         ))}
-        <MenuItem onClick={openOnClick}>
+        {/* <MenuItem onClick={openOnClick}>
           <ListItemIcon className={classes.listIcon}>{<AccountCircle/>}</ListItemIcon>
           <ListItemText className={classes.listText} primary="Edit Profile"/>
-        </MenuItem>
+        </MenuItem> */}
         <ListItem button={true} onClick={() => logoutUser()}>
           <ListItemIcon className={classes.listIcon}>{<ExitToApp />}</ListItemIcon>
           <ListItemText className={classes.listText} primary={'Logout'} />
@@ -277,10 +271,10 @@ const Sidebar = (props: any ) => {
                   }
                 }
             })}
-            <MenuItem onClick={openOnClick}>
+            {/* <MenuItem onClick={openOnClick}>
                 <ListItemIcon className={classes.listIcon}>{<AccountCircle/>}</ListItemIcon>
                 <ListItemText className={classes.listText} primary="Edit Profile"/>
-            </MenuItem>
+            </MenuItem> */}
             <ListItem button={true} onClick={() => logoutUser()}>
               <ListItemIcon className={classes.listIcon}>{<ExitToApp />}</ListItemIcon>
               <ListItemText className={classes.listText} primary={'Logout'} />
