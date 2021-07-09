@@ -75,12 +75,6 @@ const sidebarDataWithoutLogout = [
     icon: <CalendarViewDay />,
     cName: 'nav-text',
   },
-  {
-    title: 'Help',
-    path: '/help',
-    icon: <Help />,
-    cName: 'nav-text',
-  },
 ];
 
 function mapStateToProps(state: StoreState) {
@@ -215,10 +209,10 @@ const Sidebar = (props: any ) => {
             <ListItemText className={classes.listText} primary={obj.title} />
           </MenuItem>
         ))}
-        {/* <MenuItem onClick={openOnClick}>
-          <ListItemIcon className={classes.listIcon}>{<AccountCircle/>}</ListItemIcon>
-          <ListItemText className={classes.listText} primary="Edit Profile"/>
-        </MenuItem> */}
+        <MenuItem onClick={openOnClick}>
+          <ListItemIcon className={classes.listIcon}>{<Help/>}</ListItemIcon>
+          <ListItemText className={classes.listText} primary="Help"/>
+        </MenuItem>
         <ListItem button={true} onClick={() => logoutUser()}>
           <ListItemIcon className={classes.listIcon}>{<ExitToApp />}</ListItemIcon>
           <ListItemText className={classes.listText} primary={'Logout'} />
@@ -271,16 +265,16 @@ const Sidebar = (props: any ) => {
                   }
                 }
             })}
-            {/* <MenuItem onClick={openOnClick}>
-                <ListItemIcon className={classes.listIcon}>{<AccountCircle/>}</ListItemIcon>
-                <ListItemText className={classes.listText} primary="Edit Profile"/>
-            </MenuItem> */}
+            <MenuItem onClick={openOnClick}>
+            <ListItemIcon className={classes.listIcon}>{<Help/>}</ListItemIcon>
+            <ListItemText className={classes.listText} primary="Help"/>
+          </MenuItem>
             <ListItem button={true} onClick={() => logoutUser()}>
               <ListItemIcon className={classes.listIcon}>{<ExitToApp />}</ListItemIcon>
               <ListItemText className={classes.listText} primary={'Logout'} />
             </ListItem>
           </List>
-        </div>
+        </div>z
       </SwipeableDrawer>
     );
 
@@ -362,72 +356,35 @@ const Sidebar = (props: any ) => {
 
         <Dialog
           open={open}
-          fullScreen={fullscreen}
+          fullScreen={false}
           className={classes.dialog}
         >
           <DialogContent className={classes.profilePage}>
-          <DialogActions className={classes.close}>
-              <Close onClick={handleClose} fontSize="large"/>
-          </DialogActions>
-
-          <Avatar src="../../assets/avatar.jpg" className={classes.image} />
-             
-          {editInfo ? (
-            <div>
-              <Typography variant="h5">
-                  {userName}   
+            {/* <Divider className={classes.Divider}/> */}
+          <DialogActions >
+          <Typography style={{fontSize: "30pt", left: "20px", position: "absolute"}} variant="h3" align="left">
+                  Help   
               </Typography>
+              <Close className={classes.close} onClick={handleClose} fontSize="large"/>
+          </DialogActions>
+            <div>
+              
 
               <Divider className={classes.Divider}/>
 
-              <Typography> 
-                <span className={classes.label}>Account Details</span>
+              <Typography variant="subtitle1" align="center"> 
+                <p>
+                  Thank you for all your support and cooperation as we 
+                  continue to expand and develop our product in creating
+                  an improved experience between stylists and their customers. <br/><br/>
 
-                <Typography className={classes.label} variant="subtitle2">Email Address: {emailAddress} </Typography>
-                
-                <Typography className={classes.label} variant="subtitle2">Phone Number: {phoneNumber} </Typography>
-
+                  Reliability is our top priority, and we value any opportunity to assist
+                  our users with any issues surrounding ReZerve.<br/><br/>
+                  For any support inquiries, please email: <br/>
+                  <a href="mailto: rezerve.help@gmail.com" style={{color: "#3087de", fontWeight: "bold"}}>rezerve.help@gmail.com</a>
+                </p> 
               </Typography>
             </div>
-          ) : (
-          // Edit/Update Description
-          <>
-            <Typography variant="h5">
-                {userName}   
-            </Typography>
-
-            <Divider className={classes.Divider}/>
-            <Typography> 
-              <span className={classes.label}>Account Details</span>
-            </Typography>
-                    
-            <form autoComplete="off" style={{ padding: 10 }}>
-              <TextField
-                className={classes.label}
-                label="Email Address"
-                id="edit-email-address"
-                value={emailAddress}
-                onChange={(e) => handleEmailChange(e)}
-                InputLabelProps={{className : classes.dataInput}} 
-                InputProps={{ className: classes.dataInput}}
-              />
-            </form>
-            <form autoComplete="off" style={{ padding: 10 }}>
-              <TextField
-                className={classes.label}
-                label="Phone Number"
-                id="edit-phone-number"
-                value={phoneNumber}
-                onChange={(e) => handlePhoneChange(e)}
-                InputLabelProps={{className : classes.dataInput}} 
-                InputProps={{ className: classes.dataInput}}
-              />
-            </form>
-          </>
-          )}
-          <Typography variant="caption" className={classes.edit} onClick={handleDialog}>
-            {editInfo ? (<a>EDIT</a>) : (<a>SAVE CHANGES</a>)}
-          </Typography>
         </DialogContent>
       </Dialog>
       </div>
@@ -498,8 +455,12 @@ const useStyles = makeStyles((theme) => ({
     },
   },
   close: {
-    // Theme Color, or use css color in quote
-    fontSize: '30pt'
+    color: theme.palette.primary.light,
+    fontSize: '30pt',
+    '&:hover': {
+      color: theme.palette.primary.main,
+      cursor: "pointer"
+    },
   },
 
   image: {
