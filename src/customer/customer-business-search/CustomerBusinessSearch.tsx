@@ -33,6 +33,9 @@ import { addBusinessFound, clearBusinessesFound, setSelectedEmployee, clearEmplo
 import { Business } from '../../models/Business.interface';
 
 import cat1 from '../../assets/cat1.jpg';
+import Hair from '../../assets/business-card-covers/Hair.jpg'
+import Barber from '../../assets/business-card-covers/Barber.jpg'
+import Nail from '../../assets/business-card-covers/Nail.jpg'
 import algoliasearch from 'algoliasearch';
 
 type CustomerBusinessSearchState = {
@@ -377,6 +380,16 @@ class CustomerBusinessSearch extends React.Component<
               </div>
 
               {this.props.foundBusinesses.map((business, i) => {
+                var imageType = cat1
+                if (business.businessInfo.type === "Hair"){
+                  imageType = Hair
+                }
+                else if (business.businessInfo.type === "Barber"){
+                  imageType = Barber
+                }
+                else if (business.businessInfo.type === "Nail"){
+                  imageType = Nail
+                }
                 return (
                   <Card className={classes.businessInfoPreview} key={i}>
                     <CardActionArea
@@ -384,7 +397,7 @@ class CustomerBusinessSearch extends React.Component<
                       onClick={() => this.selectBusiness(business)}
                     >
                       <CardMedia
-                        image={cat1}
+                        image={imageType}
                         style={{ height: '100%', position: 'relative' }}
                       >
                         <div className={classes.previewBusinessTitle}>
