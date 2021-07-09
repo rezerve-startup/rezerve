@@ -208,6 +208,7 @@ class BusinessSignUp extends React.Component<any, State> {
     } else {
       console.log('Invalid form');
     }
+    window.location.reload();
   };
 
   handleSignUp = () => {
@@ -666,7 +667,7 @@ class BusinessSignUp extends React.Component<any, State> {
                             type="submit"
                             loading={this.state.loading}
                             onClick={() => {
-                              console.log(this.state.name);
+                              //console.log(this.state.name);
                               //Index the new business name to Algolia Search
                               //const objects = [{
                               //  objectID: docRef.id,
@@ -743,8 +744,8 @@ const styles = (theme: Theme) =>
       boxShadow: 'none',
       marginTop: '10px',
       '&:hover': {
-        backgroundColor: theme.palette.secondary.dark,
-        color: theme.palette.primary.light,
+        backgroundColor: theme.palette.primary.main,
+        color: 'white',
         boxShadow: 'none',
       },
     },

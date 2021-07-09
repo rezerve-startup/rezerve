@@ -262,6 +262,7 @@ class CustomerBusinessSearch extends React.Component<
 
     const autocomplete = ({hits, currentRefinement, refine }) => (
       <div>
+        {console.log(hits)}
       <Autocomplete
           freeSolo
           id="combo-box-demo"

@@ -268,30 +268,10 @@ class CustomerSignUp extends React.Component<any, State> {
                 console.log(e);
               })
               .finally(() => {
-                // this.setState({
-                //   ...this.state,
-                //   loading: false,
-                //   snackbar: {
-                //     open: true,
-                //     message: 'Successfully created your account',
-                //     type: "success",
-                //   },
-                // });
-
-                //auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL)
-                //.then(() => {
-                  auth
-                    .signInWithEmailAndPassword(emailToUse, passwordToUse)
-                    .then((userCreds) => {
-                      if (userCreds !== null && userCreds.user) {
-                        const user = userCreds.user;
-                        this.dispatchUpdateUser(user)
-                      }
-                      this.props.handleSignUpClose()
-                      this.setState({ ...this.state, loading: false, open: false })
-                    });
-                  });
-              //});
+                this.props.handleSignUpClose();
+                this.setState({ ...this.state, loading: false, open: false });
+                window.location.reload();
+              });
           })
           .catch((e) => {
             console.log(e);
