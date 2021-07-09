@@ -85,8 +85,8 @@ class CustomerBusinessSearch extends React.Component<
       userLongitude: this.props.curLongitude,
       count: 5,
       miles: 0,
-      hidden: true,
-      buttonValue: 'by Name',
+      hidden: false,
+      buttonValue: 'by City',
     };
   }
 
