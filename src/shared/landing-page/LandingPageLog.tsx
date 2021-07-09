@@ -161,13 +161,13 @@ const LandingPageLoggedIn = (props: any) => {
           onChange={handleTabChange}
           className={classes.navItem}
         >
-          <Tab label="Hair" icon={<FaceIcon />} {...a11yProps(0)} />
+          <Tab label="Hair"{...a11yProps(0)} />
           <Divider orientation="vertical" flexItem />
-          <Tab label="Nail" icon={<PanToolIcon />} {...a11yProps(2)} />
+          <Tab label="Nail"{...a11yProps(2)} />
           <Divider orientation="vertical" flexItem />
-          <Tab label="Barber" icon={<EmojiPeopleIcon />} {...a11yProps(4)} />
+          <Tab label="Barber"{...a11yProps(4)} />
           <Divider orientation="vertical" flexItem />
-          <Tab label="House Calls" icon={<HomeIcon />} {...a11yProps(6)} />
+          <Tab label="House Calls"{...a11yProps(6)} />
         </Tabs>
       </AppBar>
 
