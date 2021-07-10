@@ -111,10 +111,13 @@ export default function CheckoutForm(props) {
 
     const cardElement = elements!.getElement('card');
     stripe!
-      .confirmCardPayment(clientSecret, {
+      .confirmCardSetup(clientSecret, {
         payment_method: {
           card: cardElement!,
         },
+      },
+      {
+        handleActions: false
       })
       .then((result) => {
         if (result.error) {
@@ -124,7 +127,7 @@ export default function CheckoutForm(props) {
           setError(null);
           setSucceeded(true);
           setSnackSeverity('success');
-          setSnackMessage('Payment processed');
+          setSnackMessage('Card processed');
           props.paymentSuccess(true);
         }
       })
