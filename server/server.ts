@@ -16,16 +16,14 @@ app.use(cors());
 app.post('/create-payment-intent', async (req, res) => {
   const price = req.body; //JSON sent in from CheckoutForm.tsx 
 
-  // const customer = await stripe.customers.create({
-    // source: tokenized mastercard,
-    // email: email here, 
-//  });
+  const customer = await stripe.customers.create();
 
   // Create a PaymentIntent with the order amount and currency
-  const paymentIntent = await stripe.paymentIntents.create({
-    amount: 75,
+  const setupIntent = await stripe.setupIntents.create({
+    amount: 95,
     currency: 'usd',
-	description: 'Rezerve Booking Fee'
+	  description: 'Rezerve Booking Fee',
+    customer: customer.id
   });
 
   // Transfer to business
@@ -37,7 +35,7 @@ app.post('/create-payment-intent', async (req, res) => {
   // }); 
 
   res.send({
-    clientSecret: paymentIntent.client_secret,
+    clientSecret: setupIntent.client_secret,
   });
 });
 
