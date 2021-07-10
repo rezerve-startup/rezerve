@@ -111,7 +111,7 @@ export default function CheckoutForm(props) {
 
     const cardElement = elements!.getElement('card');
     stripe!
-      .confirmCardSetup(clientSecret, {
+      .confirmCardPayment(clientSecret, {
         payment_method: {
           card: cardElement!,
         },
