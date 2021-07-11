@@ -22,10 +22,6 @@ app.post('/create-payment-intent', async (req, res) => {
   const setupIntent = await stripe.setupIntents.create({
     customer: customer.id,
     description: "ReZerve Booking Fee",
-    single_use: {
-      amount: 95,
-      currency: 'usd'
-    }
   });
 
   res.send({
