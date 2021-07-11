@@ -20,19 +20,13 @@ app.post('/create-payment-intent', async (req, res) => {
 
   // Create a PaymentIntent with the order amount and currency
   const setupIntent = await stripe.setupIntents.create({
-    amount: 95,
-    currency: 'usd',
-	  description: 'Rezerve Booking Fee',
-    customer: customer.id
+    customer: customer.id,
+    description: "ReZerve Booking Fee",
+    single_use: {
+      amount: 95,
+      currency: 'usd'
+    }
   });
-
-  // Transfer to business
-  //const transfer =  await strip.tranfer.create({ 
-    // amount: ,
-    // currency: ,
-    // destination: `{{CONNECTED_STRIPE_ACCOUNT_ID}}`,
-    // transfer_group: `{id}` ,
-  // }); 
 
   res.send({
     clientSecret: setupIntent.client_secret,
