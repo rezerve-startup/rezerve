@@ -12,7 +12,7 @@ app.use(express.static('.'));
 app.use(express.json());
 app.use(cors());
 
-
+//Creates Setup Intent at Checkout
 app.post('/create-payment-intent', async (req, res) => {
   const price = req.body; //JSON sent in from CheckoutForm.tsx 
 
@@ -28,6 +28,72 @@ app.post('/create-payment-intent', async (req, res) => {
     clientSecret: setupIntent.client_secret,
   });
 });
+
+//Accepts payment from previous Setup Intent
+app.post("/charge-card-off-session", async (req, res) => {
+  let paymentIntent, customer;
+  try {
+    // You need to attach the PaymentMethod to a Customer in order to reuse
+    // Since we are using test cards, create a new Customer here
+    // You would do this in your payment flow that saves cards
+    customer = await stripe.customers.create({
+      payment_method: req.body.paymentMethod
+    });
+
+    // List the customer's payment methods to find one to charge
+    const paymentMethods = await stripe.paymentMethods.list({
+      customer: customer.id,
+      type: "card"
+    });
+
+    // Create and confirm a PaymentIntent with the order amount, currency, 
+    // Customer and PaymentMethod ID
+    paymentIntent = await stripe.paymentIntents.create({
+      amount: 95,
+      currency: "usd",
+      payment_method: paymentMethods.data[0].id,
+      customer: customer.id,
+      off_session: true,
+      confirm: true
+    });
+
+    res.send({
+      succeeded: true,
+      clientSecret: paymentIntent.client_secret,
+      publicKey: process.env.STRIPE_PUBLIC_KEY
+    });
+  } catch (err) {
+    if (err.code === "authentication_required") {
+      // Bring the customer back on-session to authenticate the purchase
+      // You can do this by sending an email or app notification to let them know
+      // the off-session purchase failed
+      // Use the PM ID and client_secret to authenticate the purchase
+      // without asking your customers to re-enter their details
+      res.send({
+        error: "authentication_required",
+        paymentMethod: err.raw.payment_method.id,
+        clientSecret: err.raw.payment_intent.client_secret,
+        publicKey: process.env.STRIPE_PUBLIC_KEY,
+        amount: 95,
+        card: {
+          brand: err.raw.payment_method.card.brand,
+          last4: err.raw.payment_method.card.last4
+        }
+      });
+    } else if (err.code) {
+      // The card was declined for other reasons (e.g. insufficient funds)
+      // Bring the customer back on-session to ask them for a new payment method
+      res.send({
+        error: err.code,
+        clientSecret: err.raw.payment_intent.client_secret,
+        publicKey: process.env.STRIPE_PUBLIC_KEY,
+      });
+    } else {
+      console.log("Unknown error occurred", err);
+    }
+  }
+});
+
 
 // Use for live site
 // tslint:disable-next-line: no-console
