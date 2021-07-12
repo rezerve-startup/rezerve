@@ -16,7 +16,7 @@ import ReactDOM from 'react-dom';
 ReactDOM.render(
   <Thumbnail width={250}
              height={250}
-             page="https://facebook.github.io/react/docs/getting-started.html"
+             page="https://rezerve-startup.herokuapp.com/preview"
              scale={4} />,
   document.getElementById('root')
 )
