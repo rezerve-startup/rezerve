@@ -2,12 +2,6 @@ import { Button, createStyles, makeStyles, Theme } from '@material-ui/core';
 import logo from './unknown.png';
 import React, { useState } from 'react';
 import Typography from '@material-ui/core/Typography';
-import List from '@material-ui/core/List';
-import ListItem from '@material-ui/core/ListItem';
-import IconButton from '@material-ui/core/IconButton';
-import Grid from '@material-ui/core/Grid';
-import ListItemText from '@material-ui/core/ListItemText';
-import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
 import FiberManualRecordRoundedIcon from '@material-ui/icons/FiberManualRecordRounded';
 const useStyles = makeStyles((theme: Theme) =>
 	createStyles({
@@ -132,11 +126,17 @@ function Preview() {
 			
           
 			<div className={classes.buttonDiv}>
-			<Button className={classes.previewButton}type="submit" variant="contained"  href = {"/LandingPage"}>
+			<Button className={classes.previewButton}type="submit" variant="contained"  href = {"/business-sign-up"}>
 				Get Started Now
 				</Button>
+			
 				</div>
 		</div>
+/*	<meta   property="og:title"  content="Example Title" />
+				<meta   name="image"   property="og:image"   content="%PUBLIC_URL%/fish.png" />
+				<meta   name="author"   content="Example Author" />
+				<meta   property="og:description"   content="Example Description"/>
+				<meta   property="og:url"   content="https://rezerve-startup.herokuapp.com/preview" />*/
 		/*<List dense={dense}>
               
                 <ListItem>
@@ -156,3 +156,4 @@ function Preview() {
 
 }
 export default Preview;
+
