@@ -26,23 +26,18 @@ app.post('/create-payment-intent', async (req, res) => {
 
   res.send({
     clientSecret: setupIntent.client_secret,
+    cID: customer.id
   });
 });
 
 //Accepts payment from previous Setup Intent
 app.post("/charge-card-off-session", async (req, res) => {
-  let paymentIntent, customer;
+  let paymentIntent;
+  const cID = req.body
   try {
-    // You need to attach the PaymentMethod to a Customer in order to reuse
-    // Since we are using test cards, create a new Customer here
-    // You would do this in your payment flow that saves cards
-    customer = await stripe.customers.create({
-      payment_method: req.body.paymentMethod
-    });
-
     // List the customer's payment methods to find one to charge
     const paymentMethods = await stripe.paymentMethods.list({
-      customer: customer.id,
+      customer: cID,
       type: "card"
     });
 
@@ -52,7 +47,7 @@ app.post("/charge-card-off-session", async (req, res) => {
       amount: 95,
       currency: "usd",
       payment_method: paymentMethods.data[0].id,
-      customer: customer.id,
+      customer: cID,
       off_session: true,
       confirm: true
     });

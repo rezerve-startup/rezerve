@@ -117,6 +117,7 @@ export default function CheckoutForm(props) {
         },
       },
       {
+    
       })
       .then((result) => {
         if (result.error) {
