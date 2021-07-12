@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect } from 'react';
+import React, {  useEffect } from 'react';
 import { Link, Redirect } from 'react-router-dom';
 import {
   AppBar,
@@ -11,15 +11,10 @@ import {
   Grid,
   Divider,
   Typography,
-  Button,
   CircularProgress,
-  LinearProgress,
-  FormControl,
-  Select,
 } from '@material-ui/core';
 import SignUpPage from '../sign-up/SignUpPage'
 import HomeIcon from '@material-ui/icons/Home';
-import LocationOnIcon from '@material-ui/icons/LocationOn';
 //Extra
 import FaceIcon from '@material-ui/icons/Face';
 import PanToolIcon from '@material-ui/icons/PanTool';
@@ -36,7 +31,7 @@ import {
 } from '../../shared/store/actions';
 import CustomerBusinessSearch from '../../customer/customer-business-search/CustomerBusinessSearch';
 import { StoreState} from '../store/types';
-import { connect, useDispatch, useSelector} from 'react-redux';
+import { connect} from 'react-redux';
 import LoginDefault from '../login/loginDefault';
 
 //import Sidebar from '../shared/sidebar/sidebar';
@@ -116,9 +111,7 @@ function a11yProps(index: any) {
     'aria-controls': `scrollable-prevent-tabpanel-${index}`,
   };
 }
-type State = {
 
-}
 function mapStateToProps(state: StoreState) {
   return ({
     user: state.system.user,
@@ -139,12 +132,8 @@ const LandingPageDefault = (props: any) => {
   const [redirectToCustomer, setRedirectToCustomer] = React.useState(false);
   const [redirectToEmployee, setRedirectToEmployee] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
-  const [lat, setLat] = React.useState(0);
-  const [long, setLong] = React.useState(0);
   const [didMount, setDidMount] = React.useState(false);
 
-  const stateLatitude = props.curLatitude;
-  const stateLongitude = props.curLongitude;
   const locationStatus = props.locStatus;
 
   const dispatchLocationStatus = (status: boolean) => {
@@ -227,9 +216,6 @@ const LandingPageDefault = (props: any) => {
     let lat = position.coords.latitude;
     let long = position.coords.longitude;
     
-    setLat(lat);
-    setLong(long);
-    
     dispatchLocation(lat, long);
     dispatchLocationStatus(true);
 
@@ -286,13 +272,13 @@ const LandingPageDefault = (props: any) => {
                 onChange={handleTabChange}
                 className={classes.navItem}
               >
-                <Tab label="Hair" icon={<FaceIcon />} {...a11yProps(0)} />
+                <Tab label="Hair"{...a11yProps(0)} />
                 <Divider orientation="vertical" flexItem />
-                <Tab label="Nail" icon={<PanToolIcon />} {...a11yProps(2)} />
+                <Tab label="Nail"{...a11yProps(2)} />
                 <Divider orientation="vertical" flexItem />
-                <Tab label="Barber" icon={<EmojiPeopleIcon />} {...a11yProps(4)} />
+                <Tab label="Barber"{...a11yProps(4)} />
                 <Divider orientation="vertical" flexItem />
-                <Tab label="House Calls" icon={<HomeIcon />} {...a11yProps(6)} />
+                <Tab label="House Calls"{...a11yProps(6)} />
               </Tabs>
             </AppBar>
           </div>
@@ -319,7 +305,7 @@ const LandingPageDefault = (props: any) => {
                     <CustomerBusinessSearch tabSelected={"Barber"}/>
                   </TabPanel>
                   <TabPanel tabValue={tabValue} index={6}>
-                    <CustomerBusinessSearch tabSelected={"House Calls"}/>
+                    <CustomerBusinessSearch tabSelected={"House Call"}/>
                   </TabPanel>
                 </div>)}
       </div>

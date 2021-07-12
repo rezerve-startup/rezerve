@@ -146,7 +146,7 @@ class AvailablityCard extends React.Component<Props, State> {
                     checked={item.enabled}
                     onChange={(e) => this.updateEnabled(e, index)}
                   />
-                  <Typography className={classes.dayText}>{item.day}</Typography>
+                  <Typography className={classes.dayText}>{item.day.substring(0,3) + '.'}</Typography>
                   <div className={classes.hourlyAvailability}>
                     <TextField
                       id="time"

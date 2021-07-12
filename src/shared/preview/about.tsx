@@ -1,6 +1,6 @@
 import { Button, createStyles, makeStyles, Theme } from '@material-ui/core';
 import logo from './unknown.png';
-import React, { useState } from 'react';
+import React from 'react';
 import Typography from '@material-ui/core/Typography';
 import FiberManualRecordRoundedIcon from '@material-ui/icons/FiberManualRecordRounded';
 const useStyles = makeStyles((theme: Theme) =>

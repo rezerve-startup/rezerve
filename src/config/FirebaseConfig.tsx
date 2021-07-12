@@ -26,7 +26,7 @@ export const firestore = firebase.firestore();
 
 export const unsubscribe = auth.onAuthStateChanged((user) => {
   store.dispatch(setAuthChanging(true));
-  //console.log(user);
+  console.log("user: " + user);
   if (user) {
     firestore
       .collection('users')
@@ -38,10 +38,10 @@ export const unsubscribe = auth.onAuthStateChanged((user) => {
           firestore.collection('customers').doc(userInfo.customerId).get()
             .then((customerObj) => {
               let customerInfo = customerObj.data();
-
+              console.log(customerInfo);
               let customerInfoToAdd = {}
               userInfo.customerInfo = customerInfoToAdd;
-
+              console.log( "UseInfo: " + userInfo)
               store.dispatch(setUserCustomerInfo(userInfo));
               store.dispatch(setAuthChanging(false));
             })

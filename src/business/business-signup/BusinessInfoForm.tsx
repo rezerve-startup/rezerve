@@ -34,6 +34,9 @@ const styles = (theme: Theme) =>
       textAlign: 'center',
       fontSize: 24,
     },
+    typo: {
+      color: theme.palette.primary.main
+    }
   });
 
 // tslint:disable-next-line: no-empty-interface
@@ -63,7 +66,7 @@ interface RootState {
   };
 }
 
-type Props = NonStyleProps & WithStyles<'root' | 'title' | 'card'>;
+type Props = NonStyleProps & WithStyles<'root' | 'title' | 'card' | 'typo'>;
 
 const DecoratedBusinessInfoForm = withStyles(styles, { withTheme: true })(
   class BusinessInfoForm extends React.Component<Props, RootState> {
@@ -165,7 +168,6 @@ const DecoratedBusinessInfoForm = withStyles(styles, { withTheme: true })(
 
     render() {
       const { classes } = this.props;
-      const { errors } = this.state;
 
       return (
         <div className={classes.root}>
@@ -180,6 +182,7 @@ const DecoratedBusinessInfoForm = withStyles(styles, { withTheme: true })(
                 {this.props.title}
               </Typography>
               <Typography
+                className={classes.typo}
                 variant="caption"
                 component="p"
                 color="textSecondary"
@@ -201,7 +204,7 @@ const DecoratedBusinessInfoForm = withStyles(styles, { withTheme: true })(
                     variant="outlined"
                   />
                 </Grid>
-                <Grid item={true} xs={3}>
+                <Grid item={true} xs={8}>
                 <FormControl variant="outlined" required fullWidth={true}> 
                     <InputLabel>Business Type</InputLabel>
                     <Select

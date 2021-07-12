@@ -17,7 +17,7 @@ import {
   useTheme
 } from '@material-ui/core';
 import CloseIcon from '@material-ui/icons/Close';
-import cat1 from '../../../assets/business-pictures/cat1.jpg';
+import avatar from '../../../assets/avatar.jpg';
 import { connect } from 'react-redux';
 import { StoreState } from '../../../shared/store/types';
 import { setSelectedEmployee, addSelectedEmployeeAppointment, setBookDialogStatus } from '../../../shared/store/actions';
@@ -464,7 +464,7 @@ class BusinessInfoDetails extends React.Component<any, any> {
                       <Grid container={true} item={true} xs={4} key={employee.id} className={classes.employeeSelection}>
                         <img
                           className={classes.businessPicture}
-                          src={cat1}
+                          src={avatar}
                           alt=''
                         />
                         <div>

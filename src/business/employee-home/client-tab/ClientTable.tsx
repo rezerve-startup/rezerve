@@ -93,7 +93,6 @@ interface HeadCell {
 }
 
 const headCells: HeadCell[] = [
-  { id: 'name', numeric: false, disablePadding: true, label: 'Client Name' },
   {
     id: 'numVisits',
     numeric: true,
@@ -142,6 +141,11 @@ function EnhancedTableHead(props: EnhancedTableProps) {
             inputProps={{ 'aria-label': 'select all desserts' }}
           />
         </TableCell>
+
+        <TableCell align="left">
+          <Typography align="left">Select All</Typography> 
+        </TableCell>
+
         {headCells.map((headCell) => (
           <TableCell
             key={headCell.id}
@@ -497,7 +501,7 @@ const ClientTable = (props: any) => {
 
                 if (apptData.datetime.toDate() < Date.now()) {
                   if (employeeClients[`${apptData.customerId}`]) {
-                    if (apptData.status === 'accepted') {
+                    if (apptData.status === 'accepted' || apptData.status === 'completed') {
                       let numVisits = employeeClients[`${apptData.customerId}`] + 1;
 
                       employeeClients[`${apptData.customerId}`].numVisits += 1;
@@ -562,12 +566,12 @@ const ClientTable = (props: any) => {
     setSelected(newSelected);
   };
 
-  const handleChangePage = (event: unknown, newPage: number) => {
+  const handleChangePage = (event: React.MouseEvent<HTMLButtonElement> | null, newPage: number) => {
     setPage(newPage);
   };
 
   const handleChangeRowsPerPage = (
-    event: React.ChangeEvent<HTMLInputElement>,
+    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
@@ -646,15 +650,6 @@ const ClientTable = (props: any) => {
             </TableBody>
           </Table>
         </TableContainer>
-        <TablePagination
-          rowsPerPageOptions={[5, 10, 25]}
-          component="div"
-          count={props.employeeClients.length}
-          rowsPerPage={rowsPerPage}
-          page={page}
-          onChangePage={handleChangePage}
-          onChangeRowsPerPage={handleChangeRowsPerPage}
-        />
       </Paper>
     </div>
   );

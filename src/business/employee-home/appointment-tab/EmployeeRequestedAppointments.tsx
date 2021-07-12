@@ -27,7 +27,6 @@ import { connect } from 'react-redux';
 import { StoreState } from '../../../shared/store/types';
 import moment from 'moment';
 import image from '../../../assets/avatar.jpg';
-
 import { updateEmployeeAppointmentStatus, setUserEmployeeAppointments } from '../../../shared/store/actions';
 import { firestore } from '../../../config/FirebaseConfig';
 import firebase from 'firebase';
@@ -619,7 +618,6 @@ class EmployeeRequestedAppointments extends React.Component<Props, State> {
       status: appointmentToUpdate.status
     }).then(() => {
       this.dispatchUpdateEmployeeAppointmentStatus(appointmentToUpdate);
-
       if (appointmentToUpdate.customerId !== 'Guest') {
         if (appointmentToUpdate.status === 'cancelled') {
           this.sendMessageToCustomer(`We're sorry, but your appointment on ${appointmentToUpdate.formattedDate} from ${appointmentToUpdate.startTime} - ${appointmentToUpdate.endTime} has been cancelled.`, appointmentToUpdate.customerId);
@@ -627,12 +625,38 @@ class EmployeeRequestedAppointments extends React.Component<Props, State> {
           this.sendMessageToCustomer(`Your appointment on ${appointmentToUpdate.formattedDate} from ${appointmentToUpdate.startTime} - ${appointmentToUpdate.endTime} has been accepted.`, appointmentToUpdate.customerId);
         }
       }
-
+      this.acceptPayment(appointmentToUpdate)
       this.setState({
         acceptAppointmentStatusDialogOpen: false,
         cancelAppointmentStatusDialogOpen: false,
       })
     });
+  }
+
+  acceptPayment(appt : any){
+      // Create PaymentIntent as soon as the page loads
+      // Local testing
+      // http://localhost:4242/charge-card-off-session
+  
+      // Live site
+      // https://rezerve-startup-api.herokuapp.com/charge-card-off-session
+      console.log(appt.cID)
+      window
+        .fetch('https://rezerve-startup-api.herokuapp.com/charge-card-off-session', {
+          // Use one of the links above for local/live
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          
+          body: JSON.stringify({cID : appt.cID}),
+        })
+        .then((res) => {
+          return res.json();
+        })
+        .then((data) => {
+          
+        });
   }
 
   handleOnChangeCustomerMessage(e) {

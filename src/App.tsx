@@ -1,7 +1,6 @@
 import React from 'react';
-import { BrowserRouter as Router, Switch, Route, withRouter, Redirect } from 'react-router-dom';
+import { BrowserRouter as Router, Switch, Route, Redirect } from 'react-router-dom';
 import {
-  colors,
   createMuiTheme,
   createStyles,
   Theme,
@@ -11,7 +10,6 @@ import {
 
 
 import EmployeeHome from './business/employee-home/EmployeeHome';
-import BusinessInfo from './business/business-info/BusinessInfo';
 import BusinessHome from './business/business-home/BusinessHome';
 import BusinessAccountInfo from './business/business-signup/BusinessInfoForm';
 import BusinessSignUp from './business/business-signup/BusinessSignUp';
@@ -22,8 +20,6 @@ import LandingLoggedIn from './shared/landing-page/LandingPageLog';
 import Preview from './shared/preview/about';
 import SignUpPage from './shared/sign-up/SignUpPage';
 import LoginDialog from './shared/login/loginDefault';
-
-import { auth, firestore } from './config/FirebaseConfig';
 import { connect } from 'react-redux';
 import { StoreState, SystemState } from './shared/store/types';
 import { 
@@ -31,7 +27,6 @@ import {
   setUserCustomerInfo, 
   setBusinessAvailability 
 } from './shared/store/actions';
-import TempLoginPage from './shared/TempLoginPage';
 import CustomerAppointmentHome from './customer/customer-appointments/CustomerAppointmentHome';
 import MessagingHome from './shared/messaging/MessagingHome';
 import CustomerSignUp from './customer/customer-signup/CustomerSignup';
@@ -49,7 +44,6 @@ const routes = [
   { path: '/landing-page-loggedIn', component: LandingLoggedIn },
   { path: '/sign-up-page', component: SignUpPage },
   { path: '/customer-sign-up', component: CustomerSignUp },
-  { path: '/temp-login', component: TempLoginPage },
   { path: '/employee-home', component: EmployeeHome },
   { path: '/business-home', component: BusinessHome },
   { path: '/login-page', component: LoginDialog },
@@ -113,7 +107,6 @@ class App extends React.Component<any, SystemState> {
 */
     return (
       <div className={classes.root}>
-        {auth.signOut}
         <ThemeProvider theme={theme}>
           <Router>
             <Switch>
@@ -124,7 +117,6 @@ class App extends React.Component<any, SystemState> {
               <Route path={'/business-personal-info'} exact={true} component={BusinessPersonalInfo}/>
               <Route path={'/sign-up-page'} exact={true} component={SignUpPage}/>
               <Route path={'/customer-sign-up'} exact={true} component={CustomerSignUp}/>
-              <Route path={'/temp-login'} exact={true} component={TempLoginPage}/>
               <Route path={'/appointments'} exact={true} component={CustomerAppointmentHome}/>
               <Route path={'/customer-home'} exact={true} component={LandingLoggedIn}/>
               <Route path={'/employee-home'} exact={true} component={EmployeeHome} />

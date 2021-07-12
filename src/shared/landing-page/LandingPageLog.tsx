@@ -161,29 +161,27 @@ const LandingPageLoggedIn = (props: any) => {
           onChange={handleTabChange}
           className={classes.navItem}
         >
-          <Tab label="Hair" icon={<FaceIcon />} {...a11yProps(0)} />
+          <Tab label="Hair"{...a11yProps(0)} />
           <Divider orientation="vertical" flexItem />
-          <Tab label="Nail" icon={<PanToolIcon />} {...a11yProps(2)} />
+          <Tab label="Nail"{...a11yProps(2)} />
           <Divider orientation="vertical" flexItem />
-          <Tab label="Barber" icon={<EmojiPeopleIcon />} {...a11yProps(4)} />
+          <Tab label="Barber"{...a11yProps(4)} />
           <Divider orientation="vertical" flexItem />
-          <Tab label="House Calls" icon={<HomeIcon />} {...a11yProps(6)} />
+          <Tab label="House Calls"{...a11yProps(6)} />
         </Tabs>
       </AppBar>
 
-      {/*</AppBar>*/}
-
       <TabPanel tabValue={tabValue} index={0}>
-        <CustomerBusinessSearch filter="hair" />
+        <CustomerBusinessSearch tabSelected={"Hair"}/> 
       </TabPanel>
       <TabPanel tabValue={tabValue} index={2}>
-        <CustomerBusinessSearch filter="nails" />
+        <CustomerBusinessSearch tabSelected={"Nail"}/>
       </TabPanel>
       <TabPanel tabValue={tabValue} index={4}>
-        <CustomerBusinessSearch filter="barber" />
+        <CustomerBusinessSearch tabSelected={"Barber"}/>
       </TabPanel>
       <TabPanel tabValue={tabValue} index={6}>
-        <CustomerBusinessSearch filter="houseCall" />
+        <CustomerBusinessSearch tabSelected={"House Call"}/>
       </TabPanel>
     </div>
   );

@@ -16,12 +16,11 @@ import {
   CardActions,
   Snackbar
 } from '@material-ui/core';
-import ArrowForwardIcon from '@material-ui/icons/ArrowForward';
 import { Close } from '@material-ui/icons';
-import { Email, Visibility, VisibilityOff } from '@material-ui/icons';
+import {  Visibility, VisibilityOff } from '@material-ui/icons';
 import MuiAlert, { AlertProps } from '@material-ui/lab/Alert';
 import { connect } from 'react-redux';
-import { auth, firestore } from '../../config/FirebaseConfig';
+import { auth} from '../../config/FirebaseConfig';
 import {
   setUserEmployeeInfo,
   setUserCustomerInfo, 
@@ -29,7 +28,6 @@ import {
 } from '../store/actions';
 import { StoreState } from '../../shared/store/types';
 import Reset from './reset';
-import { Redirect } from 'react-router';
 import firebase from 'firebase';
 import SignUpPage from '../sign-up/SignUpPage';
 
@@ -40,7 +38,7 @@ function Alert(props: AlertProps) {
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {
-      backgroundColor: theme.palette.secondary.dark,
+      backgroundColor: 'white',
       minHeight: '100vh',
       flex: '1'
     },
@@ -65,10 +63,10 @@ const useStyles = makeStyles((theme: Theme) =>
       [theme.breakpoints.up('lg')]:{
         width: '50vw'
       },
-      backgroundColor: theme.palette.secondary.dark,
+      backgroundColor: 'white',
       padding: '4px',
       overflow: 'auto',
-        
+      borderRadius: '25px' 
     },
     formStyle: {
       backgroundColor: 'white'
@@ -125,7 +123,6 @@ function LoginDefault(props) {
   };
 
   const handleSubmit = (event) => {
-    auth.signOut();
     auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL)
       .then(() => {
         auth

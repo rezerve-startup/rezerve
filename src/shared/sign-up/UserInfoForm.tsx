@@ -28,6 +28,9 @@ const styles = (theme: Theme) =>
       textAlign: 'center',
       fontSize: 24,
     },
+    typo: {
+      color: theme.palette.primary.main
+    }
   });
 
 interface Errors {
@@ -58,7 +61,7 @@ interface RootState {
   };
 }
 
-type Props = NonStyleProps & WithStyles<'root' | 'title' | 'card'>;
+type Props = NonStyleProps & WithStyles<'root' | 'title' | 'card' | 'typo'>;
 
 const DecoratedUserInfoForm = withStyles(styles, { withTheme: true })(
   class UserInfoForm extends React.Component<Props, RootState> {
@@ -163,6 +166,7 @@ const DecoratedUserInfoForm = withStyles(styles, { withTheme: true })(
                 { this.props.title }
               </Typography>
               <Typography
+                className={classes.typo}
                 variant="caption"
                 component="p"
                 color="textSecondary"
