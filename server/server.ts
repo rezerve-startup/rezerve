@@ -12,24 +12,6 @@ app.use(express.static('.'));
 app.use(express.json());
 app.use(cors());
 
-//Creates Setup Intent at Checkout
-app.post('/create-payment-intent', async (req, res) => {
-  const price = req.body; //JSON sent in from CheckoutForm.tsx 
-
-  const customer = await stripe.customers.create();
-
-  // Create a PaymentIntent with the order amount and currency
-  const setupIntent = await stripe.setupIntents.create({
-    customer: customer.id,
-    description: "ReZerve Booking Fee",
-  });
-
-  res.send({
-    clientSecret: setupIntent.client_secret,
-    cID: customer.id
-  });
-});
-
 //Accepts payment from previous Setup Intent
 app.post("/charge-card-off-session", async (req, res) => {
   let paymentIntent;
@@ -88,6 +70,26 @@ app.post("/charge-card-off-session", async (req, res) => {
     }
   }
 });
+
+//Creates Setup Intent at Checkout
+app.post('/create-payment-intent', async (req, res) => {
+  const price = req.body; //JSON sent in from CheckoutForm.tsx 
+
+  const customer = await stripe.customers.create();
+
+  // Create a PaymentIntent with the order amount and currency
+  const setupIntent = await stripe.setupIntents.create({
+    customer: customer.id,
+    description: "ReZerve Booking Fee",
+  });
+
+  res.send({
+    clientSecret: setupIntent.client_secret,
+    cID: customer.id
+  });
+});
+
+
 
 
 // Use for live site

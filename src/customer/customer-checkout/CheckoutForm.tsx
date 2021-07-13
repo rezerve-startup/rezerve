@@ -62,8 +62,7 @@ export default function CheckoutForm(props) {
 
     // Live site
     // https://rezerve-startup-api.herokuapp.com/create-payment-intent
-    window
-      .fetch('https://rezerve-startup-api.herokuapp.com/create-payment-intent', {
+    fetch('https://rezerve-startup-api.herokuapp.com/create-payment-intent', {
         // Use one of the links above for local/live
         method: 'POST',
         headers: {
@@ -79,7 +78,6 @@ export default function CheckoutForm(props) {
         setClientSecret(data.clientSecret);
       });
   }, []);
-
   const cardStyle = {
     style: {
       base: {

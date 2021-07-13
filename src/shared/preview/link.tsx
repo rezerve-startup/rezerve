@@ -10,13 +10,13 @@
 </html>*/
 
 import React from 'react';
-import Thumbnail from 'react-thumbnail';
+//import Thumbnail from 'react-thumbnail';
 import ReactDOM from 'react-dom';
  
-ReactDOM.render(
-  <Thumbnail width={250}
-             height={250}
-             page="https://rezerve-startup.herokuapp.com/preview"
-             scale={4} />,
-  document.getElementById('root')
-)
+//  ReactDOM.render(
+// //   <Thumbnail width={250}
+// //              height={250}
+// //              page="https://rezerve-startup.herokuapp.com/preview"
+// //              scale={4} />,
+//   document.getElementById('root')
+// )

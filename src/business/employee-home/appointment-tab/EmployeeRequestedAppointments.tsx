@@ -30,6 +30,10 @@ import image from '../../../assets/avatar.jpg';
 import { updateEmployeeAppointmentStatus, setUserEmployeeAppointments } from '../../../shared/store/actions';
 import { firestore } from '../../../config/FirebaseConfig';
 import firebase from 'firebase';
+import {Elements} from '@stripe/react-stripe-js';
+import {loadStripe} from '@stripe/stripe-js';
+import AcceptPayment from './AcceptPayment'
+import AcceptAppointment from './AcceptAppointment';
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -177,6 +181,7 @@ function mapStateToProps(state: StoreState) {
   });
 }
 
+
 type State = {
   incomingSchedule: IncomingSchedule[];
   acceptAppointmentStatusDialogOpen: boolean;
@@ -309,6 +314,7 @@ class EmployeeRequestedAppointments extends React.Component<Props, State> {
     });
   }
 
+  
   render() {
     const { classes } = this.props;
     return (
@@ -416,6 +422,7 @@ class EmployeeRequestedAppointments extends React.Component<Props, State> {
                     <Typography>${appt.service.price}</Typography>
                   </div>
                   <div className={classes.appointmentActionContainer}>
+                  
                     <Button
                       size="small"
                       color="primary"
@@ -557,15 +564,8 @@ class EmployeeRequestedAppointments extends React.Component<Props, State> {
           )))}
         </div>
 
-        <Dialog open={this.state.acceptAppointmentStatusDialogOpen} onClose={() => this.handleCloseAcceptAppointmentDialog()}>
-          <DialogTitle>Accept Appointment</DialogTitle>
-          <DialogContent>
-            <DialogContentText>Are you sure you would like to accept this appointment?</DialogContentText>
-          </DialogContent>
-          <DialogActions>
-            <Button onClick={() => this.updateAppointmentStatus()}>Yes</Button>
-            <Button onClick={() => this.handleCloseAcceptAppointmentDialog()}>No</Button>
-          </DialogActions>
+        <Dialog open={this.state.acceptAppointmentStatusDialogOpen} onClose={() => this.handleCloseAcceptAppointmentDialog()}> 
+          <AcceptAppointment appt={this.state.selectedAppointment}/>
         </Dialog>
 
         <Dialog open={this.state.cancelAppointmentStatusDialogOpen} onClose={() => this.handleCloseCancelAppointmentDialog()}>
@@ -612,8 +612,7 @@ class EmployeeRequestedAppointments extends React.Component<Props, State> {
 
   updateAppointmentStatus() {
     let appointmentToUpdate = this.state.selectedAppointment;
-    appointmentToUpdate.status = this.state.selectedAction;
-
+    appointmentToUpdate.status = this.state.selectedAction;    
     firestore.collection('appointments').doc(`${appointmentToUpdate.appointmentId}`).update({
       status: appointmentToUpdate.status
     }).then(() => {
@@ -623,40 +622,15 @@ class EmployeeRequestedAppointments extends React.Component<Props, State> {
           this.sendMessageToCustomer(`We're sorry, but your appointment on ${appointmentToUpdate.formattedDate} from ${appointmentToUpdate.startTime} - ${appointmentToUpdate.endTime} has been cancelled.`, appointmentToUpdate.customerId);
         } else if (appointmentToUpdate.status === 'accepted') {
           this.sendMessageToCustomer(`Your appointment on ${appointmentToUpdate.formattedDate} from ${appointmentToUpdate.startTime} - ${appointmentToUpdate.endTime} has been accepted.`, appointmentToUpdate.customerId);
+
         }
+        
       }
-      this.acceptPayment(appointmentToUpdate)
       this.setState({
         acceptAppointmentStatusDialogOpen: false,
         cancelAppointmentStatusDialogOpen: false,
       })
     });
-  }
-
-  acceptPayment(appt : any){
-      // Create PaymentIntent as soon as the page loads
-      // Local testing
-      // http://localhost:4242/charge-card-off-session
-  
-      // Live site
-      // https://rezerve-startup-api.herokuapp.com/charge-card-off-session
-      console.log(appt.cID)
-      window
-        .fetch('https://rezerve-startup-api.herokuapp.com/charge-card-off-session', {
-          // Use one of the links above for local/live
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          
-          body: JSON.stringify({cID : appt.cID}),
-        })
-        .then((res) => {
-          return res.json();
-        })
-        .then((data) => {
-          
-        });
   }
 
   handleOnChangeCustomerMessage(e) {
