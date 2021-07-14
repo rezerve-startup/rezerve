@@ -33,12 +33,12 @@ export default function AcceptPayment(props){
       })
       .then((data) => {
         setClientSecret(data.clientSecret)
-        setPublicKey(data.publicKey)
+        //setPublicKey(data.publicKey)
         setSucceeded(data.succeeded)
       });
     }, []);
 
-    console.log(4, publicKey)
+    console.log(4, succeeded)
 
       const handlePayment = async (ev) => {
         ev.preventDefault();

@@ -41,18 +41,19 @@ app.post('/create-payment', async (req, res) => {
 
   // Create and confirm a PaymentIntent with the order amount, currency, 
   // Customer and PaymentMethod ID
-  const paymentIntent =  await stripe.paymentIntents.create({
-    amount: 95,
-    currency: "usd",
-    payment_method: paymentMethods.data[0].id,
-    customer: cID,
-    off_session: true,
-    confirm: true
-  });
+  // const paymentIntent =  await stripe.paymentIntents.create({
+  //   amount: 95,
+  //   currency: "usd",
+  //   payment_method: paymentMethods.data[0].id,
+  //   customer: cID,
+  //   off_session: true,
+  //   confirm: true
+  // });
 
   res.send({
     succeeded: true,
-    clientSecret: paymentIntent.client_secret
+    //clientSecret: paymentIntent.client_secret
+    //pm: paymentMethods.data[0].id,
   });
 
 
