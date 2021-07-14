@@ -34,10 +34,10 @@ app.post('/create-setup-intent', async (req, res) => {
 app.post('/create-payment', async (req, res) => {
   const cID = req.body
 
-  const paymentMethods = await stripe.paymentMethods.list({
-    customer: cID,
-    type: "card"
-  });
+  // const paymentMethods = await stripe.paymentMethods.list({
+  //   customer: cID,
+  //   type: "card"
+  // });
 
   // Create and confirm a PaymentIntent with the order amount, currency, 
   // Customer and PaymentMethod ID
@@ -50,10 +50,19 @@ app.post('/create-payment', async (req, res) => {
   //   confirm: true
   // });
 
+  const price = req.body; //JSON sent in from CheckoutForm.tsx 
+
+  const customer = await stripe.customers.create();
+
+  // Create a PaymentIntent with the order amount and currency
+  const setupIntent = await stripe.setupIntents.create({
+    customer: customer.id,
+    description: "ReZerve Booking Fee",
+  });
+
   res.send({
-    succeeded: true,
-    //clientSecret: paymentIntent.client_secret
-    //pm: paymentMethods.data[0].id,
+    clientSecret: setupIntent.client_secret,
+    cID: customer.id
   });
 
 
