@@ -6,11 +6,11 @@ const app = express();
 // Takes secret sk_test_....
 const stripe = require('stripe')(`${process.env.STRIPE_API_KEY}`);
 
-var cors = require('cors');
+const cors = require('cors');
 
 app.use(express.static('.'));
 app.use(express.json());
-//app.use(cors());
+app.use(cors());
 
 //Accepts payment from previous Setup Intent
 app.post("/charge-card-off-session", async (req, res) => {
