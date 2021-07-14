@@ -69,7 +69,7 @@ export default function CheckoutForm(props) {
           'Content-Type': 'application/json',
         },
 
-        body: JSON.stringify({ servicePrice: sentPrice }),
+        body: JSON.stringify({ action: 'setupIntent'}),
       })
       .then((res) => {
         return res.json();

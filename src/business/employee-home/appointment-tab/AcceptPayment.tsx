@@ -26,7 +26,7 @@ export default function AcceptPayment(props){
           'Content-Type': 'application/json',
         },
          
-        body: JSON.stringify({cID : props.cID}),
+        body: JSON.stringify({action: 'paymentIntent', cID : props.cID}),
       })
       .then((res) => {
         return res.json();

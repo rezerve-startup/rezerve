@@ -14,8 +14,8 @@ app.use(cors());
 
 //Accepts payment from previous Setup Intent
 app.post('/create-setup-intent', async (req, res) => {
-  const price = req.body; //JSON sent in from CheckoutForm.tsx 
-
+  const action = req.body.action; //JSON sent in from CheckoutForm.tsx 
+  if(action === 'setupIntent'){
   const customer = await stripe.customers.create();
 
   // Create a PaymentIntent with the order amount and currency
@@ -28,23 +28,19 @@ app.post('/create-setup-intent', async (req, res) => {
     clientSecret: setupIntent.client_secret,
     cID: customer.id
   });
-});
-
-//Creates Setup Intent at Checkout
-app.post('/create-payment', async (req, res) => {
-  const cID = req.body
-
-  // const paymentMethods = await stripe.paymentMethods.list({
-  //   customer: cID,
-  //   type: "card"
-  // });
+} else if (action === 'paymentIntent'){
+  const cID = req.body.cID
+  const paymentMethods = await stripe.paymentMethods.list({
+    customer: cID,
+    type: "card"
+  });
 
   // Create and confirm a PaymentIntent with the order amount, currency, 
   // Customer and PaymentMethod ID
-  const paymentIntent =  await stripe.paymentIntents.create({
+  const paymentIntent = await stripe.paymentIntents.create({
     amount: 95,
     currency: "usd",
-    payment_method: "pm_1JCKpFG4OM4l9C1diFEJzudS",
+    payment_method: paymentMethods.data[0].id,
     customer: cID,
     off_session: true,
     confirm: true
@@ -52,12 +48,13 @@ app.post('/create-payment', async (req, res) => {
 
   res.send({
     succeeded: true,
-    clientSecret: paymentIntent.client_secret
-    //pm: paymentMethods.data[0].id,
+    clientSecret: paymentIntent.client_secret,
+    publicKey: process.env.STRIPE_PUBLIC_KEY
   });
-
-
-
+  
+  
+  
+  
   // try {
   //   // List the customer's payment methods to find one to charge
   //   const paymentMethods = await stripe.paymentMethods.list({
@@ -110,8 +107,14 @@ app.post('/create-payment', async (req, res) => {
   //   } else {
   //     console.log("Unknown error occurred", err);
   //   }
-  // }
+  }
 });
+
+//Creates Setup Intent at Checkout
+// app.post('/create-payment', async (req, res) => {
+//   const cID = req.body
+  
+// });
 
 
 
