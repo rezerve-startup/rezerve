@@ -10,7 +10,7 @@ var cors = require('cors');
 
 app.use(express.static('.'));
 app.use(express.json());
-app.use(cors());
+//app.use(cors());
 
 //Accepts payment from previous Setup Intent
 app.post("/charge-card-off-session", async (req, res) => {

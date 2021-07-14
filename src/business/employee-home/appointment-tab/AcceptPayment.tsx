@@ -1,7 +1,6 @@
-import React from 'react'
+import React, {useEffect} from 'react'
 import {useStripe} from '@stripe/react-stripe-js';
 import {Button} from '@material-ui/core';
-import { useEffect } from 'react';
 
 
 export default function AcceptPayment(props){
@@ -19,7 +18,7 @@ export default function AcceptPayment(props){
     useEffect(() => {
       console.log(props.cID)
       
-      window.fetch('https://rezerve-startup-api.herokuapp.com/charge-card-off-session', {
+      fetch('https://rezerve-startup-api.herokuapp.com/charge-card-off-session', {
         // Use one of the links above for local/live
         method: 'POST',
         headers: {
