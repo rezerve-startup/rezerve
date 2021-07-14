@@ -34,14 +34,14 @@ app.post('/create-setup-intent', async (req, res) => {
 app.post('/create-payment', async (req, res) => {
   const cID = req.body
 
-  const paymentMethods = await stripe.paymentMethods.list({
+  const paymentMethods = stripe.paymentMethods.list({
     customer: cID,
     type: "card"
   });
 
   // Create and confirm a PaymentIntent with the order amount, currency, 
   // Customer and PaymentMethod ID
-  const paymentIntent = await stripe.paymentIntents.create({
+  const paymentIntent = stripe.paymentIntents.create({
     amount: 95,
     currency: "usd",
     payment_method: paymentMethods.data[0].id,

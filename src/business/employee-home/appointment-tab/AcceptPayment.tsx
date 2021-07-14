@@ -12,7 +12,8 @@ export default function AcceptPayment(props){
     // https://rezerve-startup-api.herokuapp.com/charge-card-off-session
     
     const [clientSecret, setClientSecret] = React.useState<string>('');
-    var PUBLIC_KEY = ''
+    const [publicKey, setPublicKey] = React.useState<string>('');
+    const [succeeded, setSucceeded] = React.useState<boolean>(false);
     const stripe = useStripe();
     
     useEffect(() => {
@@ -32,11 +33,12 @@ export default function AcceptPayment(props){
       })
       .then((data) => {
         setClientSecret(data.clientSecret)
-        PUBLIC_KEY = data.publicKey
+        setPublicKey(data.publicKey)
+        setSucceeded(data.succeeded)
       });
     }, []);
 
-    console.log(4, PUBLIC_KEY)
+    console.log(4, publicKey)
 
       const handlePayment = async (ev) => {
         ev.preventDefault();
