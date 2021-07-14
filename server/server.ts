@@ -52,8 +52,7 @@ app.post('/create-payment', async (req, res) => {
 
   res.send({
     succeeded: true,
-    clientSecret: paymentIntent.client_secret,
-    publicKey: process.env.STRIPE_PUBLIC_KEY
+    clientSecret: paymentIntent.client_secret
   });
 
 
