@@ -13,7 +13,7 @@ app.use(express.json());
 app.use(cors());
 
 //Accepts payment from previous Setup Intent
-app.post("/charge-card-off-session", async (req, res) => {
+app.post('/create-setup-intent', async (req, res) => {
   const price = req.body; //JSON sent in from CheckoutForm.tsx 
 
   const customer = await stripe.customers.create();
@@ -31,8 +31,7 @@ app.post("/charge-card-off-session", async (req, res) => {
 });
 
 //Creates Setup Intent at Checkout
-app.post('/create-payment-intent', async (req, res) => {
-  let paymentIntent;
+app.post('/create-payment', async (req, res) => {
   const cID = req.body
   try {
     // List the customer's payment methods to find one to charge
@@ -43,7 +42,7 @@ app.post('/create-payment-intent', async (req, res) => {
 
     // Create and confirm a PaymentIntent with the order amount, currency, 
     // Customer and PaymentMethod ID
-    paymentIntent = await stripe.paymentIntents.create({
+    const paymentIntent = await stripe.paymentIntents.create({
       amount: 95,
       currency: "usd",
       payment_method: paymentMethods.data[0].id,

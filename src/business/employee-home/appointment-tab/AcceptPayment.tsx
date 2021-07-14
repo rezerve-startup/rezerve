@@ -18,7 +18,7 @@ export default function AcceptPayment(props){
     useEffect(() => {
       console.log(props.cID)
       
-      fetch('https://rezerve-startup-api.herokuapp.com/create-payment-intent', {
+      fetch('https://rezerve-startup-api.herokuapp.com/create-payment', {
         // Use one of the links above for local/live
         method: 'POST',
         headers: {
