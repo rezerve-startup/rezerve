@@ -160,7 +160,7 @@ const CustomerCheckout = (props: any) => {
   
         <DialogActions>
           <div>
-            {activeStep !== 0 && 
+            {activeStep !== 0 && customerPaid === false &&
               <Button
                 onClick={activeStep === 0 ? handleClose : handleBack}
                 className={classes.backButton}
@@ -169,16 +169,16 @@ const CustomerCheckout = (props: any) => {
               </Button>
             }
   
+            {activeStep === 0 &&
             <Button
-              variant="contained"
-              color="primary"
-              disabled={activeStep === steps.length - 1 ? !customerPaid : false}
-              onClick={
-                activeStep === steps.length - 1 ? props.bookAppointment : handleNext
-              }
-            >
-              {activeStep === steps.length - 1 ? 'Confirm & Book' : 'Next'}
-            </Button>
+            variant="contained"
+            color="primary"
+            onClick={
+              handleNext
+            }
+          >
+            Next
+          </Button>}
           </div>
         </DialogActions>
       </>

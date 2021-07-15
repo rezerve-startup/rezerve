@@ -32,68 +32,89 @@ app.post('/create-setup-intent', async (req, res) => {
   });
 } else if (action === 'paymentIntent'){
   const cID = req.body.cID
-  try {
-    // List the customer's payment methods to find one to charge
-    const paymentMethods = await stripe.paymentMethods.list({
-      customer: cID,
-      type: "card"
-    });
 
-    // Create and confirm a PaymentIntent with the order amount, currency, 
-    // Customer and PaymentMethod ID
-    const paymentIntent = await stripe.paymentIntents.create({
-      amount: 95,
-      currency: "usd",
-      payment_method: paymentMethods.data[0].id,
-      customer: cID,
-      off_session: true,
-      confirm: true
-    });
+  const paymentMethods = await stripe.paymentMethods.list({
+    customer: cID,
+    type: "card"
+  });
 
-    res.send({
-      succeeded: true,
-      clientSecret: paymentIntent.client_secret,
-      publicKey: process.env.STRIPE_PUBLIC_KEY
-    });
-    } catch (err) {
-    if (err.code === "authentication_required") {
-      // Bring the customer back on-session to authenticate the purchase
-      // You can do this by sending an email or app notification to let them know
-      // the off-session purchase failed
-      // Use the PM ID and client_secret to authenticate the purchase
-      // without asking your customers to re-enter their details
-      res.send({
-        error: "authentication_required",
-        paymentMethod: err.raw.payment_method.id,
-        clientSecret: err.raw.payment_intent.client_secret,
-        publicKey: process.env.STRIPE_PUBLIC_KEY,
-        amount: 95,
-        card: {
-          brand: err.raw.payment_method.card.brand,
-          last4: err.raw.payment_method.card.last4
-        }
-      });
-    } else if (err.code) {
-      // The card was declined for other reasons (e.g. insufficient funds)
-      // Bring the customer back on-session to ask them for a new payment method
-      res.send({
-        error: err.code,
-        clientSecret: err.raw.payment_intent.client_secret,
-        publicKey: process.env.STRIPE_PUBLIC_KEY,
-      });
-    } else {
-      console.log("Unknown error occurred", err);
+  // Create and confirm a PaymentIntent with the order amount, currency, 
+  // Customer and PaymentMethod ID
+  const paymentIntent = await stripe.paymentIntents.create({
+    amount: 95,
+    currency: "usd",
+    payment_method: paymentMethods.data[0].id,
+    customer: cID,
+    off_session: true,
+    confirm: true
+  });
+
+  res.send({
+    succeeded: true,
+    clientSecret: paymentIntent.client_secret,
+    publicKey: process.env.STRIPE_PUBLIC_KEY
+  });
+  // try {
+  //   // List the customer's payment methods to find one to charge
+  //   const paymentMethods = await stripe.paymentMethods.list({
+  //     customer: cID,
+  //     type: "card"
+  //   });
+
+  //   // Create and confirm a PaymentIntent with the order amount, currency, 
+  //   // Customer and PaymentMethod ID
+  //   const paymentIntent = await stripe.paymentIntents.create({
+  //     amount: 95,
+  //     currency: "usd",
+  //     payment_method: paymentMethods.data[0].id,
+  //     customer: cID,
+  //     off_session: true,
+  //     confirm: true
+  //   });
+
+  //   res.send({
+  //     succeeded: true,
+  //     clientSecret: paymentIntent.client_secret,
+  //     publicKey: process.env.STRIPE_PUBLIC_KEY
+  //   });
+  //   } catch (err) {
+  //   if (err.code === "authentication_required") {
+  //     // Bring the customer back on-session to authenticate the purchase
+  //     // You can do this by sending an email or app notification to let them know
+  //     // the off-session purchase failed
+  //     // Use the PM ID and client_secret to authenticate the purchase
+  //     // without asking your customers to re-enter their details
+  //     res.send({
+  //       error: "authentication_required",
+  //       paymentMethod: err.raw.payment_method.id,
+  //       clientSecret: err.raw.payment_intent.client_secret,
+  //       publicKey: process.env.STRIPE_PUBLIC_KEY,
+  //       amount: 95,
+  //       card: {
+  //         brand: err.raw.payment_method.card.brand,
+  //         last4: err.raw.payment_method.card.last4
+  //       }
+  //     });
+  //   } else if (err.code) {
+  //     // The card was declined for other reasons (e.g. insufficient funds)
+  //     // Bring the customer back on-session to ask them for a new payment method
+  //     res.send({
+  //       error: err.code,
+  //       clientSecret: err.raw.payment_intent.client_secret,
+  //       publicKey: process.env.STRIPE_PUBLIC_KEY,
+  //     });
+  //   } else {
+  //     console.log("Unknown error occurred", err);
+  //  }
+
+  //   }
    }
-
-    }
-  }
 });
 
 //Creates a twilio message
 app.post('/notify', async (req, res) => {
   const recipient = '+1' + req.body.recipient
   const reciever = '+1' + req.body.reciever
-  
   client.messages.create({
     to: recipient,
     from: reciever,
