@@ -1,8 +1,8 @@
 import React from 'react';
 import { BrowserRouter as Router, Switch, Route, Redirect } from 'react-router-dom';
 import {
-  createMuiTheme,
   createStyles,
+  createTheme,
   Theme,
   ThemeProvider,
   withStyles,
@@ -50,10 +50,10 @@ const routes = [
   { path: '/', component: LandingDefault },
 ];
 
-const theme = createMuiTheme({
+const theme = createTheme({
   palette: {
     primary: {
-      main: '#FE8488',
+      main: '#FF6060',
       light: '#FF6D6D',
       dark: '#f00604',
     },
