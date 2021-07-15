@@ -159,10 +159,10 @@ function Preview() {
 	return(
 		<>
 		<Helmet>
-			<title>Create your Business!</title>
+			<title>ReZerve | Enroll Your Business</title>
 			<meta property="og:title" content="ReZerve | Enroll Your Business"/>
 			<meta property="og:description" content="ReZerve | The First Free-To-Use Booking and business Management Software for Stylists and Beauty Profressionals"/>
-			<meta property="og:image" content={logo}/>
+			<meta property="og:image" content="https://rezerve-startup.herokuapp.com/rezerve_logo.jpg"/>
 		</Helmet>
 
 		<BusinessPreview/>
