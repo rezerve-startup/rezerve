@@ -5,9 +5,7 @@ const app = express();
 // tslint:disable-next-line: no-var-requires
 // Takes secret sk_test_....
 const stripe = require('stripe')(`${process.env.STRIPE_API_KEY}`);
-const accountSid = process.env.TWILIO_ACCOUNT_SID;
-const authToken = process.env.TWILIO_AUTH_TOKEN;
-const client = require('twilio')(accountSid, authToken);
+
 const cors = require('cors');
 
 app.use(express.static('.'));
@@ -32,7 +30,6 @@ app.post('/create-setup-intent', async (req, res) => {
   });
 } else if (action === 'paymentIntent'){
   const cID = req.body.cID
-
   const paymentMethods = await stripe.paymentMethods.list({
     customer: cID,
     type: "card"
@@ -54,6 +51,10 @@ app.post('/create-setup-intent', async (req, res) => {
     clientSecret: paymentIntent.client_secret,
     publicKey: process.env.STRIPE_PUBLIC_KEY
   });
+  
+  
+  
+  
   // try {
   //   // List the customer's payment methods to find one to charge
   //   const paymentMethods = await stripe.paymentMethods.list({
@@ -77,7 +78,7 @@ app.post('/create-setup-intent', async (req, res) => {
   //     clientSecret: paymentIntent.client_secret,
   //     publicKey: process.env.STRIPE_PUBLIC_KEY
   //   });
-  //   } catch (err) {
+  // } catch (err) {
   //   if (err.code === "authentication_required") {
   //     // Bring the customer back on-session to authenticate the purchase
   //     // You can do this by sending an email or app notification to let them know
@@ -105,21 +106,13 @@ app.post('/create-setup-intent', async (req, res) => {
   //     });
   //   } else {
   //     console.log("Unknown error occurred", err);
-  //  }
-
   //   }
-   }
+  }
 });
 
-//Creates a twilio message
-// app.post('/notify', async (req, res) => {
-//   const recipient = '+1' + req.body.recipient
-//   const reciever = '+1' + req.body.reciever
-//   client.messages.create({
-//     to: recipient,
-//     from: reciever,
-//     body: 'This is a test.'
-//   })
+//Creates Setup Intent at Checkout
+// app.post('/create-payment', async (req, res) => {
+//   const cID = req.body
   
 // });
 
