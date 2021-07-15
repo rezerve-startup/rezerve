@@ -5,6 +5,7 @@ import {
   DialogActions,
   DialogContentText,
   DialogTitle,
+  Typography,
 } from '@material-ui/core/';
 // tslint:disable-next-line: no-submodule-imports
 import { makeStyles, useTheme } from '@material-ui/core/styles';
@@ -23,7 +24,7 @@ function StripePaymentSetup(props) {
   return (
     <div className="App">
       <Elements stripe={promise}>
-        <AcceptPayment cID={props.cID}/>
+        <AcceptPayment cID={props.cID} this={props.this}/>
       </Elements>
     </div>
   );
@@ -41,13 +42,12 @@ const AcceptAppointment = (props: any) => {
       <>
         <DialogTitle>Accept Appointment</DialogTitle>
           <DialogContent>
-            <StripePaymentSetup cID={props.appt.cID}/>
-            {/* <DialogContentText>Would you like to accept this appointment?</DialogContentText> */}
+          <DialogContentText>Would you like to accept this appointment?</DialogContentText>
+            <Typography align="center">
+              <StripePaymentSetup cID={props.appt.cID} this={props.this}/>
+            </Typography>
+            
           </DialogContent>
-          <DialogActions>
-            <Button onClick={() => (props.updateAppointmentStatus())}>Yes</Button>
-            <Button onClick={() => props.handleCloseAcceptAppointmentDialog()}>No</Button>
-          </DialogActions>
           
       </>
     );

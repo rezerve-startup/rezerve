@@ -3,7 +3,7 @@ import {useStripe} from '@stripe/react-stripe-js';
 import {Button} from '@material-ui/core';
 
 
-export default function AcceptPayment(props){
+export default function AcceptPayment(props:any){
     // Create PaymentIntent as soon as the page loads
     // Local testing
     // http://localhost:4242/charge-card-off-session
@@ -19,7 +19,7 @@ export default function AcceptPayment(props){
     useEffect(() => {
       console.log(props.cID)
       
-      fetch('https://rezerve-startup-api.herokuapp.com/create-payment', {
+      fetch('https://rezerve-startup-api.herokuapp.com/create-setup-intent', {
         // Use one of the links above for local/live
         method: 'POST',
         headers: {
@@ -40,7 +40,7 @@ export default function AcceptPayment(props){
 
     console.log(4, succeeded)
 
-      const handlePayment = async (ev) => {
+      const handleConfirm = async (ev) => {
         ev.preventDefault();
         stripe!
         .confirmCardPayment(clientSecret)
@@ -64,9 +64,9 @@ export default function AcceptPayment(props){
           // setProcessing(false);
           // setOpen(true);
           console.log("Payment Processed")
+          props.this.updateAppointmentStatus();
         });
+       
       }
-      
-      
-        return(<Button onClick={handlePayment}>Confirm Appointment</Button>)
+        return(<Button onClick={handleConfirm}>Confirm Appointment</Button>)
   }

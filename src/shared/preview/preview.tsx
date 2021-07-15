@@ -37,7 +37,7 @@ function generate(element) {
   );
 }
 
-export default function InteractiveList() {
+function PreviewPage(){
   const classes = useStyles();
   const [dense, setDense] = React.useState(false);
   const [secondary, setSecondary] = React.useState(false);
@@ -152,5 +152,10 @@ export default function InteractiveList() {
         </Grid>
       </Grid>
     </div>
-  );
+  )
+}
+export default function InteractiveList() {
+    return(
+      <PreviewPage/>
+    );
 }
