@@ -160,8 +160,8 @@ function Preview() {
 		<>
 		<Helmet>
 			<title>Create your Business!</title>
-			<meta property="og:title" content="ReZerve | The First Free-To-Use Booking and business Management Software for Stylists and Beauty Profressionals"/>
-			<meta property="og:description" content="Preview Link"/>
+			<meta property="og:title" content="ReZerve | Enroll Your Business"/>
+			<meta property="og:description" content="ReZerve | The First Free-To-Use Booking and business Management Software for Stylists and Beauty Profressionals"/>
 			<meta property="og:image" content={logo}/>
 		</Helmet>
 
