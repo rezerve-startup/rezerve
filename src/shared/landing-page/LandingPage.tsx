@@ -1,44 +1,24 @@
-import React, {  useEffect } from 'react';
-import { Link, Redirect } from 'react-router-dom';
 import {
-  AppBar,
-  Tabs,
-  Tab,
-  makeStyles,
-  createStyles,
-  Theme,
-  Box,
-  Grid,
-  Divider,
-  Typography,
-  CircularProgress,
+  AppBar, Box, CircularProgress, createStyles, Divider, Grid, makeStyles, Tab, Tabs, Theme, Typography
 } from '@material-ui/core';
-import SignUpPage from '../sign-up/SignUpPage'
-import HomeIcon from '@material-ui/icons/Home';
-//Extra
-import FaceIcon from '@material-ui/icons/Face';
-import PanToolIcon from '@material-ui/icons/PanTool';
-import EmojiPeopleIcon from '@material-ui/icons/EmojiPeople';
-//----
-
-import { 
-  setUserEmployeeInfo,
-  setUserCustomerInfo, 
-  setBusinessAvailability,
-  updateCurrentLatitude,
-  updateCurrentLongitude,
-  locationStatus
-} from '../../shared/store/actions';
+import React, { useEffect } from 'react';
+import { connect } from 'react-redux';
+import { Link, Redirect } from 'react-router-dom';
 import CustomerBusinessSearch from '../../customer/customer-business-search/CustomerBusinessSearch';
-import { StoreState} from '../store/types';
-import { connect} from 'react-redux';
+// ----
+import {
+  locationStatus, setBusinessAvailability, setUserCustomerInfo, setUserEmployeeInfo, updateCurrentLatitude,
+  updateCurrentLongitude
+} from '../../shared/store/actions';
 import LoginDefault from '../login/loginDefault';
+import SignUpPage from '../sign-up/SignUpPage';
+import { StoreState } from '../store/types';
 
-//import Sidebar from '../shared/sidebar/sidebar';
+// import Sidebar from '../shared/sidebar/sidebar';
 
-//--------------------------
-//CSS
-//--------------------------
+// --------------------------
+// CSS
+// --------------------------
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     container: {
@@ -132,7 +112,6 @@ const LandingPageDefault = (props: any) => {
   const [redirectToCustomer, setRedirectToCustomer] = React.useState(false);
   const [redirectToEmployee, setRedirectToEmployee] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
-  const [didMount, setDidMount] = React.useState(false);
 
   const locationStatus = props.locStatus;
 
@@ -155,10 +134,6 @@ const LandingPageDefault = (props: any) => {
   useEffect(() => {
     if(locationStatus === false){
       getPosition();
-    }
-    setDidMount(true);
-    return() =>{
-      setDidMount(false);
     }
   }, [] );
 

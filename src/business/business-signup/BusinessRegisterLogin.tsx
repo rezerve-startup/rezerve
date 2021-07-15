@@ -1,18 +1,6 @@
 import {
-  InputAdornment,
-  IconButton,
-  Card,
-  CardContent,
-  CardActions,
-  CircularProgress,
-  Button,
-  Grid,
-  createStyles,
-  Theme,
-  Typography,
-  withStyles,
-  TextField,
-  Tooltip,
+  Button, Card, CardActions, CardContent, CircularProgress, createStyles, Grid, IconButton, InputAdornment, TextField, Theme, Tooltip, Typography,
+  withStyles
 } from '@material-ui/core';
 import { Visibility, VisibilityOff } from '@material-ui/icons';
 import React from 'react';
@@ -172,7 +160,6 @@ class BusinessRegisterLogin extends React.Component<any, State> {
                                 ? 'Hide Password'
                                 : 'Show Password'
                             }
-                            arrow
                           >
                             <IconButton onClick={this.toggleShowPassword}>
                               {this.state.showPassword ? (

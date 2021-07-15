@@ -1,27 +1,15 @@
-import React from 'react';
 import {
   Button,
-  Card,
-  CardMedia,
-  CardActions,
-  CardContent,
-  Grid,
-  Typography,
-  TextField,
-  withStyles,
-  createStyles,
-  WithStyles,
-  Theme,
-  Snackbar,
-  IconButton
+  Card, CardActions,
+  CardContent, createStyles, IconButton, Snackbar, TextField, Theme, Typography, withStyles
 } from '@material-ui/core';
-import { Rating } from '@material-ui/lab';
-import image from '../../assets/business-pictures/cat1.jpg';
-import { StoreState } from '../../shared/store/types';
-import { connect } from 'react-redux';
 import CloseIcon from '@material-ui/icons/Close';
+import { Rating } from '@material-ui/lab';
+import React from 'react';
+import { connect } from 'react-redux';
 import { firestore } from '../../config/FirebaseConfig';
-import { setEmployeeBusinessName, setEmployeeBusinessDescription } from '../../shared/store/actions';
+import { setEmployeeBusinessDescription, setEmployeeBusinessName } from '../../shared/store/actions';
+import { StoreState } from '../../shared/store/types';
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -60,21 +48,11 @@ const StyledRating = withStyles((theme) => ({
   },
 }))(Rating);
 
-type State = {
-  editInfo: boolean;
-  description: string;
-  businessName: string;
-};
-
 function mapStateToProps(state: StoreState) {
   return ({
     business: state.system.user.employeeInfo?.business,
     businessId: state.system.user.employeeInfo?.businessId
   })
-}
-
-interface Props extends WithStyles<typeof styles> {
-  business: any;
 }
 
 class BusinessCard extends React.Component<any, any> {
@@ -125,7 +103,7 @@ class BusinessCard extends React.Component<any, any> {
             {!this.state.editInfo ? (
               <div className={classes.cardContent}>
                 <Typography variant="h5">
-                  {this.props.business.name}
+                  <b>{this.props.business.name}</b>
                 </Typography>
                 <Typography variant="subtitle1" color="textSecondary">
                   {this.props.business.description}

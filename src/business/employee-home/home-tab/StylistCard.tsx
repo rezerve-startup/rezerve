@@ -1,43 +1,13 @@
-import React, { useEffect } from 'react';
 import {
-  Grid,
   Button,
-  Card,
-  CardContent,
-  CardActions,
-  CardMedia,
-  Typography,
-  TextField,
-  Theme,
-  makeStyles,
-  withStyles,
-  WithStyles,
-  createStyles,
+  Card, CardActions, CardContent, Grid, TextField, Typography, withStyles
 } from '@material-ui/core';
 import { Rating } from '@material-ui/lab';
+import React from 'react';
 import { connect } from 'react-redux';
-import { StoreState } from '../../../shared/store/types';
-import { setEmployeeReviews, setEmployeePosition } from '../../../shared/store/actions';
 import { firestore } from '../../../config/FirebaseConfig';
-
-const image = require('../../../assets/avatar.jpg');
-
-const styles = (theme: Theme) =>
-  createStyles({
-    card: {
-      padding: theme.spacing(1),
-    },
-    userContent: {
-      flex: '1 0 auto',
-    },
-    userImage: {
-      width: '125px',
-      height: '100%',
-    },
-    userRating: {
-      marginTop: '16px',
-    },
-  });
+import { setEmployeePosition, setEmployeeReviews } from '../../../shared/store/actions';
+import { StoreState } from '../../../shared/store/types';
 
 const StyledRating = withStyles((theme) => ({
   iconFilled: {
@@ -48,24 +18,9 @@ const StyledRating = withStyles((theme) => ({
   },
 }))(Rating);
 
-
-type State = {
-  employeeFirstName: string;
-  employeeLastName: string;
-  employeePosition: string;
-  editInfo: boolean;
-};
-
-interface Props extends WithStyles<typeof styles> {
-  employeeId?: any;
-  employeeFirstName?: any;
-  employeeLastName?: any;
-  employeePosition?: any;
-}
-
 function mapStateToProps(state: StoreState) {
-  let employeeReviews = state.system.user.employeeInfo.reviews;
-  let reviewsToAdd: any[] = [];
+  const employeeReviews = state.system.user.employeeInfo.reviews;
+  const reviewsToAdd: any[] = [];
 
   if (employeeReviews) {
     for (const review of employeeReviews) {
@@ -113,7 +68,7 @@ class StylistCard extends React.Component<any, any>{
   componentDidMount(){
     firestore.collection('reviews').where('employeeId', '==', `${this.props.employeeId}`).get()
       .then((querySnapshot) => {
-        let employeeReviews: any[] = [];
+        const employeeReviews: any[] = [];
 
         querySnapshot.forEach((reviewDoc) => {
           employeeReviews.push(reviewDoc.data());
@@ -149,7 +104,6 @@ class StylistCard extends React.Component<any, any>{
   }
 
   render(){
-    const { classes } = this.props;
     return (
       <Card className={this.props.card} elevation={0}>
         <Grid container={true} justify="space-between" spacing={2}>
@@ -158,7 +112,7 @@ class StylistCard extends React.Component<any, any>{
             {!this.state.editInfo ? (
                 <div>
                   <Typography variant="h5">
-                    {this.state.employeeFirstName}
+                    <b>{this.state.employeeFirstName}</b>
                   </Typography>
                   <Typography variant="subtitle1" color="textSecondary">
                     {this.state.employeePosition}

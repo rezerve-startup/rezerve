@@ -1,41 +1,38 @@
-import React from 'react';
-import { BrowserRouter as Router, Switch, Route, Redirect } from 'react-router-dom';
 import {
   createMuiTheme,
   createStyles,
   Theme,
   ThemeProvider,
-  withStyles,
+  withStyles
 } from '@material-ui/core';
-
-
-import EmployeeHome from './business/employee-home/EmployeeHome';
+import React from 'react';
+import { connect } from 'react-redux';
+import { BrowserRouter as Router, Redirect, Route, Switch } from 'react-router-dom';
 import BusinessHome from './business/business-home/BusinessHome';
 import BusinessAccountInfo from './business/business-signup/BusinessInfoForm';
 import BusinessSignUp from './business/business-signup/BusinessSignUp';
 import BusinessPersonalInfo from './business/business-signup/BusinPersInfoPage';
-
+import EmployeeHome from './business/employee-home/EmployeeHome';
+import CustomerAppointmentHome from './customer/customer-appointments/CustomerAppointmentHome';
+import CustomerSignUp from './customer/customer-signup/CustomerSignup';
 import LandingDefault from './shared/landing-page/LandingPage';
 import LandingLoggedIn from './shared/landing-page/LandingPageLog';
+import MessagingHome from './shared/messaging/MessagingHome';
 import Preview from './shared/preview/about';
 import SignUpPage from './shared/sign-up/SignUpPage';
-import LoginDialog from './shared/login/loginDefault';
-import { connect } from 'react-redux';
-import { StoreState, SystemState } from './shared/store/types';
-import { 
-  setUserEmployeeInfo,
-  setUserCustomerInfo, 
-  setBusinessAvailability 
+import {
+  setBusinessAvailability, setUserCustomerInfo, setUserEmployeeInfo
 } from './shared/store/actions';
-import CustomerAppointmentHome from './customer/customer-appointments/CustomerAppointmentHome';
-import MessagingHome from './shared/messaging/MessagingHome';
-import CustomerSignUp from './customer/customer-signup/CustomerSignup';
+import { StoreState, SystemState } from './shared/store/types';
 
 
+
+
+/*
 const routes = [
   /* { path: "/help", component: Help },
   { path: "/messages", component: Messages },
-  { path: "/settings", component: Settings }, */
+  { path: "/settings", component: Settings }, 
   { path: '/appointments', component: CustomerAppointmentHome },
   { path: '/business-sign-up', component: BusinessSignUp },
   { path: '/business-account-info', component: BusinessAccountInfo },
@@ -49,8 +46,8 @@ const routes = [
   { path: '/login-page', component: LoginDialog },
   { path: '/', component: LandingDefault },
 ];
-
-const theme = createMuiTheme({
+*/
+const themeColors = createMuiTheme({
   palette: {
     primary: {
       main: '#FE8488',
@@ -72,7 +69,7 @@ function mapStateToProps(state: StoreState) {
   };
 }
 
-//interface Props extends WithStyles<typeof styles> {}
+// interface Props extends WithStyles<typeof styles> {}
 
 class App extends React.Component<any, SystemState> {
   constructor(props: any) {
@@ -107,7 +104,7 @@ class App extends React.Component<any, SystemState> {
 */
     return (
       <div className={classes.root}>
-        <ThemeProvider theme={theme}>
+        <ThemeProvider theme={themeColors}>
           <Router>
             <Switch>
               <Route path={'/'} exact={true} component={LandingDefault}/>
@@ -122,7 +119,7 @@ class App extends React.Component<any, SystemState> {
               <Route path={'/employee-home'} exact={true} component={EmployeeHome} />
               <Route path={'/business-home'} exact={true} component={BusinessHome}/>
               <Route path={'/messages'} exact={true} component={MessagingHome}/>
-              <Route path={'**'} exact><Redirect to={'/'}></Redirect></Route>
+              <Route path={'**'} exact={true}><Redirect to={'/'}/></Route>
             </Switch>
           </Router>
         </ThemeProvider>

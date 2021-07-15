@@ -1,30 +1,13 @@
-import React from 'react';
 import {
-  Button,
-  Grid,
-  Card,
-  CardActions,
-  Typography,
-  List,
-  ListItem,
-  ListItemText,
-  ListItemSecondaryAction,
-  TextField,
-  withStyles,
-  createStyles,
-  WithStyles,
-  Theme,
-  CardContent,
-  Divider,
-  Checkbox,
-  Snackbar,
-  IconButton,
+  Button, Card,
+  CardActions, CardContent, Checkbox, createStyles, Divider, IconButton, Snackbar, TextField, Theme, Typography, withStyles
 } from '@material-ui/core';
 import CloseIcon from '@material-ui/icons/Close';
-import { firestore } from '../../config/FirebaseConfig';
-import { StoreState } from '../../shared/store/types';
-import { updateBusinessSchedule } from '../../shared/store/actions';
+import React from 'react';
 import { connect } from 'react-redux';
+import { firestore } from '../../config/FirebaseConfig';
+import { updateBusinessSchedule } from '../../shared/store/actions';
+import { StoreState } from '../../shared/store/types';
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -58,20 +41,6 @@ const styles = (theme: Theme) =>
     }
   });
 
-type State = {
-  businessSchedule: BusinessSchedule[];
-  editInfo: boolean;
-};
-
-interface BusinessSchedule {
-  day: string;
-  start: string;
-  end: string;
-  enabled: boolean;
-}
-
-interface Props extends WithStyles<typeof styles> {}
-
 function mapStateToProps(state: StoreState) {
   return ({
     businessSchedule: state.system.user?.employeeInfo.business.about.daysOpen,
@@ -93,7 +62,7 @@ class AvailablityCard extends React.Component<any, any> {
   }
 
   updateEnabled(event, index) {
-    let daysOpen = this.state.businessSchedule;
+    const daysOpen = this.state.businessSchedule;
     daysOpen[index].enabled = event.target.checked;
 
     this.setState({
@@ -102,7 +71,7 @@ class AvailablityCard extends React.Component<any, any> {
   }
 
   handleStartTimeChange(index, e) {
-    let businessScheduleToUpdate = this.state.businessSchedule;
+    const businessScheduleToUpdate = this.state.businessSchedule;
     businessScheduleToUpdate[index].start = e.target.value;
 
     this.setState({
@@ -111,7 +80,7 @@ class AvailablityCard extends React.Component<any, any> {
   }
 
   handleCloseTimeChange(index, e) {
-    let businessScheduleToUpdate = this.state.businessSchedule;
+    const businessScheduleToUpdate = this.state.businessSchedule;
     businessScheduleToUpdate[index].end = e.target.value;
 
     this.setState({
@@ -226,7 +195,7 @@ class AvailablityCard extends React.Component<any, any> {
     if (this.state.editInfo) {
       let validTimes = true;
   
-      for (let businessDay of this.state.businessSchedule) {
+      for (const businessDay of this.state.businessSchedule) {
         if (businessDay.end <= businessDay.start) {
           validTimes = false;
           break;

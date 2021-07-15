@@ -1,39 +1,32 @@
-import React from 'react';
+import {
+  Button, Card, CardActionArea,
+  CardMedia, createStyles, Grid, TextField, Theme, Typography, withStyles
+} from '@material-ui/core';
+import InputAdornment from '@material-ui/core/InputAdornment';
+import SvgIcon, { SvgIconProps } from '@material-ui/core/SvgIcon';
 import { Search } from '@material-ui/icons';
 import { Rating } from '@material-ui/lab';
-import firebase from 'firebase';
-import {
-  InstantSearch,
-  connectAutoComplete,
-} from 'react-instantsearch-dom';
-
-import {
-  Card,
-  withStyles,
-  createStyles,
-  Theme,
-  TextField,
-  CardActionArea,
-  CardMedia,
-  Button,
-  Grid,
-  Typography,
-} from '@material-ui/core';
 import Autocomplete from '@material-ui/lab/Autocomplete';
-
-import { firestore } from '../../config/FirebaseConfig';
-import { connect } from 'react-redux';
 import { LoadScript, StandaloneSearchBox } from '@react-google-maps/api';
-import BusinessInfo from '../../business/business-info/BusinessInfo';
-import { StoreState } from '../../shared/store/types';
-import { addBusinessFound, clearBusinessesFound, setSelectedEmployee, clearEmployeesForBusiness,
-  updateCurrentLatitude,
-  updateCurrentLongitude
- } from '../../shared/store/actions';
-import { Business } from '../../models/Business.interface';
-
-import cat1 from '../../assets/cat1.jpg';
 import algoliasearch from 'algoliasearch';
+import firebase from 'firebase';
+import React from 'react';
+import {
+  connectAutoComplete, InstantSearch
+} from 'react-instantsearch-dom';
+import { connect } from 'react-redux';
+import { ReactComponent as algoliaLogo } from '../../assets/algolia-blue-mark.svg';
+import cat1 from '../../assets/cat1.jpg';
+import BusinessInfo from '../../business/business-info/BusinessInfo';
+import { firestore } from '../../config/FirebaseConfig';
+import { Business } from '../../models/Business.interface';
+import {
+  addBusinessFound, clearBusinessesFound, clearEmployeesForBusiness, setSelectedEmployee, updateCurrentLatitude,
+  updateCurrentLongitude
+} from '../../shared/store/actions';
+import { StoreState } from '../../shared/store/types';
+
+
 
 type CustomerBusinessSearchState = {
   searchBoxRef: any;
@@ -64,6 +57,12 @@ function mapStateToProps(state: StoreState) {
     curLongitude: state.location.newLong,
     locStatus: state.location.newStatus
   };
+}
+
+function CustomIcon (props: SvgIconProps) {
+  return(
+    <SvgIcon component={algoliaLogo} viewBox="0 0 60 50"/>
+  );
 }
 
 
@@ -118,6 +117,7 @@ class CustomerBusinessSearch extends React.Component<
       this.setState({count: 55});
     }
     
+    // tslint:disable-next-line: comment-format
     //console.log("Latitude from state: " + this.state.userLatitude);
     //console.log("Longitude from state: " + this.state.userLongitude);
 
@@ -213,7 +213,6 @@ class CustomerBusinessSearch extends React.Component<
   }
   
   handleSwitchcSearch():void {
-    this.dispatchClearBusinessesFound();
     this.setState({ hidden: !this.state.hidden });
     if(this.state.buttonValue === 'by Name')
     {
@@ -260,11 +259,11 @@ class CustomerBusinessSearch extends React.Component<
     //Algolia implementation
     const searchClient = algoliasearch("QDMMNJHF77","3a233c2bc51c8de99d7da44b86f8e1b0");
 
+
     const autocomplete = ({hits, currentRefinement, refine }) => (
       <div>
-        {console.log(hits)}
       <Autocomplete
-          freeSolo
+          freeSolo={true}
           id="combo-box-demo"
           options={hits.map(hit => (hit.name))}
           onChange={(event: any, newValue: string | null) => {
@@ -273,17 +272,23 @@ class CustomerBusinessSearch extends React.Component<
           renderInput={(params) => 
             <TextField
             {... params}
-            //inputRef={this.state.anchorEl}
             className={classes.search}
             id="standard-basic"
             placeholder="Search by Business Name"
-            fullWidth
+            fullWidth={true}
             value={currentRefinement}
             onChange={
               (event) => {
                 refine(event.currentTarget.value);
               }
             }
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="start">
+                  <CustomIcon />
+                </InputAdornment>
+              ),
+            }}
             />
         }
         />
@@ -299,13 +304,13 @@ class CustomerBusinessSearch extends React.Component<
           <div className={classes.customerBusinessSearchPage}>
             <div className={classes.changingColors}>
               <div className={classes.searchBoxContainer}>
-                  <Grid container alignItems="center" spacing={1}>
+                  <Grid container={true} alignItems="center" spacing={1}>
                   <LoadScript
                     googleMapsApiKey={`${process.env.REACT_APP_GOOGLE_MAPS_API_KEY}`}
                     libraries={mapsLibraries}
                   >
                     {/* GOOGLE MAPS SEARCH */}            
-                    <Grid item xs={8} sm={10} hidden={!this.state.hidden} >
+                    <Grid item={true} xs={8} sm={10} hidden={!this.state.hidden} >
                       <StandaloneSearchBox
                         onLoad={ (event)=>{
                           this.onLoad(event);
@@ -319,23 +324,24 @@ class CustomerBusinessSearch extends React.Component<
                           id="standard-basic"
                           placeholder="Search by city"
                           value={this.state.locationSearchValue}
+                          // tslint:disable-next-line: jsx-no-bind
                           onChange={this.handleSearchChange.bind(this)}
-                          fullWidth
+                          fullWidth={true}
                         />
                       </StandaloneSearchBox>
                     </Grid>
 
                     {/* ALGOLIA SEARCH */}
-                    <Grid item xs={8} sm={10} hidden={this.state.hidden}>
+                    <Grid item={true} xs={8} sm={10} hidden={this.state.hidden}>
                     <InstantSearch
                         indexName="Business_Data"
                         searchClient={searchClient}
-                        refresh
+                        refresh={true}
                       >
                       <CustomAutocomplete />
                       </InstantSearch>
                     </Grid>                    
-                    <Grid item xs={4} sm={2}> 
+                    <Grid item={true} xs={4} sm={2}> 
                       <Button 
                             className={classes.searchButton}
                             variant="outlined"
@@ -414,8 +420,8 @@ class CustomerBusinessSearch extends React.Component<
                   </Card>
                 );
               })}
-              <Grid container justify='center' >
-                <Grid item hidden={!this.state.hidden}>
+              <Grid container={true} justify='center' >
+                <Grid item={true} hidden={!this.state.hidden}>
                   <Button variant="contained" onClick={() => this.displayMore()}>
                     Load More Businesses
                   </Button>

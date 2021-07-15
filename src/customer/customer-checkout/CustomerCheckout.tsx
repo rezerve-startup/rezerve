@@ -1,26 +1,15 @@
-import React, { createRef } from 'react';
 import {
-  Divider,
-  Checkbox,
-  TextField,
-  Dialog,
-  DialogContent,
   Button,
-  DialogActions,
-  Typography,
-  useMediaQuery,
-  Stepper,
-  Step,
-  StepLabel,
-  // tslint:disable-next-line: no-submodule-imports
+  DialogActions, DialogContent, Divider, Step,
+  StepLabel, Stepper, Typography
 } from '@material-ui/core/';
 // tslint:disable-next-line: no-submodule-imports
-import { makeStyles, useTheme } from '@material-ui/core/styles';
-import { loadStripe } from '@stripe/stripe-js';
+import { makeStyles } from '@material-ui/core/styles';
 import { Elements } from '@stripe/react-stripe-js';
+import { loadStripe } from '@stripe/stripe-js';
+import React from 'react';
 import CheckoutForm from './CheckoutForm';
 import './CustomerCheckout.css';
-import moment, { Moment } from 'moment';
 const PUBLIC_KEY = "pk_test_51IT9oWG4OM4l9C1dre9yGOSSd1MtmDOWcGsjlv7Exe6u46E2UpIjt92w9zO7ld2i0v1os1NaYwWX48MxqbhvRoq8009WuwQftX"
 const promise = loadStripe(PUBLIC_KEY);
 
@@ -42,8 +31,6 @@ function getStepContent(stepIndex: number, setCustomerPaid, businessName, appoin
 }
 
 function StripePaymentSetup(props) {
-  // tslint:disable-next-line: no-shadowed-variable
-  const classes = useStyles();
   const price:number = props.price;
   return (
     <div className="App">
@@ -101,8 +88,6 @@ const ConfirmationCard = (props: any) => {
 }
 
 const BookingConfirmation = (props: any) => {
-  // tslint:disable-next-line: no-shadowed-variable
-  const classes = useStyles();
   return (
     <div>
       <ConfirmationCard businessName={props.businessName} appointmentDateTime={props.appointmentDateTime} employeeName={props.employeeName} service={props.service} />
@@ -111,10 +96,8 @@ const BookingConfirmation = (props: any) => {
 }
 
 const CustomerCheckout = (props: any) => {
-  const theme = useTheme();
   // tslint:disable-next-line: no-shadowed-variableF
   const classes = useStyles();
-  const [open, setOpen] = React.useState(false);
   const [activeStep, setActiveStep] = React.useState(0);
   const steps = getSteps();
   const [customerPaid, setCustomerPaid] = React.useState<boolean>(false);
@@ -128,17 +111,8 @@ const CustomerCheckout = (props: any) => {
     setActiveStep((prevActiveStep) => prevActiveStep - 1);
   };
 
-  const handleReset = () => {
-    setActiveStep(0);
-  };
-
-  const openOnClick = () => {
-    setOpen(true);
-    handleReset();
-  };
-
   const handleClose = () => {
-    setOpen(false);
+    console.log("closed")
   };
 
   if (props.businessName && props.appointmentDateTime && props.employeeName && props.service) {
@@ -192,7 +166,7 @@ const CustomerCheckout = (props: any) => {
 const useStyles = makeStyles((theme) => ({
   divider0: {
     // Theme Color, or use css color in quote
-    background: '#c8c8c8',
+    background: 'white',
     color: 'white',
     height: '30px',
     width: '95%',
@@ -201,7 +175,7 @@ const useStyles = makeStyles((theme) => ({
 
   divider1: {
     // Theme Color, or use css color in quote
-    background: 'white',
+    background: theme.palette.primary.dark,
     color: 'white',
     height: '2px',
     width: '98%',
@@ -217,31 +191,32 @@ const useStyles = makeStyles((theme) => ({
     fontWeight: 'bold',
     paddingLeft: '0.25rem',
     paddingRight: '0.25rem',
-    fontSize: '18pt'
+    fontSize: '18pt',
+    textAlign: 'center'
   },
 
   confirmationEmployeeName: {
-    fontWeight: 'bold',
     paddingLeft: '0.25rem',
-    paddingRight: '0.25rem'
+    paddingRight: '0.25rem',
+    margin: '4px'
   },
 
   confirmationServicePrice: {
-    fontWeight: 'bold',
     paddingLeft: '0.25rem',
     paddingRight: '0.25rem',
     display: 'flex',
     justifyContent: 'space-between',
-    alignItems: 'center'
+    alignItems: 'center',
+    margin: '4px'
   },
 
   confirmationAppointmentDate: {
-    fontWeight: 'bold',
     paddingLeft: '0.25rem',
     paddingRight: '0.25rem',
     display: 'flex',
     justifyContent: 'space-between',
-    alignItems: 'center'
+    alignItems: 'center',
+    margin: '4px'
   },
 
   priceAlign: {
@@ -261,8 +236,9 @@ const useStyles = makeStyles((theme) => ({
   },
 
   itemCard: {
-    background: '#c8c8c8',
-    color: 'white',
+    border: "1px solid",
+    background: 'white',
+    color: theme.palette.secondary.dark,
     margin: 'auto',
     width: '90%',
   },

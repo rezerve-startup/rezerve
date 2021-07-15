@@ -30,10 +30,10 @@ import { firestore } from '../../config/FirebaseConfig';
 import { Message } from '@material-ui/icons';
 import firebase from 'firebase';
 
+// tslint:disable-next-line: no-var-requires
 const image = require('../../assets/avatar.jpg');
 
 function mapStateToProps(state: StoreState) {
-  let allAppointments: any[] = [];
   let upcomingAppointments: any[] = [];
   let pastAppointments: any[] = [];
   let cancelledAppointments: any[] = [];

@@ -1,40 +1,22 @@
-import React from 'react';
-import Carousel from 'react-material-ui-carousel';
-import { LocationOn } from '@material-ui/icons';
-import { Rating } from '@material-ui/lab';
 import {
-  Avatar,
-  CircularProgress,
-  Paper,
-  withStyles,
-  createStyles,
-  Theme,
-  Button,
-  List,
-  RadioGroup,
-  FormControlLabel,
-  Radio,
-  Grid,
-  Snackbar,
-  IconButton,
-  Typography
+  Avatar, Button, CircularProgress, createStyles, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, FormControlLabel, IconButton, List, Radio, RadioGroup, Snackbar, TextField, Theme, Typography, withStyles
 } from '@material-ui/core';
 import CloseIcon from '@material-ui/icons/Close';
-
-import { firestore } from '../../config/FirebaseConfig';
+import { Rating } from '@material-ui/lab';
+import { LoadScript } from '@react-google-maps/api';
+import firebase from 'firebase';
+import React from 'react';
 import { connect } from 'react-redux';
+import { firestore } from '../../config/FirebaseConfig';
+import { Business } from '../../models/Business.interface';
+import { Employee } from '../../models/Employee.interface';
+import { Review } from '../../models/Review.interface';
+import { User } from '../../models/User.interface';
 import { addEmployeeForBusiness, clearEmployeesForBusiness, setSelectedEmployee } from '../../shared/store/actions';
 import { StoreState } from '../../shared/store/types';
 import BusinessInfoDetails from './business-info-details/BusinessInfoDetails';
-import avatar from '../../assets/avatar.jpg';
 import MapsContainer from './MapsContainer';
-import { LoadScript } from '@react-google-maps/api';
-import { Business } from '../../models/Business.interface';
-import { Review } from '../../models/Review.interface';
-import { User } from '../../models/User.interface';
-import { Employee } from '../../models/Employee.interface';
-import { Dialog, DialogTitle, DialogContent, DialogContentText, TextField, DialogActions } from '@material-ui/core';
-import firebase from 'firebase';
+
 
 type BusinessInfoState = {
   businessKey: string;
@@ -204,7 +186,7 @@ class BusinessInfo extends React.Component<any, BusinessInfoState> {
       .get()
       // Get business reviews
       .then((businessDocInfo) => {
-        let businessData = businessDocInfo.data()
+        const businessData = businessDocInfo.data()
 
         let numberReviewsShown = 0;
 
@@ -248,8 +230,6 @@ class BusinessInfo extends React.Component<any, BusinessInfoState> {
       })
       // Get employees
       .then(() => {
-        let employeeAppointments = [];
-        let employeeReviews = [];
 
         this.state.businessInfo.employees.forEach((employeeId, index) => {
           let tempEmployee: Employee;
@@ -317,8 +297,8 @@ class BusinessInfo extends React.Component<any, BusinessInfoState> {
   }
 
   showMoreReviews() {
-    let tempReviewsStored = this.state.businessReviewsStored.slice();
-    let tempReviewsShown = this.state.businessReviewsShown.slice();
+    const tempReviewsStored = this.state.businessReviewsStored.slice();
+    const tempReviewsShown = this.state.businessReviewsShown.slice();
 
     let valuesChanged = false;
 
@@ -376,7 +356,7 @@ class BusinessInfo extends React.Component<any, BusinessInfoState> {
   
         businessRef.update({
           reviews: businessReviewIds,
-          overallRating: overallRating,
+          overallRating,
         }).then(() => {
   
           if (review.employeeId !== '') {
@@ -447,10 +427,6 @@ class BusinessInfo extends React.Component<any, BusinessInfoState> {
   render() {
     const { classes } = this.props;
 
-    const businessPictures = [
-      { imageUrl: avatar}
-    ];
-
     return (
       <div className={classes.businessInfoPage}>
         {this.state.businessInfo !== undefined ? (
@@ -486,7 +462,7 @@ class BusinessInfo extends React.Component<any, BusinessInfoState> {
                   >
                     <MapsContainer
                       businessLocation={this.state.businessInfo.about.location}
-                    ></MapsContainer>
+                    />
                   </LoadScript>
                 </div>
               </div>

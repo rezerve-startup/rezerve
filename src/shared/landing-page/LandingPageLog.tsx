@@ -1,32 +1,19 @@
-import React from 'react';
 import {
-  AppBar,
-  Tabs,
-  Tab,
-  makeStyles,
-  createStyles,
-  Theme,
-  Box,
-  Divider,
-  Typography,
+  AppBar, Box, createStyles, Divider, makeStyles, Tab, Tabs, Theme, Typography
 } from '@material-ui/core';
-
-import HomeIcon from '@material-ui/icons/Home';
-//Extra
-import FaceIcon from '@material-ui/icons/Face';
-import PanToolIcon from '@material-ui/icons/PanTool';
-import EmojiPeopleIcon from '@material-ui/icons/EmojiPeople';
-//----
-
+import React from 'react';
+import { connect } from 'react-redux';
+// tslint:disable-next-line: no-implicit-dependencies
+import { Redirect } from 'react-router';
 import CustomerBusinessSearch from '../../customer/customer-business-search/CustomerBusinessSearch';
 import Sidebar from '../sidebar/Sidebar';
-import { Redirect } from 'react-router';
 import { StoreState } from '../store/types';
-import { connect } from 'react-redux';
 
-//--------------------------
-//CSS
-//--------------------------
+
+
+// --------------------------
+// CSS
+// --------------------------
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     container: {

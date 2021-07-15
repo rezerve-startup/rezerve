@@ -1,48 +1,17 @@
-import React from 'react';
-import { Link, Redirect } from 'react-router-dom';
 import {
-  Typography,
-  Divider,
-  IconButton,
-  makeStyles,
-  SwipeableDrawer,
-  AppBar,
-  Toolbar,
-  List,
-  ListItem,
-  ListItemText,
-  ListItemIcon,
-  ListItemAvatar,
-  Avatar,
-  MenuItem,
-  Menu,
-  Button,
-  Box,
-  useTheme,
-  useMediaQuery,
-  Dialog,
-  DialogContent,
-  DialogActions,
-  TextField
+  AppBar, Avatar, Box, Button, Dialog, DialogActions, DialogContent, Divider,
+  IconButton, List,
+  ListItem, ListItemAvatar, ListItemIcon, ListItemText, makeStyles, Menu, MenuItem, SwipeableDrawer, TextField, Toolbar, Typography, useMediaQuery, useTheme
 } from '@material-ui/core';
 import {
-  AccountCircle,
-  Menu as MenuIcon,
-  Forum,
-  CalendarViewDay,
-  Help,
-  Settings,
-  ExitToApp,
-  ArrowDropDown,
-  Search,
-  Home,
-  Close,
-  Business
+  AccountCircle, ArrowDropDown, Business, CalendarViewDay, Close, ExitToApp, Forum, Help, Home, Menu as MenuIcon, Search
 } from '@material-ui/icons';
+import React from 'react';
 import { connect } from 'react-redux';
-import { StoreState } from '../store/types';
-import { setEmployeePhone, setEmployeeEmail } from '../store/actions';
+import { Link, Redirect } from 'react-router-dom';
 import { auth, firestore } from '../../config/FirebaseConfig';
+import { setEmployeeEmail, setEmployeePhone } from '../store/actions';
+import { StoreState } from '../store/types';
 
 const sidebarDataWithoutLogout = [
   {
@@ -99,7 +68,7 @@ const Sidebar = (props: any ) => {
     isSidebarOpen: false,
   });
 
-  const [userName, setUserName] = React.useState(`${props.user.firstName} ${props.user.lastName}`);
+  const [userName] = React.useState(`${props.user.firstName} ${props.user.lastName}`);
   const [emailAddress, setEmailAddress] = React.useState(props.user.email);
   const [phoneNumber, setPhoneNumber] = React.useState(props.user.phone);
 
@@ -119,10 +88,6 @@ const Sidebar = (props: any ) => {
 
   const handleMenuClose = () => {
     setAnchorEl(null);
-  };
-
-  const openOnClick = () => {
-    setProfileOpen(true);
   };
 
   const handleClose = () => {
@@ -303,8 +268,6 @@ const Sidebar = (props: any ) => {
               variant="h6"
               noWrap={true}
               color="primary"
-              component={Link}
-              to="/"
             >
               ReZerve
             </Typography>

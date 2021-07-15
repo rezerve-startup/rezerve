@@ -26,7 +26,7 @@ export const firestore = firebase.firestore();
 
 export const unsubscribe = auth.onAuthStateChanged((user) => {
   store.dispatch(setAuthChanging(true));
-  console.log("user: " + user);
+  //console.log("user: " + user);
   if (user) {
     firestore
       .collection('users')
@@ -37,9 +37,9 @@ export const unsubscribe = auth.onAuthStateChanged((user) => {
         if (userInfo && userInfo.customerId !== '') {
           firestore.collection('customers').doc(userInfo.customerId).get()
             .then((customerObj) => {
-              let customerInfo = customerObj.data();
+              const customerInfo = customerObj.data();
               console.log(customerInfo);
-              let customerInfoToAdd = {}
+              const customerInfoToAdd = {}
               userInfo.customerInfo = customerInfoToAdd;
               console.log( "UseInfo: " + userInfo)
               store.dispatch(setUserCustomerInfo(userInfo));
@@ -48,9 +48,9 @@ export const unsubscribe = auth.onAuthStateChanged((user) => {
         } else if (userInfo && userInfo.employeeId !== '') {
           firestore.collection('employees').doc(userInfo.employeeId).get()
             .then((employeeObj) => {
-              let employeeInfo = employeeObj.data();
+              const employeeInfo = employeeObj.data();
 
-              let employeeInfoToAdd = {
+              const employeeInfoToAdd = {
                 availability: employeeInfo?.availability,
                 isOwner: employeeInfo?.isOwner,
                 position: employeeInfo?.position,
@@ -64,9 +64,9 @@ export const unsubscribe = auth.onAuthStateChanged((user) => {
               firestore.collection('businesses').where('employees', 'array-contains', `${userInfo.employeeId}`).get()
                 .then((querySnapshot) => {
                   querySnapshot.forEach((businessDoc) => {
-                    let businessInfoData = businessDoc.data();
+                    const businessInfoData = businessDoc.data();
 
-                    let businessAvailability = {
+                    const businessAvailability = {
                       daysOpen: businessInfoData.about.daysOpen,
                       openingTime: businessInfoData.about.openingTime,
                       closingTime: businessInfoData.about.closingTime
@@ -84,7 +84,7 @@ export const unsubscribe = auth.onAuthStateChanged((user) => {
         }
       )
       .catch((err) => {
-        //console.log(err);
+        // console.log(err);
       })
   } else {
     store.dispatch(logoutUser());

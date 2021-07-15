@@ -8,6 +8,17 @@
     ]
   },
   "rules": {
-    "no-console": false
-  }
+    "no-console": false,
+    "prefer-const": false,
+    "comment-format": false,
+    "jsx-boolean-value": false,
+    "no-submodule-imports": false,
+    "jsx-no-lambda": false,
+    "no-shadowed-variable": false,
+    "object-literal-shorthand": false,
+    "no-var-requires": false
+  },
+  "editor.codeActionsOnSave": {
+    "source.fixAll.tslint": true
+}
 }

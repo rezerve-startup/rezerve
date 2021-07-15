@@ -1,21 +1,16 @@
-import React, { useEffect } from 'react';
 import {
-  Tab,
-  Tabs,
   AppBar,
-  Box,
-  makeStyles,
-  useMediaQuery,
-  useTheme,
-  Card,
+  Box, Card,
   CardActions,
-  CardContent,
-  Typography
+  CardContent, makeStyles, Tab,
+  Tabs, Typography, useMediaQuery,
+  useTheme
 } from '@material-ui/core';
 import { CalendarToday, Description } from '@material-ui/icons';
+import firebase from 'firebase';
+import React, { useEffect } from 'react';
 import SwipeableViews from 'react-swipeable-views';
 import { firestore } from '../../config/FirebaseConfig';
-import firebase from 'firebase'
 const useStyles = makeStyles({
   root: {
     flexGrow: 1,
@@ -51,7 +46,7 @@ export default function EmployeeTab(props: any) {
   useEffect(() => {
       getInformation();
   }, [])
-//V6v6EWVILJ6P4oaGLy1y
+  
   const acceptRequest = (id, businessId) => {
     const businessRef = firestore.collection("businesses").doc(businessId);
     const employeeRef = firestore.collection("employees").doc(id);
@@ -60,6 +55,7 @@ export default function EmployeeTab(props: any) {
       employeeRequests: firebase.firestore.FieldValue.arrayRemove(id)
     })
     employeeRef.update({
+      // tslint:disable-next-line: object-literal-shorthand
       businessId: businessId,
     })
 
@@ -90,8 +86,6 @@ export default function EmployeeTab(props: any) {
     const businessId = props.businessId
     const tmpEmployees: any = []
     const tmpEmployeeRequests: any = []
-    const tmpEmployeeIds: any = []
-    const tmpEmployeeReqIds: any = []
     const tmpEmployeeInfo: any = []
     const tmpEmployeeReqInfo: any = []
     

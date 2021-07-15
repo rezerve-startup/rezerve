@@ -1,34 +1,23 @@
-import React from 'react';
 import {
-  Button,
-  Theme,
-  createStyles,
-  Card,
-  withStyles,
-  CardContent,
-  Typography,
-  CardActions,
-  CircularProgress,
-  Fab,
-  Dialog,
-  MobileStepper,
+  Button, Card, CardActions, CardContent, CircularProgress, createStyles, Dialog, Fab, MobileStepper, Theme, Typography, withStyles
 } from '@material-ui/core';
-import { connect } from 'react-redux';
-import { auth, firestore, unsubscribe } from '../../config/FirebaseConfig';
 import {
   ArrowBack,
   ArrowForward,
   KeyboardArrowLeft,
-  KeyboardArrowRight,
+  KeyboardArrowRight
 } from '@material-ui/icons';
-import Geocode from 'react-geocode';
-import firebase from 'firebase';
-import { updateUser, createNewBusiness, setAuthChanging, logoutUser } from '../../shared/store/actions';
-import { StoreState, SystemState } from '../../shared/store/types';
-import BusinessRegisterLogin from './BusinessRegisterLogin';
-import UserInfoForm from '../../shared/sign-up/UserInfoForm';
-import BusinessInfoFrom from './BusinessInfoForm';
 import algoliasearch from 'algoliasearch';
+import firebase from 'firebase';
+import React from 'react';
+import Geocode from 'react-geocode';
+import { connect } from 'react-redux';
+import { auth, firestore, unsubscribe } from '../../config/FirebaseConfig';
+import UserInfoForm from '../../shared/sign-up/UserInfoForm';
+import { logoutUser, setAuthChanging, updateUser } from '../../shared/store/actions';
+import { StoreState, SystemState } from '../../shared/store/types';
+import BusinessInfoFrom from './BusinessInfoForm';
+import BusinessRegisterLogin from './BusinessRegisterLogin';
 
 Geocode.setApiKey(process.env.REACT_APP_GOOGLE_MAPS_API_KEY);
 Geocode.setLanguage('en');
@@ -151,8 +140,8 @@ class BusinessSignUp extends React.Component<any, State> {
 
   signInUser(email: string, password: string) {
     auth.signOut();
-    //auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL)
-      //.then(() => {
+    // auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL)
+      // .then(() => {
         auth
           .signInWithEmailAndPassword(email, password)
           .then((userCreds) => {
@@ -183,7 +172,7 @@ class BusinessSignUp extends React.Component<any, State> {
           .catch((e) => {
             console.log(e);
           });
-      //});
+      // });
   }
 
   updateValue = (name: string, value: string, valid: boolean) => {
@@ -208,7 +197,6 @@ class BusinessSignUp extends React.Component<any, State> {
     } else {
       console.log('Invalid form');
     }
-    window.location.reload();
   };
 
   handleSignUp = () => {
@@ -277,6 +265,7 @@ class BusinessSignUp extends React.Component<any, State> {
                   return transaction.get(empRef).then((empDocRef) => {
                     const newUserData = {
                       employeeId: empDocRef.id,
+                      // tslint:disable-next-line: object-literal-shorthand
                       email: email,
                       firstName: firstName,
                       lastName: lastName,
@@ -521,16 +510,18 @@ class BusinessSignUp extends React.Component<any, State> {
                         })
                         .then(() => {
                           auth.signOut().then(() => {
-                            auth.signInWithEmailAndPassword(email, password).then(
-                              (userCreds) => {
-                                if (userCreds !== null && userCreds.user) {
-                                  const user = userCreds.user;
-                                  console.log("Signed in user...", user)
-                                  this.dispatchUpdateUser(user)
-                                }
-                                this.props.handleSignUpClose()
-                                this.setState({ ...this.state, open: false });
-                            });
+                            auth.signInWithEmailAndPassword(email, password)
+                              .then(
+                                (userCreds) => {
+                                  if (userCreds !== null && userCreds.user) {
+                                    const user = userCreds.user;
+                                    console.log("Signed in user...", user)
+                                    this.dispatchUpdateUser(user)
+                                  }
+                                  this.props.handleSignUpClose()
+                                  this.setState({ ...this.state, open: false });
+                                  
+                              }); 
                           });
                         })
                         .catch((e) => {
@@ -553,7 +544,7 @@ class BusinessSignUp extends React.Component<any, State> {
       })
       .catch((e) => {
         console.log(e);
-      })
+      })     
   }
 
   render() {
@@ -667,12 +658,12 @@ class BusinessSignUp extends React.Component<any, State> {
                             type="submit"
                             loading={this.state.loading}
                             onClick={() => {
-                              //console.log(this.state.name);
-                              //Index the new business name to Algolia Search
-                              //const objects = [{
+                              // console.log(this.state.name);
+                              // Index the new business name to Algolia Search
+                              // const objects = [{
                               //  objectID: docRef.id,
                               //  name: newBusinessData.name
-                              //}]
+                              // }]
                               
                               index.saveObjects([{name: this.state.name}], { autoGenerateObjectIDIfNotExist: true }); 
                             }}
