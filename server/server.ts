@@ -112,16 +112,16 @@ app.post('/create-setup-intent', async (req, res) => {
 });
 
 //Creates a twilio message
-app.post('/notify', async (req, res) => {
-  const recipient = '+1' + req.body.recipient
-  const reciever = '+1' + req.body.reciever
-  client.messages.create({
-    to: recipient,
-    from: reciever,
-    body: 'This is a test.'
-  })
+// app.post('/notify', async (req, res) => {
+//   const recipient = '+1' + req.body.recipient
+//   const reciever = '+1' + req.body.reciever
+//   client.messages.create({
+//     to: recipient,
+//     from: reciever,
+//     body: 'This is a test.'
+//   })
   
-});
+// });
 
 
 
