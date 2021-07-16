@@ -14,7 +14,7 @@ const PUBLIC_KEY = "pk_test_51IT9oWG4OM4l9C1dre9yGOSSd1MtmDOWcGsjlv7Exe6u46E2UpI
 const promise = loadStripe(PUBLIC_KEY);
 
 function getSteps() {
-  return ['Review Booking', 'Payment Information', 'Confirm Booking'];
+  return ['Review Booking', 'Payment Information'];
 }
 
 function getStepContent(stepIndex: number, setCustomerPaid, businessName, appointmentDateTime, employeeName, service) {
@@ -146,7 +146,7 @@ const CustomerCheckout = (props: any) => {
             <Button
               variant="contained"
               color="primary"
-              disabled={activeStep === steps.length - 2 ? !customerPaid : false}
+              disabled={activeStep === steps.length - 1 ? !customerPaid : false}
               onClick={
                 activeStep === steps.length - 1 ? props.bookAppointment : handleNext
               }

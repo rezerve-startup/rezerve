@@ -1,35 +1,19 @@
-import React, {useState} from 'react';
 import {
-  Button,
-  Container,
-  Grid,
-  createStyles,
-  makeStyles,
-  Theme,
-  Dialog,
-  IconButton,
-  InputAdornment,
-  Card,
-  Typography,
-  TextField,
-  CardContent,
-  CardActions,
-  Snackbar
+  Button, Card, CardActions, CardContent, Container, createStyles, Dialog, Grid, IconButton,
+  InputAdornment, makeStyles, Snackbar, TextField, Theme, Typography
 } from '@material-ui/core';
-import { Close } from '@material-ui/icons';
-import {  Visibility, VisibilityOff } from '@material-ui/icons';
+import { Close, Visibility, VisibilityOff } from '@material-ui/icons';
 import MuiAlert, { AlertProps } from '@material-ui/lab/Alert';
-import { connect } from 'react-redux';
-import { auth} from '../../config/FirebaseConfig';
-import {
-  setUserEmployeeInfo,
-  setUserCustomerInfo, 
-  setBusinessAvailability
-} from '../store/actions';
-import { StoreState } from '../../shared/store/types';
-import Reset from './reset';
 import firebase from 'firebase';
-import SignUpPage from '../sign-up/SignUpPage';
+import React, { useState } from 'react';
+import { connect } from 'react-redux';
+import { auth } from '../../config/FirebaseConfig';
+import { StoreState } from '../../shared/store/types';
+import SignUpPage from '../sign-up/SignUpPageForLoginPage';
+import {
+  setBusinessAvailability, setUserCustomerInfo, setUserEmployeeInfo
+} from '../store/actions';
+import Reset from './reset';
 
 function Alert(props: AlertProps) {
   return <MuiAlert elevation={6} variant="filled" {...props} />;
@@ -103,7 +87,7 @@ function LoginDefault(props) {
     loading: false,
     enable: true,
     retrieved: true,
-    count: 0,
+    eCode: '',
     error: false,
     state: false
   });
@@ -129,14 +113,14 @@ function LoginDefault(props) {
           .signInWithEmailAndPassword( values.email, values.password)
           .then((userCredential) => {
             if (userCredential !== null && userCredential.user) {
-              setValues({ ...values, retrieved: true, count: 0, 
+              setValues({ ...values, retrieved: true, eCode: '', 
                 message: 'Login Successful ', 
                 error: false , state: true
               });
             }
           })
-          .catch(() => {
-            setValues({ ...values, retrieved: false, count: (values.count + 1),
+          .catch((e) => {
+            setValues({ ...values, retrieved: false, eCode: e.code,
               message: 'The Email or Password entered is invalid. Please try again.', 
               error: true , state: true
             });
@@ -171,9 +155,6 @@ function LoginDefault(props) {
               <IconButton color="primary" onClick={handleClose}>
                 <Close />
               </IconButton>
-            </Grid>
-            <Grid hidden={values.retrieved} >
-              <SignUpPage />
             </Grid>
           </Grid>
           <Grid container alignItems="center" direction="column" spacing={5}>
@@ -250,8 +231,24 @@ function LoginDefault(props) {
                                         Log In
                                     </Button>
                                 </Grid>
-                                <Grid item={true} xs={8}>
-                                </Grid>
+                            
+                              <Grid item={true} xs={12}>
+                                <Typography
+                                  //className={classes.signUpText}
+                                  variant="body2"
+                                  color="textSecondary"
+                                  align="center"
+                                >
+                                  <Grid container justify='center' alignContent='center'>
+                                    <Grid item>
+                                      New to ReZerve?
+                                    </Grid>
+                                    <Grid item>
+                                      <SignUpPage />
+                                    </Grid>
+                                  </Grid>
+                                </Typography>
+                              </Grid>
                             </Grid>
                         </CardActions>
                     </form>
@@ -261,7 +258,10 @@ function LoginDefault(props) {
                   variant="body2"
                   color="secondary"
                   align="center"
-                  hidden={values.count < 3}
+                  hidden={!(values.eCode === "auth/too-many-requests") 
+                  && !(values.eCode === "auth/wrong-password")
+                  && !(values.eCode === "auth/user-not-found")
+                }
                   > 
                     <Reset/>
                 </Typography>

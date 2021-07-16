@@ -1,5 +1,6 @@
 import { Button, createStyles, makeStyles, Theme } from '@material-ui/core';
 import logo from './unknown.png';
+import {Helmet} from 'react-helmet';
 import React from 'react';
 import Typography from '@material-ui/core/Typography';
 import FiberManualRecordRoundedIcon from '@material-ui/icons/FiberManualRecordRounded';
@@ -68,16 +69,15 @@ const useStyles = makeStyles((theme: Theme) =>
 	}),
 );
 
-function Preview() {
+function BusinessPreview(){
 	const classes = useStyles();
 	const [dense, setDense] = React.useState(false);
-  const [secondary, setSecondary] = React.useState(false);
-  const list = [
+  	const list = [
 	  {item: 'MANAGE YOUR SCHEDULE', buffer: '.....'},
 	  {item: 'REACH NEW CUSTOMERS' ,buffer: '......'},
 	  {item: 'CONNECT WITH CLIENTS', buffer: '.......'},
 	  {item: 'TRACK YOUR PERFORMANCE', buffer: ''}
-  ];
+  	];
 		
 	return (
 		<div className={classes.root}>
@@ -126,11 +126,17 @@ function Preview() {
 			
           
 			<div className={classes.buttonDiv}>
-			<Button className={classes.previewButton}type="submit" variant="contained"  href = {"/LandingPage"}>
+			<Button className={classes.previewButton}type="submit" variant="contained"  href = {"/landing-page"}>
 				Get Started Now
 				</Button>
+			
 				</div>
 		</div>
+/*	<meta   property="og:title"  content="Example Title" />
+				<meta   name="image"   property="og:image"   content="%PUBLIC_URL%/fish.png" />
+				<meta   name="author"   content="Example Author" />
+				<meta   property="og:description"   content="Example Description"/>
+				<meta   property="og:url"   content="https://rezerve-startup.herokuapp.com/preview" />*/
 		/*<List dense={dense}>
               
                 <ListItem>
@@ -146,7 +152,24 @@ function Preview() {
             </List>*/
 
  );	
+}
+
+function Preview() {
+	
+	return(
+		<>
+		<Helmet>
+			<title>ReZerve | Enroll Your Business</title>
+			<meta property="og:title" content="ReZerve | Enroll Your Business"/>
+			<meta name="description" content="ReZerve | The First Free-To-Use Booking and business Management Software for Stylists and Beauty Profressionals"/>
+			<meta property="og:image" content="https://rezerve-startup.herokuapp.com/rezerve_logo.jpg"/>
+		</Helmet>
+
+		<BusinessPreview/>
+		</>
+	)
  
 
 }
 export default Preview;
+

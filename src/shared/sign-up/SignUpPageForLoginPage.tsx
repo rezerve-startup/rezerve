@@ -37,8 +37,8 @@ const useStyles = makeStyles((theme: Theme) =>
       },
     },
     signUpButton: {
-      borderRadius: '30px',
-      marginRight: '5px'
+      marginTop: 0,
+      paddingTop: 0
     },
     card: {
       [theme.breakpoints.down('md')]:{
@@ -53,7 +53,7 @@ const useStyles = makeStyles((theme: Theme) =>
       padding: '4px',
       overflow: 'auto',
       borderRadius: '30px',
-      border: '1px solid ',
+      border: '1px solid',
       borderColor: theme.palette.secondary.main,
     },
     title: {
@@ -65,7 +65,7 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 );
 
-function SignUpPage() {
+function SignUpPageForLogin() {
   const classes = useStyles();
   const [open, setOpen] = React.useState(false);
 
@@ -74,17 +74,13 @@ function SignUpPage() {
   }
 
   const handleClose = () => {
-    setOpen(false);
+    setOpen(false)
     auth.signOut();
-  }
-
-  const handleSignUpClose = () => {
-    window.location.reload();
   }
 
   return (
     <div>
-      <Button className={classes.signUpButton} variant="contained" onClick={handleClickOpen} color="primary">
+      <Button variant="text" className={classes.signUpButton} onClick={handleClickOpen} color="primary">
         Sign Up
       </Button>
       <Dialog open={open} fullScreen={true} disableBackdropClick={true}>
@@ -118,10 +114,10 @@ function SignUpPage() {
                     </Typography>
                     </Grid>
                     <Grid item>
-                      <CustomerSignUp handleSignUpClose={handleSignUpClose} />
+                      <CustomerSignUp handleSignUpClose={handleClose} />
                     </Grid>
                     <Grid item>
-                      <BusinessSignUp handleSignUpClose={handleSignUpClose} />
+                      <BusinessSignUp handleSignUpClose={handleClose} />
                     </Grid>
                   </Grid>
                 </CardContent>
@@ -134,4 +130,4 @@ function SignUpPage() {
   );
 }
 
-export default SignUpPage;
+export default SignUpPageForLogin;

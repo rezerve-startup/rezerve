@@ -1,6 +1,6 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
+  "short_name": "ReZerve",
+  "name": "ReZerve",
   "icons": [
     {
       "src": "favicon.ico",
@@ -21,5 +21,6 @@
   "start_url": ".",
   "display": "standalone",
   "theme_color": "#000000",
-  "background_color": "#ffffff"
+  "background_color": "#ffffff",
+  "description": "ReZerve is the First Free-to-Use Booking and Business Management Software for Stylists and Beauty Profressionals. Track Performance, Manage Your Schedule, and Keep Appointments Organized at the Strokes of Your Fingertips. Make Booking Easy and Change Your Business Today!"
 }

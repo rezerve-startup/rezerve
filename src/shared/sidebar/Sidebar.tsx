@@ -1,7 +1,7 @@
 import {
   AppBar, Avatar, Box, Button, Dialog, DialogActions, DialogContent, Divider,
   IconButton, List,
-  ListItem, ListItemAvatar, ListItemIcon, ListItemText, makeStyles, Menu, MenuItem, SwipeableDrawer, TextField, Toolbar, Typography, useMediaQuery, useTheme
+  ListItem, ListItemAvatar, ListItemIcon, ListItemText, makeStyles, Menu, MenuItem, SwipeableDrawer, Toolbar, Typography
 } from '@material-ui/core';
 import {
   AccountCircle, ArrowDropDown, Business, CalendarViewDay, Close, ExitToApp, Forum, Help, Home, Menu as MenuIcon, Search
@@ -9,7 +9,7 @@ import {
 import React from 'react';
 import { connect } from 'react-redux';
 import { Link, Redirect } from 'react-router-dom';
-import { auth, firestore } from '../../config/FirebaseConfig';
+import { auth } from '../../config/FirebaseConfig';
 import { setEmployeeEmail, setEmployeePhone } from '../store/actions';
 import { StoreState } from '../store/types';
 
@@ -44,12 +44,6 @@ const sidebarDataWithoutLogout = [
     icon: <CalendarViewDay />,
     cName: 'nav-text',
   },
-  {
-    title: 'Help',
-    path: '/help',
-    icon: <Help />,
-    cName: 'nav-text',
-  },
 ];
 
 function mapStateToProps(state: StoreState) {
@@ -60,20 +54,13 @@ function mapStateToProps(state: StoreState) {
 
 const Sidebar = (props: any ) => {
   const classes = useStyles();
-  const theme = useTheme();
-  const fullscreen = useMediaQuery(theme.breakpoints.down('xl'));
 
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [mobileSidebar, setMobileSidebar] = React.useState({
     isSidebarOpen: false,
   });
 
-  const [userName] = React.useState(`${props.user.firstName} ${props.user.lastName}`);
-  const [emailAddress, setEmailAddress] = React.useState(props.user.email);
-  const [phoneNumber, setPhoneNumber] = React.useState(props.user.phone);
-
   const [open, setProfileOpen] = React.useState(false);
-  const [editInfo, setEditInfo] = React.useState(true);
   const isMenuOpen = Boolean(anchorEl);
 
   const handleMobileSidebar = (value: boolean) => (
@@ -90,49 +77,14 @@ const Sidebar = (props: any ) => {
     setAnchorEl(null);
   };
 
+  const openOnClick = () => {
+    setProfileOpen(true);
+  };
+
   const handleClose = () => {
     setProfileOpen(false);
     handleMenuClose()
   };
-
-  const dispatchSetEmployeePhone = (phoneNumber: string) => {
-    props.setEmployeePhone(phoneNumber);
-  }
-
-  const dispatchSetEmployeeEmail = (email: string) => {
-    props.setEmployeeEmail(email);
-  }
-
-  const handleDialog = () =>{
-    if (!editInfo) {
-        const phoneRegex = /[0-9]{3}-[0-9]{3}-[0-9]{4}/;
-        const emailRegex = /.+@.+/;
-
-        if (phoneNumber.match(phoneRegex) && emailAddress.match(emailRegex)) {
-            dispatchSetEmployeePhone(phoneNumber);
-            dispatchSetEmployeeEmail(emailAddress);
-
-            firestore.collection('users').doc(`${auth.currentUser?.uid}`).update({
-                phone: phoneNumber,
-                email: emailAddress
-            }).then(() => {
-                dispatchSetEmployeePhone(phoneNumber);
-                dispatchSetEmployeeEmail(emailAddress);
-                setEditInfo(!editInfo);
-            })
-        }
-    } else {
-        setEditInfo(!editInfo);
-    }
-  };
-
-  const handleEmailChange = (e) => {
-      setEmailAddress(e.target.value);
-  }
-
-  const handlePhoneChange = (e) => {
-      setPhoneNumber(e.target.value);
-  }
 
   function logoutUser() {
     auth.signOut();
@@ -180,10 +132,10 @@ const Sidebar = (props: any ) => {
             <ListItemText className={classes.listText} primary={obj.title} />
           </MenuItem>
         ))}
-        {/* <MenuItem onClick={openOnClick}>
-          <ListItemIcon className={classes.listIcon}>{<AccountCircle/>}</ListItemIcon>
-          <ListItemText className={classes.listText} primary="Edit Profile"/>
-        </MenuItem> */}
+        <MenuItem onClick={openOnClick}>
+          <ListItemIcon className={classes.listIcon}>{<Help/>}</ListItemIcon>
+          <ListItemText className={classes.listText} primary="Help"/>
+        </MenuItem>
         <ListItem button={true} onClick={() => logoutUser()}>
           <ListItemIcon className={classes.listIcon}>{<ExitToApp />}</ListItemIcon>
           <ListItemText className={classes.listText} primary={'Logout'} />
@@ -236,16 +188,16 @@ const Sidebar = (props: any ) => {
                   }
                 }
             })}
-            {/* <MenuItem onClick={openOnClick}>
-                <ListItemIcon className={classes.listIcon}>{<AccountCircle/>}</ListItemIcon>
-                <ListItemText className={classes.listText} primary="Edit Profile"/>
-            </MenuItem> */}
+            <MenuItem onClick={openOnClick}>
+            <ListItemIcon className={classes.listIcon}>{<Help/>}</ListItemIcon>
+            <ListItemText className={classes.listText} primary="Help"/>
+          </MenuItem>
             <ListItem button={true} onClick={() => logoutUser()}>
               <ListItemIcon className={classes.listIcon}>{<ExitToApp />}</ListItemIcon>
               <ListItemText className={classes.listText} primary={'Logout'} />
             </ListItem>
           </List>
-        </div>
+        </div>z
       </SwipeableDrawer>
     );
 
@@ -268,6 +220,8 @@ const Sidebar = (props: any ) => {
               variant="h6"
               noWrap={true}
               color="primary"
+              component={Link}
+              to="/"
             >
               ReZerve
             </Typography>
@@ -325,72 +279,35 @@ const Sidebar = (props: any ) => {
 
         <Dialog
           open={open}
-          fullScreen={fullscreen}
+          fullScreen={false}
           className={classes.dialog}
         >
           <DialogContent className={classes.profilePage}>
-          <DialogActions className={classes.close}>
-              <Close onClick={handleClose} fontSize="large"/>
-          </DialogActions>
-
-          <Avatar src="../../assets/avatar.jpg" className={classes.image} />
-             
-          {editInfo ? (
-            <div>
-              <Typography variant="h5">
-                  {userName}   
+            {/* <Divider className={classes.Divider}/> */}
+          <DialogActions >
+          <Typography style={{fontSize: "30pt", left: "20px", position: "absolute"}} variant="h3" align="left">
+                  Help   
               </Typography>
+              <Close className={classes.close} onClick={handleClose} fontSize="large"/>
+          </DialogActions>
+            <div>
+              
 
               <Divider className={classes.Divider}/>
 
-              <Typography> 
-                <span className={classes.label}>Account Details</span>
+              <Typography variant="subtitle1" align="center"> 
+                <p>
+                  Thank you for all your support and cooperation as we 
+                  continue to expand and develop our product in creating
+                  an improved experience between stylists and their customers. <br/><br/>
 
-                <Typography className={classes.label} variant="subtitle2">Email Address: {emailAddress} </Typography>
-                
-                <Typography className={classes.label} variant="subtitle2">Phone Number: {phoneNumber} </Typography>
-
+                  Reliability is our top priority, and we value any opportunity to assist
+                  our users with any issues surrounding ReZerve.<br/><br/>
+                  For any support inquiries, please email: <br/>
+                  <a href="mailto: rezerve.help@gmail.com" style={{color: "#3087de", fontWeight: "bold"}}>rezerve.help@gmail.com</a>
+                </p> 
               </Typography>
             </div>
-          ) : (
-          // Edit/Update Description
-          <>
-            <Typography variant="h5">
-                {userName}   
-            </Typography>
-
-            <Divider className={classes.Divider}/>
-            <Typography> 
-              <span className={classes.label}>Account Details</span>
-            </Typography>
-                    
-            <form autoComplete="off" style={{ padding: 10 }}>
-              <TextField
-                className={classes.label}
-                label="Email Address"
-                id="edit-email-address"
-                value={emailAddress}
-                onChange={(e) => handleEmailChange(e)}
-                InputLabelProps={{className : classes.dataInput}} 
-                InputProps={{ className: classes.dataInput}}
-              />
-            </form>
-            <form autoComplete="off" style={{ padding: 10 }}>
-              <TextField
-                className={classes.label}
-                label="Phone Number"
-                id="edit-phone-number"
-                value={phoneNumber}
-                onChange={(e) => handlePhoneChange(e)}
-                InputLabelProps={{className : classes.dataInput}} 
-                InputProps={{ className: classes.dataInput}}
-              />
-            </form>
-          </>
-          )}
-          <Typography variant="caption" className={classes.edit} onClick={handleDialog}>
-            {editInfo ? (<a>EDIT</a>) : (<a>SAVE CHANGES</a>)}
-          </Typography>
         </DialogContent>
       </Dialog>
       </div>
@@ -461,8 +378,12 @@ const useStyles = makeStyles((theme) => ({
     },
   },
   close: {
-    // Theme Color, or use css color in quote
-    fontSize: '30pt'
+    color: theme.palette.primary.light,
+    fontSize: '30pt',
+    '&:hover': {
+      color: theme.palette.primary.main,
+      cursor: "pointer"
+    },
   },
 
   image: {

@@ -1,17 +1,23 @@
 import {
   Button, Card, CardActions, CardContent, CircularProgress, createStyles, Grid, IconButton, InputAdornment, TextField, Theme, Tooltip, Typography,
-  withStyles
+  withStyles, Snackbar
 } from '@material-ui/core';
 import { Visibility, VisibilityOff } from '@material-ui/icons';
 import React from 'react';
 import { connect } from 'react-redux';
 import { updateUser } from '../../shared/store/actions';
 import { StoreState } from '../../shared/store/types';
+import MuiAlert, { AlertProps } from '@material-ui/lab/Alert';
+import Reset from '../../shared/login/reset';
 
 function mapStateToProps(state: StoreState) {
   return {
     system: state.system,
   };
+}
+
+function Alert(props: AlertProps) {
+  return <MuiAlert elevation={6} variant="filled" {...props} />;
 }
 
 interface ComponentState {
@@ -25,6 +31,7 @@ interface ComponentState {
     email: string;
     password: string;
   };
+  isOpen: boolean;
 }
 
 type State = ComponentState;
@@ -44,6 +51,7 @@ class BusinessRegisterLogin extends React.Component<any, State> {
         email: '',
         password: '',
       },
+      isOpen: false,
     };
   }
 
@@ -89,6 +97,7 @@ class BusinessRegisterLogin extends React.Component<any, State> {
   };
 
   handleSignIn = () => {
+    this.setState({ ...this.state, isOpen: true });
     this.props.handleSignIn(this.state.email, this.state.password);
   };
 
@@ -99,6 +108,17 @@ class BusinessRegisterLogin extends React.Component<any, State> {
   render() {
     const { classes } = this.props;
     const { errors } = this.state;
+
+    const handleSnackBarClose = (event?: React.SyntheticEvent, reason?: string) => {
+      if (reason === 'clickaway') {
+        return;
+      }
+
+      if (this.state.isOpen)
+      {
+        this.setState({ ...this.state, isOpen: false });
+      }
+    }
 
     return (
       <div className={classes.root}>
@@ -206,6 +226,23 @@ class BusinessRegisterLogin extends React.Component<any, State> {
             </CardActions>
           </form>
         </Card>
+        <Typography
+          //className={classes.signUpText}
+          variant="body2"
+          color="secondary"
+          align="center"
+          hidden={!(this.props.errorCode === "auth/too-many-requests") 
+          && !(this.props.errorCode === "auth/wrong-password")
+          && !(this.props.errorCode === "auth/user-not-found") 
+        }
+        > 
+          <Reset/>
+        </Typography>
+        <Snackbar open={((this.props.errorMessage).length > 0) && this.state.isOpen} autoHideDuration={3000} onClose={handleSnackBarClose}>
+          <Alert onClose={handleSnackBarClose} severity={((this.props.errorMessage).length > 0) ? "error" : "success"}>
+              {this.props.errorMessage}
+          </Alert>
+        </Snackbar>
       </div>
     );
   }

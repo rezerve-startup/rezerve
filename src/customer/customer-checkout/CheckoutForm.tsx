@@ -62,15 +62,14 @@ export default function CheckoutForm(props) {
 
     // Live site
     // https://rezerve-startup-api.herokuapp.com/create-payment-intent
-    window
-      .fetch('https://rezerve-startup-api.herokuapp.com/create-payment-intent', {
+    fetch('https://rezerve-startup-api.herokuapp.com/create-setup-intent', {
         // Use one of the links above for local/live
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
 
-        body: JSON.stringify({ servicePrice: sentPrice }),
+        body: JSON.stringify({ action: 'setupIntent'}),
       })
       .then((res) => {
         return res.json();
@@ -79,7 +78,6 @@ export default function CheckoutForm(props) {
         setClientSecret(data.clientSecret);
       });
   }, []);
-
   const cardStyle = {
     style: {
       base: {
@@ -111,10 +109,13 @@ export default function CheckoutForm(props) {
 
     const cardElement = elements!.getElement('card');
     stripe!
-      .confirmCardPayment(clientSecret, {
+      .confirmCardSetup(clientSecret, {
         payment_method: {
           card: cardElement!,
         },
+      },
+      {
+    
       })
       .then((result) => {
         if (result.error) {
@@ -124,7 +125,7 @@ export default function CheckoutForm(props) {
           setError(null);
           setSucceeded(true);
           setSnackSeverity('success');
-          setSnackMessage('Payment processed');
+          setSnackMessage('Card processed');
           props.paymentSuccess(true);
         }
       })

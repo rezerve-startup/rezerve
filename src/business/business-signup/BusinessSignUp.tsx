@@ -49,6 +49,8 @@ interface ComponentState {
   zipcode: string;
   description: string;
   coverImage: string;
+  message: string;
+  errorCode: string;
 }
 
 type State = ComponentState & SystemState;
@@ -87,6 +89,8 @@ class BusinessSignUp extends React.Component<any, State> {
       user: props.system.user,
       authChanging: props.system.authChanging,
       bookDialogStatus: props.system.bookDialogStatus,
+      message: '',
+      errorCode: '',
     };
 
     this.signInUser = this.signInUser.bind(this);
@@ -146,6 +150,9 @@ class BusinessSignUp extends React.Component<any, State> {
           .signInWithEmailAndPassword(email, password)
           .then((userCreds) => {
             if (userCreds !== null && userCreds.user) {
+
+              this.setState({ ...this.state, message: '', errorCode: '' });
+
               const user = userCreds.user;
 
               firestore
@@ -171,6 +178,8 @@ class BusinessSignUp extends React.Component<any, State> {
           })
           .catch((e) => {
             console.log(e);
+            this.setState({ ...this.state, errorCode: e.code })
+            this.setState({ ...this.state, message: 'The Email or Password entered is invalid. Please try again.' });
           });
       // });
   }
@@ -211,6 +220,7 @@ class BusinessSignUp extends React.Component<any, State> {
   closeDialog = () => {
     alert('Are you sure you want to cancel creating your account?');
     this.setState({ ...this.state, open: false, creatingUserAccount: false });
+    
   };
 
   async createNewBusiness() {
@@ -474,13 +484,13 @@ class BusinessSignUp extends React.Component<any, State> {
                       state: businessState,
                       zipcode: businessZipcode,
                       daysOpen: [
+                        'Sunday',
                         'Monday',
                         'Tuesday',
                         'Wednesday',
                         'Thursday',
                         'Friday',
                         'Saturday',
-                        'Sunday',
                       ],
                       closingTime: '17:00',
                       openingTime: '8:00',
@@ -544,7 +554,7 @@ class BusinessSignUp extends React.Component<any, State> {
       })
       .catch((e) => {
         console.log(e);
-      })     
+      })
   }
 
   render() {
@@ -584,6 +594,8 @@ class BusinessSignUp extends React.Component<any, State> {
                 <BusinessRegisterLogin
                   handleSignUp={this.handleSignUp}
                   handleSignIn={this.signInUser}
+                  errorMessage={this.state.message}
+                  errorCode={this.state.errorCode}
                 />
               ) : (
                 <div className={classes.root}>

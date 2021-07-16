@@ -12,7 +12,7 @@ import { CalendarToday, Description } from '@material-ui/icons';
 import SwipeableViews from 'react-swipeable-views';
 import EmployeeCalendarAppointments from './EmployeeCalendarAppointments';
 import EmployeeRequestedAppointments from './EmployeeRequestedAppointments';
-
+import {Elements, ElementsConsumer} from '@stripe/react-stripe-js';
 const useStyles = makeStyles({
   root: {
     flexGrow: 1,
