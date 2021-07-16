@@ -10,6 +10,8 @@ import { loadStripe } from '@stripe/stripe-js';
 import React from 'react';
 import CheckoutForm from './CheckoutForm';
 import './CustomerCheckout.css';
+import moment, { Moment } from 'moment';
+import { PinDropSharp } from '@material-ui/icons';
 const PUBLIC_KEY = "pk_test_51IT9oWG4OM4l9C1dre9yGOSSd1MtmDOWcGsjlv7Exe6u46E2UpIjt92w9zO7ld2i0v1os1NaYwWX48MxqbhvRoq8009WuwQftX"
 const promise = loadStripe(PUBLIC_KEY);
 
@@ -17,12 +19,12 @@ function getSteps() {
   return ['Review Booking', 'Payment Information'];
 }
 
-function getStepContent(stepIndex: number, setCustomerPaid, businessName, appointmentDateTime, employeeName, service) {
+function getStepContent(stepIndex: number, setCustomerPaid, businessName, appointmentDateTime, employeeName, service, appt) {
   switch (stepIndex) {
     case 0:
       return <ConfirmationCard businessName={businessName} appointmentDateTime={appointmentDateTime} employeeName={employeeName} service={service} />;
     case 1:
-      return <StripePaymentSetup paymentSuccess={setCustomerPaid} price={service.price} />;
+      return <StripePaymentSetup paymentSuccess={setCustomerPaid} price={service.price} this={appt}/>;
     case 2:
       return <BookingConfirmation businessName={businessName} appointmentDateTime={appointmentDateTime} employeeName={employeeName} service={service} />;
     default:
@@ -35,7 +37,7 @@ function StripePaymentSetup(props) {
   return (
     <div className="App">
       <Elements stripe={promise}>
-        <CheckoutForm paymentSuccess={props.paymentSuccess} price={price}/>
+        <CheckoutForm paymentSuccess={props.paymentSuccess} price={price} this={props.this}/>
       </Elements>
     </div>
   );
@@ -128,13 +130,13 @@ const CustomerCheckout = (props: any) => {
             ))}
           </Stepper>
           <Typography component={'span'} className={classes.instructions}>
-            {getStepContent(activeStep, setCustomerPaid, props.businessName, props.appointmentDateTime, props.employeeName, props.service)}
+            {getStepContent(activeStep, setCustomerPaid, props.businessName, props.appointmentDateTime, props.employeeName, props.service, props.this)}
           </Typography>
         </DialogContent>
   
         <DialogActions>
           <div>
-            {activeStep !== 0 && 
+            {activeStep !== 0 && customerPaid === false &&
               <Button
                 onClick={activeStep === 0 ? handleClose : handleBack}
                 className={classes.backButton}
@@ -143,16 +145,16 @@ const CustomerCheckout = (props: any) => {
               </Button>
             }
   
+            {activeStep === 0 &&
             <Button
-              variant="contained"
-              color="primary"
-              disabled={activeStep === steps.length - 1 ? !customerPaid : false}
-              onClick={
-                activeStep === steps.length - 1 ? props.bookAppointment : handleNext
-              }
-            >
-              {activeStep === steps.length - 1 ? 'Confirm & Book' : 'Next'}
-            </Button>
+            variant="contained"
+            color="primary"
+            onClick={
+              handleNext
+            }
+          >
+            Next
+          </Button>}
           </div>
         </DialogActions>
       </>

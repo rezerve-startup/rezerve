@@ -5,6 +5,7 @@ import {
   Theme,
   Button,
   CircularProgress,
+  Typography,
 } from '@material-ui/core';
 import { Alert } from '@material-ui/lab';
 import { CardElement, useStripe, useElements } from '@stripe/react-stripe-js';
@@ -149,6 +150,7 @@ export default function CheckoutForm(props) {
 
   return (
     <div>
+      { !open &&
       <form id="payment-form" onSubmit={handleSubmit}>
         <CardElement
           id="card-element"
@@ -177,6 +179,24 @@ export default function CheckoutForm(props) {
           </Alert>
         </Snackbar>
       </form>
+      }
+
+      {open &&
+          <Typography align="center">
+
+          {/* Maybe Add Card Here */}
+
+            <Button
+            variant="contained"
+            color="primary"
+            onClick={
+              props.this.bookAppointment
+            }
+          >
+            {'Confirm & Book'}
+          </Button>
+          </Typography>      
+      }
     </div>
   );
 }
