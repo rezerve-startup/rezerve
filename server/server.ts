@@ -5,6 +5,7 @@ const app = express();
 // tslint:disable-next-line: no-var-requires
 // Takes secret sk_test_....
 const stripe = require('stripe')(`${process.env.STRIPE_API_KEY}`);
+const client = require('twilio')(`${process.env.TWILIO_ACCOUNT_SID}`, `${process.env.TWILIO_AUTH_TOKEN}`);
 
 const cors = require('cors');
 
