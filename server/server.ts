@@ -5,8 +5,10 @@ const app = express();
 // tslint:disable-next-line: no-var-requires
 // Takes secret sk_test_....
 const stripe = require('stripe')(`${process.env.STRIPE_API_KEY}`);
-
+const accountSid = process.env.TWILIO_ACCOUNT_SID;
+const authToken = process.env.TWILIO_AUTH_TOKEN;
 const cors = require('cors');
+const client = require('twilio')(accountSid, authToken);
 
 app.use(express.static('.'));
 app.use(express.json());
@@ -107,6 +109,8 @@ app.post('/create-setup-intent', async (req, res) => {
   //   } else {
   //     console.log("Unknown error occurred", err);
   //   }
+  } else if(action === 'notify'){
+      //Do Nothing Right Now
   }
 });
 
