@@ -21,6 +21,7 @@ import { Elements } from '@stripe/react-stripe-js';
 import CheckoutForm from './CheckoutForm';
 import './CustomerCheckout.css';
 import moment, { Moment } from 'moment';
+import { PinDropSharp } from '@material-ui/icons';
 const PUBLIC_KEY = "pk_test_51IT9oWG4OM4l9C1dre9yGOSSd1MtmDOWcGsjlv7Exe6u46E2UpIjt92w9zO7ld2i0v1os1NaYwWX48MxqbhvRoq8009WuwQftX"
 const promise = loadStripe(PUBLIC_KEY);
 
@@ -28,12 +29,12 @@ function getSteps() {
   return ['Review Booking', 'Payment Information'];
 }
 
-function getStepContent(stepIndex: number, setCustomerPaid, businessName, appointmentDateTime, employeeName, service) {
+function getStepContent(stepIndex: number, setCustomerPaid, businessName, appointmentDateTime, employeeName, service, appt) {
   switch (stepIndex) {
     case 0:
       return <ConfirmationCard businessName={businessName} appointmentDateTime={appointmentDateTime} employeeName={employeeName} service={service} />;
     case 1:
-      return <StripePaymentSetup paymentSuccess={setCustomerPaid} price={service.price} />;
+      return <StripePaymentSetup paymentSuccess={setCustomerPaid} price={service.price} this={appt}/>;
     case 2:
       return <BookingConfirmation businessName={businessName} appointmentDateTime={appointmentDateTime} employeeName={employeeName} service={service} />;
     default:
@@ -48,7 +49,7 @@ function StripePaymentSetup(props) {
   return (
     <div className="App">
       <Elements stripe={promise}>
-        <CheckoutForm paymentSuccess={props.paymentSuccess} price={price}/>
+        <CheckoutForm paymentSuccess={props.paymentSuccess} price={price} this={props.this}/>
       </Elements>
     </div>
   );
@@ -154,7 +155,7 @@ const CustomerCheckout = (props: any) => {
             ))}
           </Stepper>
           <Typography component={'span'} className={classes.instructions}>
-            {getStepContent(activeStep, setCustomerPaid, props.businessName, props.appointmentDateTime, props.employeeName, props.service)}
+            {getStepContent(activeStep, setCustomerPaid, props.businessName, props.appointmentDateTime, props.employeeName, props.service, props.this)}
           </Typography>
         </DialogContent>
   
