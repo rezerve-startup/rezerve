@@ -1,19 +1,17 @@
 import {
   AppBar, Box, createStyles, Divider, makeStyles, Tab, Tabs, Theme, Typography
 } from '@material-ui/core';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
 // tslint:disable-next-line: no-implicit-dependencies
 import { Redirect } from 'react-router';
+import { firestore } from '../../config/FirebaseConfig';
 import CustomerBusinessSearch from '../../customer/customer-business-search/CustomerBusinessSearch';
 import Sidebar from '../sidebar/Sidebar';
 import { StoreState } from '../store/types';
-
-
-
-// --------------------------
-// CSS
-// --------------------------
+//--------------------------
+//CSS
+//--------------------------
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     container: {
@@ -112,7 +110,7 @@ function mapStateToProps(state: StoreState) {
 //--------------------------
 const LandingPageLoggedIn = (props: any) => {
   const classes = useStyles();
-
+  const [appointmentCount, setAppointmentCount] = React.useState(0);
   const [tabValue, setTabValue] = React.useState(0);
   const handleTabChange = (
     event: React.ChangeEvent<{}>,
@@ -121,13 +119,26 @@ const LandingPageLoggedIn = (props: any) => {
     setTabValue(newTabValue);
   };
 
+  useEffect(() => {
+    getInformation();
+}, [])
+
+  const getInformation = () =>{
+    firestore.collection('appointments')
+          .where("customerId", "==", props.user.customerId)
+            .where("status", "==", "accepted")
+              .onSnapshot((snapshot) => {
+                setAppointmentCount(snapshot.size)
+              })
+  }
+
   if (props.user === undefined) {
     return <Redirect to={'/'} />
   }
 
   return (
     <div>
-      <Sidebar />
+      <Sidebar businessNotifications={0} employeeNotifications={appointmentCount}/>
       {
         (props.user.customerId === '')? (
           <div>

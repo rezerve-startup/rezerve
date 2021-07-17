@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {
   Tab,
   Tabs,
@@ -16,6 +16,7 @@ import Sidebar from '../../shared/sidebar/Sidebar';
 import { StoreState } from '../../shared/store/types';
 import { Redirect } from 'react-router';
 import { connect } from 'react-redux';
+import { firestore } from '../../config/FirebaseConfig';
 
 const useStyles = makeStyles({
   root: {
@@ -34,7 +35,20 @@ const CustomerAppointmentHome = (props: any) => {
   const theme = useTheme();
   const [value, setValue] = React.useState(0);
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  const [appointmentCount, setAppointmentCount] = React.useState(0);
+  
+  useEffect(() => {
+    getInformation();
+}, [])
 
+  const getInformation = () =>{
+    firestore.collection('appointments')
+          .where("customerId", "==", props.user.customerId)
+            .where("status", "==", "accepted")
+              .onSnapshot((snapshot) => {
+                setAppointmentCount(snapshot.size)
+              })
+  }
   const handleChange = (_event: any, newValue: number) => {
     setValue(newValue);
   };
@@ -54,7 +68,7 @@ const CustomerAppointmentHome = (props: any) => {
 
   return (
     <div className={classes.root}>
-      <Sidebar />
+      <Sidebar businessNotifications={0} employeeNotifications={appointmentCount}/>
       <Box m={1}>
         <AppBar position="relative" color="default">
           <Tabs

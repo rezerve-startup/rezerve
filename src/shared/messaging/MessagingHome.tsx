@@ -62,15 +62,55 @@ class MessagingHome extends React.Component<any, any> {
         this.state = {
             conversationSelectedOn: false,
             selectedConversation: null,
-            messageToSend: ''
+            messageToSend: '',
+            businessNotifications: 0,
+            employeeNotifications: 0,
         }
     }
 
     componentDidMount() {
         if (this.props.user !== undefined) {
             this.getConversations();
+            this.getInformation();
         }
     }
+
+    getInformation(){
+        if(this.props.user === undefined){
+          //No information to get
+        }
+        else{
+          if(this.props.user.customerId === '' && this.props.user.employeeInfo.isOwner === true){
+            firestore.collection('businesses')
+              .doc(this.props.user.employeeInfo.businessId)
+                .get()
+                  .then((docRef) => {
+                    const employeeReq: string[] = docRef.data()?.employeeRequests
+                    this.setState({
+                      businessNotifications: employeeReq.length
+                    })
+                  })
+          }
+          firestore.collection('appointments')
+              .where("employeeId", "==", this.props.user.employeeId)
+                .where("status", "==", "requested")
+                  .onSnapshot((snapshot) => {
+                    this.setState({
+                      employeeNotifications: snapshot.size
+                    })
+                })
+          }
+          if(this.props.user.employeeId === ''){
+            firestore.collection('appointments')
+            .where("customerId", "==", this.props.user.customerId)
+            .where("status", "==", "accepted")
+              .onSnapshot((snapshot) => {
+                this.setState({
+                    employeeNotifications: snapshot.size
+                  })
+              })
+          }
+      }
 
     dispatchSetUserEmployeeConversations(employeeConversations: any[]) {
         this.props.setUserEmployeeConversations(employeeConversations);
@@ -294,7 +334,8 @@ class MessagingHome extends React.Component<any, any> {
 
         return (
             <div className={classes.root}>
-                <Sidebar />
+                <Sidebar businessNotifications={this.state.businessNotifications} employeeNotifications={this.state.employeeNotifications} />
+
                 <div className={classes.messagingContainer}>
                     {this.state.conversationSelectedOn ? (
                         this.renderSelectedConversation()

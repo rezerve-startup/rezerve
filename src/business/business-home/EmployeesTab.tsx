@@ -1,6 +1,5 @@
 import {
-  AppBar,
-  Box, Card,
+  AppBar, Badge, Box, Card,
   CardActions,
   CardContent, makeStyles, Tab,
   Tabs, Typography, useMediaQuery,
@@ -57,8 +56,9 @@ export default function EmployeeTab(props: any) {
     employeeRef.update({
       // tslint:disable-next-line: object-literal-shorthand
       businessId: businessId,
+      services: props.services
     })
-
+    props.this.handleNotification()
     getInformation();
   }
 
@@ -67,6 +67,7 @@ export default function EmployeeTab(props: any) {
     businessRef.update({
       employeeRequests: firebase.firestore.FieldValue.arrayRemove(id)
     })
+    props.this.handleNotification()
     getInformation();
   }
   
@@ -169,7 +170,7 @@ export default function EmployeeTab(props: any) {
               <Tab
                 key={i}
                 label={tab.label}
-                icon={tab.icon}
+                icon={<Badge color="primary" badgeContent={tab.label === "Employee Requests" ? (props.req): 0}>{tab.icon}</Badge>}
                 {...a11yProps(i)}
               />
             ))}

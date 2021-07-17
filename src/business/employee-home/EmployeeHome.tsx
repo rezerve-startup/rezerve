@@ -13,6 +13,7 @@ import {
   useMediaQuery,
   useTheme,
   Divider,
+  Badge
 } from '@material-ui/core';
 import { Home, List, Person, Assessment } from '@material-ui/icons';
 import ClientTab from './client-tab/ClientTab';
@@ -53,6 +54,8 @@ type State = {
   user: any;
   tabs: CustomTab[];
   tabValue: number;
+  businessNotifications: number;
+  employeeNotifications: number;
 };
 
 function mapStateToProps(state: StoreState) {
@@ -62,6 +65,7 @@ function mapStateToProps(state: StoreState) {
 }
 
 class EmployeeHome extends React.Component<Props, State> {
+  
   constructor(props: Props) {
     super(props);
     this.state = {
@@ -72,10 +76,40 @@ class EmployeeHome extends React.Component<Props, State> {
         { label: 'Clients', icon: <Person /> },
       ],
       tabValue: 0,
+      businessNotifications: 0,
+      employeeNotifications: 0,
     };
   }
 
   componentDidMount() {
+    this.getInformation();
+  }
+
+  getInformation(){
+    if(this.props.user === undefined){
+      //No information to get
+    }
+    else{
+      if(this.state.user.customerId === '' && this.state.user.employeeInfo.isOwner === true){
+        firestore.collection('businesses')
+          .doc(this.state.user.employeeInfo.businessId)
+            .get()
+              .then((docRef) => {
+                const employeeReq: string[] = docRef.data()?.employeeRequests
+                this.setState({
+                  businessNotifications: employeeReq.length
+                })
+              })
+      }
+      firestore.collection('appointments')
+          .where("employeeId", "==", this.state.user.employeeId)
+            .where("status", "==", "requested")
+              .onSnapshot((snapshot) => {
+                this.setState({
+                  employeeNotifications: snapshot.size
+                })
+              })
+      }
   }
 
   render() {
@@ -92,7 +126,7 @@ class EmployeeHome extends React.Component<Props, State> {
       <div className={classes.root}>
         {this.state.user.employeeInfo.businessId && 
         <div>
-          <Sidebar />
+          <Sidebar businessNotifications={this.state.businessNotifications} employeeNotifications={this.state.employeeNotifications} />
           <Box m={1}>
             <AppBar position="static" color="transparent" elevation={0}>
               <Tabs
@@ -108,7 +142,7 @@ class EmployeeHome extends React.Component<Props, State> {
                   <Tab
                     key={i}
                     label={tab.label}
-                    icon={tab.icon}
+                    icon={<Badge color="primary" badgeContent={tab.label === "Appointments" ? (this.state.employeeNotifications): 0}>{tab.icon}</Badge>}
                     {...a11yProps(i)}
                   />
                 ))}

@@ -1,7 +1,28 @@
 import {
-  AppBar, Avatar, Box, Button, Dialog, DialogActions, DialogContent, Divider,
-  IconButton, List,
-  ListItem, ListItemAvatar, ListItemIcon, ListItemText, makeStyles, Menu, MenuItem, SwipeableDrawer, Toolbar, Typography
+  Typography,
+  Divider,
+  IconButton,
+  makeStyles,
+  SwipeableDrawer,
+  AppBar,
+  Toolbar,
+  List,
+  ListItem,
+  ListItemText,
+  ListItemIcon,
+  ListItemAvatar,
+  Avatar,
+  MenuItem,
+  Menu,
+  Button,
+  Box,
+  useTheme,
+  useMediaQuery,
+  Dialog,
+  DialogContent,
+  DialogActions,
+  TextField,
+  Badge
 } from '@material-ui/core';
 import {
   AccountCircle, ArrowDropDown, Business, CalendarViewDay, Close, ExitToApp, Forum, Help, Home, Menu as MenuIcon, Search
@@ -12,39 +33,6 @@ import { Link, Redirect } from 'react-router-dom';
 import { auth } from '../../config/FirebaseConfig';
 import { setEmployeeEmail, setEmployeePhone } from '../store/actions';
 import { StoreState } from '../store/types';
-
-const sidebarDataWithoutLogout = [
-  {
-    title: 'Messages',
-    path: '/messages',
-    icon: <Forum />,
-    cName: 'nav-text',
-  },
-  {
-    title: 'Business Search',
-    path: '/customer-home',
-    icon: <Search />,
-    cName: 'nav-text',
-  },
-  {
-    title: 'Employee Home',
-    path: '/employee-home',
-    icon: <Home />,
-    cName: 'nav-text'
-  },
-  {
-    title: 'Business Home',
-    path: '/business-home',
-    icon: <Business />,
-    cName: 'nav-text',
-  },
-  {
-    title: 'Appointments',
-    path: '/appointments',
-    icon: <CalendarViewDay />,
-    cName: 'nav-text',
-  },
-];
 
 function mapStateToProps(state: StoreState) {
   return ({
@@ -60,8 +48,46 @@ const Sidebar = (props: any ) => {
     isSidebarOpen: false,
   });
 
+  const [userName, setUserName] = React.useState(`${props.user.firstName} ${props.user.lastName}`);
+  const [emailAddress, setEmailAddress] = React.useState(props.user.email);
+  const [phoneNumber, setPhoneNumber] = React.useState(props.user.phone);
   const [open, setProfileOpen] = React.useState(false);
   const isMenuOpen = Boolean(anchorEl);
+  const sidebarDataWithoutLogout = [
+    {
+      title: 'Messages',
+      path: '/messages',
+      icon: <Forum />,
+      cName: 'nav-text',
+    },
+    {
+      title: 'Business Search',
+      path: '/customer-home',
+      icon: <Search />,
+      cName: 'nav-text',
+    },
+    {
+      title: 'Employee Home',
+      reference: props.employeeNotifications,
+      path: '/employee-home',
+      icon: <Home />,
+      cName: 'nav-text'
+    },
+    {
+      title: 'Business Home',
+      reference: props.businessNotifications,
+      path: '/business-home',
+      icon: <Business />,
+      cName: 'nav-text',
+    },
+    {
+      title: 'Appointments',
+      reference: props.employeeNotifications,
+      path: '/appointments',
+      icon: <CalendarViewDay />,
+      cName: 'nav-text',
+    },
+  ];
 
   const handleMobileSidebar = (value: boolean) => (
     _event: React.KeyboardEvent | React.MouseEvent,
@@ -110,19 +136,19 @@ const Sidebar = (props: any ) => {
       >
         {props.user.customerId === '' &&
           <MenuItem button={true} component={Link} to={sidebarDataWithoutLogout[2].path}>
-            <ListItemIcon className={classes.listIcon}>{sidebarDataWithoutLogout[2].icon}</ListItemIcon>
+            <ListItemIcon className={classes.listIcon}><Badge color="primary" badgeContent={props.employeeNotifications}>{sidebarDataWithoutLogout[2].icon}</Badge></ListItemIcon>
             <ListItemText className={classes.listText} primary={sidebarDataWithoutLogout[2].title} />
           </MenuItem>
         }
         {props.user.customerId === '' && props.user.employeeInfo.isOwner === true &&
           <MenuItem button={true} component={Link} to={sidebarDataWithoutLogout[3].path}>
-            <ListItemIcon className={classes.listIcon}>{sidebarDataWithoutLogout[3].icon}</ListItemIcon>
+            <ListItemIcon className={classes.listIcon}><Badge color="primary" badgeContent={props.businessNotifications}>{sidebarDataWithoutLogout[2].icon}</Badge></ListItemIcon>
             <ListItemText className={classes.listText} primary={sidebarDataWithoutLogout[3].title} />
           </MenuItem>
         }
         {props.user.employeeId === '' &&
           <MenuItem button={true} component={Link} to={sidebarDataWithoutLogout[4].path}>
-            <ListItemIcon className={classes.listIcon}>{sidebarDataWithoutLogout[4].icon}</ListItemIcon>
+            <ListItemIcon className={classes.listIcon}><Badge color="primary" badgeContent={props.employeeNotifications}>{sidebarDataWithoutLogout[4].icon}</Badge></ListItemIcon>
             <ListItemText className={classes.listText} primary={sidebarDataWithoutLogout[4].title} />
           </MenuItem>
         }
@@ -168,7 +194,7 @@ const Sidebar = (props: any ) => {
                     return (
                         <ListItem button={true} key={i} component={Link} to={obj.path}>
                             <ListItemIcon className={classes.listIcon}>
-                            {obj.icon}
+                              <Badge color="primary" badgeContent={obj.reference}>{obj.icon}</Badge>
                             </ListItemIcon>
                             <ListItemText className={classes.listText} primary={obj.title} />
                         </ListItem>
@@ -180,7 +206,9 @@ const Sidebar = (props: any ) => {
                     return (
                       <ListItem button={true} key={i} component={Link} to={obj.path}>
                           <ListItemIcon className={classes.listIcon}>
-                          {obj.icon}
+                            <Badge color="primary" badgeContent={obj.reference}>
+                            {obj.icon}
+                            </Badge>
                           </ListItemIcon>
                           <ListItemText className={classes.listText} primary={obj.title} />
                       </ListItem>
@@ -212,7 +240,9 @@ const Sidebar = (props: any ) => {
                 className={classes.menuButton}
                 onClick={handleMobileSidebar(true)}
               >
-                <MenuIcon />
+                <Badge color="primary" badgeContent={props.businessNotifications + props.employeeNotifications}>
+                  <MenuIcon />
+                </Badge>
               </IconButton>
             </div>
             <Typography
@@ -265,7 +295,7 @@ const Sidebar = (props: any ) => {
                   aria-controls={menuId}
                   aria-haspopup="true"
                   onClick={handleMenuOpen}
-                  startIcon={<AccountCircle />}
+                  startIcon={<Badge color="primary" badgeContent={props.businessNotifications + props.employeeNotifications}><AccountCircle /></Badge>}
                   endIcon={<ArrowDropDown />}
                 >
                   {props.user.firstName} {props.user.lastName}
