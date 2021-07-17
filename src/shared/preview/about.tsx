@@ -71,7 +71,6 @@ const useStyles = makeStyles((theme: Theme) =>
 
 function BusinessPreview(){
 	const classes = useStyles();
-	const [dense, setDense] = React.useState(false);
   	const list = [
 	  {item: 'MANAGE YOUR SCHEDULE', buffer: '.....'},
 	  {item: 'REACH NEW CUSTOMERS' ,buffer: '......'},
@@ -88,7 +87,7 @@ function BusinessPreview(){
 			noWrap={true}
 			color="primary"
 			gutterBottom>
-				 <img className={classes.logo}src={logo}/>
+				 <img className={classes.logo}src={logo} alt="ReZerve | The First Free-To-Use Booking and Business Management Software for Stylist and Beauty Profressionals "/>
 			</Typography>
 			
 				</div>

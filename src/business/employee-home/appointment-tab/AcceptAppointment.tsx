@@ -1,8 +1,6 @@
-import React, { createRef } from 'react';
+import React from 'react';
 import {
   DialogContent,
-  Button,
-  DialogActions,
   DialogContentText,
   DialogTitle,
   Typography,
@@ -19,8 +17,6 @@ const promise = loadStripe(PUBLIC_KEY);
 
 function StripePaymentSetup(props) {
   // tslint:disable-next-line: no-shadowed-variable
-  const classes = useStyles();
-  const price:number = props.price;
   return (
     <div className="App">
       <Elements stripe={promise}>
@@ -33,11 +29,7 @@ function StripePaymentSetup(props) {
 
 
 const AcceptAppointment = (props: any) => {
-  const theme = useTheme();
   // tslint:disable-next-line: no-shadowed-variableF
-  const classes = useStyles();
-  const [open, setOpen] = React.useState(false);
-
     return (
       <>
         <DialogTitle>Accept Appointment</DialogTitle>

@@ -42,16 +42,16 @@ interface CustomTab {
   icon: React.ReactElement<SvgIconProps>;
 }
 
-interface Props extends WithStyles<typeof styles> {}
+// interface Props extends WithStyles<typeof styles> {}
 
-type State = {
-  business: any;
-  businessId: string;
-  tabs: CustomTab[];
-  tabValue: number;
-  businessNotifications: number;
-  employeeNotifications: number;
-};
+// type State = {
+//   business: any;
+//   businessId: string;
+//   tabs: CustomTab[];
+//   tabValue: number;
+//   businessNotifications: number;
+//   employeeNotifications: number;
+// };
 
 function mapStateToProps(state: StoreState) {
   return {

@@ -15,10 +15,9 @@ import {
   Divider,
   Badge
 } from '@material-ui/core';
-import { Home, List, Person, Assessment } from '@material-ui/icons';
+import { Home, List, Person} from '@material-ui/icons';
 import ClientTab from './client-tab/ClientTab';
 import HomeTab from './home-tab/HomeTab';
-import BusinessPerformance from '../business-home/business-performance/BusinessPerformance';
 import { connect } from 'react-redux';
 import { firestore } from '../../config/FirebaseConfig';
 import { StoreState } from '../../shared/store/types';

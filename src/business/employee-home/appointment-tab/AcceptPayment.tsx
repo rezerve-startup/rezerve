@@ -12,13 +12,10 @@ export default function AcceptPayment(props:any){
     // https://rezerve-startup-api.herokuapp.com/charge-card-off-session
     
     const [clientSecret, setClientSecret] = React.useState<string>('');
-    const [publicKey, setPublicKey] = React.useState<string>('');
     const [succeeded, setSucceeded] = React.useState<boolean>(false);
     const stripe = useStripe();
     
     useEffect(() => {
-      console.log(props.cID)
-      
       fetch('https://rezerve-startup-api.herokuapp.com/create-setup-intent', {
         // Use one of the links above for local/live
         method: 'POST',
@@ -36,7 +33,7 @@ export default function AcceptPayment(props:any){
         //setPublicKey(data.publicKey)
         setSucceeded(data.succeeded)
       });
-    }, []);
+    }, [props.cID]);
 
     console.log(4, succeeded)
 

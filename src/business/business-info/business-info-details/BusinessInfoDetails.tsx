@@ -13,8 +13,6 @@ import {
   Dialog,
   Snackbar,
   IconButton,
-  useMediaQuery,
-  useTheme
 } from '@material-ui/core';
 import CloseIcon from '@material-ui/icons/Close';
 import avatar from '../../../assets/avatar.jpg';

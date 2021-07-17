@@ -30,9 +30,6 @@ import image from '../../../assets/avatar.jpg';
 import { updateEmployeeAppointmentStatus, setUserEmployeeAppointments } from '../../../shared/store/actions';
 import { firestore } from '../../../config/FirebaseConfig';
 import firebase from 'firebase';
-import {Elements} from '@stripe/react-stripe-js';
-import {loadStripe} from '@stripe/stripe-js';
-import AcceptPayment from './AcceptPayment'
 import AcceptAppointment from './AcceptAppointment';
 
 const styles = (theme: Theme) =>
@@ -138,7 +135,6 @@ const styles = (theme: Theme) =>
   });
 
 function mapStateToProps(state: StoreState) {
-  let allAppointments: any[] = [];
   let upcomingAppointments: any[] = [];
   let pastAppointments: any[] = [];
   let cancelledAppointments: any[] = [];

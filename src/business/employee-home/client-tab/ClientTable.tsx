@@ -10,20 +10,16 @@ import {
   TableContainer,
   TableHead,
   TableRow,
-  TablePagination,
   TableSortLabel,
   Checkbox,
-  Tooltip,
   Theme,
   createStyles,
   makeStyles,
   lighten,
   Avatar,
-  Fab,
   InputBase,
   Grow,
-  fade,
-  withStyles,
+  alpha,
   Dialog,
   DialogTitle,
   DialogContent,
@@ -31,11 +27,8 @@ import {
   TextField,
   DialogActions,
   Button,
-  IconButton,
-  Snackbar,
 } from '@material-ui/core';
-import { Delete, Check, Add, Search, Message } from '@material-ui/icons';
-import CloseIcon from '@material-ui/icons/Close';
+import {Check, Search, Message } from '@material-ui/icons';
 import { Client } from '../../models/BusinessHome';
 import { SpeedDial, SpeedDialAction, SpeedDialIcon } from '@material-ui/lab';
 import { connect } from 'react-redux';
@@ -46,10 +39,6 @@ import firebase from 'firebase';
 import image from '../../../assets/avatar.jpg';
 
 // const image = require('../../../assets/avatar.jpg');
-
-const fabActions = [
-  { icon: <Message />, name: 'Message' }
-];
 
 function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
   if (b[orderBy] < a[orderBy]) {
@@ -194,9 +183,9 @@ const useToolbarStyles = makeStyles((theme: Theme) =>
     search: {
       position: 'relative',
       borderRadius: theme.shape.borderRadius,
-      backgroundColor: fade(theme.palette.primary.dark, 0.15),
+      backgroundColor: alpha(theme.palette.primary.dark, 0.15),
       '&:hover': {
-        backgroundColor: fade(theme.palette.primary.dark, 0.25),
+        backgroundColor: alpha(theme.palette.primary.dark, 0.25),
       },
       marginRight: theme.spacing(2),
       marginLeft: 0,
@@ -251,7 +240,7 @@ interface EnhancedTableToolbarProps {
 
 const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
   const classes = useToolbarStyles();
-  const { selectedClients, employeeId } = props;
+  const {selectedClients} = props;
   const [searching] = React.useState(false);
   const [open, setOpen] = React.useState(false);
   const [messageDialogOpen, setMessageDialogOpen] = React.useState(false);
@@ -502,7 +491,6 @@ const ClientTable = (props: any) => {
                 if (apptData.datetime.toDate() < Date.now()) {
                   if (employeeClients[`${apptData.customerId}`]) {
                     if (apptData.status === 'accepted' || apptData.status === 'completed') {
-                      let numVisits = employeeClients[`${apptData.customerId}`] + 1;
 
                       employeeClients[`${apptData.customerId}`].numVisits += 1;
                     }
@@ -566,16 +554,16 @@ const ClientTable = (props: any) => {
     setSelected(newSelected);
   };
 
-  const handleChangePage = (event: React.MouseEvent<HTMLButtonElement> | null, newPage: number) => {
-    setPage(newPage);
-  };
+  // const handleChangePage = (event: React.MouseEvent<HTMLButtonElement> | null, newPage: number) => {
+  //   setPage(newPage);
+  // };
 
-  const handleChangeRowsPerPage = (
-    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-  ) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0);
-  };
+  // const handleChangeRowsPerPage = (
+  //   event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  // ) => {
+  //   setRowsPerPage(parseInt(event.target.value, 10));
+  //   setPage(0);
+  // };
 
   const isSelected = (customerId: string) => selected.indexOf(customerId) !== -1;
 

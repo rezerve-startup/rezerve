@@ -83,11 +83,11 @@ type State = {
   currentDate: string; // YYYY-MM-DD
 };
 
-interface IncomingSchedule {
-  startDate: string; // YYYY-MM-DDTHH:MM
-  endDate: string; // YYYY-MM-DDTHH:MM
-  title: string;
-}
+// interface IncomingSchedule {
+//   startDate: string; // YYYY-MM-DDTHH:MM
+//   endDate: string; // YYYY-MM-DDTHH:MM
+//   title: string;
+// }
 
 interface Props extends WithStyles<typeof styles> {
   scheduleItems?: any[]

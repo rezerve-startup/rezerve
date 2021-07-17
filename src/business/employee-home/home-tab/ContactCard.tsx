@@ -7,7 +7,6 @@ import {
   TextField,
   withStyles,
   createStyles,
-  WithStyles,
   Theme,
   Divider,
 } from '@material-ui/core';
@@ -34,7 +33,6 @@ type State = {
   email: string;
 };
 
-interface Props extends WithStyles<typeof styles> {}
 
 function mapStateToProps(state: StoreState) {
   return ({

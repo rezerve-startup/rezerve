@@ -55,7 +55,6 @@ export default function CheckoutForm(props) {
     );
   };
 
-  const sentPrice: number = props.price;
   useEffect(() => {
     // Create PaymentIntent as soon as the page loads
     // Local testing

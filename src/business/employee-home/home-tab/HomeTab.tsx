@@ -15,11 +15,9 @@ import { setUserEmployeeAppointments } from '../../../shared/store/actions';
 import StylistCard from './StylistCard';
 import AvailabilityCard from './AvailabilityCard';
 import ContactCard from './ContactCard';
-import TodoList from './TodoList';
 import { connect } from 'react-redux';
 import { StoreState } from '../../../shared/store/types';
 import { firestore } from '../../../config/FirebaseConfig';
-import { Redirect } from 'react-router';
 import EmployeeServicesCard from './EmployeeServicesCard';
 
 const styles = (theme: Theme) =>

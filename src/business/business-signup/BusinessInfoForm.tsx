@@ -8,14 +8,12 @@ import {
   Grid,
   CardContent,
   Typography,
-  IconButton,
   WithStyles,
   Select,
   FormControl,
   InputLabel,
   MenuItem,
 } from '@material-ui/core';
-import { Close } from '@material-ui/icons';
 import { parsePhoneNumber } from 'libphonenumber-js';
 import { states } from './StateArray';
 import { FileObject } from 'material-ui-dropzone';
@@ -325,16 +323,16 @@ const DecoratedBusinessInfoForm = withStyles(styles, { withTheme: true })(
   },
 );
 
-const dialogTitle = (props: { toggleDialog: () => void }) => (
-  <>
-    <span>Upload file</span>
-    <IconButton
-      style={{ right: '12px', top: '8px', position: 'absolute' }}
-      onClick={props.toggleDialog}
-    >
-      <Close />
-    </IconButton>
-  </>
-);
+// const dialogTitle = (props: { toggleDialog: () => void }) => (
+//   <>
+//     <span>Upload file</span>
+//     <IconButton
+//       style={{ right: '12px', top: '8px', position: 'absolute' }}
+//       onClick={props.toggleDialog}
+//     >
+//       <Close />
+//     </IconButton>
+//   </>
+// );
 
 export default DecoratedBusinessInfoForm;

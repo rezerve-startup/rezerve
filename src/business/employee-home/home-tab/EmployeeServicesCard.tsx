@@ -5,25 +5,20 @@ import {
   Typography,
   withStyles,
   createStyles,
-  WithStyles,
   Theme,
   Divider,
   Button,
   Dialog,
   DialogTitle,
   DialogContent,
-  DialogContentText,
   DialogActions,
   TextField,
   MenuItem,
-  IconButton,
-  Snackbar,
 } from '@material-ui/core';
 import { connect } from 'react-redux';
 import { StoreState } from '../../../shared/store/types';
 import { setEmployeeServices } from '../../../shared/store/actions';
 import { firestore } from '../../../config/FirebaseConfig';
-import CloseIcon from '@material-ui/icons/Close';
 
 function mapStateToProps(state: StoreState) {
     let allServices = state.system.user.employeeInfo?.services;
@@ -42,7 +37,6 @@ function mapStateToProps(state: StoreState) {
     }
 }
 
-interface Props extends WithStyles<typeof styles> {}
 
 const appointmentLengthOptions = [
     { value: 1, label: '30 min' },

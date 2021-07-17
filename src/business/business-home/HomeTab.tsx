@@ -1,20 +1,14 @@
 import React from 'react';
-import Carousel from 'react-material-ui-carousel';
 import {
-  Paper,
   Grid,
   withStyles,
   createStyles,
   WithStyles,
   Theme,
-  Typography,
 } from '@material-ui/core';
 
 import BusinessCard from  './business-card'
 import AvailabilityCard from './AvailabilityCard'
-import PreferencesCard from './PreferencesCard';
-import ContactCard from '../employee-home/home-tab/ContactCard';
-import TodoList from '../employee-home/home-tab/TodoList';
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -39,7 +33,6 @@ type State = {};
 class HomePanel extends React.Component<Props, State> {
   render() {
     const { classes, isMobile } = this.props;
-    const carouselComponents = [AvailabilityCard];
 
     return (
       <div className={classes.root}>

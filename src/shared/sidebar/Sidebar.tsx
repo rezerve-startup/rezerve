@@ -16,12 +16,9 @@ import {
   Menu,
   Button,
   Box,
-  useTheme,
-  useMediaQuery,
   Dialog,
   DialogContent,
   DialogActions,
-  TextField,
   Badge
 } from '@material-ui/core';
 import {
@@ -48,9 +45,6 @@ const Sidebar = (props: any ) => {
     isSidebarOpen: false,
   });
 
-  const [userName, setUserName] = React.useState(`${props.user.firstName} ${props.user.lastName}`);
-  const [emailAddress, setEmailAddress] = React.useState(props.user.email);
-  const [phoneNumber, setPhoneNumber] = React.useState(props.user.phone);
   const [open, setProfileOpen] = React.useState(false);
   const isMenuOpen = Boolean(anchorEl);
   const sidebarDataWithoutLogout = [
