@@ -12,12 +12,6 @@ app.use(express.static('.'));
 app.use(express.json());
 app.use(cors());
 
-app.use(function(req, res, next){
-  res.header("Access-Control-Allow-Origin", "https://rezerve-startup.herokuapp.com");
-  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept")
-  next();
-})
-
 //Accepts payment from previous Setup Intent
 app.post('/create-setup-intent', async (req, res) => {
   const action = req.body.action; //JSON sent in from CheckoutForm.tsx 
@@ -57,6 +51,9 @@ app.post('/create-setup-intent', async (req, res) => {
     clientSecret: paymentIntent.client_secret,
     publicKey: process.env.STRIPE_PUBLIC_KEY
   });
+  
+  
+  
   
   // try {
   //   // List the customer's payment methods to find one to charge
@@ -118,3 +115,14 @@ app.post('/create-setup-intent', async (req, res) => {
 //   const cID = req.body
   
 // });
+
+
+
+
+// Use for live site
+// tslint:disable-next-line: no-console
+app.listen(process.env.PORT || 5000, () => console.log(`Node server listening on port ${process.env.PORT || 5000}!`));
+
+// Use for local testing
+// tslint:disable-next-line: no-console
+//app.listen(4242, () => console.log('Node server listening on port 4242!'));
