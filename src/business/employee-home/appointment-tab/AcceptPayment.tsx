@@ -16,13 +16,11 @@ export default function AcceptPayment(props:any){
     const stripe = useStripe();
     
     useEffect(() => {
-      fetch('https://rezerve-startup-api.herokuapp.com/create-setup-intent', {
+      window.fetch('https://rezerve-startup-api.herokuapp.com/create-setup-intent', {
         // Use one of the links above for local/live
         mode: 'cors',
         method: 'POST',
         headers: {
-          'Access-Control-Allow-Origin': 'http://localhost:3000',
-          'Access-COntrol-Allow-Headers' : 'Origin, X-Requested-With, Content-Type, Accept',
           'Content-Type': 'application/json',
         },
          
@@ -36,7 +34,7 @@ export default function AcceptPayment(props:any){
         //setPublicKey(data.publicKey)
         setSucceeded(data.succeeded)
       });
-    }, [props.cID]);
+    }, []);
 
     console.log(4, succeeded)
 

@@ -11,7 +11,7 @@ const cors = require('cors');
 app.use(express.static('.'));
 app.use(express.json());
 app.use(cors(
-  {origin: "http://localhost:3000",}
+  {origin: "https://rezerve-startup.herokupp.com",}
 ));
 
 //Accepts payment from previous Setup Intent
