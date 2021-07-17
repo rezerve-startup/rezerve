@@ -5,13 +5,18 @@ const app = express();
 // tslint:disable-next-line: no-var-requires
 // Takes secret sk_test_....
 const stripe = require('stripe')(`${process.env.STRIPE_API_KEY}`);
-// const client = require('twilio')(`${process.env.TWILIO_ACCOUNT_SID}`, `${process.env.TWILIO_AUTH_TOKEN}`);
 
 const cors = require('cors');
 
 app.use(express.static('.'));
 app.use(express.json());
 app.use(cors());
+
+app.use(function(req, res, next){
+  res.header("Access-Control-Allow-Origin", "https://rezerve-startup-api.herokuapp.com");
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept")
+  next();
+})
 
 //Accepts payment from previous Setup Intent
 app.post('/create-setup-intent', async (req, res) => {
@@ -52,9 +57,6 @@ app.post('/create-setup-intent', async (req, res) => {
     clientSecret: paymentIntent.client_secret,
     publicKey: process.env.STRIPE_PUBLIC_KEY
   });
-  
-  
-  
   
   // try {
   //   // List the customer's payment methods to find one to charge
@@ -116,14 +118,3 @@ app.post('/create-setup-intent', async (req, res) => {
 //   const cID = req.body
   
 // });
-
-
-
-
-// Use for live site
-// tslint:disable-next-line: no-console
-app.listen(process.env.PORT || 5000, () => console.log(`Node server listening on port ${process.env.PORT || 5000}!`));
-
-// Use for local testing
-// tslint:disable-next-line: no-console
-//app.listen(4242, () => console.log('Node server listening on port 4242!'));

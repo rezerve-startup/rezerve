@@ -11,6 +11,7 @@ import {
   withStyles,
   SvgIconProps,
   CircularProgress,
+  Badge
 } from '@material-ui/core';
 import { Home, Assessment, People } from '@material-ui/icons';
 import HomePanel from './HomeTab';
@@ -48,6 +49,8 @@ type State = {
   businessId: string;
   tabs: CustomTab[];
   tabValue: number;
+  businessNotifications: number;
+  employeeNotifications: number;
 };
 
 function mapStateToProps(state: StoreState) {
@@ -68,6 +71,8 @@ class BusinessHome extends React.Component<any, any> {
         { label: 'Employees', icon: <People />},
       ],
       tabValue: 0,
+      businessNotifications: 0,
+      employeeNotifications: 0,
     };
   }
 
@@ -84,8 +89,36 @@ class BusinessHome extends React.Component<any, any> {
           this.dispatchSetEmployeeBusiness(businessData);
         });
       });
+      this.getInformation()
   }
 
+  getInformation(){
+        firestore.collection('businesses')
+          .doc(this.props.user.employeeInfo.businessId)
+            .get()
+              .then((docRef) => {
+                const employeeReq: string[] = docRef.data()?.employeeRequests
+                this.setState({
+                  businessNotifications: employeeReq.length
+                })
+              })
+      
+      firestore.collection('appointments')
+          .where("employeeId", "==", this.props.user.employeeId)
+            .where("status", "==", "requested")
+              .onSnapshot((snapshot) => {
+                this.setState({
+                  employeeNotifications: snapshot.size
+                })
+              })
+      
+  }
+
+  handleNotification(){
+    this.setState({
+      businessNotifications: this.state.businessNotifications - 1
+    })
+  }
   render() {
     const { classes } = this.props;
     const isMobile = true;
@@ -103,7 +136,8 @@ class BusinessHome extends React.Component<any, any> {
     }
     return (
       <div className={classes.root}>
-        <Sidebar/>
+        <Sidebar businessNotifications={this.state.businessNotifications} employeeNotifications={this.state.employeeNotifications} />
+
         <Box m={1}>
           
           <AppBar position="static" color="default">
@@ -120,7 +154,7 @@ class BusinessHome extends React.Component<any, any> {
                 <Tab
                   key={i}
                   label={tab.label}
-                  icon={tab.icon}
+                  icon={<Badge color="primary" badgeContent={tab.label === "Employees" ? (this.state.businessNotifications): 0}>{tab.icon}</Badge>}
                   {...a11yProps(i)}
                 />
               ))}
@@ -139,7 +173,7 @@ class BusinessHome extends React.Component<any, any> {
               <BusinessPerformance />
             </TabPanel>
              <TabPanel value={this.state.tabValue} index={2}>
-              <EmployeesTab businessId={this.props.user.employeeInfo.businessId}/>
+              <EmployeesTab businessId={this.props.user.employeeInfo.businessId} req={this.state.businessNotifications} this={this} services={this.props.user.employeeInfo.services}/>
             </TabPanel>
           </SwipeableViews>
         </Box>

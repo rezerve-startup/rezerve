@@ -496,9 +496,9 @@ class BusinessInfoDetails extends React.Component<any, any> {
                 )
               })}
 
-              <div className={classes.firstAvailableTimeButton}>
+              {/* <div className={classes.firstAvailableTimeButton}>
                 <Button variant="contained" onClick={() => this.displayFirstAvailable()}>Show First Available</Button>
-              </div>
+              </div> */}
 
               <div className={classes.appointmentSelection}>
                 <div className={classes.setAppointmentDate}>

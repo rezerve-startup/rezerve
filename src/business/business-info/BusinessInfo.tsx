@@ -483,15 +483,18 @@ class BusinessInfo extends React.Component<any, BusinessInfoState> {
                   <div>
                     <b>REVIEWS</b>
                   </div>
-                  <Rating
-                    size="medium"
-                    value={this.state.businessTotalScore / (this.state.businessReviewsShown.length + this.state.businessReviewsStored.length)}
-                    precision={0.5}
-                    readOnly={true}
-                    classes={{
-                      iconFilled: classes.starRatingFilled
-                    }}
-                  />
+                  {this.props.selectedBusinessInfo.overallRating === 0 ?
+                    (<Typography variant="body2">{this.props.selectedBusinessInfo.name} currently has no reviews. Book now and add one!</Typography>) : 
+                    (<Rating
+                      size="medium"
+                      value={this.props.selectedBusinessInfo.overallRating}
+                      precision={0.5}
+                      readOnly={true}
+                      classes={{
+                        iconFilled: classes.starRatingFilled
+                      }}
+                    />)
+                  }
                 </div>
 
                 <div>

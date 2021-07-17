@@ -232,14 +232,9 @@ class CustomerSignUp extends React.Component<any, State> {
                     .collection('businesses')
                     .doc(this.state.selectedBusiness?.id);
 
-                  firestore.runTransaction((transaction) => {
-                    return transaction.get(businessRef).then((businessDocRef) => {
-                      const employeeReqs: any[] = businessDocRef.data()?.employeeRequests
-                      
-                      employeeReqs.push(`${docRef.id}`)
-                      transaction.update(businessRef, { employeeRequests: employeeReqs })
+                    businessRef.update({
+                      employeeRequests: firebase.firestore.FieldValue.arrayUnion(newUser.employeeId),
                     })
-                  })
                   .then(() => {
                     console.log("Added employee to business request queue")
                   })
@@ -255,7 +250,7 @@ class CustomerSignUp extends React.Component<any, State> {
               .finally(() => {
                 this.props.handleSignUpClose();
                 this.setState({ ...this.state, loading: false, open: false });
-                window.location.reload();
+                //window.location.reload();
               });
           })
           .catch((e) => {
