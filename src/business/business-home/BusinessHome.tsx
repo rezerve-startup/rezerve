@@ -6,7 +6,6 @@ import {
   Tab,
   Tabs,
   Theme,
-  WithStyles,
   createStyles,
   withStyles,
   SvgIconProps,

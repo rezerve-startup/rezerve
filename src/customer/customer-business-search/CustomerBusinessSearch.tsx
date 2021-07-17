@@ -19,7 +19,6 @@ import Barber from '../../assets/business-card-covers/Barber.jpg';
 import Hair from '../../assets/business-card-covers/Hair.jpg';
 import House_Call from '../../assets/business-card-covers/House_Call.jpg';
 import Nail from '../../assets/business-card-covers/Nail.jpg';
-import cat1 from '../../assets/cat1.jpg';
 import BusinessInfo from '../../business/business-info/BusinessInfo';
 import { firestore } from '../../config/FirebaseConfig';
 import { Business } from '../../models/Business.interface';
@@ -390,7 +389,7 @@ class CustomerBusinessSearch extends React.Component<
               </div>
 
               {this.props.foundBusinesses.map((business, i) => {
-                let imageType = cat1
+                let imageType = Barber
                 if (business.businessInfo.type === "Hair"){
                   imageType = Hair
                 }

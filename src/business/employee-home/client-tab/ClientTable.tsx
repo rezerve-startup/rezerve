@@ -471,8 +471,8 @@ const ClientTable = (props: any) => {
   const [order, setOrder] = React.useState<Order>('asc');
   const [orderBy, setOrderBy] = React.useState<keyof Client>('numVisits');
   const [selected, setSelected] = React.useState<string[]>([]);
-  const [page, setPage] = React.useState(0);
-  const [rowsPerPage, setRowsPerPage] = React.useState(5);
+  const [page] = React.useState(0);
+  const [rowsPerPage] = React.useState(5);
 
   useEffect(function() {
     firestore.collection('appointments').where('employeeId', '==', `${props.employeeId}`).get()
