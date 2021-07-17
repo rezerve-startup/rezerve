@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {
   AppBar,
   Tabs,
@@ -23,7 +23,7 @@ import Sidebar from '../sidebar/Sidebar';
 import { Redirect } from 'react-router';
 import { StoreState } from '../store/types';
 import { connect } from 'react-redux';
-
+import { firestore } from '../../config/FirebaseConfig';
 //--------------------------
 //CSS
 //--------------------------
@@ -125,7 +125,7 @@ function mapStateToProps(state: StoreState) {
 //--------------------------
 const LandingPageLoggedIn = (props: any) => {
   const classes = useStyles();
-
+  const [appointmentCount, setAppointmentCount] = React.useState(0);
   const [tabValue, setTabValue] = React.useState(0);
   const handleTabChange = (
     event: React.ChangeEvent<{}>,
@@ -134,13 +134,26 @@ const LandingPageLoggedIn = (props: any) => {
     setTabValue(newTabValue);
   };
 
+  useEffect(() => {
+    getInformation();
+}, [])
+
+  const getInformation = () =>{
+    firestore.collection('appointments')
+          .where("customerId", "==", props.user.customerId)
+            .where("status", "==", "accepted")
+              .onSnapshot((snapshot) => {
+                setAppointmentCount(snapshot.size)
+              })
+  }
+
   if (props.user === undefined) {
     return <Redirect to={'/'} />
   }
 
   return (
     <div>
-      <Sidebar />
+      <Sidebar businessNotifications={0} employeeNotifications={appointmentCount}/>
       {
         (props.user.customerId === '')? (
           <div>
