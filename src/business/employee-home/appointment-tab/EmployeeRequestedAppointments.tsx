@@ -1,21 +1,9 @@
-import React from 'react';
 import {
-  Typography,
-  withStyles,
-  createStyles,
-  WithStyles,
-  Theme,
   Accordion,
   AccordionDetails,
-  AccordionSummary,
-  Button,
-  Avatar,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogContentText,
-  DialogActions,
-  TextField,
+  AccordionSummary, Avatar, Button, createStyles, Dialog, DialogActions, DialogContent,
+  DialogContentText, DialogTitle, TextField, Theme, Typography,
+  withStyles, WithStyles
 } from '@material-ui/core';
 // tslint:disable-next-line: no-submodule-imports
 import { Description, Message } from '@material-ui/icons/';
@@ -23,16 +11,14 @@ import { Description, Message } from '@material-ui/icons/';
 import DeleteIcon from '@material-ui/icons/Delete';
 // tslint:disable-next-line: no-submodule-imports
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-import { connect } from 'react-redux';
-import { StoreState } from '../../../shared/store/types';
-import moment from 'moment';
-import image from '../../../assets/avatar.jpg';
-import { updateEmployeeAppointmentStatus, setUserEmployeeAppointments } from '../../../shared/store/actions';
-import { firestore } from '../../../config/FirebaseConfig';
 import firebase from 'firebase';
-import {Elements} from '@stripe/react-stripe-js';
-import {loadStripe} from '@stripe/stripe-js';
-import AcceptPayment from './AcceptPayment'
+import moment from 'moment';
+import React from 'react';
+import { connect } from 'react-redux';
+import image from '../../../assets/avatar.jpg';
+import { firestore } from '../../../config/FirebaseConfig';
+import { setUserEmployeeAppointments, updateEmployeeAppointmentStatus } from '../../../shared/store/actions';
+import { StoreState } from '../../../shared/store/types';
 import AcceptAppointment from './AcceptAppointment';
 
 const styles = (theme: Theme) =>

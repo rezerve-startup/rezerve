@@ -138,19 +138,19 @@ const LandingPageLoggedIn = (props: any) => {
 
   return (
     <div>
-      <Sidebar businessNotifications={0} employeeNotifications={appointmentCount}/>
-      {
-        (props.user.customerId === '')? (
-          <div>
-                <AppBar className={classes.alert} position="sticky">
-                  <Typography align="center" variant="caption">
-                      Your request is still awaiting business approval. When approved, you will gain access to employee features. 
-                  </Typography>
-                </AppBar>
-              </div>
-        ):("")
-      }
-      <AppBar position="static">
+      <AppBar position="sticky">
+        <Sidebar businessNotifications={0} employeeNotifications={appointmentCount} />
+        {
+          (props.user.customerId === '')? (
+            <div>
+                  <AppBar className={classes.alert} position="sticky">
+                    <Typography align="center" variant="caption">
+                        Your request is still awaiting business approval. When approved, you will gain access to employee features. 
+                    </Typography>
+                  </AppBar>
+                </div>
+          ):("")
+        }
         <Tabs
           centered
           value={tabValue}

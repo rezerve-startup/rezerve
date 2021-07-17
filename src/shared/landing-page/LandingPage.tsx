@@ -235,11 +235,8 @@ const LandingPageDefault = (props: any) => {
                 </Grid>
               </Grid>
             </Box>
-          </AppBar>
-          
-          <div className={classes.appBar}>
-            <AppBar position="sticky">
-              <Tabs
+            <Box m={0} className={classes.appBar}>
+              <Tabs 
                 centered
                 value={tabValue}
                 indicatorColor="primary"
@@ -255,9 +252,8 @@ const LandingPageDefault = (props: any) => {
                 <Divider orientation="vertical" flexItem />
                 <Tab label="House Calls"{...a11yProps(6)} />
               </Tabs>
-            </AppBar>
-          </div>
-
+            </Box>
+          </AppBar>
           
             {loading ? 
               (<div className={classes.loadingSpinnerContainer}>
