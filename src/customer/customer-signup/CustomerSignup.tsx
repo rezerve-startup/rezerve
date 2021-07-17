@@ -1,44 +1,22 @@
-import React from 'react';
 import {
-  Button,
-  Theme,
-  createStyles,
-  Card,
-  withStyles,
-  Grid,
-  CardContent,
-  Typography,
-  CardActions,
-  CardMedia,
-  IconButton,
-  CircularProgress,
-  Checkbox,
-  FormControlLabel,
-  ListItem,
-  ListItemAvatar,
-  List,
-  Avatar,
-  ListItemText,
-  ListSubheader,
-  Fab,
-  Dialog,
-  Snackbar,
-  Divider,
-  TextField,
+  Avatar, Button, Card, CardActions, CardContent, CardMedia, Checkbox, CircularProgress, createStyles, Dialog, Divider, Fab, FormControlLabel, Grid, IconButton, List, ListItem,
+  ListItemAvatar, ListItemText,
+  ListSubheader, Snackbar, SvgIcon, SvgIconProps, TextField, Theme, Typography, withStyles
 } from '@material-ui/core';
-import { createNewCustomer, updateUser, setAuthChanging, logoutUser } from '../../shared/store/actions';
-import { connect } from 'react-redux';
-import { auth, firestore } from '../../config/FirebaseConfig';
-import { Image, ArrowBack, ArrowForward, Close } from '@material-ui/icons';
+import { ArrowBack, ArrowForward, Close, Image } from '@material-ui/icons';
 import { Alert } from '@material-ui/lab';
-import UserInfoForm from '../../shared/sign-up/UserInfoForm';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import algoliasearch from 'algoliasearch';
 import firebase from 'firebase';
+import React, { Fragment } from 'react';
 import {
-  InstantSearch,
-  connectAutoComplete,
+  connectAutoComplete, InstantSearch
 } from 'react-instantsearch-dom';
+import { connect } from 'react-redux';
+import { ReactComponent as algoliaLogo } from '../../assets/algolia-blue-mark.svg';
+import { auth, firestore } from '../../config/FirebaseConfig';
+import UserInfoForm from '../../shared/sign-up/UserInfoForm';
+import { createNewCustomer, logoutUser, setAuthChanging, updateUser } from '../../shared/store/actions';
 
 interface Business {
   id: string;
@@ -69,6 +47,12 @@ type State = {
 
 function mapStateToProps(state: State) {
   return {};
+}
+
+function CustomIcon (props: SvgIconProps) {
+  return(
+    <SvgIcon component={algoliaLogo} viewBox="0 0 60 50"/>
+  );
 }
 
 class CustomerSignUp extends React.Component<any, State> {
@@ -557,20 +541,28 @@ const BusinessSearchComponent = withStyles(styles, { withTheme: true })(
             handleSearchSelection(newValue);
           }}
           renderInput={(params) => 
-            <TextField
-            {... params}
-            //inputRef={this.state.anchorEl}
-            className={classes.search}
-            id="standard-basic"
-            placeholder="Search your Business Here"
-            fullWidth
-            value={currentRefinement}
-            onChange={
-              (event) => {
-                refine(event.currentTarget.value);
-              }
-            }
-            />
+            <Fragment>
+              <Grid container>
+                <Grid item xs>
+                  <TextField
+                  {... params}
+                  className={classes.search}
+                  id="standard-basic"
+                  placeholder="Search by Business Name"
+                  fullWidth={true}
+                  value={currentRefinement}
+                  onChange={
+                    (event) => {
+                      refine(event.currentTarget.value);
+                    }
+                  }
+                  />
+                </Grid>
+                <Grid item>
+                  <CustomIcon />
+                </Grid>
+              </Grid>
+            </Fragment>
         }
         />
         
@@ -598,6 +590,7 @@ const BusinessSearchComponent = withStyles(styles, { withTheme: true })(
             {businesses.map((business, idx) => {
               return (
                 // tslint:disable-next-line: jsx-no-lambda
+                // tslint:disable-next-line: jsx-key
                 <div>
                   <ListItem key={idx} onClick={() => handleClick(business)}>
                     <ListItemAvatar>
