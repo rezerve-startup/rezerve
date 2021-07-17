@@ -11,6 +11,8 @@ import { LoadScript, StandaloneSearchBox } from '@react-google-maps/api';
 import algoliasearch from 'algoliasearch';
 import firebase from 'firebase';
 import React from 'react';
+// tslint:disable-next-line: no-duplicate-imports
+import { Fragment } from 'react';
 import {
   connectAutoComplete, InstantSearch
 } from 'react-instantsearch-dom';
@@ -267,33 +269,36 @@ class CustomerBusinessSearch extends React.Component<
     const autocomplete = ({hits, currentRefinement, refine }) => (
       <div>
       <Autocomplete
-          freeSolo={true}
           id="combo-box-demo"
+          freeSolo
           options={hits.map(hit => (hit.name))}
+          //popupIcon={<CustomIcon />}
           onChange={(event: any, newValue: string | null) => {
             this.handleMenuSelection(newValue);
           }}
-          renderInput={(params) => 
-            <TextField
-            {... params}
-            className={classes.search}
-            id="standard-basic"
-            placeholder="Search by Business Name"
-            fullWidth={true}
-            value={currentRefinement}
-            onChange={
-              (event) => {
-                refine(event.currentTarget.value);
-              }
-            }
-            InputProps={{
-              endAdornment: (
-                <InputAdornment position="start">
+          renderInput={(params) =>
+            <Fragment>
+              <Grid container>
+                <Grid item xs>
+                  <TextField
+                  {... params}
+                  className={classes.search}
+                  id="standard-basic"
+                  placeholder="Search by Business Name"
+                  fullWidth={true}
+                  value={currentRefinement}
+                  onChange={
+                    (event) => {
+                      refine(event.currentTarget.value);
+                    }
+                  }
+                  />
+                </Grid>
+                <Grid item>
                   <CustomIcon />
-                </InputAdornment>
-              ),
-            }}
-            />
+                </Grid>
+              </Grid>
+            </Fragment>
         }
         />
         
