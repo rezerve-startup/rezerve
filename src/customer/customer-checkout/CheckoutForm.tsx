@@ -66,6 +66,7 @@ export default function CheckoutForm(props) {
         // Use one of the links above for local/live
         method: 'POST',
         headers: {
+          'Access-Control-Allow-Origin': 'https://rezerve-startup.herokuapp.com',
           'Content-Type': 'application/json',
         },
 
