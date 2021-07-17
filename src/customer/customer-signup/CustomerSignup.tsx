@@ -1,20 +1,19 @@
 import {
   Avatar, Button, Card, CardActions, CardContent, CardMedia, Checkbox, CircularProgress, createStyles, Dialog, Divider, Fab, FormControlLabel, Grid, IconButton, List, ListItem,
   ListItemAvatar, ListItemText,
-  ListSubheader, Snackbar, SvgIcon, TextField, Theme, Typography, withStyles
+  ListSubheader, Snackbar, SvgIcon, SvgIconProps, TextField, Theme, Typography, withStyles
 } from '@material-ui/core';
 import { ArrowBack, ArrowForward, Close, Image } from '@material-ui/icons';
 import { Alert } from '@material-ui/lab';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import algoliasearch from 'algoliasearch';
-import React from 'react';
-// tslint:disable-next-line: no-duplicate-imports
-import { Fragment } from 'react';
-import { ReactComponent as algoliaLogo } from '../../assets/algolia-blue-mark.svg';
+import firebase from 'firebase';
+import React, { Fragment } from 'react';
 import {
   connectAutoComplete, InstantSearch
 } from 'react-instantsearch-dom';
 import { connect } from 'react-redux';
+import { ReactComponent as algoliaLogo } from '../../assets/algolia-blue-mark.svg';
 import { auth, firestore } from '../../config/FirebaseConfig';
 import UserInfoForm from '../../shared/sign-up/UserInfoForm';
 import { createNewCustomer, logoutUser, setAuthChanging, updateUser } from '../../shared/store/actions';

@@ -2,7 +2,6 @@ import {
   Button, Card, CardActionArea,
   CardMedia, createStyles, Grid, TextField, Theme, Typography, withStyles
 } from '@material-ui/core';
-import InputAdornment from '@material-ui/core/InputAdornment';
 import SvgIcon, { SvgIconProps } from '@material-ui/core/SvgIcon';
 import { Search } from '@material-ui/icons';
 import { Rating } from '@material-ui/lab';
@@ -10,9 +9,7 @@ import Autocomplete from '@material-ui/lab/Autocomplete';
 import { LoadScript, StandaloneSearchBox } from '@react-google-maps/api';
 import algoliasearch from 'algoliasearch';
 import firebase from 'firebase';
-import React from 'react';
-// tslint:disable-next-line: no-duplicate-imports
-import { Fragment } from 'react';
+import React, { Fragment } from 'react';
 import {
   connectAutoComplete, InstantSearch
 } from 'react-instantsearch-dom';
