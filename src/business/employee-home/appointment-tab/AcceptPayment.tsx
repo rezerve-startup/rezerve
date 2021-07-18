@@ -18,9 +18,9 @@ export default function AcceptPayment(props:any){
     useEffect(() => {
       fetch('https://rezerve-startup-api.herokuapp.com/create-setup-intent', {
         // Use one of the links above for local/live
-        mode: 'cors',
         method: 'POST',
         headers: {
+          'Allow-Access-Origin-Header': 'https://rezerve-startup.herokuapp.com',
           'Content-Type': 'application/json',
         },
          
