@@ -461,7 +461,7 @@ class BusinessInfoDetails extends React.Component<any, any> {
                 <Grid container={true} spacing={1}>
                   {this.props.businessEmployees.map((employee) => {
                     return (
-                      <Grid container={true} item={true} xs={4} key={employee.id} className={classes.employeeSelection}>
+                      <Grid container={true} item={true} xs={6} sm={4} key={employee.id} className={classes.employeeSelection}>
                         <img
                           className={classes.businessPicture}
                           src={avatar}
