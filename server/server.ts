@@ -17,7 +17,7 @@ app.use
 )
 //Accepts payment from previous Setup Intent
 app.post('/create-setup-intent', async (req, res) => {
-  //res.header('Access-Control-Allow-Origin', 'http://localhost:3000')
+  res.setHeader('Access-Control-Allow-Origin', '*')
   const action = req.body.action; //JSON sent in from CheckoutForm.tsx 
   
   if(action === 'setupIntent'){

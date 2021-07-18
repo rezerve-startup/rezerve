@@ -2,7 +2,6 @@ import React, {useEffect} from 'react'
 import {useStripe} from '@stripe/react-stripe-js';
 import {Button} from '@material-ui/core';
 
-
 export default function AcceptPayment(props:any){
     // Create PaymentIntent as soon as the page loads
     // Local testing
@@ -20,14 +19,15 @@ export default function AcceptPayment(props:any){
         // Use one of the links above for local/live
         method: 'POST',
         headers: {
-          'Access-Control-Allow-Origin': 'https://rezerve-startup.herokuapp.com',
+          'Access-Control-Allow-Origin': '*',
           'Content-Type': 'application/json',
         },
          
         body: JSON.stringify({action: 'paymentIntent', cID : props.cID}),
-      })
-      .then((res) => {
+      },
         
+      )
+      .then((res) => {
         return res.json();
       })
       .then((data) => {
