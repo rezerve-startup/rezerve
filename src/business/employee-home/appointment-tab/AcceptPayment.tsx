@@ -20,13 +20,14 @@ export default function AcceptPayment(props:any){
         // Use one of the links above for local/live
         method: 'POST',
         headers: {
-          'Allow-Access-Origin-Header': 'https://rezerve-startup.herokuapp.com',
+          'Access-Control-Allow-Origin': 'https://rezerve-startup.herokuapp.com',
           'Content-Type': 'application/json',
         },
          
         body: JSON.stringify({action: 'paymentIntent', cID : props.cID}),
       })
       .then((res) => {
+        
         return res.json();
       })
       .then((data) => {
