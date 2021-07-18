@@ -375,13 +375,13 @@ class CustomerBusinessSearch extends React.Component<
                       ):
                       (
                         <div>
-                          {(this.props.foundBusinesses).length === 1 ? 
+                          {/* (this.props.foundBusinesses).length === 1 ? 
                           (
                             <div>Business located within {this.state.miles} miles from {this.state.address}</div>
                           ): 
                           (
                             <div>Businesses located within {this.state.miles} miles from {this.state.address}</div>
-                          )}
+                          )*/}
                         </div>
                       )
                     }

@@ -35,7 +35,7 @@ export default function AcceptPayment(props:any){
         //setPublicKey(data.publicKey)
         setSucceeded(data.succeeded)
       });
-    }, []);
+    }, [props.cID]);
 
     console.log(4, succeeded)
 
