@@ -8,16 +8,17 @@ const stripe = require('stripe')(`${process.env.STRIPE_API_KEY}`);
 
 const cors = require('cors');
 
-// app.use(express.static('.'));
-// app.use(express.json());
+app.use(express.static('.'));
+app.use(express.json());
 app.use
   (cors({
     origin: "*",
+    credentials: true,
+    optionsSuccessStatus: 204
   })
 )
 //Accepts payment from previous Setup Intent
 app.post('/create-setup-intent', async (req, res) => {
-  res.setHeader('Access-Control-Allow-Origin', '*')
   const action = req.body.action; //JSON sent in from CheckoutForm.tsx 
   
   if(action === 'setupIntent'){
@@ -43,7 +44,7 @@ app.post('/create-setup-intent', async (req, res) => {
   // Create and confirm a PaymentIntent with the order amount, currency, 
   // Customer and PaymentMethod ID
   const paymentIntent = await stripe.paymentIntents.create({
-    amount: 95,
+    amount: 75,
     currency: "usd",
     payment_method: paymentMethods.data[0].id,
     customer: cID,
