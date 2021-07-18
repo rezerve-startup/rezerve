@@ -16,7 +16,7 @@ app.use(cors(
 
 //Accepts payment from previous Setup Intent
 app.post('/create-setup-intent', async (req, res) => {
-  res.header('Access-Control-Allow-Origin', 'http://localhost:3000')
+  //res.header('Access-Control-Allow-Origin', 'http://localhost:3000')
   const action = req.body.action; //JSON sent in from CheckoutForm.tsx 
   if(action === 'setupIntent'){
   const customer = await stripe.customers.create();

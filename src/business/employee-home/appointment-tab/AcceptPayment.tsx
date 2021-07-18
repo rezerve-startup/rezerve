@@ -16,7 +16,7 @@ export default function AcceptPayment(props:any){
     const stripe = useStripe();
     
     useEffect(() => {
-      window.fetch('https://rezerve-startup-api.herokuapp.com/create-setup-intent', {
+      fetch('https://rezerve-startup-api.herokuapp.com/create-setup-intent', {
         // Use one of the links above for local/live
         mode: 'cors',
         method: 'POST',
