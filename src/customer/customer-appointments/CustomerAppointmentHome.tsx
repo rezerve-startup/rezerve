@@ -45,6 +45,7 @@ const CustomerAppointmentHome = (props: any) => {
     firestore.collection('appointments')
           .where("customerId", "==", props.user.customerId)
             .where("status", "==", "accepted")
+              .where("datetime", ">", Date.now())
               .onSnapshot((snapshot) => {
                 setAppointmentCount(snapshot.size)
               })

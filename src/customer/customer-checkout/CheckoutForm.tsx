@@ -9,6 +9,7 @@ import {
 } from '@material-ui/core';
 import { Alert } from '@material-ui/lab';
 import { CardElement, useStripe, useElements } from '@stripe/react-stripe-js';
+import { firestore } from '../../config/FirebaseConfig';
 
 const useStyles = makeStyles((theme: Theme) => ({
   root: {
@@ -28,6 +29,8 @@ export default function CheckoutForm(props) {
   const [processing, setProcessing] = React.useState<boolean>(false);
   const [disabled, setDisabled] = React.useState<boolean>(true);
   const [clientSecret, setClientSecret] = React.useState<string>('');
+  const [cID, setCID] = React.useState<string>('');
+  const [appointmentId, setAppointmentId] = React.useState<string>('');
   const [snackSeverity, setSnackSeverity] = React.useState<
     'error' | 'success' | 'info' | 'warning' | undefined
   >(undefined);
@@ -77,6 +80,7 @@ export default function CheckoutForm(props) {
       })
       .then((data) => {
         setClientSecret(data.clientSecret);
+        setCID(data.cID)
       });
   }, []);
   const cardStyle = {
@@ -148,6 +152,20 @@ export default function CheckoutForm(props) {
     setOpen(false);
   };
 
+  const handleConfirm = () => {
+    props.this.bookAppointment(cID)
+    
+      // if(props.this.props.user !== undefined){
+      //   const customerRef = firestore.collection('customers').doc(`${props.this.props.user.customerId}`)
+      //   customerRef.get().then((docRef) => {
+      //     const customerAppointments: string[] = docRef.data()?.appointments
+      //     setAppointmentId(customerAppointments[customerAppointments.length -1])
+      //     console.log(appointmentId)
+      //   })
+      // }
+    
+    }
+
   return (
     <div>
       { !open &&
@@ -190,7 +208,7 @@ export default function CheckoutForm(props) {
             variant="contained"
             color="primary"
             onClick={
-              props.this.bookAppointment
+              handleConfirm
             }
           >
             {'Confirm & Book'}

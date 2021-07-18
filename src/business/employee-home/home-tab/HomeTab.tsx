@@ -53,7 +53,7 @@ function mapStateToProps(state: StoreState) {
   if (allAppointments) {
     allAppointments.forEach((appt) => {
       if (appt.datetime.toDate().valueOf() > dateNow) {
-        if (appt.status !== 'cancelled') {
+        if (appt.status !== 'cancelled' && appt.status !== 'requested') {
           upcomingAppts.push(appt);
         }
       }
