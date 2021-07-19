@@ -174,7 +174,7 @@ export default function CheckoutForm(props) {
     <div>
       
       <form id="payment-form" onSubmit={handleSubmit}>
-        {!open && 
+        {!(error === null  && open)  && 
         <div>
           <CardElement
           id="card-element"
