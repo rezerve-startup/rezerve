@@ -114,9 +114,11 @@ class BusinessHome extends React.Component<any, any> {
   }
 
   handleNotification(){
-    this.setState({
-      businessNotifications: this.state.businessNotifications - 1
-    })
+    if(this.state.businessNotifications > 0){
+      this.setState({
+        businessNotifications: this.state.businessNotifications - 1
+      })
+    }
   }
   render() {
     const { classes } = this.props;
