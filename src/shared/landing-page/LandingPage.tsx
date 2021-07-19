@@ -41,6 +41,9 @@ const useStyles = makeStyles((theme: Theme) =>
       textDecoration: 'none',
       fontFamily: 'Raleway'
     },
+    spanZ: {
+      color: theme.palette.primary.main,
+    },
     appBar: {
       backgroundColor: theme.palette.secondary.dark,
       color: theme.palette.secondary.light,
@@ -221,7 +224,7 @@ const LandingPageDefault = (props: any) => {
                     component={Link}
                     to="/"
                   >
-                   <b>ReZerve</b>
+                   <b>Re<span className={classes.spanZ}>Z</span>erve</b>
                   </Typography>
                 </Grid>
                 <Grid>

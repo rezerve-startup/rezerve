@@ -103,6 +103,7 @@ function BusinessPreview(){
 					
 				{list.map((li, i) =>{
 						return(
+							// tslint:disable-next-line: jsx-key
 							<Typography align= 'center' variant="body2">
 								<div className={classes.font} key={i}>
 									<FiberManualRecordRoundedIcon style={{color: '#f00604', fontSize: 32}}/>
@@ -118,7 +119,7 @@ function BusinessPreview(){
 			<div className={classes.font}>
 				<Typography align= 'center' variant="body2">
 				<div className={classes.font}>
-						MAKE BOOKING EASY. CREATE YOUR PROFILE AND CHANGE YOUR BUSINESS TODAY!
+						MAKE BOOKING EASY. CREATE YOUR PROFILE AND TRANSFORM YOUR BUSINESS TODAY!
 					</div>
 				</Typography>
 			</div>

@@ -247,7 +247,7 @@ const Sidebar = (props: any ) => {
               component={Link}
               to="/"
             >
-              <b>ReZerve</b>
+              <b>Re<span className={classes.spanZ}>Z</span>erve</b>
             </Typography>
             <div className={classes.root} />
             <div className={classes.sectionDesktop}>
@@ -410,7 +410,9 @@ const useStyles = makeStyles((theme) => ({
       cursor: "pointer"
     },
   },
-
+  spanZ: {
+    color: theme.palette.primary.main,
+  },
   image: {
     // Theme Color, or use css color in quote,
     height: '100px',
