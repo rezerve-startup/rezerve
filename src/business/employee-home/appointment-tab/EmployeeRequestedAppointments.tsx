@@ -140,7 +140,7 @@ function mapStateToProps(state: StoreState) {
       appointment.startTime = moment(appointmentDate.toISOString()).format('h:mm A');
       appointment.endTime = moment(appointmentDate.toISOString()).add(30 * appointment.service.length, 'minutes').format('h:mm A');
 
-      if (appointment.status === 'cancelled') {
+      if (appointment.status === 'cancelled' || (appointment.status === 'requested' && appointmentDate.valueOf() < currentDate)) {
         cancelledAppointments.push(appointment);
       } else if (appointment.status === 'requested') {
         requestedAppointments.push(appointment);
@@ -599,7 +599,8 @@ class EmployeeRequestedAppointments extends React.Component<Props, State> {
     let appointmentToUpdate = this.state.selectedAppointment;
     appointmentToUpdate.status = this.state.selectedAction;    
     firestore.collection('appointments').doc(`${appointmentToUpdate.appointmentId}`).update({
-      status: appointmentToUpdate.status
+      status: appointmentToUpdate.status,
+      cID: firebase.firestore.FieldValue.delete()
     }).then(() => {
       this.dispatchUpdateEmployeeAppointmentStatus(appointmentToUpdate);
       if (appointmentToUpdate.customerId !== 'Guest') {

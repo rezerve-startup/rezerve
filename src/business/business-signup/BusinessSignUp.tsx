@@ -590,14 +590,6 @@ class BusinessSignUp extends React.Component<any, State> {
                 <ArrowBack />
                 &nbsp;Back
               </Fab>
-              {!loggedIn && !creatingUserAccount ? (
-                <BusinessRegisterLogin
-                  handleSignUp={this.handleSignUp}
-                  handleSignIn={this.signInUser}
-                  errorMessage={this.state.message}
-                  errorCode={this.state.errorCode}
-                />
-              ) : (
                 <div className={classes.root}>
                   <form
                     className={classes.root}
@@ -716,7 +708,6 @@ class BusinessSignUp extends React.Component<any, State> {
                     }
                   />
                 </div>
-              )}
             </CardContent>
           </Card>
         </Dialog>

@@ -46,8 +46,9 @@ app.post('/create-setup-intent', async (req, res) => {
     // Create and confirm a PaymentIntent with the order amount, currency, 
     // Customer and PaymentMethod ID
     const paymentIntent = await stripe.paymentIntents.create({
-      amount: 95,
+      amount: 75,
       currency: "usd",
+      description: "ReZerve Booking Fee",
       payment_method: paymentMethods.data[0].id,
       customer: cID,
       off_session: true,
@@ -71,7 +72,7 @@ app.post('/create-setup-intent', async (req, res) => {
         paymentMethod: err.raw.payment_method.id,
         clientSecret: err.raw.payment_intent.client_secret,
         publicKey: process.env.STRIPE_PUBLIC_KEY,
-        amount: 95,
+        amount: 75,
         card: {
           brand: err.raw.payment_method.card.brand,
           last4: err.raw.payment_method.card.last4
