@@ -1,5 +1,5 @@
 import { Button, createStyles, makeStyles, Theme } from '@material-ui/core';
-import logo from './unknown.png';
+import logo from '../../assets/unknown.png';
 import {Helmet} from 'react-helmet';
 import React from 'react';
 import Typography from '@material-ui/core/Typography';

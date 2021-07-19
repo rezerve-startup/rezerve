@@ -1,15 +1,10 @@
-import React, { useEffect } from 'react';
 import {
-  Snackbar,
-  makeStyles,
-  Theme,
   Button,
-  CircularProgress,
-  Typography,
+  CircularProgress, makeStyles, Snackbar, Theme, Typography
 } from '@material-ui/core';
 import { Alert } from '@material-ui/lab';
-import { CardElement, useStripe, useElements } from '@stripe/react-stripe-js';
-import { firestore } from '../../config/FirebaseConfig';
+import { CardElement, useElements, useStripe } from '@stripe/react-stripe-js';
+import React, { useEffect } from 'react';
 
 const useStyles = makeStyles((theme: Theme) => ({
   root: {
