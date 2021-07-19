@@ -34,7 +34,7 @@ function StripePaymentSetup(props) {
   return (
     <div className="App">
       <Elements stripe={promise}>
-        <CheckoutForm paymentSuccess={props.paymentSuccess} price={price} this={props.this}/>
+        <CheckoutForm paymentSuccess={props.paymentSuccess} price={price} this={props.this} businessName={props.businessName}/>
       </Elements>
     </div>
   );

@@ -512,6 +512,9 @@ class CustomerUpcomingAppointments extends React.Component<Props, State> {
           <DialogTitle>Cancel Appointment</DialogTitle>
           <DialogContent>
             <DialogContentText>Are you sure you would like to cancel this appointment?</DialogContentText>
+              <div className={classes.itemCard}>
+              <Typography variant="body2" align="center">*Disclaimer: Cancellations to appointments already accepted by a business (Upcoming Appointments) will not be refunded the $0.75 Booking Fee.</Typography>
+              </div>
           </DialogContent>
           <DialogActions>
             <Button onClick={() => this.updateAppointmentStatus()}>Yes</Button>
@@ -613,7 +616,15 @@ const styles = (theme: Theme) =>
     },
     allPastApptsContainer: {
       marginBottom: '1rem'
-    }
+    },
+    itemCard: {
+      border: "1px solid",
+      background: 'white',
+      color: theme.palette.secondary.dark,
+      margin: 'auto',
+      width: '90%',
+      alignContent: 'center'
+    },
   });
 
 export default connect(mapStateToProps, { updateCustomerAppointmentStatus, setUserCustomerAppointments })(
