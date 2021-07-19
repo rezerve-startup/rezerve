@@ -39,6 +39,7 @@ const useStyles = makeStyles((theme: Theme) =>
       display: 'block',
       color: theme.palette.background.paper,
       textDecoration: 'none',
+      fontFamily: 'Raleway'
     },
     appBar: {
       backgroundColor: theme.palette.secondary.dark,
@@ -220,7 +221,7 @@ const LandingPageDefault = (props: any) => {
                     component={Link}
                     to="/"
                   >
-                    ReZerve
+                   <b>ReZerve</b>
                   </Typography>
                 </Grid>
                 <Grid>

@@ -247,7 +247,7 @@ const Sidebar = (props: any ) => {
               component={Link}
               to="/"
             >
-              ReZerve
+              <b>ReZerve</b>
             </Typography>
             <div className={classes.root} />
             <div className={classes.sectionDesktop}>
@@ -367,6 +367,7 @@ const useStyles = makeStyles((theme) => ({
     display: 'block',
     color: theme.palette.background.paper,
     textDecoration: 'none',
+    fontFamily: 'Raleway'
   },
   divider: {
     background: 'white',
