@@ -10,6 +10,7 @@ import { LoadScript, StandaloneSearchBox } from '@react-google-maps/api';
 import algoliasearch from 'algoliasearch';
 import firebase from 'firebase';
 import React, { Fragment } from 'react';
+import { Configure } from 'react-instantsearch-dom';
 import {
   connectAutoComplete, InstantSearch
 } from 'react-instantsearch-dom';
@@ -343,6 +344,9 @@ class CustomerBusinessSearch extends React.Component<
                         searchClient={searchClient}
                         refresh={true}
                       >
+                        <Configure
+                        distinct 
+                        />
                       <CustomAutocomplete />
                       </InstantSearch>
                     </Grid>                    

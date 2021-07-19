@@ -48,8 +48,7 @@ interface ComponentState {
   zipcode: string;
   description: string;
   coverImage: string;
-  message: string;
-  errorCode: string;
+  algoReady: boolean;
 }
 
 type State = ComponentState & SystemState;
@@ -88,8 +87,7 @@ class BusinessSignUp extends React.Component<any, State> {
       user: props.system.user,
       authChanging: props.system.authChanging,
       bookDialogStatus: props.system.bookDialogStatus,
-      message: '',
-      errorCode: '',
+      algoReady: true
     };
 
     this.signInUser = this.signInUser.bind(this);
@@ -149,9 +147,6 @@ class BusinessSignUp extends React.Component<any, State> {
           .signInWithEmailAndPassword(email, password)
           .then((userCreds) => {
             if (userCreds !== null && userCreds.user) {
-
-              this.setState({ ...this.state, message: '', errorCode: '' });
-
               const user = userCreds.user;
 
               firestore
@@ -177,8 +172,6 @@ class BusinessSignUp extends React.Component<any, State> {
           })
           .catch((e) => {
             console.log(e);
-            this.setState({ ...this.state, errorCode: e.code })
-            this.setState({ ...this.state, message: 'The Email or Password entered is invalid. Please try again.' });
           });
       // });
   }
@@ -205,6 +198,13 @@ class BusinessSignUp extends React.Component<any, State> {
     } else {
       console.log('Invalid form');
     }
+
+    if(this.state.algoReady === true)
+    {
+      index.saveObjects([{name: this.state.name}], { autoGenerateObjectIDIfNotExist: true });
+      this.setState({ ...this.state, algoReady: false});
+    }
+
   };
 
   handleSignUp = () => {
@@ -218,8 +218,7 @@ class BusinessSignUp extends React.Component<any, State> {
 
   closeDialog = () => {
     alert('Are you sure you want to cancel creating your account?');
-    this.setState({ ...this.state, open: false, creatingUserAccount: true });
-    
+    this.setState({ ...this.state, open: false, creatingUserAccount: true, algoReady: true });
   };
 
   async createNewBusiness() {
@@ -508,8 +507,9 @@ class BusinessSignUp extends React.Component<any, State> {
                     .then((docRef) => {
                       console.log(
                         `Created new business document: ${docRef.id}`,
+                        
                       );
-                                           
+                                        
 
                       firestore
                         .collection('employees')
@@ -622,11 +622,11 @@ class BusinessSignUp extends React.Component<any, State> {
                       <Card className={classes.reviewContent} elevation={0}>
                         <CardContent>
                           <Typography
-                            variant="h5"
-                            component="h5"
+                            variant="h4"
+                            component="h4"
                             className={classes.title}
                           >
-                            Are you sure you want to create this business?
+                            <b>Are you sure you want to create this business?</b>
                           </Typography>
 
                           <br />
@@ -659,16 +659,7 @@ class BusinessSignUp extends React.Component<any, State> {
                             variant="contained"
                             type="submit"
                             loading={this.state.loading}
-                            onClick={() => {
-                              // console.log(this.state.name);
-                              // Index the new business name to Algolia Search
-                              // const objects = [{
-                              //  objectID: docRef.id,
-                              //  name: newBusinessData.name
-                              // }]
-                              
-                              index.saveObjects([{name: this.state.name}], { autoGenerateObjectIDIfNotExist: true }); 
-                            }}
+                            disabled={!this.state.algoReady}
                           >
                             Create Business
                           </AdornedButton>
@@ -726,7 +717,6 @@ const styles = (theme: Theme) =>
     },
     title: {
       textAlign: 'center',
-      fontSize: 24,
     },
     businessButton: {
       backgroundColor: theme.palette.primary.main,

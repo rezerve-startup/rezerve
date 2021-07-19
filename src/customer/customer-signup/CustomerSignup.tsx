@@ -249,7 +249,7 @@ class CustomerSignUp extends React.Component<any, State> {
               .finally(() => {
                 this.props.handleSignUpClose();
                 this.setState({ ...this.state, loading: false, open: false });
-                //window.location.reload();
+                window.location.reload();
               });
           })
           .catch((e) => {
