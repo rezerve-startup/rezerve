@@ -17,7 +17,6 @@ import UserInfoForm from '../../shared/sign-up/UserInfoForm';
 import { logoutUser, setAuthChanging, updateUser } from '../../shared/store/actions';
 import { StoreState, SystemState } from '../../shared/store/types';
 import BusinessInfoFrom from './BusinessInfoForm';
-import BusinessRegisterLogin from './BusinessRegisterLogin';
 
 Geocode.setApiKey(process.env.REACT_APP_GOOGLE_MAPS_API_KEY);
 Geocode.setLanguage('en');
@@ -69,7 +68,7 @@ class BusinessSignUp extends React.Component<any, State> {
       loading: false,
       activeStep: 0,
       validForm: false,
-      creatingUserAccount: false,
+      creatingUserAccount: true,
       employeeId: '',
       email: '',
       firstName: '',
@@ -219,7 +218,7 @@ class BusinessSignUp extends React.Component<any, State> {
 
   closeDialog = () => {
     alert('Are you sure you want to cancel creating your account?');
-    this.setState({ ...this.state, open: false, creatingUserAccount: false });
+    this.setState({ ...this.state, open: false, creatingUserAccount: true });
     
   };
 
@@ -559,7 +558,6 @@ class BusinessSignUp extends React.Component<any, State> {
 
   render() {
     const { classes } = this.props;
-    const { loggedIn, creatingUserAccount } = this.state;
 
     return (
       <div className={classes.root}>
