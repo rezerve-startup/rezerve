@@ -1,6 +1,6 @@
 import React, {useEffect} from 'react'
 import {useStripe} from '@stripe/react-stripe-js';
-import {Button} from '@material-ui/core';
+import {Button, CircularProgress} from '@material-ui/core';
 
 export default function AcceptPayment(props:any){
     // Create PaymentIntent as soon as the page loads
@@ -11,7 +11,8 @@ export default function AcceptPayment(props:any){
     // https://rezerve-startup-api.herokuapp.com/charge-card-off-session
     
     const [clientSecret, setClientSecret] = React.useState<string>('');
-    const [succeeded, setSucceeded] = React.useState<boolean>(false);
+    const [error, setError] = React.useState<string | null>('');
+    const [loaded, setLoaded] = React.useState<boolean>(false)
     const stripe = useStripe();
     
     useEffect(() => {
@@ -32,40 +33,34 @@ export default function AcceptPayment(props:any){
       })
       .then((data) => {
         setClientSecret(data.clientSecret)
-        //setPublicKey(data.publicKey)
-        setSucceeded(data.succeeded)
+        setLoaded(true)
       });
-    }, [props.cID]);
+    }, []);
 
-    console.log(4, succeeded)
 
       const handleConfirm = async (ev) => {
         ev.preventDefault();
-        stripe!
-        .confirmCardPayment(clientSecret)
+        
+        await stripe!.confirmCardPayment(clientSecret)
         .then((result) => {
           if (result.error) {
-            // setSnackSeverity('error');
-            console.log(`Error: ${result.error.message}`);
+            props.this.forceCancelAppointment();
           } else {
-            // setError(null);
-            // setSucceeded(true);
-            // setSnackSeverity('success');
-            // setSnackMessage('Card processed');
-            // props.paymentSuccess(true);
+            console.log("Payment Processed")
+            props.this.updateAppointmentStatus();
           }
         })
         .catch((e) => {
-          // setSnackSeverity('error');
           console.log(`Error: ${e.message}`);
-        })
-        .finally(() => {
-          // setProcessing(false);
-          // setOpen(true);
-          console.log("Payment Processed")
-          props.this.updateAppointmentStatus();
-        });
-       
+        })       
       }
-        return(<Button onClick={handleConfirm}>Confirm Appointment</Button>)
+        return(
+        <div>
+          {loaded ? (
+            <Button onClick={handleConfirm}>
+            Confirm Appointment
+          </Button>
+          ) : (<CircularProgress/>)}
+        </div>
+        )
   }

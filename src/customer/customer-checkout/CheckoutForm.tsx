@@ -16,6 +16,14 @@ const useStyles = makeStyles((theme: Theme) => ({
   spinner: {
     marginLeft: theme.spacing(2),
   },
+  itemCard: {
+    border: "4px solid black",
+    background: theme.palette.primary.main,
+    color: theme.palette.secondary.light,
+    margin: 'auto',
+    width: '90%',
+    marginTop: '10px'
+  },
 }));
 
 export default function CheckoutForm(props) {
@@ -141,10 +149,11 @@ export default function CheckoutForm(props) {
 
   const handleClose = (event?: React.SyntheticEvent, reason?: string) => {
     if (reason === 'clickaway') {
+      setOpen(false)
       return;
     }
 
-    setOpen(false);
+    //setOpen(false);
   };
 
   const handleConfirm = () => {
@@ -160,16 +169,19 @@ export default function CheckoutForm(props) {
       // }
     
     }
-
+    const classes = useStyles();
   return (
     <div>
       
       <form id="payment-form" onSubmit={handleSubmit}>
-        <CardElement
+        {!open && 
+        <div>
+          <CardElement
           id="card-element"
           options={cardStyle}
           onChange={handleChange}
         />
+      
         <AdornedButton
           disabled={processing || disabled || succeeded}
           id="submit"
@@ -181,6 +193,12 @@ export default function CheckoutForm(props) {
         >
           {processing ? '' : 'Pay now'}
         </AdornedButton>
+    
+        <div className={classes.itemCard}>
+            <Typography  variant="body1" align="center">Booking Fee will only be charged after your stylist accepts the appointment.</Typography>
+        </div>
+        </div>
+    }
         <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
           <Alert
             onClose={handleClose}
@@ -194,7 +212,7 @@ export default function CheckoutForm(props) {
       </form>
       
 
-      {error === null && open &&
+      {error === null  && open &&
           <Typography align="center">
 
           {/* Maybe Add Card Here */}

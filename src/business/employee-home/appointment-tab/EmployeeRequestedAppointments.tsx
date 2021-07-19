@@ -171,6 +171,7 @@ type State = {
   incomingSchedule: IncomingSchedule[];
   acceptAppointmentStatusDialogOpen: boolean;
   cancelAppointmentStatusDialogOpen: boolean;
+  declinedDialogOpen: boolean;
   selectedAppointment: any;
   selectedAction: string;
   messageDialogOpen: boolean;
@@ -209,6 +210,7 @@ class EmployeeRequestedAppointments extends React.Component<Props, State> {
       messageDialogOpen: false,
       customerId: '',
       messageToCustomer: '',
+      declinedDialogOpen: false
     }
   }
 
@@ -299,7 +301,20 @@ class EmployeeRequestedAppointments extends React.Component<Props, State> {
     });
   }
 
-  
+  handleCloseDeclinedDialog(){
+    this.setState({
+      declinedDialogOpen: false
+    })
+  }
+
+  forceCancelAppointment(){
+    this.setState({
+      selectedAction: 'cancelled',
+      declinedDialogOpen: true
+    })
+    this.updateAppointmentStatus();
+  }
+
   render() {
     const { classes } = this.props;
     return (
@@ -561,6 +576,17 @@ class EmployeeRequestedAppointments extends React.Component<Props, State> {
           <DialogActions>
             <Button onClick={() => this.updateAppointmentStatus()}>Yes</Button>
             <Button onClick={() => this.handleCloseCancelAppointmentDialog()}>No</Button>
+          </DialogActions>
+        </Dialog>
+
+        <Dialog open={this.state.declinedDialogOpen} onClose={() => this.handleCloseDeclinedDialog()}>
+          <DialogTitle>Unable to Book Appointment</DialogTitle>
+          <DialogContent>
+            <DialogContentText>There has been an error with the booking process on the client's end.
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Typography align="center"><Button onClick={() => this.handleCloseDeclinedDialog()}>Ok</Button></Typography>
           </DialogActions>
         </Dialog>
 
