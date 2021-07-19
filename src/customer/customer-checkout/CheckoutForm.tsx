@@ -20,6 +20,7 @@ const useStyles = makeStyles((theme: Theme) => ({
 
 export default function CheckoutForm(props) {
   const [succeeded, setSucceeded] = React.useState<boolean>(false);
+  const [error, setError] = React.useState<string | null>(null);
   const [processing, setProcessing] = React.useState<boolean>(false);
   const [disabled, setDisabled] = React.useState<boolean>(true);
   const [clientSecret, setClientSecret] = React.useState<string>('');
@@ -99,6 +100,7 @@ export default function CheckoutForm(props) {
     // Listen for changes in the CardElement
     // and display any errors as the customer types their card details
     setDisabled(event.empty);
+    setError(event.error ? event.error.message : '');
   };
 
   const handleSubmit = async (ev) => {
@@ -120,6 +122,7 @@ export default function CheckoutForm(props) {
           setSnackSeverity('error');
           setSnackMessage(`Error: ${result.error.message}`);
         } else {
+          setError(null);
           setSucceeded(true);
           setSnackSeverity('success');
           setSnackMessage('Card processed');
@@ -160,7 +163,7 @@ export default function CheckoutForm(props) {
 
   return (
     <div>
-      { !open &&
+      
       <form id="payment-form" onSubmit={handleSubmit}>
         <CardElement
           id="card-element"
@@ -189,9 +192,9 @@ export default function CheckoutForm(props) {
           </Alert>
         </Snackbar>
       </form>
-      }
+      
 
-      {open &&
+      {error === null && open &&
           <Typography align="center">
 
           {/* Maybe Add Card Here */}
