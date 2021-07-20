@@ -81,7 +81,7 @@ export default function AcceptPayment(props:any){
             {loaded ? (
               <div>
                 {succeeded === true ? (
-                  <Button onClick={handleCatch} color="secondary" variant="contained" style={{marginTop: '5px'}}>Confirm Appointment</Button>
+                  <Button onClick={handleConfirm} color="secondary" variant="contained" style={{marginTop: '5px'}}>Confirm Appointment</Button>
                 ) : (
                   <Button onClick={handleCatch} color="secondary" variant="contained" style={{marginTop: '5px'}}>Confirm Appointment</Button> 
                 )}

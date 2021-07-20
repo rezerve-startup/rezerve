@@ -52,7 +52,6 @@ app.post('/create-setup-intent', async (req, res) => {
       payment_method: paymentMethods.data[0].id,
       customer: cID,
       off_session: true,
-      confirm: false
     });
 
     res.send({
