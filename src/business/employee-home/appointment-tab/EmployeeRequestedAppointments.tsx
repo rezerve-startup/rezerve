@@ -552,7 +552,7 @@ class EmployeeRequestedAppointments extends React.Component<Props, State> {
           )))}
         </div>
 
-        <Dialog open={this.state.acceptAppointmentStatusDialogOpen} onClose={() => this.handleCloseAcceptAppointmentDialog()}> 
+        <Dialog open={this.state.acceptAppointmentStatusDialogOpen} onClose={(reason: 'backdropClick') => {}}> 
           <AcceptAppointment appt={this.state.selectedAppointment} this={this}/>
         </Dialog>
 
