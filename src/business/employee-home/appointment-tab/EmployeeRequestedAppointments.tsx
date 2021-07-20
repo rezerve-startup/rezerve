@@ -310,7 +310,6 @@ class EmployeeRequestedAppointments extends React.Component<Props, State> {
   forceCancelAppointment(){
     this.setState({
       selectedAction: 'cancelled',
-      declinedDialogOpen: true
     })
     this.updateAppointmentStatus();
   }
@@ -355,17 +354,6 @@ class EmployeeRequestedAppointments extends React.Component<Props, State> {
                     <Typography>${appt.service.price}</Typography>
                   </div>
                   <div className={classes.appointmentActionContainer}>
-                    <Button
-                      size="small"
-                      color="secondary"
-                      variant="contained"
-                      className={classes.button}
-                      startIcon={<DeleteIcon />}
-                      // tslint:disable-next-line: jsx-no-lambda
-                      onClick={() => this.cancelAppointment(appt)}
-                    >
-                      Cancel
-                    </Button>
                     {appt.customerId !== 'Guest' &&
                       <Button
                         size="small"

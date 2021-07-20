@@ -19,7 +19,7 @@ function StripePaymentSetup(props) {
   return (
     <div className="App">
       <Elements stripe={promise}>
-        <AcceptPayment cID={props.cID} this={props.this}/>
+        <AcceptPayment cID={props.cID} this={props.this} appt={props.appt}/>
       </Elements>
     </div>
   );
@@ -35,7 +35,7 @@ const AcceptAppointment = (props: any) => {
           <DialogContent>
           <DialogContentText>Would you like to accept this appointment?</DialogContentText>
             <Typography align="center">
-              <StripePaymentSetup cID={props.appt.cID} this={props.this}/>
+              <StripePaymentSetup cID={props.appt.cID} this={props.this} appt={props.appt}/>
             </Typography>
             
           </DialogContent>
