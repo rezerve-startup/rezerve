@@ -31,9 +31,9 @@ const AcceptAppointment = (props: any) => {
   // tslint:disable-next-line: no-shadowed-variableF
     return (
       <>
-        <DialogTitle>Accept Appointment</DialogTitle>
+        <DialogTitle>Appointment Accepted</DialogTitle>
           <DialogContent>
-          <DialogContentText>Would you like to accept this appointment?</DialogContentText>
+          <DialogContentText>This appointment has been accepted</DialogContentText>
             <Typography align="center">
               <StripePaymentSetup cID={props.appt.cID} this={props.this} appt={props.appt}/>
             </Typography>
