@@ -9,7 +9,7 @@ import { Elements } from '@stripe/react-stripe-js';
 import { loadStripe } from '@stripe/stripe-js';
 import React from 'react';
 import CheckoutForm from './CheckoutForm';
-const PUBLIC_KEY = "pk_live_51IT9oWG4OM4l9C1djPJNEIxFEuRenRxG4YxAr4FOEfpGWsWCQ47s0L606rET7gbRBEmxvVYhvIsuxbYwIfQDcHh500Fh34cGmb"
+const PUBLIC_KEY = "pk_test_51IT9oWG4OM4l9C1dre9yGOSSd1MtmDOWcGsjlv7Exe6u46E2UpIjt92w9zO7ld2i0v1os1NaYwWX48MxqbhvRoq8009WuwQftX"
 const promise = loadStripe(PUBLIC_KEY);
 
 function getSteps() {

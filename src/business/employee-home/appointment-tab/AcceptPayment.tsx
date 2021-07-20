@@ -42,8 +42,7 @@ export default function AcceptPayment(props:any){
 
     console.log(succeeded)
     
-      const handleConfirm = async (ev) => {
-        ev.preventDefault();
+      const handleConfirm = () => {
         stripe!
         .confirmCardPayment(clientSecret)
         .then((result) => {

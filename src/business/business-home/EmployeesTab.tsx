@@ -61,7 +61,6 @@ export default function EmployeeTab(props: any) {
     props.this.handleNotification()
     getInformation();
   }
-
   const removeRequest = (id, businessId) => {
     const businessRef = firestore.collection("businesses").doc(businessId);
     businessRef.update({
