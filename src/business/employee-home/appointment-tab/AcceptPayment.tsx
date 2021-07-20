@@ -42,7 +42,8 @@ export default function AcceptPayment(props:any){
 
     console.log(succeeded)
     
-      const handleConfirm = () => {
+      const handleConfirm = async (ev) => {
+        ev.preventDefault();
         stripe!
         .confirmCardPayment(clientSecret)
         .then((result) => {
@@ -72,39 +73,17 @@ export default function AcceptPayment(props:any){
         });
       }
 
-      const handleCancel = () => {
-        const apptRef = firestore.collection('appointments').doc(props.appt.appointmentId)
-        apptRef.update({
-          status: 'cancelled',
-          cID: firebase.firestore.FieldValue.delete()
-        }).then(() => {
-          apptRef.get().then(() => {
-            props.this.forceCancelAppointment();
-          })
-        })
-        
+      const handleCatch = () => {
+        props.this.updateAppointmentStatus();
       }
         return(
           <div>
             {loaded ? (
               <div>
                 {succeeded === true ? (
-                  <Button onClick={handleConfirm}>Confirm Appointment</Button>
+                  <Button onClick={handleCatch} color="secondary" variant="contained" style={{marginTop: '5px'}}>Confirm Appointment</Button>
                 ) : (
-                  <div>
-                    <div style={
-                  {border: "4px solid black",
-                  background: "#FF6060",
-                  color: "#e2e2e2",
-                  margin: 'auto',
-                  width: '90%',
-                  marginTop: '10px'}}>
-
-                      <Typography>There has been an error with the booking process on the client's end. 
-                      </Typography>
-                  </div>
-                  <Button onClick={handleCancel} color="secondary" variant="contained" style={{marginTop: '5px'}}>Ok</Button>
-                  </div>
+                  <Button onClick={handleCatch} color="secondary" variant="contained" style={{marginTop: '5px'}}>Confirm Appointment</Button> 
                 )}
               </div>
             ) : (<CircularProgress/>)}
