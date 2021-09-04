@@ -153,18 +153,12 @@ class BusinessInfo extends React.Component<any, BusinessInfoState> {
     const businessData = firestore
       .collection('businesses')
       .doc(`${this.state.businessKey}`);
-    let performanceArray: any[] = [];
-    businessData.get().then((value) => {
-      performanceArray = value.data()?.performance;
-      performanceArray.push({
-        type: 'ProfileView',
-        date: firebase.firestore.Timestamp.fromDate(new Date())
-      });
-    }).then(() => {
       businessData.update({
-        performance: performanceArray
+        performance: firebase.firestore.FieldValue.arrayUnion({
+          type: 'ProfileView',
+          date: firebase.firestore.Timestamp.fromDate(new Date())
+        })
       })
-    });
   }
 
   getBusinessInfoData() {

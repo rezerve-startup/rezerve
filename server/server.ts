@@ -5,7 +5,9 @@ const app = express();
 // tslint:disable-next-line: no-var-requires
 // Takes secret sk_test_....
 const stripe = require('stripe')(`${process.env.STRIPE_API_KEY}`);
-
+const accountSid = process.env.TWILIO_ACCOUNT_SID;
+const authToken = process.env.TWILIO_AUTH_TOKEN;
+const client = require('twilio')(accountSid, authToken);
 const cors = require('cors');
 
 app.use(express.static('.'));
@@ -14,7 +16,6 @@ app.use
   (cors({
     origin: "*",
     credentials: true,
-    optionsSuccessStatus: 204
   })
 )
 //Accepts payment from previous Setup Intent
@@ -34,7 +35,13 @@ app.post('/create-setup-intent', async (req, res) => {
     clientSecret: setupIntent.client_secret,
     cID: customer.id
   });
-} else if (action === 'paymentIntent'){
+} 
+  else if(action === 'sms'){
+    client.messages
+      .create({from: '+15017122661', body: 'Hi there', to: '+18703707699'})
+      .then(message => console.log(message.sid));
+  }
+  else if (action === 'paymentIntent'){
   const cID = req.body.cID
   try {
     // List the customer's payment methods to find one to charge
