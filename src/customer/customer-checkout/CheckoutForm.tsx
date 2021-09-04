@@ -64,15 +64,15 @@ export default function CheckoutForm(props) {
   useEffect(() => {
     // Create PaymentIntent as soon as the page loads
     // Local testing
-    // http://localhost:4242/create-payment-intent
+    // http://localhost:4242/create-setup-intent
 
     // Live site
-    // https://rezerve-startup-api.herokuapp.com/create-payment-intent
+    // https://rezerve-startup-api.herokuapp.com/create-setup-intent
     fetch('https://rezerve-startup-api.herokuapp.com/create-setup-intent', {
         // Use one of the links above for local/live
         method: 'POST',
         headers: {
-          'Access-Control-Allow-Origin': 'https://rezerve-startup.herokuapp.com',
+          'Access-Control-Allow-Origin': '*',
           'Content-Type': 'application/json',
         },
 
