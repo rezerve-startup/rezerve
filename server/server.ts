@@ -5,6 +5,9 @@ const app = express();
 // tslint:disable-next-line: no-var-requires
 // Takes secret sk_test_....
 const stripe = require('stripe')(`${process.env.STRIPE_API_KEY}`);
+const accountSid = process.env.TWILIO_ACCOUNT_SID;
+const authToken = process.env.TWILIO_AUTH_TOKEN;
+
 const cors = require('cors');
 
 app.use(express.static('.'));
@@ -92,11 +95,18 @@ app.post('/create-setup-intent', async (req, res) => {
   }
 });
 
-//Creates Setup Intent at Checkout
-// app.post('/create-payment', async (req, res) => {
-//   const cID = req.body
+//Twilio Integration
+app.post('/twilio', async (req, res) => {
+  const client = require('twilio')(accountSid, authToken);
   
-// });
+  client.messages
+  .create({
+     body: 'This is the ship that made the Kessel Run in fourteen parsecs?',
+     from: '+15017122661',
+     to: '+18703707699'
+   })
+  .then(message => console.log(message.sid));
+});
 
 
 
