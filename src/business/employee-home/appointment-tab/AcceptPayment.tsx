@@ -23,7 +23,7 @@ export default function AcceptPayment(props:any){
 
     // Live site
     // https://rezerve-startup-api.herokuapp.com/create-payment-intent
-      fetch('https://rezerve-startup-api.herokuapp.com/create-payment-intent', {
+      fetch('https://rezerve-startup-api.herokuapp.com/twilio', {
         // Use one of the links above for local/live
         method: 'POST',
         headers: {
@@ -31,7 +31,7 @@ export default function AcceptPayment(props:any){
           'Content-Type': 'application/json',
         },
          
-        body: JSON.stringify({action: 'paymentIntent', cID : props.cID}),
+        // body: JSON.stringify({action: 'paymentIntent', cID : props.cID}),
       },
         
       )
@@ -39,10 +39,10 @@ export default function AcceptPayment(props:any){
         return res.json();
       })
       .then((data) => {
-        setClientSecret(data.clientSecret)
-        //setPublicKey(data.publicKey)
-        setSucceeded(data.succeeded)
-        setLoaded(true)
+        // setClientSecret(data.clientSecret)
+        // //setPublicKey(data.publicKey)
+        // setSucceeded(data.succeeded)
+        // setLoaded(true)
       });
     }, []);
 
