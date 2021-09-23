@@ -1,7 +1,8 @@
 import {
-  AppBar, Box, CircularProgress, createStyles, Divider, Grid, makeStyles, Tab, Tabs, Theme, Typography
+  AppBar, Button, Box, CircularProgress, createStyles, Divider, Grid, makeStyles, Tab, Tabs, Theme, Typography, Card, Dialog
 } from '@material-ui/core';
 import React, { useEffect } from 'react';
+import Carousel from 'react-material-ui-carousel';
 import { connect } from 'react-redux';
 import { Link, Redirect } from 'react-router-dom';
 import CustomerBusinessSearch from '../../customer/customer-business-search/CustomerBusinessSearch';
@@ -13,6 +14,8 @@ import {
 import LoginDefault from '../login/loginDefault';
 import SignUpPage from '../sign-up/SignUpPage';
 import { StoreState } from '../store/types';
+import CardOne from './CardOne';
+import CardTwo from './CardTwo';
 
 // import Sidebar from '../shared/sidebar/sidebar';
 
@@ -58,6 +61,13 @@ const useStyles = makeStyles((theme: Theme) =>
       alignItems: 'center',
       height: '100%'
     },
+    cardDialog: {
+      backgroundColor: theme.palette.primary.main,
+      minHeight: "100vh"
+    },
+    guestButton: {
+      color: theme.palette.secondary.light,
+    }
   }),
 );
 //--------------------------
@@ -116,6 +126,7 @@ const LandingPageDefault = (props: any) => {
   const [redirectToCustomer, setRedirectToCustomer] = React.useState(false);
   const [redirectToEmployee, setRedirectToEmployee] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
+  const [open, setOpen] = React.useState(true);
 
   const locationStatus = props.locStatus;
 
@@ -140,8 +151,6 @@ const LandingPageDefault = (props: any) => {
       getPosition();
     }
   }, [] );
-
-
 
   const handleTabChange = (
     event: React.ChangeEvent<{}>,
@@ -209,9 +218,38 @@ const LandingPageDefault = (props: any) => {
     //console.log("Status from props: " + locationStatus);
   }
 
+
+
+  const carouselComponents = [CardOne,CardTwo];
+  const handleClose = () => {
+   setOpen(false);
+  }
+
   if (props.authChanging === false){
   return (
         <div>
+          <Dialog open={open} fullScreen={true} disableBackdropClick={true}>
+            <div className={classes.cardDialog}>
+                <Carousel
+                stopAutoPlayOnHover={true}
+                autoPlay={false}
+                animation="slide"
+                // navButtonsAlwaysInvisible={isMobile ? true : false}
+                >
+                  {carouselComponents.map((Component, i) => (
+                    <Component key={i} />
+                  ))}
+              </Carousel>
+              <Grid container alignContent="center" justify="center">
+                    <Grid>
+                      <Button variant="text" className={classes.guestButton} onClick={handleClose}>
+                        Continue as Guest 
+                      </Button>
+                    </Grid>
+              </Grid>
+            </div>
+            
+          </Dialog>
           <AppBar className={classes.container} position="sticky">
             <Box m={1}>
               <Grid container alignItems="center" justify="space-between">
@@ -239,6 +277,18 @@ const LandingPageDefault = (props: any) => {
                 </Grid>
               </Grid>
             </Box>
+            {/*<Grid xs={true}>
+                <Carousel
+                  stopAutoPlayOnHover={true}
+                  autoPlay={false}
+                  animation="slide"
+                  // navButtonsAlwaysInvisible={isMobile ? true : false}
+                >
+                  {carouselComponents.map((Component, i) => (
+                    <Component key={i} />
+                  ))}
+                </Carousel>
+                  </Grid>*/}
             <Box m={0} className={classes.appBar}>
               <Tabs 
                 centered

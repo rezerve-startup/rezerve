@@ -28,39 +28,6 @@ const useStyles = makeStyles((theme: Theme) =>
       backgroundColor: 'white',
       color: theme.palette.secondary.dark,
     },
-    select: {
-      color: theme.palette.secondary.light,
-      borderRadius: '30px',
-      '& .MuiOutlinedInput-notchedOutline': {
-        borderColor: theme.palette.secondary.light,
-      },
-      '&:hover': {
-        '& .MuiOutlinedInput-notchedOutline': {
-          borderColor: theme.palette.secondary.light,
-          borderWidth: '1px',
-        },
-      },
-      '&.Mui-focused': {
-        color: theme.palette.primary.light,
-        '& .MuiOutlinedInput-notchedOutline': {
-          borderColor: theme.palette.secondary.light,
-          borderWidth: '1px',
-        },
-      },
-      '&after': {
-        '& .MuiOutlinedInput-notchedOutline': {
-          borderColor: theme.palette.secondary.light,
-        },
-      },
-      '& .MuiSelect-icon': {
-        color: theme.palette.primary.light,
-      },
-    },
-    rightBorder: {
-      '& .MuiTabs-indicator': {
-        color: theme.palette.primary.dark,
-      },
-    },
   }),
 );
 //--------------------------

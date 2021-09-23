@@ -38,8 +38,9 @@ const useStyles = makeStyles((theme: Theme) =>
       },
     },
     signUpButton: {
-      marginTop: 0,
-      paddingTop: 0
+      borderRadius: '30px',
+      marginRight: '5px',
+      color: theme.palette.secondary.light,
     },
     card: {
       [theme.breakpoints.down('md')]:{
@@ -54,7 +55,7 @@ const useStyles = makeStyles((theme: Theme) =>
       padding: '4px',
       overflow: 'auto',
       borderRadius: '30px',
-      border: '1px solid',
+      border: '1px solid ',
       borderColor: theme.palette.secondary.main,
     },
     title: {
@@ -66,7 +67,7 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 );
 
-function SignUpPageForLogin() {
+function SignUpPageForDialog() {
   const classes = useStyles();
   const [open, setOpen] = React.useState(false);
 
@@ -75,14 +76,18 @@ function SignUpPageForLogin() {
   }
 
   const handleClose = () => {
-    setOpen(false)
+    setOpen(false);
     auth.signOut();
+  }
+
+  const handleSignUpClose = () => {
+    window.location.reload();
   }
 
   return (
     <div>
-      <Button variant="text" className={classes.signUpButton} onClick={handleClickOpen} color="primary">
-        Sign Up
+      <Button className={classes.signUpButton} variant="contained" onClick={handleClickOpen} color="primary">
+        SET UP MY BUSINESS PROFILE
       </Button>
       <Dialog open={open} fullScreen={true} disableBackdropClick={true}>
         <Container className={classes.root} maxWidth={false}>
@@ -115,10 +120,10 @@ function SignUpPageForLogin() {
                     </Typography>
                     </Grid>
                     <Grid item>
-                      <CustomerSignUp handleSignUpClose={handleClose} />
+                      <CustomerSignUp handleSignUpClose={handleSignUpClose} />
                     </Grid>
                     <Grid item>
-                      <BusinessSignUp handleSignUpClose={handleClose} />
+                      <BusinessSignUp handleSignUpClose={handleSignUpClose} />
                     </Grid>
                   </Grid>
                 </CardContent>
@@ -131,4 +136,4 @@ function SignUpPageForLogin() {
   );
 }
 
-export default SignUpPageForLogin;
+export default SignUpPageForDialog;
