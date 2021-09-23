@@ -24,29 +24,9 @@ import {
   setBusinessAvailability, setUserCustomerInfo, setUserEmployeeInfo
 } from './shared/store/actions';
 import { StoreState, SystemState } from './shared/store/types';
+import ReactGA from "react-ga4";
 
 
-
-
-/*
-const routes = [
-  /* { path: "/help", component: Help },
-  { path: "/messages", component: Messages },
-  { path: "/settings", component: Settings }, 
-  { path: '/appointments', component: CustomerAppointmentHome },
-  { path: '/business-sign-up', component: BusinessSignUp },
-  { path: '/business-account-info', component: BusinessAccountInfo },
-  { path: '/business-personal-info', component: BusinessPersonalInfo },
-  { path: '/landing-page-default', component: LandingDefault },
-  { path: '/landing-page-loggedIn', component: LandingLoggedIn },
-  { path: '/sign-up-page', component: SignUpPage },
-  { path: '/customer-sign-up', component: CustomerSignUp },
-  { path: '/employee-home', component: EmployeeHome },
-  { path: '/business-home', component: BusinessHome },
-  { path: '/login-page', component: LoginDialog },
-  { path: '/', component: LandingDefault },
-];
-*/
 const themeColors = createTheme({
   palette: {
     primary: {
@@ -69,7 +49,7 @@ function mapStateToProps(state: StoreState) {
   };
 }
 
-// interface Props extends WithStyles<typeof styles> {}
+
 
 class App extends React.Component<any, SystemState> {
   constructor(props: any) {
@@ -85,23 +65,9 @@ class App extends React.Component<any, SystemState> {
 
   render() {
     const { classes } = this.props;
-/*
-    const page = () => {
-      if(this.props.system.user)
-      {
-        if(this.props.system.user.customerId !== '')
-        {
-          return (<LandingLoggedIn />);
-        }
-        if(this.props.system.user.employeeId !== '')
-        {
-          return (<BusinessHome />);
-        }
-      }
-      else 
-        return (<LandingDefault />);
-    }
-*/
+
+    ReactGA.initialize("G-R4891Q549L");
+
     return (
       <div className={classes.root}>
         <ThemeProvider theme={themeColors}>
