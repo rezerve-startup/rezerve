@@ -19,6 +19,42 @@ app.use
     credentials: true,
   })
 )
+
+//Set CORS headers to respond to Twilio Flex Plugin
+exports.handler = function (context, event, callback) {
+  // Access the NodeJS Helper Library by calling context.getTwilioClient()
+  const client = context.getTwilioClient();
+
+  // Create a custom Twilio Response
+  const response = new twilio.Response();
+  // Set the CORS headers to allow Flex to make an error-free HTTP request
+  response.appendHeader('Access-Control-Allow-Origin', '*');
+  response.appendHeader('Access-Control-Allow-Methods', 'OPTIONS, POST, GET');
+  response.appendHeader('Access-Control-Allow-Headers', 'Content-Type');
+
+  // Use the NodeJS Helper Library to make an API call for the Flex Plugin.
+  // Note that the workspace SID is passed from the event parameter.
+  client.taskrouter.v1
+    .workspaces(event.WorkspaceSid)
+    .workers()
+    .cumulativeStatistics()
+    .fetch()
+    .then((data) => {
+      response.appendHeader('Content-Type', 'application/json');
+      response.setBody(data);
+      // Return a success response using the callback function
+      return callback(null, response);
+    })
+    .catch((err) => {
+      response.appendHeader('Content-Type', 'plain/text');
+      response.setBody(err.message);
+      response.setStatusCode(500);
+      // If there's an error, send an error response.
+      // Keep using the response object for CORS purposes.
+      return callback(null, response);
+    });
+};
+
 //Accepts payment from previous Setup Intent
 app.post('/create-setup-intent', async (req, res) => {
   const action = req.body.action; //JSON sent in from CheckoutForm.tsx 
@@ -98,10 +134,7 @@ app.post('/create-setup-intent', async (req, res) => {
 
 //Twilio Integration
 app.post('/twilio', async (req, res) => {
-  const client = twilio(accountSid, authToken, {
-    //Uses App, so it inherits same policies as other APIs
-    httpClient: app,
-  });
+  const client = twilio(accountSid, authToken);
 
   client.messages
   .create({
