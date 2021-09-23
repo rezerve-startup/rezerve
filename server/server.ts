@@ -5,6 +5,7 @@ const app = express();
 // tslint:disable-next-line: no-var-requires
 // Takes secret sk_test_....
 const stripe = require('stripe')(`${process.env.STRIPE_API_KEY}`);
+const twilio = require('twilio');
 const accountSid = process.env.TWILIO_ACCOUNT_SID;
 const authToken = process.env.TWILIO_AUTH_TOKEN;
 
@@ -97,17 +98,10 @@ app.post('/create-setup-intent', async (req, res) => {
 
 //Twilio Integration
 app.post('/twilio', async (req, res) => {
-  const client = require('twilio')(accountSid, authToken);
-
-  // Build a mapping of headers
-  const headers = {
-    'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Methods': 'GET,PUT,POST,DELETE,OPTIONS',
-    'Access-Control-Allow-Headers': 'Content-Type',
-  };
-
-  // Set headers in response
-  client.setHeaders(headers);
+  const client = twilio(accountSid, authToken, {
+    //Uses App, so it inherits same policies as other APIs
+    httpClient: app,
+  });
 
   client.messages
   .create({

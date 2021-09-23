@@ -46,7 +46,8 @@
     "react-thumbnail": "^1.0.0",
     "redux": "^4.0.5",
     "serve": "^11.3.2",
-    "stripe": "^8.140.0"
+    "stripe": "^8.140.0",
+    "twilio": "^3.68.0"
   },
   "scripts": {
     "start-app": "serve -s build",
