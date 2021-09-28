@@ -50,7 +50,6 @@ class BusinessInfoDetails extends React.Component<any, any> {
       bookingMessage: '',
       customerNumber: '',
       customerName: '',
-      employeeNumber: ''
     };
 
   }
@@ -406,31 +405,10 @@ class BusinessInfoDetails extends React.Component<any, any> {
       firestore.collection('employees').doc(`${this.props.selectedEmployee.id}`).update({
         appointments: firebase.firestore.FieldValue.arrayUnion(docRef.id)
       }).then(() => {
-        fetch('https://rezerve-startup-api.herokuapp.com/twilio-business', {
-            // Use one of the links above for local/live
-            method: 'POST',
-            headers: {
-              'Access-Control-Allow-Origin': '*',
-              'Content-Type': 'application/json',
-            },
-            
-            body: JSON.stringify({employeeNumber : this.state.employeeNumber,
-            }),
-          },
-            
-          )
-          .then((res) => {
-            return res.json();
-          });
-        }).then(() => {
         if (this.props.user !== undefined) {
           firestore.collection('customers').doc(`${this.props.user.customerId}`).update({
             appointments: firebase.firestore.FieldValue.arrayUnion(docRef.id)
           })
-            .catch((e) => {
-              // setSnackSeverity('error');
-              console.log(`Error: ${e.message}`);
-            })
           .then(() => {
             let appointmentToAdd = {
               businessId: this.props.businessId,
@@ -452,7 +430,7 @@ class BusinessInfoDetails extends React.Component<any, any> {
           this.handleCloseBookDialog();
           this.showSuccessfulBooking();
         }
-      })
+      });
     }).catch((error) => {
       console.log(error);
       this.showFailedBooking();
@@ -470,15 +448,7 @@ class BusinessInfoDetails extends React.Component<any, any> {
   }
 
   handleOpenBookDialog() {
-    firestore.collection('users')
-    .where('employeeId', '==', this.props.selectedEmployee.id).onSnapshot((snapshot) => {
-      this.setState({
-        employeeNumber: snapshot.docs[0].data()?.phone
-      })
-      this.dispatchSetBookDialogStatus(true);
-    })
-  
-    
+    this.dispatchSetBookDialogStatus(true);
   }
 
   handleCloseBookDialog() {
