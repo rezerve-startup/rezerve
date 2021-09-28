@@ -108,7 +108,7 @@ app.post('/twilio-customer', (req, res) => {
   const recievingNumber = req.body.employeeNumber;
   const businessName = req.body.businessName;
   const date = req.body.apptDate;
-  const customerMessage = 'ReZerve | ' + businessName + 'has accepted your appointment for ' + date;
+  const customerMessage = 'ReZerve | ' + businessName + ' has accepted your appointment for ' + date;
   client.messages
   .create({
      body: customerMessage,
