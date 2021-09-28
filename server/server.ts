@@ -102,27 +102,45 @@ app.post('/create-setup-intent', async (req, res) => {
 
 //Twilio Integration
 app.post('/twilio', (req, res) => {
-  const recievingNumber = req.body.customerNumber;
+  const messageRecipient = req.body.recipient;
+  const recievingNumber = req.body.phoneNumber;
   const businessName = req.body.businessName;
   const date = req.body.apptDate;
 
   res.header('Access-Control-Allow-Origin', '*');
   res.header('Content-Type', 'application/json');
   
-  const customerMessage = 'ReZerve | ' + businessName + 'has accepted your appointment for ' + date;
-  client.messages
-  .create({
-     body: customerMessage,
-     from: '+14694059872',
-     to: recievingNumber
-   })
-   .then(() => {
-    res.send(JSON.stringify({ success: true }));
-  })
-  .catch(err => {
-    console.log(err);
-    res.send(JSON.stringify({ success: false }));
-  });
+  if(messageRecipient === 'customer'){
+    const customerMessage = 'ReZerve | ' + businessName + 'has accepted your appointment for ' + date;
+    client.messages
+    .create({
+       body: customerMessage,
+       from: '+14694059872',
+       to: recievingNumber
+     })
+     .then(() => {
+      res.send(JSON.stringify({ success: true }));
+    })
+    .catch(err => {
+      console.log(err);
+      res.send(JSON.stringify({ success: false }));
+    }); 
+  } else {
+    const businessMessage = 'ReZerve | You have a new appointment request. Go to your ReZerve Dashboard to see appointment details at https://www.rezervebookings.com/' ;
+    client.messages
+    .create({
+       body: businessMessage,
+       from: '+14694059872',
+       to: recievingNumber
+     })
+     .then(() => {
+      res.send(JSON.stringify({ success: true }));
+    })
+    .catch(err => {
+      console.log(err);
+      res.send(JSON.stringify({ success: false }));
+    });
+  }
 });
 
 

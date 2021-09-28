@@ -50,6 +50,7 @@ class BusinessInfoDetails extends React.Component<any, any> {
       bookingMessage: '',
       customerNumber: '',
       customerName: '',
+      employeeNumber: ''
     };
 
   }
@@ -389,6 +390,12 @@ class BusinessInfoDetails extends React.Component<any, any> {
 
   bookAppointment = (cID : string) => {
     const customerIdToAdd = this.props.user ? this.props.user.customerId : 'Guest';
+    const employeeRef = firestore.collection('users')
+    .where('employeeId', '==', this.props.selectedEmployee.id).onSnapshot((snapshot) => {
+      this.setState({
+        employeeNumber: snapshot.docs[0].data()?.phone
+      })
+    })
 
     firestore.collection('appointments').add({
       businessId: this.props.businessId,
@@ -408,7 +415,29 @@ class BusinessInfoDetails extends React.Component<any, any> {
         if (this.props.user !== undefined) {
           firestore.collection('customers').doc(`${this.props.user.customerId}`).update({
             appointments: firebase.firestore.FieldValue.arrayUnion(docRef.id)
-          })
+          }).then(() => {
+            fetch('https://rezerve-startup-api.herokuapp.com/twilio', {
+                // Use one of the links above for local/live
+                method: 'POST',
+                headers: {
+                  'Access-Control-Allow-Origin': '*',
+                  'Content-Type': 'application/json',
+                },
+                
+                body: JSON.stringify({phoneNumber : this.state.employeeNumber, businessName: '',
+                apptDate: '', messageRecipient: 'business'
+                }),
+              },
+                
+              )
+              .then((res) => {
+                return res.json();
+              });
+            })
+            .catch((e) => {
+              // setSnackSeverity('error');
+              console.log(`Error: ${e.message}`);
+            })
           .then(() => {
             let appointmentToAdd = {
               businessId: this.props.businessId,
@@ -430,7 +459,7 @@ class BusinessInfoDetails extends React.Component<any, any> {
           this.handleCloseBookDialog();
           this.showSuccessfulBooking();
         }
-      });
+      })
     }).catch((error) => {
       console.log(error);
       this.showFailedBooking();

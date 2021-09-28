@@ -94,8 +94,8 @@ export default function AcceptPayment(props:any){
               'Content-Type': 'application/json',
             },
             
-            body: JSON.stringify({customerNumber : customerNumber, businessName: businessName,
-            apptDate: props.appt.formattedDate
+            body: JSON.stringify({phoneNumber : customerNumber, businessName: businessName,
+            apptDate: props.appt.formattedDate + ' at ' + props.appt.startTime, messageRecipient: 'customer'
             }),
           },
             

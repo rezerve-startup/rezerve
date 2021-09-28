@@ -250,7 +250,7 @@ class EmployeeRequestedAppointments extends React.Component<Props, State> {
 
           if (apptData.customerId === 'Guest') {  
             apptData.client = {
-              firstName: 'Guest',
+              firstName: apptData.guestName,
               lastName: ''
             };
 
