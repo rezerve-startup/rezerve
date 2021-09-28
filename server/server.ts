@@ -100,52 +100,50 @@ app.post('/create-setup-intent', async (req, res) => {
   }
 });
 
-//Twilio Integration
-app.post('/twilio', (req, res) => {
-  const messageRecipient = req.body.recipient;
-  const recievingNumber = req.body.phoneNumber;
+//Twilio Integration to customer
+app.post('/twilio-customer', (req, res) => {
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Content-Type', 'application/json');
+  
+  const recievingNumber = req.body.employeeNumber;
   const businessName = req.body.businessName;
   const date = req.body.apptDate;
+  const customerMessage = 'ReZerve | ' + businessName + 'has accepted your appointment for ' + date;
+  client.messages
+  .create({
+     body: customerMessage,
+     from: '+14694059872',
+     to: recievingNumber
+   })
+   .then(() => {
+    res.send(JSON.stringify({ success: true }));
+  })
+  .catch(err => {
+    console.log(err);
+    res.send(JSON.stringify({ success: false }));
+  });
+});
 
+//Twilio Integration to the Stylist
+app.post('/twilio-business', (req, res) => {
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Content-Type', 'application/json');
   
-  
-  if(messageRecipient === 'customer'){
-    const customerMessage = 'ReZerve | ' + businessName + 'has accepted your appointment for ' + date;
-    res.header('Access-Control-Allow-Origin', '*');
-    res.header('Content-Type', 'application/json');
-  
-    client.messages
-    .create({
-       body: customerMessage,
-       from: '+14694059872',
-       to: recievingNumber
-     })
-     .then(() => {
-      res.send(JSON.stringify({ success: true }));
-    })
-    .catch(err => { 
-      console.log(err);
-      res.send(JSON.stringify({ success: false }));
-    });
-  } else if (messageRecipient === 'business') {
-    const businessMessage = 'ReZerve | You have a new appointment request. Go to your ReZerve Dashboard to see appointment details at https://www.rezervebookings.com/' ;
-    res.header('Access-Control-Allow-Origin', '*');
-    res.header('Content-Type', 'application/json');
-
-    client.messages
-    .create({
-       body: businessMessage,
-       from: '+14694059872',
-       to: recievingNumber
-     })
-     .then(() => {
-      res.send(JSON.stringify({ success: true }));
-    })
-    .catch(err => {
-      console.log(err);
-      res.send(JSON.stringify({ success: false }));
-    });
-  }
+  const recievingNumber = req.body.employeeNumber;
+  const employeeMessage = 'ReZerve | You have a new appointment request. Go to your ReZerve Dashboard to see appointment details at https://www.rezervebookings.com/';
+  client.messages
+  .create({
+     body: employeeMessage,
+     from: '+14694059872',
+     to: recievingNumber
+   })
+   .then(() => {
+    res.send(JSON.stringify({ success: true }));
+  })
+  .catch(err => {
+    console.log(err);
+    res.send(JSON.stringify({ success: false }));
+  });
 });
 
 

@@ -86,7 +86,7 @@ export default function AcceptPayment(props:any){
           }
         })
         .then(() => {
-          fetch('https://rezerve-startup-api.herokuapp.com/twilio', {
+          fetch('https://rezerve-startup-api.herokuapp.com/twilio-customer', {
             // Use one of the links above for local/live
             method: 'POST',
             headers: {
@@ -94,8 +94,8 @@ export default function AcceptPayment(props:any){
               'Content-Type': 'application/json',
             },
             
-            body: JSON.stringify({phoneNumber : customerNumber, businessName: businessName,
-            apptDate: props.appt.formattedDate + ' at ' + props.appt.startTime, messageRecipient: 'customer'
+            body: JSON.stringify({customerNumber : customerNumber, businessName: businessName,
+            apptDate: props.appt.formattedDate + ' at ' + props.appt.startTime,
             }),
           },
             
@@ -119,7 +119,7 @@ export default function AcceptPayment(props:any){
       }
 
       const handleCatch = () => {
-        fetch('https://rezerve-startup-api.herokuapp.com/twilio', {
+        fetch('https://rezerve-startup-api.herokuapp.com/twilio-customer', {
           // Use one of the links above for local/live
           method: 'POST',
           headers: {
@@ -127,8 +127,8 @@ export default function AcceptPayment(props:any){
             'Content-Type': 'application/json',
           },
            
-          body: JSON.stringify({phoneNumber : customerNumber, businessName: businessName,
-            apptDate: props.appt.formattedDate, messageRecipient : 'customer',
+          body: JSON.stringify({customerNumber : customerNumber, businessName: businessName,
+            apptDate: props.appt.formattedDate + ' at ' + props.appt.startTime,
             }),
         },
           

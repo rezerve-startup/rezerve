@@ -412,7 +412,7 @@ class BusinessInfoDetails extends React.Component<any, any> {
       firestore.collection('employees').doc(`${this.props.selectedEmployee.id}`).update({
         appointments: firebase.firestore.FieldValue.arrayUnion(docRef.id)
       }).then(() => {
-        fetch('https://rezerve-startup-api.herokuapp.com/twilio', {
+        fetch('https://rezerve-startup-api.herokuapp.com/twilio-business', {
             // Use one of the links above for local/live
             method: 'POST',
             headers: {
@@ -420,8 +420,7 @@ class BusinessInfoDetails extends React.Component<any, any> {
               'Content-Type': 'application/json',
             },
             
-            body: JSON.stringify({phoneNumber : this.state.employeeNumber, businessName: '',
-            apptDate: '', messageRecipient: 'business'
+            body: JSON.stringify({employeeNumber : this.state.employeeNumber,
             }),
           },
             
