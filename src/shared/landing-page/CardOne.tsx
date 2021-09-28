@@ -16,7 +16,8 @@ import {
   makeStyles,
   Grid,
   CardHeader,
-  CardMedia
+  CardMedia,
+  Hidden
 } from '@material-ui/core';
 import Clear from '@material-ui/icons/Clear';
 import SignUpPage from '../sign-up/SignUpPageDialog';
@@ -37,7 +38,6 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     logo: {
       paddingBottom: '30px',
-      height: '40px'
     },
     container: {
       minHeight: '80vh'
@@ -54,6 +54,11 @@ const useStyles = makeStyles((theme: Theme) =>
     spanZ: {
       color: theme.palette.primary.main,
     },
+    customText: {
+      [theme.breakpoints.down('xs')]: {
+        fontSize: '14px'
+      },
+    },
   }),
 );
 
@@ -63,29 +68,29 @@ function CardOne(){
         <Card className={classes.cardStyle}>
           <CardContent>
             <Grid container justifyContent="space-between">
-              <Grid>
-                <Typography
-                  className={classes.title}
-                  variant="h6"
-                  noWrap={true}
-                  color="primary"
-                  //component={Link}
-                  //to="/"
-                >
-                  <b>Re<span className={classes.spanZ}>Z</span>erve</b>
-                </Typography>
-              </Grid>
-              <Grid>
-                <Grid>
-                  <CardMedia
-                    className={classes.logo}
-                    component="img"
-                    image={logo}
-                    alt="logo"
-                  />
+                <Grid xs={11} md={12}>
+                  <Typography
+                    className={classes.title}
+                    variant="h6"
+                    noWrap={true}
+                    color="primary"
+                    //component={Link}
+                    //to="/"
+                  >
+                    <b>Re<span className={classes.spanZ}>Z</span>erve</b>
+                  </Typography>
                 </Grid>
+                <Grid xs={1}>
+                  <Hidden mdUp>
+                    <CardMedia
+                        className={classes.logo}
+                        component="img"
+                        image={logo}
+                        alt="logo"
+                    />
+                  </Hidden>
+                  </Grid>
               </Grid>
-            </Grid>
             
             <Grid className={classes.container}
              container direction="column" justifyContent="center" alignItems="center" spacing={4}>
@@ -107,7 +112,7 @@ function CardOne(){
                 </Grid>
               </Grid>
 
-              <Grid item>
+              <Grid item className={classes.customText}>
                 <Grid container direction="row" justifyContent="space-around" spacing={3}>
 
                   <Grid item>

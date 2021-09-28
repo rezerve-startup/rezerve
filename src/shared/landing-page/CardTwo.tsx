@@ -16,7 +16,8 @@ import {
   makeStyles,
   Grid,
   CardHeader,
-  CardMedia
+  CardMedia,
+  Hidden
 } from '@material-ui/core';
 import Clear from '@material-ui/icons/Clear';
 import LoginDefault from '../login/loginDefault';
@@ -38,7 +39,6 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     logo: {
       paddingBottom: '30px',
-      height: '40px'
     },
     container: {
       minHeight: '80vh'
@@ -80,29 +80,29 @@ function CardTwo(){
         <Card className={classes.cardStyle}>
           <CardContent>
             <Grid container justifyContent="space-between">
-              <Grid>
-                <Typography
-                  className={classes.title}
-                  variant="h6"
-                  noWrap={true}
-                  color="primary"
-                  //component={Link}
-                  //to="/"
-                >
-                  <b>Re<span className={classes.spanZ}>Z</span>erve</b>
-                </Typography>
+                  <Grid xs={11} md={12}>
+                    <Typography
+                      className={classes.title}
+                      variant="h6"
+                      noWrap={true}
+                      color="primary"
+                      //component={Link}
+                      //to="/"
+                    >
+                      <b>Re<span className={classes.spanZ}>Z</span>erve</b>
+                    </Typography>
+                  </Grid>
+                  <Grid xs={1}>
+                    <Hidden mdUp>
+                      <CardMedia
+                          className={classes.logo}
+                          component="img"
+                          image={logo}
+                          alt="logo"
+                      />
+                    </Hidden>
+                    </Grid>
               </Grid>
-              <Grid>
-                <Grid>
-                  <CardMedia
-                    className={classes.logo}
-                    component="img"
-                    image={logo}
-                    alt="logo"
-                  />
-                </Grid>
-              </Grid>
-            </Grid>
             
             <Grid className={classes.container} 
               container justifyContent="center" alignItems="center" direction="column" spacing={4}>
