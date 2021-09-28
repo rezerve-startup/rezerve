@@ -3,6 +3,8 @@ import {useStripe} from '@stripe/react-stripe-js';
 import {Button, CircularProgress, Typography} from '@material-ui/core';
 import { firestore } from '../../../config/FirebaseConfig';
 import firebase from 'firebase';
+import { AppsTwoTone } from '@material-ui/icons';
+import { setEmployeeBusinessName } from '../../../shared/store/actions';
 export default function AcceptPayment(props:any){
     // Create PaymentIntent as soon as the page loads
     // Local testing
@@ -12,18 +14,36 @@ export default function AcceptPayment(props:any){
     // https://rezerve-startup-api.herokuapp.com/charge-card-off-session
     
     const [clientSecret, setClientSecret] = React.useState<string>('');
+    const [businessName, setBusinessName] = React.useState<string>('');
     const [loaded, setLoaded] = React.useState<boolean>(false);
     const [succeeded, setSucceeded] = React.useState<boolean>(false);
+    const [customerNumber, setCustomerNumber] = React.useState<string>('')
     const stripe = useStripe();
     
     useEffect(() => {
+
+      const businessDoc = firestore.collection('businesses')
+      .doc(props.appt.businessId).get()
+      .then((docRef) => {
+        setBusinessName(docRef.data()?.name);
+      })
+      .then(() => {
+        if(props.appt.guestNumber === ''){
+          firestore.collection('users').where('customerId', '==', props.appt.customerId)
+          .onSnapshot((snapshot) => {
+            setCustomerNumber('1' + snapshot.docs[1].data()?.phone);
+          })
+        } else {
+          setCustomerNumber('1' + props.appt.guestNumber);
+        }
+      });
       // Create PaymentIntent as soon as the page loads
     // Local testing
     // http://localhost:4242/create-payment-intent
 
     // Live site
     // https://rezerve-startup-api.herokuapp.com/create-payment-intent
-      fetch('https://rezerve-startup-api.herokuapp.com/twilio', {
+      fetch('https://rezerve-startup-api.herokuapp.com/create-setup-intent', {
         // Use one of the links above for local/live
         method: 'POST',
         headers: {
@@ -31,7 +51,7 @@ export default function AcceptPayment(props:any){
           'Content-Type': 'application/json',
         },
          
-        // body: JSON.stringify({action: 'paymentIntent', cID : props.cID}),
+         body: JSON.stringify({action: 'paymentIntent', cID : props.cID}),
       },
         
       )
@@ -39,15 +59,15 @@ export default function AcceptPayment(props:any){
         return res.json();
       })
       .then((data) => {
-        // setClientSecret(data.clientSecret)
-        // //setPublicKey(data.publicKey)
-        // setSucceeded(data.succeeded)
-        // setLoaded(true)
+        setClientSecret(data.clientSecret)
+        //  setPublicKey(data.publicKey)
+         setSucceeded(data.success)
+         setLoaded(true)
       });
+
+      
     }, []);
 
-    console.log(succeeded)
-    
       const handleConfirm = async (ev) => {
         ev.preventDefault();
         stripe!
@@ -65,6 +85,25 @@ export default function AcceptPayment(props:any){
             console.log("Yippie Kay Yay")
           }
         })
+        .then(() => {
+          fetch('https://rezerve-startup-api.herokuapp.com/twilio', {
+            // Use one of the links above for local/live
+            method: 'POST',
+            headers: {
+              'Access-Control-Allow-Origin': '*',
+              'Content-Type': 'application/json',
+            },
+            
+            body: JSON.stringify({customerNumber : customerNumber, businessName: businessName,
+            apptDate: props.appt.formattedDate
+            }),
+          },
+            
+          )
+          .then((res) => {
+            return res.json();
+          });
+        })
         .catch((e) => {
           // setSnackSeverity('error');
           console.log(`Error: ${e.message}`);
@@ -80,7 +119,26 @@ export default function AcceptPayment(props:any){
       }
 
       const handleCatch = () => {
-        props.this.updateAppointmentStatus();
+        fetch('https://rezerve-startup-api.herokuapp.com/twilio', {
+          // Use one of the links above for local/live
+          method: 'POST',
+          headers: {
+            'Access-Control-Allow-Origin': '*',
+            'Content-Type': 'application/json',
+          },
+           
+          body: JSON.stringify({customerNumber : customerNumber, businessName: businessName,
+            apptDate: props.appt.formattedDate
+            }),
+        },
+          
+        )
+        .then((res) => {
+          return res.json();
+        })
+        .then(() => {
+          props.this.updateAppointmentStatus();
+        })
       }
         return(
           <div>

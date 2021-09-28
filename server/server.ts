@@ -102,15 +102,19 @@ app.post('/create-setup-intent', async (req, res) => {
 
 //Twilio Integration
 app.post('/twilio', (req, res) => {
+  const recievingNumber = req.body.customerNumber;
+  const businessName = req.body.businessName;
+  const date = req.body.apptDate;
+
   res.header('Access-Control-Allow-Origin', '*');
   res.header('Content-Type', 'application/json');
   
-  
+  const customerMessage = 'ReZerve | ' + businessName + 'has accepted your appointment for ' + date;
   client.messages
   .create({
-     body: 'This is the ship that made the Kessel Run in fourteen parsecs?',
+     body: customerMessage,
      from: '+14694059872',
-     to: '+18703707699'
+     to: recievingNumber
    })
    .then(() => {
     res.send(JSON.stringify({ success: true }));

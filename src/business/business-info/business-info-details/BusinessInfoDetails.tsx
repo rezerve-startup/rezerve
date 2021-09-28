@@ -48,7 +48,10 @@ class BusinessInfoDetails extends React.Component<any, any> {
       selectedAppointmentSlot: -1,
       bookingMessageOpen: false,
       bookingMessage: '',
+      customerNumber: '',
+      customerName: '',
     };
+
   }
   
   componentDidMount() {
@@ -75,6 +78,14 @@ class BusinessInfoDetails extends React.Component<any, any> {
     this.props.setBookDialogStatus(bookDialogStatus);
   }
 
+  checkGuest(){
+    if(this.state.customerNumber.length === 10 && this.state.customerName.length > 0){
+      return true;
+    }else{
+      return false;
+    }
+  }
+
   handleSelectEmployee(e): void {
     this.setState({
       selectedService: -1,
@@ -91,9 +102,21 @@ class BusinessInfoDetails extends React.Component<any, any> {
     }
   }
 
+  handleGuestName(e): void{
+    this.setState({
+      customerName: e.target.value,
+    });
+
+  }
+
+  handleGuestNumber(e): void{
+    this.setState({
+      customerNumber: e.target.value,
+    });
+  }
   handleSelectedDateChange(e): void {
     this.setState({
-      selectedDate: e.target.value
+      selectedDate: e.target.value,
     });
   }
 
@@ -374,8 +397,11 @@ class BusinessInfoDetails extends React.Component<any, any> {
       datetime: new Date(this.state.availableAppointmentTimes[this.state.selectedAppointmentSlot]),
       employeeId: this.props.selectedEmployee.id,
       service: this.props.selectedEmployee.services[this.state.selectedService],
-      status: 'requested'
-    }).then((docRef) => {
+      status: 'requested',
+      guestName: this.state.customerName,
+      guestNumber: this.state.customerNumber
+    })
+    .then((docRef) => {
       firestore.collection('employees').doc(`${this.props.selectedEmployee.id}`).update({
         appointments: firebase.firestore.FieldValue.arrayUnion(docRef.id)
       }).then(() => {
