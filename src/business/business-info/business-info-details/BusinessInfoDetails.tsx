@@ -412,28 +412,28 @@ class BusinessInfoDetails extends React.Component<any, any> {
       firestore.collection('employees').doc(`${this.props.selectedEmployee.id}`).update({
         appointments: firebase.firestore.FieldValue.arrayUnion(docRef.id)
       }).then(() => {
+        fetch('https://rezerve-startup-api.herokuapp.com/twilio', {
+            // Use one of the links above for local/live
+            method: 'POST',
+            headers: {
+              'Access-Control-Allow-Origin': '*',
+              'Content-Type': 'application/json',
+            },
+            
+            body: JSON.stringify({phoneNumber : this.state.employeeNumber, businessName: '',
+            apptDate: '', messageRecipient: 'business'
+            }),
+          },
+            
+          )
+          .then((res) => {
+            return res.json();
+          });
+        }).then(() => {
         if (this.props.user !== undefined) {
           firestore.collection('customers').doc(`${this.props.user.customerId}`).update({
             appointments: firebase.firestore.FieldValue.arrayUnion(docRef.id)
-          }).then(() => {
-            fetch('https://rezerve-startup-api.herokuapp.com/twilio', {
-                // Use one of the links above for local/live
-                method: 'POST',
-                headers: {
-                  'Access-Control-Allow-Origin': '*',
-                  'Content-Type': 'application/json',
-                },
-                
-                body: JSON.stringify({phoneNumber : this.state.employeeNumber, businessName: '',
-                apptDate: '', messageRecipient: 'business'
-                }),
-              },
-                
-              )
-              .then((res) => {
-                return res.json();
-              });
-            })
+          })
             .catch((e) => {
               // setSnackSeverity('error');
               console.log(`Error: ${e.message}`);

@@ -31,7 +31,7 @@ export default function AcceptPayment(props:any){
         if(props.appt.guestNumber === ''){
           firestore.collection('users').where('customerId', '==', props.appt.customerId)
           .onSnapshot((snapshot) => {
-            setCustomerNumber('1' + snapshot.docs[1].data()?.phone);
+            setCustomerNumber('1' + snapshot.docs[0].data()?.phone);
           })
         } else {
           setCustomerNumber('1' + props.appt.guestNumber);
@@ -128,7 +128,7 @@ export default function AcceptPayment(props:any){
           },
            
           body: JSON.stringify({phoneNumber : customerNumber, businessName: businessName,
-            apptDate: props.appt.formattedDate
+            apptDate: props.appt.formattedDate, messageRecipient : 'customer',
             }),
         },
           

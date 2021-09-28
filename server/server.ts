@@ -124,8 +124,8 @@ app.post('/twilio', (req, res) => {
     .catch(err => {
       console.log(err);
       res.send(JSON.stringify({ success: false }));
-    }); 
-  } else {
+    });
+  } else if (messageRecipient === 'business') {
     const businessMessage = 'ReZerve | You have a new appointment request. Go to your ReZerve Dashboard to see appointment details at https://www.rezervebookings.com/' ;
     client.messages
     .create({
