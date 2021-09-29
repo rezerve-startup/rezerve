@@ -34,6 +34,8 @@ function getStepContent(stepIndex: number, setCustomerPaid, businessName, appoin
         return <GuestContactCard this={appt}/>;
       case 2:
         return <StripePaymentSetup paymentSuccess={setCustomerPaid} price={service.price} this={appt}/>;
+      case 3:
+        return <BookingConfirmation businessName={businessName} appointmentDateTime={appointmentDateTime} employeeName={employeeName} service={service} />;
       default:
         return 'Our apologies, there has been a mishap with the booking process. Please try again later.';
     }
@@ -44,6 +46,8 @@ function getStepContent(stepIndex: number, setCustomerPaid, businessName, appoin
         return <ConfirmationCard businessName={businessName} appointmentDateTime={appointmentDateTime} employeeName={employeeName} service={service} phoneField={true}/>;
       case 1:
         return <StripePaymentSetup paymentSuccess={setCustomerPaid} price={service.price} this={appt}/>;
+      case 2:
+        return <BookingConfirmation businessName={businessName} appointmentDateTime={appointmentDateTime} employeeName={employeeName} service={service} />;
       default:
         return 'Our apologies, there has been a mishap with the booking process. Please try again later.';
     }
