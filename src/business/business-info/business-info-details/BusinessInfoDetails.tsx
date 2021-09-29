@@ -388,12 +388,12 @@ class BusinessInfoDetails extends React.Component<any, any> {
     }
   }
 
-  bookAppointment = (cID : string) => {
+  bookAppointment = () => {
     const customerIdToAdd = this.props.user ? this.props.user.customerId : 'Guest';
 
     firestore.collection('appointments').add({
       businessId: this.props.businessId,
-      cID: cID,
+      // cID: cID,
       customerId: customerIdToAdd,
       datetime: new Date(this.state.availableAppointmentTimes[this.state.selectedAppointmentSlot]),
       employeeId: this.props.selectedEmployee.id,
@@ -434,7 +434,7 @@ class BusinessInfoDetails extends React.Component<any, any> {
           .then(() => {
             let appointmentToAdd = {
               businessId: this.props.businessId,
-              cID: cID,
+              // cID: cID,
               customerId: this.props.user.customerId,
               datetime: firebase.firestore.Timestamp.fromDate(new Date(this.state.availableAppointmentTimes[this.state.selectedAppointmentSlot])),
               employeeId: this.props.selectedEmployee.id,

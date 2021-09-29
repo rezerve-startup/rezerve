@@ -157,7 +157,7 @@ export default function CheckoutForm(props) {
   };
 
   const handleConfirm = () => {
-    props.this.bookAppointment(cID)
+    props.this.bookAppointment();
     
       // if(props.this.props.user !== undefined){
       //   const customerRef = firestore.collection('customers').doc(`${props.this.props.user.customerId}`)
