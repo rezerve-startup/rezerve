@@ -213,7 +213,7 @@ export default function CheckoutForm(props) {
       
 
       {error === null  && open &&
-          <Typography align="center">
+          <Typography align="center" style={{cursor: 'pointer'}}>
 
           {/* Maybe Add Card Here */}
 
