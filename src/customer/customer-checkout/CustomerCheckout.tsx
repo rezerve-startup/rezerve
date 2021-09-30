@@ -1,56 +1,31 @@
 import {
-  Button, Card, CardContent, CardActions,
+  Button,
   DialogActions, DialogContent, Divider, Step,
-  StepLabel, Stepper, Typography, TextField
+  StepLabel, Stepper, Typography
 } from '@material-ui/core/';
-import LoginDefault from '../../shared/login/loginDefault';
-import SignUpPage from '../../shared/sign-up/SignUpPage';
 // tslint:disable-next-line: no-submodule-imports
 import { makeStyles } from '@material-ui/core/styles';
 import { Elements } from '@stripe/react-stripe-js';
 import { loadStripe } from '@stripe/stripe-js';
 import React from 'react';
-import loginDefault from '../../shared/login/loginDefault';
 import CheckoutForm from './CheckoutForm';
-const PUBLIC_KEY = "pk_live_51IT9oWG4OM4l9C1djPJNEIxFEuRenRxG4YxAr4FOEfpGWsWCQ47s0L606rET7gbRBEmxvVYhvIsuxbYwIfQDcHh500Fh34cGmb"
-const TEST_KEY = "pk_test_51IT9oWG4OM4l9C1dre9yGOSSd1MtmDOWcGsjlv7Exe6u46E2UpIjt92w9zO7ld2i0v1os1NaYwWX48MxqbhvRoq8009WuwQftX"
-const promise = loadStripe(TEST_KEY);
+const PUBLIC_KEY = "pk_test_51IT9oWG4OM4l9C1dre9yGOSSd1MtmDOWcGsjlv7Exe6u46E2UpIjt92w9zO7ld2i0v1os1NaYwWX48MxqbhvRoq8009WuwQftX"
+const promise = loadStripe(PUBLIC_KEY);
 
-function getSteps(user) {
-  if(user === undefined){
-    return ['Review Booking', 'Customer Information' ,'Payment Information'];
-  }
-  else{
-    return ['Review Booking', 'Payment Information'];
-  }
+function getSteps() {
+  return ['Review Booking', 'Payment Information'];
 }
 
 function getStepContent(stepIndex: number, setCustomerPaid, businessName, appointmentDateTime, employeeName, service, appt) {
-  if(appt.props.user === undefined){
-    switch (stepIndex) {
-      case 0:
-        return <ConfirmationCard businessName={businessName} appointmentDateTime={appointmentDateTime} employeeName={employeeName} service={service}/>;
-      case 1:
-        return <GuestContactCard this={appt}/>;
-      case 2:
-        return <StripePaymentSetup paymentSuccess={setCustomerPaid} price={service.price} this={appt}/>;
-      case 3:
-        return <BookingConfirmation businessName={businessName} appointmentDateTime={appointmentDateTime} employeeName={employeeName} service={service} />;
-      default:
-        return 'Our apologies, there has been a mishap with the booking process. Please try again later.';
-    }
-  }
-  else{
-    switch (stepIndex) {
-      case 0:
-        return <ConfirmationCard businessName={businessName} appointmentDateTime={appointmentDateTime} employeeName={employeeName} service={service} phoneField={true}/>;
-      case 1:
-        return <StripePaymentSetup paymentSuccess={setCustomerPaid} price={service.price} this={appt}/>;
-      case 2:
-        return <BookingConfirmation businessName={businessName} appointmentDateTime={appointmentDateTime} employeeName={employeeName} service={service} />;
-      default:
-        return 'Our apologies, there has been a mishap with the booking process. Please try again later.';
-    }
+  switch (stepIndex) {
+    case 0:
+      return <ConfirmationCard businessName={businessName} appointmentDateTime={appointmentDateTime} employeeName={employeeName} service={service} />;
+    case 1:
+      return <StripePaymentSetup paymentSuccess={setCustomerPaid} price={service.price} this={appt}/>;
+    case 2:
+      return <BookingConfirmation businessName={businessName} appointmentDateTime={appointmentDateTime} employeeName={employeeName} service={service} />;
+    default:
+      return 'Our apologies, there has been a mishap with the booking process. Please try again later.';
   }
 }
 
@@ -70,111 +45,43 @@ const ConfirmationCard = (props: any) => {
   const classes = useStyles();
 
   return (
-    <div>
-      <div className={classes.itemCard}>
-        <div className={classes.confirmationBusinessName}>
-          <div>{props.businessName}</div>
-        </div>
-
-        <div className={classes.confirmationEmployeeName}>
-          <div>{props.employeeName}</div>
-        </div>
-
-        <div className={classes.confirmationAppointmentDate}>
-          <div>{props.appointmentDateTime.format('ddd MM/DD/YYYY')}</div>
-          <div>{props.appointmentDateTime.format('h:mm A')}</div>
-        </div>
-        <Divider className={classes.divider0} />
-        <div className={classes.confirmationServicePrice}>
-          <div>{props.service.name}</div>
-          <div>${props.service.price}</div>
-        </div>
-
-        <div className={classes.confirmationServicePrice}>
-          <div>Booking Fee</div>
-          <div>$0.75</div>
-        </div>
-        <Divider className={classes.divider1} />
-        <div className={classes.confirmationServicePrice}>
-          <div>*Payment Due</div>
-          <div>$0.75</div>
-        </div>
-
-        <Divider className={classes.divider0} />
-      
-        <div style={{textAlign: 'center'}}>
-          <Typography variant="caption">
-            *Your payment in Step 2 is only for the Booking Fee. Service payment will happen at {props.businessName}.
-          </Typography>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-//Guest Contact Card
-const GuestContactCard = (props: any) => {
-  // tslint:disable-next-line: no-shadowed-variable
-  const classes = useStyles();
-
-  return (
-    <div>
-      <div style={{textAlign: 'center'}}>
-        <Typography align="center" variant="caption">
-          Please provide your name and phone number in the fields below
-        </Typography>
-      <div style={{display: 'flex',}}>
-      <TextField
-                    name="name"
-                    label="Name"
-                    fullWidth={true}
-                    variant="outlined"
-                    value={props.this.state.customerName}
-                    onChange={(e) => props.this.handleGuestName(e)}
-                  />
-        
-        <TextField
-                    name="phone"
-                    value={props.this.state.customerNumber}
-                    type="number"
-                    label="Phone Number"
-                    fullWidth={true}
-                    variant="outlined"
-                    onChange={(e) => props.this.handleGuestNumber(e)}
-                  />
-      </div>
+    <div className={classes.itemCard}>
       <div className={classes.confirmationBusinessName}>
-          <div>or</div>
+        <div>{props.businessName}</div>
       </div>
 
-      <Card>
-        <CardContent>
-          <Typography align="center" variant="body1">
-            Create an account with ReZerve!
-          </Typography>
-
-          <Typography align="left" variant="caption">
-          <p>With an account, you can:</p>
-          <ul style={{marginLeft: '40px'}}>
-              <li>Add Customer Reviews</li>
-              <li>Send Direct Messages to your Stylist</li>
-              <li>View your Past Appointments</li>
-              <li>Bypass this section every time you book</li>
-          </ul>
-          Signing up with ReZerve is easy and free. Join our family and connect with your stylist today!
-          </Typography>
-        </CardContent>
-          <CardActions >
-              <div style={{display: 'flex', margin: 'auto'}}>
-                <LoginDefault/>
-                <SignUpPage/>
-              </div>
-          </CardActions>
-      </Card>
+      <div className={classes.confirmationEmployeeName}>
+        <div>{props.employeeName}</div>
       </div>
 
+      <div className={classes.confirmationAppointmentDate}>
+        <div>{props.appointmentDateTime.format('ddd MM/DD/YYYY')}</div>
+        <div>{props.appointmentDateTime.format('h:mm A')}</div>
+      </div>
+      <Divider className={classes.divider0} />
+      <div className={classes.confirmationServicePrice}>
+        <div>{props.service.name}</div>
+        <div>${props.service.price}</div>
+      </div>
+
+      <div className={classes.confirmationServicePrice}>
+        <div>Booking Fee</div>
+        <div>$0.75</div>
+      </div>
+      <Divider className={classes.divider1} />
+      <div className={classes.confirmationServicePrice}>
+        <div>*Payment Due</div>
+        <div>$0.75</div>
+      </div>
+
+      <Divider className={classes.divider0} />
       
-      
+      <div style={{textAlign: 'center'}}>
+        <Typography variant="caption">
+          *Your payment in Step 2 is only for the Booking Fee. Service payment will happen at {props.businessName}.
+        </Typography>
+      </div>
+
     </div>
   );
 }
@@ -182,7 +89,7 @@ const GuestContactCard = (props: any) => {
 const BookingConfirmation = (props: any) => {
   return (
     <div>
-      <ConfirmationCard businessName={props.businessName} appointmentDateTime={props.appointmentDateTime} employeeName={props.employeeName} service={props.service} phoneField={false} />
+      <ConfirmationCard businessName={props.businessName} appointmentDateTime={props.appointmentDateTime} employeeName={props.employeeName} service={props.service} />
     </div>
   );
 }
@@ -191,7 +98,7 @@ const CustomerCheckout = (props: any) => {
   // tslint:disable-next-line: no-shadowed-variableF
   const classes = useStyles();
   const [activeStep, setActiveStep] = React.useState(0);
-  const steps = getSteps(props.this.props.user);
+  const steps = getSteps();
   const [customerPaid, setCustomerPaid] = React.useState<boolean>(false);
 
   const handleNext = () => {
@@ -235,11 +142,10 @@ const CustomerCheckout = (props: any) => {
               </Button>
             }
   
-            {activeStep !== steps.length - 1 &&
+            {activeStep === 0 &&
             <Button
             variant="contained"
             color="primary"
-            disabled={(activeStep !== 0 && !props.this.checkGuest())}
             onClick={
               handleNext
             }
