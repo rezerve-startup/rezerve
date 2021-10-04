@@ -620,7 +620,10 @@ class BusinessInfoDetails extends React.Component<any, any> {
               service={this.props.selectedEmployee?.services[this.state.selectedService]}
               businessName={this.props.businessName}
               appointmentDateTime={this.state.availableAppointmentTimes[this.state.selectedAppointmentSlot]}
+              bookAppointment={this.bookAppointment}
               this={this}
+              checkGuest={this.checkGuest}
+              user={this.props.user}
             />
           </Dialog>
         )}

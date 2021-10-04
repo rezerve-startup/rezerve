@@ -25,17 +25,15 @@ function getSteps(user) {
   }
 }
 
-function getStepContent(stepIndex: number, setCustomerPaid, businessName, appointmentDateTime, employeeName, service, appt) {
-  if(appt.props.user === undefined){
+function getStepContent(stepIndex: number, setCustomerPaid, businessName, appointmentDateTime, employeeName, service, user, bookAppointment, appt) {
+  if(user === undefined){
     switch (stepIndex) {
       case 0:
         return <ConfirmationCard businessName={businessName} appointmentDateTime={appointmentDateTime} employeeName={employeeName} service={service}/>;
       case 1:
         return <GuestContactCard this={appt}/>;
       case 2:
-        return <StripePaymentSetup paymentSuccess={setCustomerPaid} price={service.price} this={appt}/>;
-      case 3:
-        return <BookingConfirmation businessName={businessName} appointmentDateTime={appointmentDateTime} employeeName={employeeName} service={service} />;
+        return <StripePaymentSetup paymentSuccess={setCustomerPaid} bookAppointment={bookAppointment}/>;
       default:
         return 'Our apologies, there has been a mishap with the booking process. Please try again later.';
     }
@@ -43,11 +41,9 @@ function getStepContent(stepIndex: number, setCustomerPaid, businessName, appoin
   else{
     switch (stepIndex) {
       case 0:
-        return <ConfirmationCard businessName={businessName} appointmentDateTime={appointmentDateTime} employeeName={employeeName} service={service} phoneField={true}/>;
+        return <ConfirmationCard businessName={businessName} appointmentDateTime={appointmentDateTime} employeeName={employeeName} service={service}/>;
       case 1:
-        return <StripePaymentSetup paymentSuccess={setCustomerPaid} price={service.price} this={appt}/>;
-      case 2:
-        return <BookingConfirmation businessName={businessName} appointmentDateTime={appointmentDateTime} employeeName={employeeName} service={service} />;
+        return <StripePaymentSetup paymentSuccess={setCustomerPaid} bookAppointment={bookAppointment}/>;
       default:
         return 'Our apologies, there has been a mishap with the booking process. Please try again later.';
     }
@@ -59,7 +55,7 @@ function StripePaymentSetup(props) {
   return (
     <div className="App">
       <Elements stripe={promise}>
-        <CheckoutForm paymentSuccess={props.paymentSuccess} price={price} this={props.this} businessName={props.businessName}/>
+        <CheckoutForm paymentSuccess={props.paymentSuccess}  businessName={props.businessName} bookAppointment={props.bookAppointment}/>
       </Elements>
     </div>
   );
@@ -135,11 +131,11 @@ const GuestContactCard = (props: any) => {
         
         <TextField
                     name="phone"
-                    value={props.this.state.customerNumber}
                     type="number"
                     label="Phone Number"
                     fullWidth={true}
                     variant="outlined"
+                    value={props.this.state.customerNumber}
                     onChange={(e) => props.this.handleGuestNumber(e)}
                   />
       </div>
@@ -191,7 +187,7 @@ const CustomerCheckout = (props: any) => {
   // tslint:disable-next-line: no-shadowed-variableF
   const classes = useStyles();
   const [activeStep, setActiveStep] = React.useState(0);
-  const steps = getSteps(props.this.props.user);
+  const steps = getSteps(props.user);
   const [customerPaid, setCustomerPaid] = React.useState<boolean>(false);
 
   const handleNext = () => {
@@ -220,7 +216,7 @@ const CustomerCheckout = (props: any) => {
             ))}
           </Stepper>
           <Typography component={'span'} className={classes.instructions}>
-            {getStepContent(activeStep, setCustomerPaid, props.businessName, props.appointmentDateTime, props.employeeName, props.service, props.this)}
+            {getStepContent(activeStep, setCustomerPaid, props.businessName, props.appointmentDateTime, props.employeeName, props.service, props.user, props.bookAppointment, props.this)}
           </Typography>
         </DialogContent>
   
