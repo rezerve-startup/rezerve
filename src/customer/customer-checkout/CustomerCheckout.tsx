@@ -247,9 +247,9 @@ const CustomerCheckout = (props: any) => {
             <Button
               variant="contained"
               color="primary"
-              disabled={(activeStep === steps.length - 1 ) ? !customerPaid : false || !props.this.checkGuest()}
+              disabled={(activeStep === steps.length - 1 ) ? !customerPaid : false || (activeStep !== 0 && !props.this.checkGuest())}
               onClick={
-                activeStep === steps.length  ? logToken : handleNext
+                activeStep === steps.length  ? handleConfirm : handleNext
               }
             >
               {activeStep === steps.length -1 ? 'Review Appointment' : activeStep === steps.length ? 'Confirm & Book' : 'Next'}
