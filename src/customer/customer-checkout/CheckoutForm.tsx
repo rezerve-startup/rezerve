@@ -84,6 +84,7 @@ export default function CheckoutForm(props) {
       .then((data) => {
         setClientSecret(data.clientSecret);
         setCID(data.cID)
+        props.setToken(data.cID)
       });
   }, []);
   const cardStyle = {
@@ -147,6 +148,7 @@ export default function CheckoutForm(props) {
       });
   };
 
+  
   const handleClose = (event?: React.SyntheticEvent, reason?: string) => {
     if (reason === 'clickaway') {
       setOpen(false)
@@ -156,25 +158,25 @@ export default function CheckoutForm(props) {
     //setOpen(false);
   };
 
-  const handleConfirm = () => {
-    props.bookAppointment(cID);
+  // const handleConfirm = () => {
+  //   props.bookAppointment(cID);
     
-      // if(props.this.props.user !== undefined){
-      //   const customerRef = firestore.collection('customers').doc(`${props.this.props.user.customerId}`)
-      //   customerRef.get().then((docRef) => {
-      //     const customerAppointments: string[] = docRef.data()?.appointments
-      //     setAppointmentId(customerAppointments[customerAppointments.length -1])
-      //     console.log(appointmentId)
-      //   })
-      // }
+  //     // if(props.this.props.user !== undefined){
+  //     //   const customerRef = firestore.collection('customers').doc(`${props.this.props.user.customerId}`)
+  //     //   customerRef.get().then((docRef) => {
+  //     //     const customerAppointments: string[] = docRef.data()?.appointments
+  //     //     setAppointmentId(customerAppointments[customerAppointments.length -1])
+  //     //     console.log(appointmentId)
+  //     //   })
+  //     // }
     
-    }
+  //   }
+
     const classes = useStyles();
   return (
     <div>
       
       <form id="payment-form" onSubmit={handleSubmit}>
-        {!(error === null  && open)  && 
         <div>
           <CardElement
           id="card-element"
@@ -195,10 +197,9 @@ export default function CheckoutForm(props) {
         </AdornedButton>
     
         <div className={classes.itemCard}>
-            <Typography  variant="body1" align="center">Booking Fee will only be charged after your stylist accepts the appointment.</Typography>
+            <Typography  variant="body1" align="center">This $0.75 Booking Fee will only be charged after your stylist accepts the appointment.</Typography>
         </div>
         </div>
-    }
         <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
           <Alert
             onClose={handleClose}
@@ -210,24 +211,8 @@ export default function CheckoutForm(props) {
           </Alert>
         </Snackbar>
       </form>
+
       
-
-      {error === null  && open &&
-          <Typography align="center" style={{cursor: 'pointer'}}>
-
-          {/* Maybe Add Card Here */}
-
-            <Button
-            variant="contained"
-            color="primary"
-            onClick={
-              handleConfirm
-            }
-          >
-            {'Confirm & Book'}
-          </Button>
-          </Typography>      
-      }
     </div>
   );
 }

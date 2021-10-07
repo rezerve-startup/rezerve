@@ -25,7 +25,7 @@ function getSteps(user) {
   }
 }
 
-function getStepContent(stepIndex: number, setCustomerPaid, businessName, appointmentDateTime, employeeName, service, user, bookAppointment, appt) {
+function getStepContent(stepIndex: number, setCustomerPaid, setCID, businessName, appointmentDateTime, employeeName, service, user, handleNext, appt) {
   if(user === undefined){
     switch (stepIndex) {
       case 0:
@@ -33,7 +33,9 @@ function getStepContent(stepIndex: number, setCustomerPaid, businessName, appoin
       case 1:
         return <GuestContactCard this={appt}/>;
       case 2:
-        return <StripePaymentSetup paymentSuccess={setCustomerPaid} bookAppointment={bookAppointment}/>;
+        return <StripePaymentSetup paymentSuccess={setCustomerPaid} setToken={setCID}/>;
+      case 3:
+        return <BookingConfirmation businessName={businessName} appointmentDateTime={appointmentDateTime} employeeName={employeeName} service={service} />;
       default:
         return 'Our apologies, there has been a mishap with the booking process. Please try again later.';
     }
@@ -43,7 +45,9 @@ function getStepContent(stepIndex: number, setCustomerPaid, businessName, appoin
       case 0:
         return <ConfirmationCard businessName={businessName} appointmentDateTime={appointmentDateTime} employeeName={employeeName} service={service}/>;
       case 1:
-        return <StripePaymentSetup paymentSuccess={setCustomerPaid} bookAppointment={bookAppointment}/>;
+        return <StripePaymentSetup paymentSuccess={setCustomerPaid} setToken={setCID}/>;
+      case 2:
+        return <BookingConfirmation businessName={businessName} appointmentDateTime={appointmentDateTime} employeeName={employeeName} service={service} />;
       default:
         return 'Our apologies, there has been a mishap with the booking process. Please try again later.';
     }
@@ -55,7 +59,7 @@ function StripePaymentSetup(props) {
   return (
     <div className="App">
       <Elements stripe={promise}>
-        <CheckoutForm paymentSuccess={props.paymentSuccess}  businessName={props.businessName} bookAppointment={props.bookAppointment}/>
+        <CheckoutForm paymentSuccess={props.paymentSuccess}  businessName={props.businessName} setToken={props.setToken}/>
       </Elements>
     </div>
   );
@@ -189,7 +193,7 @@ const CustomerCheckout = (props: any) => {
   const [activeStep, setActiveStep] = React.useState(0);
   const steps = getSteps(props.user);
   const [customerPaid, setCustomerPaid] = React.useState<boolean>(false);
-
+  const [cID, setCID] = React.useState<string>('Customer Token 0');
   const handleNext = () => {
     setActiveStep((prevActiveStep) => prevActiveStep + 1);
   };
@@ -202,6 +206,15 @@ const CustomerCheckout = (props: any) => {
   const handleClose = () => {
     console.log("closed")
   };
+
+  const logToken = () => {
+    console.log(cID)
+  };
+
+  const handleConfirm = () => {
+    props.bookAppointment(cID);
+  };
+
 
   if (props.businessName && props.appointmentDateTime && props.employeeName && props.service) {
 
@@ -216,13 +229,13 @@ const CustomerCheckout = (props: any) => {
             ))}
           </Stepper>
           <Typography component={'span'} className={classes.instructions}>
-            {getStepContent(activeStep, setCustomerPaid, props.businessName, props.appointmentDateTime, props.employeeName, props.service, props.user, props.bookAppointment, props.this)}
+            {getStepContent(activeStep, setCustomerPaid, setCID, props.businessName, props.appointmentDateTime, props.employeeName, props.service, props.user, handleNext, props.this)}
           </Typography>
         </DialogContent>
   
         <DialogActions>
           <div>
-            {activeStep !== 0 && customerPaid === false &&
+            {activeStep !== 0 && 
               <Button
                 onClick={activeStep === 0 ? handleClose : handleBack}
                 className={classes.backButton}
@@ -231,7 +244,18 @@ const CustomerCheckout = (props: any) => {
               </Button>
             }
   
-            {activeStep !== steps.length - 1 &&
+            <Button
+              variant="contained"
+              color="primary"
+              disabled={(activeStep === steps.length - 1 ) ? !customerPaid : false || !props.this.checkGuest()}
+              onClick={
+                activeStep === steps.length  ? logToken : handleNext
+              }
+            >
+              {activeStep === steps.length -1 ? 'Review Appointment' : activeStep === steps.length ? 'Confirm & Book' : 'Next'}
+            </Button>
+  
+            {/* {activeStep !== steps.length - 1 &&
             <Button
             variant="contained"
             color="primary"
@@ -241,7 +265,7 @@ const CustomerCheckout = (props: any) => {
             }
           >
             Next
-          </Button>}
+          </Button>} */}
           </div>
         </DialogActions>
       </>

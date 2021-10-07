@@ -80,10 +80,16 @@ class BusinessInfoDetails extends React.Component<any, any> {
   }
 
   checkGuest(){
-    if(this.state.customerNumber.length === 10 && this.state.customerName.length > 0){
+    if(this.props.user !== undefined){
       return true;
-    }else{
-      return false;
+    }
+    else{
+      if(this.state.customerNumber.length === 10 && this.state.customerName.length > 0){
+        return true;
+      }
+      else {
+        return false;
+      }
     }
   }
 
@@ -406,22 +412,22 @@ class BusinessInfoDetails extends React.Component<any, any> {
       firestore.collection('employees').doc(`${this.props.selectedEmployee.id}`).update({
         appointments: firebase.firestore.FieldValue.arrayUnion(docRef.id)
       }).then(() => {
-        fetch('https://rezerve-startup-api.herokuapp.com/twilio-business', {
-            // Use one of the links above for local/live
-            method: 'POST',
-            headers: {
-              'Access-Control-Allow-Origin': '*',
-              'Content-Type': 'application/json',
-            },
+        // fetch('https://rezerve-startup-api.herokuapp.com/twilio-business', {
+        //     // Use one of the links above for local/live
+        //     method: 'POST',
+        //     headers: {
+        //       'Access-Control-Allow-Origin': '*',
+        //       'Content-Type': 'application/json',
+        //     },
             
-            body: JSON.stringify({employeeNumber : this.state.employeeNumber,
-            }),
-          },
+        //     body: JSON.stringify({employeeNumber : this.state.employeeNumber,
+        //     }),
+        //   },
             
-          )
-          .then((res) => {
-            return res.json();
-          });
+        //   )
+        //   .then((res) => {
+        //     return res.json();
+        //   });
         }).then(() => {
         if (this.props.user !== undefined) {
           firestore.collection('customers').doc(`${this.props.user.customerId}`).update({
