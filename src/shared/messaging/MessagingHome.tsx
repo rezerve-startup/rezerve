@@ -94,7 +94,6 @@ class MessagingHome extends React.Component<any, any> {
           firestore.collection('appointments')
               .where("employeeId", "==", this.props.user.employeeId)
                 .where("status", "==", "requested")
-                .where('datetime', '>', Date.now())
                   .onSnapshot((snapshot) => {
                     this.setState({
                       employeeNotifications: snapshot.size
