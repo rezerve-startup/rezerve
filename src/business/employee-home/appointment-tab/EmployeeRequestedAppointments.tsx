@@ -141,7 +141,7 @@ function mapStateToProps(state: StoreState) {
       appointment.endTime = moment(appointmentDate.toISOString()).add(30 * appointment.service.length, 'minutes').format('h:mm A');
 
       if (appointment.status === 'cancelled' || (appointment.status === 'requested' && appointmentDate.valueOf() < currentDate)) {
-        cancelledAppointments.push(appointment);
+        //cancelledAppointments.push(appointment);
       } else if (appointment.status === 'requested') {
         requestedAppointments.push(appointment);
       } else if (appointmentDate.valueOf() > currentDate) {
@@ -496,7 +496,7 @@ class EmployeeRequestedAppointments extends React.Component<Props, State> {
           )))}
         </div>
 
-        <div>
+        {/* <div>
           <Typography className={classes.appointmentsText}>Cancelled Appointments</Typography>
           {this.props.cancelledAppointments?.length === 0 ? (
             <Typography className={classes.noAppointmentsText}>No Cancelled Appointments</Typography>
@@ -550,7 +550,7 @@ class EmployeeRequestedAppointments extends React.Component<Props, State> {
               </AccordionDetails>
             </Accordion>
           )))}
-        </div>
+        </div> */}
 
         <Dialog open={this.state.acceptAppointmentStatusDialogOpen} onClose={(reason: 'backdropClick') => {}}> 
           <AcceptAppointment appt={this.state.selectedAppointment} this={this}/>

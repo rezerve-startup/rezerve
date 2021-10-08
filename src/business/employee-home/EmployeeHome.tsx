@@ -89,6 +89,7 @@ class EmployeeHome extends React.Component<Props, State> {
       //No information to get
     }
     else{
+      
       if(this.state.user.customerId === '' && this.state.user.employeeInfo.isOwner === true){
         firestore.collection('businesses')
           .doc(this.state.user.employeeInfo.businessId)
@@ -100,14 +101,34 @@ class EmployeeHome extends React.Component<Props, State> {
                 })
               })
       }
+      firestore.collection('employees')
+      .doc(this.state.user.employeeId)
+      .get() 
+      .then((value) => {
+        const appointments = value.data()?.appointments;
+        appointments.forEach(id => {
+          const appointmentRef = firestore.collection('appointments').doc(id)
+            appointmentRef.get()
+            .then(value => {
+              const appointment = value.data();
+              if ((appointment?.status === 'requested' && appointment?.datetime.toDate() < Date.now())){
+                appointmentRef.update({
+                  status: "cancelled"
+                })
+              }
+            });
+        });
+      });
+
       firestore.collection('appointments')
           .where("employeeId", "==", this.state.user.employeeId)
             .where("status", "==", "requested")
-              .onSnapshot((snapshot) => {
-                this.setState({
-                  employeeNotifications: snapshot.size
-                })
+            .onSnapshot((snapshot) => {
+              this.setState({
+                employeeNotifications: snapshot.size
               })
+            })
+              
       }
   }
 
