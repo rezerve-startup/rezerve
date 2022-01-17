@@ -11,7 +11,7 @@ import { Elements } from '@stripe/react-stripe-js';
 import AcceptPayment from './AcceptPayment';
 const PUBLIC_KEY = "pk_live_51IT9oWG4OM4l9C1dre9yGOSSd1MtmDOWcGsjlv7Exe6u46E2UpIjt92w9zO7ld2i0v1os1NaYwWX48MxqbhvRoq8009WuwQftX"
 const TEST_KEY = "pk_test_51IT9oWG4OM4l9C1dre9yGOSSd1MtmDOWcGsjlv7Exe6u46E2UpIjt92w9zO7ld2i0v1os1NaYwWX48MxqbhvRoq8009WuwQftX"
-const promise = loadStripe(PUBLIC_KEY);
+const promise = loadStripe(TEST_KEY);
 
 
 
