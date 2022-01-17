@@ -28,17 +28,17 @@ app.post('/create-setup-intent', async (req, res) => {
   const action = req.body.action; //JSON sent in from CheckoutForm.tsx 
   
   if(action === 'setupIntent'){
-  const customer = await stripe.customers.create();
-
+  //const customer = await stripe.customers.create();
+    const customer = 'cus_KxzyGUHKI5IZAJ';
   // Create a PaymentIntent with the order amount and currency
   const setupIntent = await stripe.setupIntents.create({
-    customer: customer.id,
+    customer: customer,
     description: "ReZerve Booking Fee",
   });
 
   res.send({
     clientSecret: setupIntent.client_secret,
-    cID: customer.id
+    cID: customer //customer.id
   });
 } 
   else if (action === 'paymentIntent'){
