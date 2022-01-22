@@ -25,7 +25,7 @@ const styles = (theme: Theme) =>
     },
     heading: {
       fontSize: theme.typography.pxToRem(15),
-      fontWeight: theme.typography.fontWeightRegular,
+      //fontWeight: theme.typography.fontWeightRegular,
     },
     button: {
       margin: theme.spacing(1),
